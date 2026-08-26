@@ -14,6 +14,7 @@
 <script src="_ds/modernist-92642c23-7a6d-485a-85e1-6daea5b2d8e1/_ds_bundle.js"></script>
 <script src="image-slot.js"></script>
 <script src="data/lugares.js"></script>
+<script src="data/fotos.js" defer></script>
 <style>
 body{margin:0;background:var(--color-bg,#f3f2f2);color:var(--color-text,#201e1d);font-family:var(--font-body,'Archivo',sans-serif)}
 a{color:var(--color-accent-700,#a21f0b)}a:hover{color:var(--color-accent,#ec3013)}
@@ -77,6 +78,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="height:2px;background:var(--color-neutral-200);margin:14px 0"></div>
 <div style="display:flex;flex-wrap:wrap;gap:8px">
 <button style="padding:10px 14px;border:2px solid var(--color-text);background:var(--color-text);color:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ copyCurLink }}">🔗 Copiar enlace</button>
+<button style="padding:10px 14px;border:2px solid #25D366;background:#25D366;color:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="background:#1da851;border-color:#1da851" onClick="{{ waShare }}">Enviar por WhatsApp</button>
 <button style="padding:10px 14px;border:2px solid var(--color-neutral-300);background:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ qrPlanGo }}">QR del plan</button>
 </div>
 <sc-if value="{{ qrPlanOn }}" hint-placeholder-val="{{ false }}">
@@ -260,7 +262,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div class="hidescroll" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px">
 <sc-for list="{{ recItems }}" as="it" hint-placeholder-count="4">
 <button onClick="{{ it.open }}" style="flex:0 0 208px;text-align:left;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:0" style-hover="box-shadow:var(--shadow-md)">
-<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1)"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
+<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
 <div style="padding:11px 12px 13px">
 <div style="font:700 14.5px/1.2 var(--font-body);margin-bottom:4px">{{ it.name }}</div>
 <div style="font:500 11.5px var(--font-body);color:var(--color-neutral-600);margin-bottom:7px">{{ it.meta }}</div>
@@ -280,7 +282,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div class="hidescroll" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px">
 <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
 <button onClick="{{ it.open }}" style="flex:0 0 208px;text-align:left;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:0" style-hover="box-shadow:var(--shadow-md)">
-<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1)"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
+<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
 <div style="padding:11px 12px 13px">
 <div style="font:700 14.5px/1.2 var(--font-body);margin-bottom:4px">{{ it.name }}</div>
 <div style="font:500 11.5px var(--font-body);color:var(--color-neutral-600);margin-bottom:7px">{{ it.meta }}</div>
@@ -399,7 +401,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-for list="{{ rVenues }}" as="v" hint-placeholder-count="4">
 <div style="background:#fff;border:2px solid var(--color-text);display:flex;flex-direction:column">
 <button onClick="{{ v.open }}" style="border:none;padding:0;cursor:pointer;text-align:left;background:none">
-<div style="{{ v.tileStyle }}"><sc-if value="{{ v.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ v.photo }}" alt="" loading="lazy" onError="{{ v.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1)"></sc-if><sc-if value="{{ v.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 52px var(--font-heading)">{{ v.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:12px;bottom:9px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ v.cat }}</span><sc-if value="{{ v.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="font:700 10.5px var(--font-body);position:absolute;right:10px;top:9px;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px">{{ v.badge }}</span></sc-if></div>
+<div style="{{ v.tileStyle }}"><sc-if value="{{ v.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ v.photo }}" alt="" loading="lazy" onError="{{ v.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ v.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 52px var(--font-heading)">{{ v.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:12px;bottom:9px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ v.cat }}</span><sc-if value="{{ v.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="font:700 10.5px var(--font-body);position:absolute;right:10px;top:9px;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px">{{ v.badge }}</span></sc-if></div>
 </button>
 <div style="padding:13px 14px 6px;flex:1">
 <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font:800 17px/1.15 var(--font-heading)">{{ v.name }}</span><span style="font:700 12px var(--font-body);flex:none">{{ v.price }}</span></div>
@@ -436,7 +438,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div class="hidescroll" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px">
 <sc-for list="{{ cs.items }}" as="it" hint-placeholder-count="4">
 <button onClick="{{ it.open }}" style="flex:0 0 208px;text-align:left;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:0" style-hover="box-shadow:var(--shadow-md)">
-<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1)"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
+<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
 <div style="padding:11px 12px 13px">
 <div style="font:700 14.5px/1.2 var(--font-body);margin-bottom:4px">{{ it.name }}</div>
 <div style="font:500 11.5px var(--font-body);color:var(--color-neutral-600);margin-bottom:7px">{{ it.meta }}</div>
@@ -456,7 +458,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="display:grid;grid-template-columns:{{ detailCols }};gap:26px;margin-bottom:30px">
 <div>
 <div style="position:relative;border:2px solid var(--color-text);background:#fff">
-<div style="width:100%;aspect-ratio:4/3;filter:grayscale(1)"><image-slot id="{{ detail.slotId }}" shape="rect" src="{{ detail.photoSrc }}" credit="{{ detail.photoCredit }}" credit-href="{{ detail.photoHref }}" placeholder="Arrastra aquí una foto real del lugar" style="width:100%;height:100%"></image-slot></div>
+<div style="width:100%;aspect-ratio:4/3"><image-slot id="{{ detail.slotId }}" shape="rect" src="{{ detail.photoSrc }}" credit="{{ detail.photoCredit }}" credit-href="{{ detail.photoHref }}" placeholder="Arrastra aquí una foto real del lugar" style="width:100%;height:100%"></image-slot></div>
 <span style="position:absolute;left:10px;top:10px;font:700 9px var(--font-body);letter-spacing:.14em;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px;pointer-events:none">FOTO · {{ detail.photoNote }}</span>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px"><sc-for list="{{ detail.tags }}" as="t" hint-placeholder-count="3"><span style="font:600 11px var(--font-body);letter-spacing:.06em;padding:4px 9px;background:var(--color-neutral-200)">{{ t.label }}</span></sc-for></div>
@@ -632,6 +634,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ planCanEdit }}" hint-placeholder-val="{{ true }}">
 <button style="padding:11px 15px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 13px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ savePlan }}">Guardar plan</button>
 <button style="padding:11px 15px;background:transparent;color:#fff;border:2px solid #fff;font:700 13px var(--font-body);cursor:pointer" style-hover="background:rgba(255,255,255,.15)" onClick="{{ toggleSend }}">Enviar plan →</button>
+<button style="padding:11px 15px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4);font:600 13px var(--font-body);cursor:pointer" style-hover="border-color:#fff" onClick="{{ mapsRoute }}">🗺️ Ruta en Maps</button>
 <button style="padding:11px 15px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4);font:600 13px var(--font-body);cursor:pointer" style-hover="border-color:#fff" onClick="{{ redoPlan }}">Rehacer</button>
 </sc-if>
 <sc-if value="{{ planRO }}" hint-placeholder-val="{{ false }}">
@@ -975,16 +978,16 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:50px">
 <div style="background:#fff;border:2px solid var(--color-text);padding:18px">
-<div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:12px">PRÓXIMO MARTES · CAPACIDAD OCIOSA</div>
+<div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:12px">DEMANDA REAL EN SOBRES · ÚLTIMOS 7 DÍAS</div>
 <div style="display:flex;gap:26px;flex-wrap:wrap;margin-bottom:14px">
-<div><div style="font:800 40px var(--font-heading)">70</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600)">CAPACIDAD</div></div>
-<div><div style="font:800 40px var(--font-heading)">42%</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600)">OCUPACIÓN ESPERADA</div></div>
-<div><div style="font:800 40px var(--font-heading);color:var(--color-accent)">41</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600)">LUGARES LIBRES</div></div>
+<div><div style="font:800 40px var(--font-heading)">{{ liveSearches }}</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600)">BÚSQUEDAS DE PLAN</div></div>
+<div><div style="font:800 40px var(--font-heading)">{{ liveUsers }}</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600)">USUARIOS ACTIVOS</div></div>
+<div><div style="font:800 40px var(--font-heading);color:var(--color-accent)">{{ livePlans }}</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600)">PLANES ARMADOS</div></div>
 </div>
-<div style="height:10px;background:var(--color-neutral-200);margin-bottom:16px"><div style="width:42%;height:100%;background:var(--color-text)"></div></div>
+<div style="height:10px;background:var(--color-neutral-200);margin-bottom:16px"><div style="{{ liveBar }}"></div></div>
 <div style="border:2px solid var(--color-accent);padding:13px 15px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
-<span style="flex:1;min-width:200px;font:600 13px/1.45 var(--font-body)"><span style="color:var(--color-accent);font-weight:800">OPORTUNIDAD:</span> conecta esos 41 lugares con gente que busca plan un martes.</span>
-<button style="padding:11px 15px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ tueCta }}">Crear oferta "Martes Date Night"</button>
+<span style="flex:1;min-width:200px;font:600 13px/1.45 var(--font-body)"><span style="color:var(--color-accent);font-weight:800">OPORTUNIDAD:</span> {{ liveOpp }}</span>
+<button style="padding:11px 15px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ tueCta }}">Publicar algo hoy</button>
 </div>
 </div>
 <div style="background:#fff;border:2px solid var(--color-text);padding:18px">
@@ -1021,15 +1024,18 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <h2 style="font:800 22px var(--font-heading);margin:0 0 4px">Publicar en Sobres</h2>
 <p style="font:500 12.5px/1.5 var(--font-body);color:var(--color-neutral-700);margin:0 0 14px">Evento, concierto, experiencia o restaurante. Al publicar entra al catálogo: buscador, mapa, resultados y "Último minuto".</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">TIPO</label><select onChange="{{ setFxCat }}" style="width:100%;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"><option>Evento</option><option>Concierto</option><option>Experiencia</option><option>Pop-up</option><option>Restaurante</option><option>Promoción</option></select></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">TIPO</label><select value="{{ fxCat }}" onChange="{{ setFxCat }}" style="width:100%;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"><option>Restaurante</option><option>Bar</option><option>Antro</option><option>Café</option><option>Evento</option><option>Concierto</option><option>Experiencia</option><option>Pop-up</option><option>Promoción</option></select></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">NOMBRE</label><input value="{{ fxNombre }}" onInput="{{ setFxNombre }}" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 <div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">DESCRIPCIÓN</label><textarea onInput="{{ setFxDesc }}" rows="2" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:500 13px var(--font-body);resize:vertical">{{ fxDesc }}</textarea></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">FECHA</label><input type="date" value="{{ fxFecha }}" onChange="{{ setFxFecha }}" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">HORA</label><input value="{{ fxHora }}" onInput="{{ setFxHora }}" placeholder="8:00 pm" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 <div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">LUGAR / DIRECCIÓN</label><input value="{{ fxLugar }}" onInput="{{ setFxLugar }}" placeholder="Ámsterdam 123, Condesa" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
-<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">ZONA</label><select onChange="{{ setFxZona }}" style="width:100%;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"><option value="roma">Roma Norte</option><option value="romasur">Roma Sur</option><option value="condesa">Condesa</option><option value="polanco">Polanco</option><option value="juarez">Juárez</option><option value="centro">Centro</option><option value="chapultepec">Chapultepec</option><option value="coyoacan">Coyoacán</option><option value="sanangel">San Ángel</option><option value="delvalle">Del Valle · Nápoles</option><option value="cu">CU · Sur</option><option value="santafe">Santa Fe · Poniente</option></select></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">ZONA</label><select value="{{ fxZona }}" onChange="{{ setFxZona }}" style="width:100%;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"><option value="roma">Roma Norte</option><option value="romasur">Roma Sur</option><option value="condesa">Condesa</option><option value="polanco">Polanco</option><option value="juarez">Juárez</option><option value="centro">Centro</option><option value="chapultepec">Chapultepec</option><option value="coyoacan">Coyoacán</option><option value="sanangel">San Ángel</option><option value="delvalle">Del Valle · Nápoles</option><option value="cu">CU · Sur</option><option value="santafe">Santa Fe · Poniente</option></select></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">PRECIO PP (MXN)</label><input value="{{ fxPrecio }}" onInput="{{ setFxPrecio }}" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">CUPO</label><input value="{{ fxCap }}" onInput="{{ setFxCap }}" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">SITIO WEB O LINK DE RESERVAS</label><input value="{{ fxWeb }}" onInput="{{ setFxWeb }}" placeholder="https://tunegocio.com — al picar Reservar los manda aquí" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">ABRE (24H)</label><input value="{{ fxOh0 }}" onInput="{{ setFxOh0 }}" placeholder="13" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">CIERRA (24H)</label><input value="{{ fxOh1 }}" onInput="{{ setFxOh1 }}" placeholder="23 · usa 26 para 2am" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 </div>
 <div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap">
 <button style="display:flex;gap:26px;padding:13px 17px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ fxPublish }}"><span>Publicar</span><span>→</span></button>
@@ -1140,7 +1146,7 @@ class Component extends DCLogic {
     this.VIBEG = { foodie:['comida','cafe'], nightlife:['copas','fiesta'], cultural:['cultura'], creativo:['cultura','cafe'], chill:['parque','cafe'], aventurero:['juego','parque'], 'romántico':['cultura','comida'], social:['copas','juego','mall'], familiar:['parque','cine','mall','juego'], joyita:[], 'clásico':[] };
     this.SEGLBL = { comida:'Comida', cafe:'Café', copas:'Copas', fiesta:'Fiesta', cultura:'Cultura', cine:'Cine', parque:'Parque', juego:'Juegos', mall:'Plaza' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Evento',nombre:'Noche de vermú y vinilos',desc:'Sesión de escucha con vermú de barril y conservas.',fecha:'',hora:'8:00 pm',lugar:'Córdoba 234, Roma Norte',zona:'roma',precio:'320',cap:'30'}, pubs:[], tmEvents:null, catLoaded:0, offers:[
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[
       {id:'o1',badge:'SOLO HOY',title:'2x1 en vermú y conservas',detail:'Hoy 6–8 pm · 20 lugares',venue:'La Distral · Roma Norte',on:true},
       {id:'o2',badge:'CUPO HOY',title:'Torno + mezcal · 6 lugares',detail:'Hoy 7:30 pm · 90 min',venue:'Barro Vivo · Roma Norte',on:true},
       {id:'o3',badge:'ÚLTIMO MINUTO',title:'Ruta de tacos: 4 lugares',detail:'Hoy 7:00 pm · 4 paradas',venue:'Ruta de tacos a pie · Roma',on:true}
@@ -1152,7 +1158,7 @@ class Component extends DCLogic {
   componentDidMount() {
     const upd = () => this.setState({ isMobile: window.innerWidth < 820, hour: new Date().getHours() });
     upd(); window.addEventListener('resize', upd);
-    if (window.SOBRES_FOTOS) this.setState(st => ({ photos: Object.assign({}, window.SOBRES_FOTOS, st.photos) }));
+    { let ft = 0; const loadFotos = () => { if (window.SOBRES_FOTOS) { this.setState(st => ({ photos: Object.assign({}, window.SOBRES_FOTOS, st.photos) })); return; } if (ft++ < 40) setTimeout(loadFotos, 250); }; loadFotos(); }
 
     this._poll = () => { fetch('/api/state' + (this.state.userName ? '?u=' + encodeURIComponent(this.state.userName) : ''), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => { if (st && st.rev !== undefined) { if (this.checkEpoch(st)) return; const first = !this.state.syncOn; this.setState({ sync: st, syncOn: true }); if (first && this.state.userName) this.mutate('join', { name: this.state.userName }, true); this.checkInbox(st); } }).catch(() => {}); };
     this._poll(); this._pollI = setInterval(this._poll, 4000);
@@ -1180,7 +1186,24 @@ class Component extends DCLogic {
     };
     Object.keys(byLang).forEach(lang => fetchWiki(lang, byLang[lang], 0));
   }
-  cat() { const sp = (this.state.sync && this.state.sync.pubs) || []; const merged = this.state.pubs.concat(sp.filter(p => !this.state.pubs.some(q => q.id === p.id))); return this.V.concat(this.EXT, merged.map(p => this.pubToVenue(p))); }
+  cat() { const sp = (this.state.sync && this.state.sync.pubs) || []; const merged = this.state.pubs.concat(sp.filter(p => !this.state.pubs.some(q => q.id === p.id)));
+    const sv = ((this.state.sync && this.state.sync.venues) || []).map(v => this.venueToPlace(v));
+    return this.V.concat(this.EXT, merged.map(p => this.pubToVenue(p)), sv); }
+  venueToPlace(v) { const Z = this.ZONES.find(z => z[0] === v.zone) || this.ZONES[0]; const g = (this.ZGEO || {})[v.zone];
+    const jit = ((v.id || '').charCodeAt((v.id || 'x').length - 1) % 10) / 10;
+    const lat = (typeof v.lat === 'number' ? v.lat : (g ? g[0] + (jit - 0.5) / 300 : null));
+    const lng = (typeof v.lng === 'number' ? v.lng : (g ? g[1] + ((jit * 7 % 1) - 0.5) / 300 : null));
+    return { id: v.id, n: v.n, cat: v.cat || 'Restaurante', z: v.zone || 'roma', col: v.col || Z[1],
+      addr: v.addr || '', web: v.web || '', pp: v.pp || 0, oh: [v.oh0 != null ? v.oh0 : 12, v.oh1 != null ? v.oh1 : 23],
+      hrs: v.hrs || ((v.date ? this.fmtDate(v.date) + ' · ' : '') + (v.hora || '')) || 'Consulta horarios',
+      tags: (v.tags && v.tags.length ? v.tags : ['social']), who: (v.who && v.who.length ? v.who : ['amigos', 'date', 'compa']),
+      tm: (v.tm && v.tm.length ? v.tm : ['tarde', 'noche']),
+      x: Z[2] + jit - 0.5, y: Z[3] + (jit * 7 % 1) - 0.5, lat, lng,
+      score: 80, d: v.desc || '', av: 'Publicado en Sobres por ' + (v.by || 'el negocio'),
+      src: 'Publicado por el negocio en Sobres', pub: true, own: true, date: v.date || '', rt: null }; }
+  track(id, kind) { if (!id || !this.state.syncOn) return; this._tq = this._tq || []; this._tq.push({ id, k: kind });
+    clearTimeout(this._tt2); this._tt2 = setTimeout(() => { const evs = (this._tq || []).splice(0, 60); if (!evs.length) return;
+      this.mutate('track', { events: evs, who: this.state.who, zone: this.state.zone }, true); }, 1200); }
   mutate(op, payload, quiet) { return fetch('/api/mutate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op, payload }) }).then(r => r.ok ? r.json() : Promise.reject()).then(st => { this.setState({ sync: st, syncOn: true }); return st; }).catch(() => { if (!quiet) this.toast('Sin conexión con el servidor del salón'); }); }
   joinAs(name) { const n = (name || '').trim().slice(0, 24); if (!n) { this.toast('Escribe tu nombre'); return; } try { localStorage.setItem('sobres_user', n); const ep = this.state.sync && this.state.sync.epoch; if (ep) localStorage.setItem('sobres_epoch', String(ep)); } catch(e) {} this.setState({ userName: n, nameInput: '' }); if (this.state.syncOn) this.mutate('join', { name: n }); if (this._followParam) { this.nav('group'); this.toast(`Listo, ${n} — aquí está el plan que te enviaron`); } else { this.toast(`Listo, ${n} — ¿qué hacemos hoy?`); } }
   checkEpoch(st) { if (!st.epoch) return false; let e0 = null; try { e0 = localStorage.getItem('sobres_epoch'); } catch(e) {}
@@ -1285,7 +1308,7 @@ class Component extends DCLogic {
   whenLabel() { const s = this.state; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
   summary() { const s = this.state; const r = this.range(); return `${this.whoLabel()} · ${this.zLabel(s.zone)} · ${this.whenLabel()} ${this.time12(r[0])}–${this.time12(r[1])} · ${this.budLabel()}${s.vibes.length ? ' · ' + s.vibes.join(' + ') : ''}`; }
   why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : v.z === s.zone ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.pp === 0) parts.push('entrada libre'); else parts.push(`~$${v.pp} pp dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
-  runSearch(extra) { const s = this.state; const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0; const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, visibleCount: this.props.resultadosMax ?? 6, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: this.engine(seed) }); this.persist(); this.nav('results'); if (s.when === 'fecha' && s.customDate) this.loadTm(s.customDate); }
+  runSearch(extra) { const s = this.state; const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0; const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, visibleCount: this.props.resultadosMax ?? 6, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed); try { (rr.venues || []).slice(0, 8).forEach(v => this.track(v.id, 'a')); } catch(e) {} return rr; })() }); this.persist(); this.nav('results'); if (s.when === 'fecha' && s.customDate) this.loadTm(s.customDate); }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
   time12(h) { const hh = Math.floor(h) % 24, m = Math.round((h % 1) * 60); const ap = hh >= 12 ? 'pm' : 'am'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return `${h12}:${m.toString().padStart(2,'0')} ${ap}`; }
   planTimes(n) { const r = this.range(); const from = r[0], to = r[1]; if (n <= 1) return [from]; const step = Math.max(1.2, (to - from) / n); const arr = []; for (let i = 0; i < n; i++) arr.push(from + step * i); return arr; }
@@ -1301,8 +1324,8 @@ class Component extends DCLogic {
     const tm = (p.times && p.times.length === stops.length) ? p.times : this.planTimes(stops.length);
     return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
   tile(v, h) { const acc = !this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat); return `position:relative;width:100%;height:${h}px;display:flex;align-items:center;justify-content:center;background:${acc?'var(--color-neutral-800,#3a3735)':'var(--color-neutral-200)'};color:${acc?'#f3f2f2':'var(--color-neutral-500)'};border-bottom:2px solid var(--color-text);overflow:hidden`; }
-  cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => this.nav('detail', { detailId: v.id, backView: this.state.view }), save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { try { navigator.clipboard.writeText(`sobres.mx/l/${v.id}`); } catch(e) {} this.toast(`Link copiado: sobres.mx/l/${v.id}`); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
-  goReserve(v) { const s = this.state; if (s.syncOn && s.userName) this.mutate('reserve', { user: s.userName, venueId: v.id, venueName: v.n, slot: '', people: s.groupSize }, true);
+  cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { try { navigator.clipboard.writeText(`sobres.mx/l/${v.id}`); } catch(e) {} this.toast(`Link copiado: sobres.mx/l/${v.id}`); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
+  goReserve(v) { const s = this.state; if (s.syncOn && s.userName) this.mutate('reserve', { user: s.userName, venueId: v.id, venueName: v.n, slot: '', people: s.groupSize, who: s.who, zone: s.zone }, true);
     const url = (v.web && /^https?:/.test(v.web)) ? v.web : 'https://www.google.com/search?q=' + encodeURIComponent(v.n + ' ' + (v.col || 'CDMX') + ' reservar');
     try { window.open(url, '_blank'); } catch(e) {}
     this.toast(v.web ? `Abriendo el sitio de ${v.n} para reservar` : `Abriendo ${v.n} en Google para reservar`); }
@@ -1450,19 +1473,51 @@ class Component extends DCLogic {
     ];
     const vTabDef = [['resumen','Resumen'],['inv','Inventario y promos'],['new','Publicar'],['ana','Analytics']];
     const vTabs = vTabDef.map(([id,label], i) => ({ label, style: `padding:11px 15px;border:none;border-left:${i>0?'2px solid var(--color-text)':'none'};background:${s.venueTab===id?'var(--color-text)':'#fff'};color:${s.venueTab===id?'#fff':'var(--color-text)'};font:700 12.5px var(--font-body);cursor:pointer`, pick: () => this.setState({ venueTab: id }) }));
+    // ── MÉTRICAS REALES: se calculan de lo que la gente hace en Sobres ──
+    const allStats = (s.sync && s.sync.stats) || {};
+    const myVenues = ((s.sync && s.sync.venues) || []).filter(v => !s.userName || v.by === s.userName);
+    const mineIds = myVenues.map(v => v.id);
+    const scope = mineIds.length ? mineIds : Object.keys(allStats);
+    const agg = { v: 0, s: 0, r: 0, a: 0 };
+    const whoAgg = {}, dayAgg = {};
+    scope.forEach(id => { const st = allStats[id]; if (!st) return;
+      agg.v += st.v || 0; agg.s += st.s || 0; agg.r += st.r || 0; agg.a += st.a || 0;
+      Object.keys(st.who || {}).forEach(k => whoAgg[k] = (whoAgg[k] || 0) + st.who[k]);
+      Object.keys(st.d || {}).forEach(k => { const dd = st.d[k]; dayAgg[k] = (dayAgg[k] || 0) + (dd.v || 0) + (dd.r || 0); }); });
+    const nfmt = n => n.toLocaleString('es-MX');
+    const ctr = agg.v ? ((agg.r / agg.v) * 100).toFixed(1) + '%' : '—';
+    const totalRes = ((s.sync && s.sync.reservas) || []).filter(x => !mineIds.length || mineIds.includes(x.venueId)).length;
+    const scopeLbl = mineIds.length ? `${myVenues.length} negocio${myVenues.length > 1 ? 's' : ''} tuyo${myVenues.length > 1 ? 's' : ''}` : 'todo Sobres';
     const kpis = [
-      { v: '1,284', k: 'VISTAS DE PERFIL', sub: '+18% vs mes anterior' }, { v: '312', k: 'GUARDADOS', sub: '+9%' },
-      { v: '2,431', k: 'APARICIONES EN RECOMENDACIONES', sub: 'Foodie · Roma · noche' }, { v: '187', k: 'CLICS A RESERVAR', sub: '7.7% CTR' },
-      { v: '64', k: 'RESERVAS / LEADS', sub: 'demanda medible' }, { v: '5.0%', k: 'CONVERSIÓN VISTA → RESERVA', sub: 'atribución completa' }
+      { v: nfmt(agg.v), k: 'VISTAS DE PERFIL', sub: 'gente que abrió la ficha' },
+      { v: nfmt(agg.s), k: 'GUARDADOS', sub: 'lo guardaron para después' },
+      { v: nfmt(agg.a), k: 'APARICIONES EN RECOMENDACIONES', sub: 'salió en resultados o planes' },
+      { v: nfmt(agg.r), k: 'CLICS A RESERVAR', sub: ctr + ' de las vistas' },
+      { v: nfmt(totalRes), k: 'RESERVAS / LEADS', sub: 'demanda medible' },
+      { v: ctr, k: 'CONVERSIÓN VISTA → RESERVA', sub: 'datos reales · ' + scopeLbl }
     ];
-    const segs = [['Amigos','41%',41],['Date','34%',34],['Compañeros','15%',15],['Familia','10%',10]].map(([k,v,w]) => ({ k, v, barStyle: `width:${w}%;height:100%;background:var(--color-accent)` }));
+    const whoLbls = { amigos:'Amigos', date:'Date', compa:'Compañeros', familia:'Familia', solo:'Solo' };
+    const whoTot = Object.values(whoAgg).reduce((a,b) => a+b, 0);
+    const segs = (whoTot ? Object.keys(whoAgg).sort((a,b) => whoAgg[b]-whoAgg[a]) : []).map(k => {
+      const pct = Math.round(whoAgg[k] / whoTot * 100);
+      return { k: whoLbls[k] || k, v: pct + '%', barStyle: `width:${pct}%;height:100%;background:var(--color-accent)` }; });
+    if (!segs.length) segs.push({ k: 'Sin datos todavía', v: '—', barStyle: 'width:0%;height:100%;background:var(--color-accent)' });
     const vOffers = s.offers.map((o, i) => ({ badge: o.badge, title: o.title, detail: o.detail, venue: o.venue, status: o.on ? 'ACTIVA' : 'PAUSADA', stColor: o.on ? 'var(--color-accent-700)' : 'var(--color-neutral-500)', toggleLabel: o.on ? 'Pausar' : 'Activar', toggle: () => { const l = s.offers.map((x,j) => j===i ? Object.assign({}, x, {on:!x.on}) : x); this.setState({ offers: l }, () => this.persist()); } }));
-    const funnel = [['Vistas de perfil','1,284',100],['Guardados','312',24],['Clics a reservar','187',15],['Reservas / leads','64',5]].map(([k,v,w]) => ({ k, v, barStyle: `width:${w}%;height:100%;background:${w===5?'var(--color-accent)':'var(--color-text)'}` }));
-    const days = [['L',22],['M',14],['X',18],['J',55],['V',92],['S',100],['D',38]].map(([d,h]) => ({ d, barStyle: `height:${h}%;background:${h<25?'var(--color-accent)':'var(--color-neutral-800,#3a3735)'};width:100%` }));
+    const fBase = Math.max(1, agg.v);
+    const funnel = [['Vistas de perfil', agg.v], ['Guardados', agg.s], ['Clics a reservar', agg.r], ['Reservas / leads', totalRes]]
+      .map(([k, n]) => { const w = Math.round(n / fBase * 100); return { k, v: nfmt(n), barStyle: `width:${Math.min(100, w)}%;height:100%;background:${k.indexOf('Reservas') === 0 ? 'var(--color-accent)' : 'var(--color-text)'}` }; });
+    const DLBL = ['D','L','M','X','J','V','S'];
+    const last7 = []; for (let i = 6; i >= 0; i--) { const dt = new Date(); dt.setDate(dt.getDate() - i);
+      const key = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+      last7.push({ d: DLBL[dt.getDay()], n: dayAgg[key] || 0 }); }
+    const dMax = Math.max(1, ...last7.map(x => x.n));
+    const days = last7.map(x => ({ d: x.d, barStyle: `height:${Math.max(3, Math.round(x.n / dMax * 100))}%;background:${x.n === dMax && x.n > 0 ? 'var(--color-accent)' : 'var(--color-neutral-800,#3a3735)'};width:100%` }));
     const fx = s.fx;
     const setFx = k => e => this.setState({ fx: Object.assign({}, this.state.fx, { [k]: e.target.value }) });
     const searchResults = this.searchIn(s.searchQ, 8).map(v => ({ letter: v.n[0], name: v.n, meta: `${v.cat} · ${v.col}${v.addr ? ' · ' + v.addr : ''} · ${v.pp === 0 ? 'Gratis' : '~$'+v.pp+' pp'} · ${v.hrs}`, open: () => { openV(v.id); } }));
-    const pubList = s.pubs.map((p, i) => ({ name: p.nombre, meta: `${p.cat} · ${p.fecha ? this.fmtDate(p.fecha) + ' · ' : ''}${p.hora} · ${this.zLabel(p.zona)}`, del: () => { const l = s.pubs.slice(); l.splice(i,1); this.setState({ pubs: l }, () => this.persist()); } }));
+    const pubList = ((s.sync && s.sync.venues) || []).slice().reverse().map(v => { const st = ((s.sync && s.sync.stats) || {})[v.id] || {};
+      return { name: v.n, meta: `${v.cat} · ${this.zLabel(v.zone)}${v.date ? ' · ' + this.fmtDate(v.date) : ''} · ${st.v || 0} vistas · ${st.r || 0} clics a reservar`,
+        del: () => this.mutate('delVenue', { venueId: v.id }).then(() => this.toast('Publicación eliminada')) }; });
     let catSections = [];
     if (r && view === 'results') {
       const rz = r.zones || [s.zone];
@@ -1561,7 +1616,7 @@ class Component extends DCLogic {
       planFriendChips: myFr.map(f => { const sentAlready = !!(plan0Exists && (((rawPlans.find(x => x.id === this.planOptId(plan0Exists)) || {}).sharedWith || []).includes(f))); const sel = s.sendSel.includes(f);
         return { label: sentAlready ? '✓ ' + f : sel ? '☑ ' + f : f, style: `padding:9px 14px;border:2px solid ${sel ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sel ? 'var(--color-accent)' : '#fff'};color:${sel ? '#fff' : sentAlready ? 'var(--color-neutral-500)' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:${sentAlready ? 'default' : 'pointer'}`, send: () => { if (sentAlready) { this.toast(`Ya se lo enviaste a ${f}`); return; } this.setState({ sendSel: sel ? s.sendSel.filter(x => x !== f) : s.sendSel.concat([f]) }); } }; }),
       hasPlanFriends: myFr.length > 0, copyCurLink: () => this.copyCurPlanLink(),
-      hasSendSel: s.sendSel.length > 0, sendGoBg: s.sendSel.length ? 'var(--color-accent)' : 'var(--color-neutral-400)',
+      hasSendSel: s.sendSel.length > 0, waShare: () => this.waShare(), mapsRoute: () => this.mapsRoute(), sendGoBg: s.sendSel.length ? 'var(--color-accent)' : 'var(--color-neutral-400)',
       sendGo: () => { if (!s.sendSel.length) { this.toast('Primero pica a quién se lo quieres enviar'); return; } if (!(s.syncOn && s.userName)) { this.toast('El envío en vivo funciona con el link del salón'); return; } const p = this.getPlan(); if (!p || !p.stops.length) return; const sel = s.sendSel.slice();
         this.ensureProposed(p).then(id => this.mutate('sharePlan', { user: s.userName, planId: id, to: sel })).then(() => { this.toast(`Plan enviado a ${sel.join(', ')} 📬`); this.setState({ sendSel: [], sendOpen: false, qrPlanUrl: '' }); }); },
       planQ: s.planQ, setPlanQ: e => this.setState({ planQ: e.target.value }), planQOpen: s.planQ.length >= 2 || s.swapIdx != null,
@@ -1610,14 +1665,37 @@ class Component extends DCLogic {
         this.proposePlan(cand); },
       insights, pStats, dietOpts, providers,
       vTabs, vIsResumen: s.venueTab === 'resumen', vIsInv: s.venueTab === 'inv', vIsNew: s.venueTab === 'new', vIsAna: s.venueTab === 'ana',
-      kpis, segs, tueCta: () => { const l = [{ id:'tdn', badge:'MARTES', title:'Martes Date Night · 2x1', detail:'Martes 6–10 pm · 41 lugares', venue:'La Distral · Roma Norte', on:true }].concat(s.offers); this.setState({ offers: l, venueTab: 'inv' }, () => this.persist()); this.toast('Oferta creada — ya aparece en el lado consumidor'); },
+      kpis, segs, tueCta: () => this.setState({ venueTab: 'new' }),
+      liveUsers: String(Object.keys((s.sync && s.sync.users) || {}).length),
+      livePlans: String(((s.sync && s.sync.plans) || []).length),
+      liveSearches: String(Object.values(allStats).reduce((a, st) => a + (st.a || 0), 0)),
+      liveBar: `width:${Math.min(100, Math.max(4, Object.keys((s.sync && s.sync.users) || {}).length * 12))}%;height:100%;background:var(--color-text)`,
+      liveOpp: (() => { const zc = {}; Object.values(allStats).forEach(st => Object.keys(st.zone || {}).forEach(z => zc[z] = (zc[z] || 0) + st.zone[z]));
+        const top = Object.keys(zc).sort((a, b) => zc[b] - zc[a])[0];
+        const wt = Object.keys(whoAgg).sort((a, b) => whoAgg[b] - whoAgg[a])[0];
+        if (!top && !wt) return 'Publica tu negocio y empieza a medir quién te busca en Sobres.';
+        return `La gente está buscando sobre todo en ${this.zLabel(top || 'roma')}${wt ? ' y sale ' + (whoLbls[wt] || wt).toLowerCase() : ''} — publica algo ahí y aparece en sus planes.`; })(),
       vOffers, promoT: s.promoT, promoD: s.promoD, setPromoT: e => this.setState({ promoT: e.target.value }), setPromoD: e => this.setState({ promoD: e.target.value }),
       addPromo: () => { if (!s.promoT) { this.toast('Ponle título a la promo'); return; } const l = [{ id:'p'+Date.now(), badge:'SOLO HOY', title: s.promoT, detail: s.promoD || 'Hoy', venue:'La Distral · Roma Norte', on:true }].concat(s.offers); this.setState({ offers: l, promoT:'', promoD:'' }, () => this.persist()); this.toast('Promo publicada en "Último minuto"'); },
       fxNombre: fx.nombre, fxDesc: fx.desc, fxFecha: fx.fecha, fxHora: fx.hora, fxLugar: fx.lugar, fxPrecio: fx.precio, fxCap: fx.cap,
+      fxCat: fx.cat, fxZona: fx.zona, setFxWeb: setFx('web'), setFxOh0: setFx('oh0'), setFxOh1: setFx('oh1'), fxWeb: fx.web, fxOh0: fx.oh0, fxOh1: fx.oh1,
       setFxCat: setFx('cat'), setFxNombre: setFx('nombre'), setFxDesc: setFx('desc'), setFxFecha: setFx('fecha'), setFxHora: setFx('hora'), setFxLugar: setFx('lugar'), setFxZona: setFx('zona'), setFxPrecio: setFx('precio'), setFxCap: setFx('cap'),
-      fxPublish: () => { const f = this.state.fx; if (!f.nombre) { this.toast('Ponle nombre'); return; } const pub = Object.assign({}, f, { id: 'pub-' + Date.now() }); const of = { id: 'of-' + pub.id, badge: f.fecha ? this.fmtDate(f.fecha).toUpperCase() : 'NUEVO', title: f.nombre, detail: `${f.hora}${f.cap ? ' · ' + f.cap + ' lugares' : ''}${f.precio ? ' · ~$' + f.precio + ' pp' : ''}`, venue: `${f.lugar || 'La Distral'} · ${this.zLabel(f.zona)}`, on: true };
-        this.setState({ pubs: s.pubs.concat([pub]), offers: [of].concat(s.offers) }, () => this.persist()); if (s.syncOn) this.mutate('publish', { pub }, true); this.toast('Publicado — ya sale en buscador, mapa y "Último minuto"'); },
-      hasPubs: s.pubs.length > 0, pubList,
+      fxPublish: () => { const f = this.state.fx; if (!f.nombre) { this.toast('Ponle nombre a tu negocio o evento'); return; }
+        if (!(s.syncOn)) { this.toast('Sin conexión con el servidor — intenta de nuevo'); return; }
+        const esEvento = ['Evento','Concierto','Experiencia','Pop-up','Promoción'].includes(f.cat);
+        const catMap = { 'Evento':'Foro','Concierto':'Foro','Experiencia':'Taller','Pop-up':'Mercado','Promoción':'Bar','Restaurante':'Restaurante','Bar':'Bar','Antro':'Antro','Café':'Café','Museo':'Museo','Parque':'Parque' };
+        const venue = { id: 'venue-' + Date.now(), n: f.nombre, cat: catMap[f.cat] || 'Restaurante', zone: f.zona,
+          col: this.zLabel(f.zona), addr: f.lugar, web: (f.web || '').trim(), pp: parseInt(f.precio) || 0,
+          oh0: parseFloat(f.oh0) || 12, oh1: parseFloat(f.oh1) || 23,
+          hrs: esEvento ? ((f.fecha ? this.fmtDate(f.fecha) + ' · ' : '') + (f.hora || '')) : `${this.time12(parseFloat(f.oh0)||12)}–${this.time12(parseFloat(f.oh1)||23)}`,
+          desc: f.desc, tags: esEvento ? ['social','creativo'] : ['social'], who: ['amigos','date','compa'],
+          tm: esEvento ? ['noche','tarde'] : ['tarde','noche'], date: f.fecha, hora: f.hora, kind: esEvento ? 'evento' : 'lugar' };
+        this.mutate('publishVenue', { user: s.userName || 'venue', venue }).then(() => {
+          if (esEvento) { const of = { id: 'of-' + venue.id, badge: f.fecha ? this.fmtDate(f.fecha).toUpperCase() : 'NUEVO', title: f.nombre, detail: `${f.hora}${f.cap ? ' · ' + f.cap + ' lugares' : ''}${f.precio ? ' · ~$' + f.precio + ' pp' : ''}`, venue: `${f.lugar || f.nombre} · ${this.zLabel(f.zona)}`, on: true };
+            this.mutate('publish', { pub: Object.assign({}, f, { id: venue.id }) }, true); this.setState({ offers: [of].concat(s.offers) }, () => this.persist()); }
+          this.setState({ fx: Object.assign({}, f, { nombre: '', desc: '', web: '', lugar: '' }) });
+          this.toast('¡Publicado! Ya aparece para todos en buscador, mapa y resultados'); }); },
+      hasPubs: pubList.length > 0, pubList,
       funnel, days
     };
   }
@@ -1666,6 +1744,22 @@ class Component extends DCLogic {
   sendPlanTo(f) { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; } const s = this.state;
     if (!(s.syncOn && s.userName)) { this.toast('El envío en vivo funciona con el link del salón'); return; }
     this.ensureProposed(p).then(id => this.mutate('sharePlan', { user: s.userName, planId: id, to: [f] })).then(() => this.toast(`Plan enviado a ${f} 📬 — le llega en su dispositivo`)); }
+  planText(p, url) { const rng = this.range(); const ts = (p.times && p.times.length === p.stops.length) ? p.times : this.planTimes(p.stops.length);
+    const fecha = this.fmtDate(this.state.planDate || this.todayISO());
+    const lineas = p.stops.map((v, i) => `${this.time12(ts[i])} · ${v.n}${v.pp ? ' ($' + v.pp + ' pp)' : ''}`).join('\n');
+    return `🌮 *Plan en Sobres* — ${fecha}\n\n${lineas}\n\nTotal: ~$${p.spent} pp · ${this.whoLabel()}\n\nÁbrelo y vota aquí:\n${url}`; }
+  waShare() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
+    this.ensureProposed(p).then(id => { const txt = this.planText(p, this.planLink(id));
+      try { window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank'); } catch(e) {}
+      this.toast('Abriendo WhatsApp con tu plan'); }); }
+  mapsRoute() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
+    const pts = p.stops.map(v => (v.lat && v.lng) ? `${v.lat},${v.lng}` : encodeURIComponent(v.n + ', ' + (v.col || 'CDMX')));
+    let url;
+    if (pts.length === 1) url = 'https://www.google.com/maps/search/?api=1&query=' + pts[0];
+    else url = 'https://www.google.com/maps/dir/?api=1&origin=' + pts[0] + '&destination=' + pts[pts.length-1]
+             + (pts.length > 2 ? '&waypoints=' + pts.slice(1, -1).join('|') : '') + '&travelmode=driving';
+    try { window.open(url, '_blank'); } catch(e) {}
+    this.toast('Abriendo la ruta del plan en Google Maps'); }
   copyCurPlanLink() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
     this.ensureProposed(p).then(id => { try { navigator.clipboard.writeText(this.planLink(id)); } catch(e) {} this.toast('Link del plan copiado — a quien se lo mandes le abre este plan para votar'); }); }
   setPlanCustom(stops) { if (!stops.length) { this.trashPlan(); return; } this.setState({ planCustom: { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: this.planTimes(stops.length) }, planStops: stops.length, swapSeed: 0, planNone: false }); }
