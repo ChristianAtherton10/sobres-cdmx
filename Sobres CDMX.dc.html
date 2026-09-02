@@ -96,17 +96,32 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ modalOn }}" hint-placeholder-val="{{ false }}">
 <div style="position:fixed;inset:0;background:rgba(32,30,29,.55);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px" onClick="{{ modalClose }}">
 <div style="background:#fff;border:2px solid var(--color-text);max-width:440px;width:100%;padding:24px" onClick="{{ noop }}">
-<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">RESERVAR · DEMO</div>
+<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">RESERVAR</div>
 <h3 style="font:800 24px/1.1 var(--font-heading);margin:10px 0 6px">{{ modalTitle }}</h3>
-<p style="font:400 14px/1.5 var(--font-body);color:var(--color-neutral-700);margin:0 0 16px">{{ modalBody }}</p>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+<p style="font:400 14px/1.5 var(--font-body);color:var(--color-neutral-700);margin:0 0 14px">{{ modalBody }}</p>
+
+<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+<div><div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">FECHA</div>
+<input type="date" value="{{ resDate }}" onChange="{{ setResDate }}" style="padding:9px 10px;border:2px solid var(--color-text);background:#fff;font:700 13px var(--font-body);cursor:pointer"></div>
+<div><div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">PERSONAS</div>
+<span style="display:inline-flex;align-items:center;border:2px solid var(--color-text)">
+<button style="width:32px;height:38px;border:none;background:#fff;font:700 16px var(--font-body);cursor:pointer" onClick="{{ resLess }}">−</button>
+<span style="font:700 14px var(--font-body);padding:0 12px">{{ resPeople }}</span>
+<button style="width:32px;height:38px;border:none;background:#fff;font:700 16px var(--font-body);cursor:pointer" onClick="{{ resMore }}">+</button></span></div>
+</div>
+
+<div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:7px">HORA</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
 <sc-for list="{{ modalSlots }}" as="s" hint-placeholder-count="3"><button style="{{ s.style }}" onClick="{{ s.pick }}">{{ s.label }}</button></sc-for>
 </div>
-<div style="display:flex;gap:10px">
-<button style="flex:1;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:600 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600);border-color:var(--color-accent-600)" onClick="{{ modalConfirm }}"><span>Confirmar reserva</span><span>→</span></button>
-<button style="padding:12px 16px;background:transparent;border:2px solid var(--color-text);font:600 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ modalClose }}">Cerrar</button>
+
+<a href="{{ resOtUrl }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 15px var(--font-body);text-decoration:none;margin-bottom:8px"><span>Reservar en OpenTable</span><span>↗</span></a>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+<sc-if value="{{ resHasWeb }}" hint-placeholder-val="{{ false }}"><a href="{{ resWeb }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="flex:1;min-width:130px;text-align:center;padding:11px 12px;background:#fff;border:2px solid var(--color-text);font:700 13px var(--font-body);text-decoration:none;color:var(--color-text)">Sitio del lugar ↗</a></sc-if>
+<a href="{{ resMapsUrl }}" target="_blank" rel="noopener" style="flex:1;min-width:130px;text-align:center;padding:11px 12px;background:#fff;border:2px solid var(--color-text);font:700 13px var(--font-body);text-decoration:none;color:var(--color-text)">Ver en Maps ↗</a>
+<button style="flex:1;min-width:130px;padding:11px 12px;background:transparent;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ modalClose }}">Cerrar</button>
 </div>
-<p style="font:400 11px/1.4 var(--font-body);color:var(--color-neutral-600);margin:12px 0 0">En producción este paso abre al proveedor de reservas o taquilla del lugar. Aquí es una simulación.</p>
+<p style="font:400 11px/1.45 var(--font-body);color:var(--color-neutral-600);margin:0">Abrimos OpenTable con tu fecha, hora y número de personas ya cargados: ahí ves la disponibilidad real y confirmas. Si el lugar no está en OpenTable (pasa con muchos bares y antros), usa el sitio del lugar.</p>
 </div></div>
 </sc-if>
 
@@ -572,6 +587,13 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </sc-if>
 <div style="max-width:780px">
 <sc-if value="{{ planEditMode }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ hasPlanNow }}" hint-placeholder-val="{{ true }}">
+<div style="background:#fff;border:2px solid var(--color-text);padding:12px 16px;margin-bottom:-2px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<span style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600)">CÓMO NOS MOVEMOS</span>
+<sc-for list="{{ transportOpts }}" as="tp" hint-placeholder-count="5"><button style="{{ tp.style }}" onClick="{{ tp.pick }}">{{ tp.label }}</button></sc-for>
+<sc-if value="{{ showRides }}" hint-placeholder-val="{{ true }}"><span style="font:600 11.5px var(--font-body);color:var(--color-accent-700);margin-left:auto">{{ rideHint }}</span></sc-if>
+</div>
+</sc-if>
 <sc-if value="{{ planZero }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px dashed var(--color-accent);background:#fff;padding:18px;margin-bottom:-2px">
 <div style="font:800 16px var(--font-heading);margin-bottom:4px">Plan en blanco</div>
@@ -600,6 +622,14 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </sc-if>
 </div>
 </div>
+<sc-if value="{{ st.hasLeg }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--color-neutral-100,#f8f3ea);border:2px solid var(--color-text);border-top:none;border-bottom:none;padding:9px 16px 9px 20px">
+<span style="font:600 11.5px var(--font-body);color:var(--color-neutral-700)">↓ {{ st.legLabel }}</span>
+<sc-if value="{{ isUber }}" hint-placeholder-val="{{ true }}"><a href="{{ st.rideUrl }}" target="_blank" rel="noopener" style="margin-left:auto;padding:7px 12px;background:var(--color-text);color:#fff;border:2px solid var(--color-text);font:700 11.5px var(--font-body);text-decoration:none;white-space:nowrap">{{ st.rideLabel }} ↗</a></sc-if>
+<sc-if value="{{ isDidi }}" hint-placeholder-val="{{ false }}"><button style="margin-left:auto;padding:7px 12px;background:var(--color-text);color:#fff;border:2px solid var(--color-text);font:700 11.5px var(--font-body);cursor:pointer;white-space:nowrap" onClick="{{ st.didiGo }}">Abrir DiDi ↗</button></sc-if>
+<a href="{{ st.mapsLeg }}" target="_blank" rel="noopener" style="padding:7px 12px;background:#fff;border:2px solid var(--color-neutral-300);font:700 11.5px var(--font-body);text-decoration:none;color:var(--color-text);white-space:nowrap">Ruta ↗</a>
+</div>
+</sc-if>
 </sc-for>
 </sc-if>
 <sc-if value="{{ planCanEdit }}" hint-placeholder-val="{{ true }}">
@@ -1146,7 +1176,7 @@ class Component extends DCLogic {
     this.VIBEG = { foodie:['comida','cafe'], nightlife:['copas','fiesta'], cultural:['cultura'], creativo:['cultura','cafe'], chill:['parque','cafe'], aventurero:['juego','parque'], 'romántico':['cultura','comida'], social:['copas','juego','mall'], familiar:['parque','cine','mall','juego'], joyita:[], 'clásico':[] };
     this.SEGLBL = { comida:'Comida', cafe:'Café', copas:'Copas', fiesta:'Fiesta', cultura:'Cultura', cine:'Cine', parque:'Parque', juego:'Juegos', mall:'Plaza' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[
       {id:'o1',badge:'SOLO HOY',title:'2x1 en vermú y conservas',detail:'Hoy 6–8 pm · 20 lugares',venue:'La Distral · Roma Norte',on:true},
       {id:'o2',badge:'CUPO HOY',title:'Torno + mezcal · 6 lugares',detail:'Hoy 7:30 pm · 90 min',venue:'Barro Vivo · Roma Norte',on:true},
       {id:'o3',badge:'ÚLTIMO MINUTO',title:'Ruta de tacos: 4 lugares',detail:'Hoy 7:00 pm · 4 paradas',venue:'Ruta de tacos a pie · Roma',on:true}
@@ -1325,10 +1355,31 @@ class Component extends DCLogic {
     return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
   tile(v, h) { const acc = !this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat); return `position:relative;width:100%;height:${h}px;display:flex;align-items:center;justify-content:center;background:${acc?'var(--color-neutral-800,#3a3735)':'var(--color-neutral-200)'};color:${acc?'#f3f2f2':'var(--color-neutral-500)'};border-bottom:2px solid var(--color-text);overflow:hidden`; }
   cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { try { navigator.clipboard.writeText(`sobres.mx/l/${v.id}`); } catch(e) {} this.toast(`Link copiado: sobres.mx/l/${v.id}`); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
-  goReserve(v) { const s = this.state; if (s.syncOn && s.userName) this.mutate('reserve', { user: s.userName, venueId: v.id, venueName: v.n, slot: '', people: s.groupSize, who: s.who, zone: s.zone }, true);
-    const url = (v.web && /^https?:/.test(v.web)) ? v.web : 'https://www.google.com/search?q=' + encodeURIComponent(v.n + ' ' + (v.col || 'CDMX') + ' reservar');
-    try { window.open(url, '_blank'); } catch(e) {}
-    this.toast(v.web ? `Abriendo el sitio de ${v.n} para reservar` : `Abriendo ${v.n} en Google para reservar`); }
+  slot24(t) { const m = /(\d+):(\d+)\s*(am|pm)/i.exec(t || ''); if (!m) return '20:00'; let h = (+m[1]) % 12; if (/pm/i.test(m[3])) h += 12; return String(h).padStart(2, '0') + ':' + m[2]; }
+  otUrl(v, hhmm, covers, dateISO) { const d = dateISO || this.state.planDate || this.todayISO();
+    const q = 'term=' + encodeURIComponent(v.n + (v.col ? ' ' + v.col : '')) + '&covers=' + (covers || this.state.groupSize || 2) + '&dateTime=' + encodeURIComponent(d + 'T' + (hhmm || '20:00'));
+    return 'https://www.opentable.com.mx/s?' + q; }
+  rideClass(n) { n = n || 1;
+    if (n >= 7) return { name: 'UberXL ×2', note: `son ${n} — pidan dos carros`, cap: 12 };
+    if (n >= 5) return { name: 'UberXL', note: 'hasta 6 personas', cap: 6 };
+    return { name: 'UberX', note: 'hasta 4 personas', cap: 4 }; }
+  uberUrl(v, cls) { const p = ['action=setPickup', 'pickup=my_location'];
+    if (v.lat && v.lng) { p.push('dropoff%5Blatitude%5D=' + v.lat); p.push('dropoff%5Blongitude%5D=' + v.lng); }
+    p.push('dropoff%5Bnickname%5D=' + encodeURIComponent(v.n));
+    if (v.addr) p.push('dropoff%5Bformatted_address%5D=' + encodeURIComponent(v.addr + ', CDMX'));
+    return 'https://m.uber.com/ul/?' + p.join('&'); }
+  didiGo(v) { const dir = (v.addr ? v.addr + ', ' : '') + (v.col || 'CDMX');
+    try { navigator.clipboard.writeText(dir); } catch(e) {}
+    this.toast('Dirección copiada — pégala como destino en DiDi');
+    setTimeout(() => { try { window.open('didi://', '_blank'); } catch(e) {} }, 400); }
+  mapsUrl(v) { return (v.lat && v.lng)
+    ? `https://www.google.com/maps/search/?api=1&query=${v.lat},${v.lng}`
+    : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v.n + ', ' + (v.col || 'CDMX')); }
+  legKm(a, b) { if (a.lat && a.lng && b.lat && b.lng) { const R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+      const s = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180) * Math.cos(b.lat*Math.PI/180) * Math.sin(dLng/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s)); }
+    return Math.hypot((a.x-b.x)*0.27, (a.y-b.y)*0.36); }
+  goReserve(v) { this.setState({ modal: v.id, modalSlot: null, resDate: this.state.planDate || this.todayISO(), resPeople: this.state.groupSize || 2 }); return; }
   searchIn(q, limit) { const n = this.strip(q); if (n.length < 2) return []; return this.cat().map(v => { const name = this.strip(v.n); let r = -1; if (name.startsWith(n)) r = 3; else if (name.includes(n)) r = 2; else if (this.strip(v.col).includes(n) || this.strip(v.cat).includes(n)) r = 1; return { v, r }; }).filter(x => x.r > 0).sort((a,b) => b.r - a.r || (b.v.score||0) - (a.v.score||0)).slice(0, limit || 8).map(x => x.v); }
   renderVals() {
     const s = this.state;
@@ -1396,12 +1447,30 @@ class Component extends DCLogic {
         sendRate: () => { const st = s.myStars || myPrev; if (!st) { this.toast('Elige de 1 a 5 estrellas'); return; } this.mutate('rate', { user: s.userName, venueId: v.id, stars: st, txt: s.myTxt, venueName: v.n }).then(x => { if (x) this.toast('Reseña publicada — ya la ven todos'); }); this.setState({ myTxt: '' }); },
         reviews: rt ? rt.entries.slice(0, 8).map(e2 => ({ user: e2.user, stars: '★'.repeat(e2.s), txt: e2.txt || '', hasTxt: !!e2.txt })) : [] }, a, { reserve: () => this.goReserve(v) }); } }
     let modalOn = false, modalTitle = '', modalBody = '', modalSlots = [];
-    if (s.modal) { const v = this.cat().find(x => x.id === s.modal); if (v) { modalOn = true; modalTitle = v.n; modalBody = `${v.cat} · ${v.col} · ${v.av}. Elige horario para ${this.whoLabel().toLowerCase()}:`; modalSlots = (v.tm.includes('noche') ? ['7:00 pm','8:30 pm','9:45 pm'] : ['11:00 am','1:00 pm','4:30 pm']).map(t => ({ label: t, style: this.chip(s.modalSlot === t), pick: () => this.setState({ modalSlot: t }) })); } }
+    let resOtUrl = '#', resMapsUrl = '#', resWeb = '#', resHasWeb = false;
+    const resPeople = s.resPeople || s.groupSize || 2;
+    const resDate = s.resDate || s.planDate || this.todayISO();
+    if (s.modal) { const v = this.cat().find(x => x.id === s.modal); if (v) { modalOn = true; modalTitle = v.n;
+      modalBody = `${v.cat} · ${v.col}${v.addr ? ' · ' + v.addr : ''}`;
+      const opts = v.tm.includes('noche') ? ['7:00 pm','8:30 pm','9:45 pm'] : ['11:00 am','1:00 pm','4:30 pm'];
+      const cur = s.modalSlot || opts[1];
+      modalSlots = opts.map(t => ({ label: t, style: this.chip(cur === t), pick: () => this.setState({ modalSlot: t }) }));
+      resOtUrl = this.otUrl(v, this.slot24(cur), resPeople, resDate);
+      resMapsUrl = this.mapsUrl(v);
+      resHasWeb = !!(v.web && /^https?:/.test(v.web)); resWeb = resHasWeb ? v.web : '#'; } }
     const plan = view === 'plan' ? this.getPlan() : null;
     const plan0Exists = s.sendOpen ? this.getPlan() : null;
     let itinerary = [], planTotal = '', planMeta = '', planTitle = 'Tu plan', planWhy = '';
     const TOPT = []; for (let th = 7; th <= 28; th += 0.5) TOPT.push({ v: String(th), label: this.time12(th) });
-    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly, canEdit: !s.planReadOnly, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~90 MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col} · ${v.av}`, pp: v.pp === 0 ? 'Gratis' : '$' + v.pp + ' pp', travel: i < plan.stops.length - 1 ? '+ ' + Math.max(4, Math.round(Math.hypot((v.x - plan.stops[i+1].x)*0.27, (v.y - plan.stops[i+1].y)*0.36) * 3.2 + 4)) + ' min al siguiente' : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i) })); planTotal = `~$${plan.spent} pp`; planMeta = `${plan.stops.length} paradas · ${(plan.stops.length * 2 - 0.5).toFixed(1)} h aprox · ${this.whoLabel()}${['amigos','familia','compa'].includes(s.who) ? ` · ~$${plan.spent * s.groupSize} total del grupo` : ''}`; planTitle = plan.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '); planWhy = s.planReadOnly ? `Este plan te lo envió ${s.openedPlanBy || 'un amigo'}. Solo se puede ver y votar — si tienes otra idea, ve a la votación y dale "+ Proponer algo más".` : `Armado para ${this.whoLabel().toLowerCase()}: paradas cercanas entre sí, total ${this.budLabel().toLowerCase()}. Cambia una parada por otra parecida, quítala, o agrega más abajo. Cuando esté listo: "Enviar plan".`; }
+    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly, canEdit: !s.planReadOnly, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~90 MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col} · ${v.av}`, pp: v.pp === 0 ? 'Gratis' : '$' + v.pp + ' pp', travel: i < plan.stops.length - 1 ? '+ ' + Math.max(4, Math.round(this.legKm(v, plan.stops[i+1]) * 3.2 + 4)) + ' min al siguiente' : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
+      hasLeg: i < plan.stops.length - 1,
+      legLabel: i < plan.stops.length - 1 ? (() => { const nx = plan.stops[i+1]; const km = this.legKm(v, nx);
+        return `${km < 1 ? Math.round(km*1000) + ' m' : km.toFixed(1) + ' km'} · ~${Math.max(4, Math.round(km * 3.2 + 4))} min hasta ${nx.n.split(' ·')[0]}`; })() : '',
+      legWalk: i < plan.stops.length - 1 && this.legKm(v, plan.stops[i+1]) <= 1.2,
+      rideLabel: 'Pedir ' + this.rideClass(s.groupSize).name,
+      rideUrl: i < plan.stops.length - 1 ? this.uberUrl(plan.stops[i+1], this.rideClass(s.groupSize)) : '#',
+      didiGo: i < plan.stops.length - 1 ? (() => this.didiGo(plan.stops[i+1])) : (() => {}),
+      mapsLeg: i < plan.stops.length - 1 ? `https://www.google.com/maps/dir/?api=1&origin=${v.lat && v.lng ? v.lat + ',' + v.lng : encodeURIComponent(v.n)}&destination=${plan.stops[i+1].lat && plan.stops[i+1].lng ? plan.stops[i+1].lat + ',' + plan.stops[i+1].lng : encodeURIComponent(plan.stops[i+1].n)}&travelmode=${this.state.transporte === 'caminando' ? 'walking' : this.state.transporte === 'metro' ? 'transit' : 'driving'}` : '#' })); planTotal = `~$${plan.spent} pp`; planMeta = `${plan.stops.length} paradas · ${(plan.stops.length * 2 - 0.5).toFixed(1)} h aprox · ${this.whoLabel()}${['amigos','familia','compa'].includes(s.who) ? ` · ~$${plan.spent * s.groupSize} total del grupo` : ''}`; planTitle = plan.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '); planWhy = s.planReadOnly ? `Este plan te lo envió ${s.openedPlanBy || 'un amigo'}. Solo se puede ver y votar — si tienes otra idea, ve a la votación y dale "+ Proponer algo más".` : `Armado para ${this.whoLabel().toLowerCase()}: paradas cercanas entre sí, total ${this.budLabel().toLowerCase()}. Cambia una parada por otra parecida, quítala, o agrega más abajo. Cuando esté listo: "Enviar plan".`; }
     const stopOpts = [1,2,3,4,5].map(n => ({ label: String(n), style: `padding:9px 15px;border:none;background:${s.planStops===n?'var(--color-text)':'#fff'};color:${s.planStops===n?'#fff':'var(--color-text)'};font:700 13px var(--font-body);cursor:pointer;border-left:${n>1?'2px solid var(--color-text)':'none'}`, pick: () => this.setState({ planStops: n }) }));
     const catGroups = { todo: null, comer: this.FOOD, beber: this.DRINK, cultura: ['Museo','Galería','Cine','Teatro','Biblioteca','Librería','Centro cultural','Sitio histórico'], experiencias: ['Taller','Tour','Espectáculo','Mercado','Al aire libre','Foro','Experiencia','Evento','Concierto','Pop-up','Promoción'] };
     const mapCats = [['todo','Todo'],['comer','Comer'],['beber','Beber'],['cultura','Cultura'],['experiencias','Experiencias y eventos']].map(([id,label]) => ({ label, style: this.chip(s.mapCat === id).replace('9px 14px','8px 12px'), pick: () => this.setState({ mapCat: id, pinId: null }) }));
@@ -1563,6 +1632,14 @@ class Component extends DCLogic {
       demoBadge: (this.props.insigniasDemo ?? true) && !s.isMobile, catCount: String(this.cat().length),
       searchQ: s.searchQ, setSearchQ: e => this.setState({ searchQ: e.target.value }), searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
       toast: s.toast, toastStyle: `position:fixed;left:50%;transform:translateX(-50%);bottom:${s.isMobile?'72px':'24px'};z-index:100;background:var(--color-text);color:#fff;padding:12px 18px;font:600 13px var(--font-body);box-shadow:var(--shadow-lg);transition:opacity .25s;opacity:${s.toast?'1':'0'};pointer-events:none;max-width:90vw`,
+      resOtUrl, resMapsUrl, resWeb, resHasWeb, resPeople: String(resPeople), resDate,
+      setResDate: e => this.setState({ resDate: e.target.value }),
+      resMore: () => this.setState({ resPeople: Math.min(20, resPeople + 1) }),
+      resLess: () => this.setState({ resPeople: Math.max(1, resPeople - 1) }),
+      resLog: () => { const v = this.cat().find(x => x.id === s.modal); if (!v) return;
+        this.track(v.id, 'r');
+        if (s.syncOn && s.userName) this.mutate('reserve', { user: s.userName, venueId: v.id, venueName: v.n, slot: s.modalSlot || '', people: resPeople, who: s.who, zone: s.zone }, true);
+        this.toast(`Reserva de ${v.n} registrada para el grupo`); },
       modalOn, modalTitle, modalBody, modalSlots, noop: e => { e && e.stopPropagation && e.stopPropagation(); }, modalClose: () => this.setState({ modal: null }), modalConfirm: () => { const v = this.cat().find(x => x.id === s.modal); this.setState({ modal: null, reserved: s.reserved.concat([s.modal]) }); if (s.syncOn) this.mutate('reserve', { user: s.userName || 'Anónimo', venueId: s.modal, venueName: v ? v.n : '', slot: s.modalSlot || '', people: s.groupSize }, true); this.toast(`Reserva ${s.syncOn ? 'registrada para el grupo' : 'demo enviada'}: ${v ? v.n : ''} ${s.modalSlot ? '· ' + s.modalSlot : ''}`); },
       isHome: !!s.userName && view === 'home', isResults: !!s.userName && view === 'results', isDetail: !!s.userName && view === 'detail', isPlan: !!s.userName && view === 'plan', isMap: !!s.userName && view === 'map', isSaved: !!s.userName && view === 'saved', isGroup: !!s.userName && view === 'group', isProfile: !!s.userName && view === 'profile', isVenues: !!s.userName && view === 'venues',
       todayLabel: new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase(),
@@ -1595,6 +1672,12 @@ class Component extends DCLogic {
       detail: detail || { slotId:'x', photoSrc:'', photoCredit:'', photoHref:'', photoNote:'', kicker:'', name:'', desc:'', why:'', facts:[], tags:[], slots:[], combos:[], cta:'', hasWeb:false, web:'#', reserve:()=>{}, save:()=>{}, saveLabel:'', share:()=>{}, mapGo:()=>{}, voteGo:()=>{}, hasAvg:false, rateAvg:'', rateN:'0', canRate:false, rateNeedName:false, rateOffline:true, starBtns:[], myTxt:'', setMyTxt:()=>{}, sendRate:()=>{}, reviews:[] },
       detailCols: s.isMobile ? '1fr' : 'minmax(300px,440px) 1fr', goBack: () => this.nav(s.backView || 'home'),
       planTitle, stopOpts, itinerary, planTotal, planMeta, planWhy,
+      transportOpts: [['propio','🚗 Mi coche'],['uber','🚕 Uber'],['didi','🚖 DiDi'],['caminando','🚶 Caminando'],['metro','🚇 Metro']]
+        .map(([id, label]) => ({ label, style: this.chip(s.transporte === id).replace('9px 14px','8px 12px'),
+          pick: () => { this.setState({ transporte: id }); if (s.openedPlanId && s.syncOn) this.mutate('setTransport', { planId: s.openedPlanId, mode: id }, true); } })),
+      rideHint: (() => { const rc = this.rideClass(s.groupSize); return `${s.groupSize} personas → ${rc.name} (${rc.note})`; })(),
+      showRides: s.transporte === 'uber' || s.transporte === 'didi',
+      isUber: s.transporte === 'uber', isDidi: s.transporte === 'didi',
       sendOpen: s.sendOpen && !!plan0Exists, toggleSend: () => this.setState({ sendOpen: !s.sendOpen, sendSel: [] }), closeSend: () => this.setState({ sendOpen: false, qrPlanUrl: '', sendSel: [] }),
       sendPlanName: plan0Exists ? plan0Exists.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → ') : '',
       sendGoFriends: () => { this.setState({ sendOpen: false }); this.nav('profile'); this.toast('Busca a tus amigos por su nombre y agrégalos'); },

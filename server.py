@@ -173,6 +173,7 @@ def apply_op(op, p):
             'to': pl.get('to') if isinstance(pl.get('to'), (int, float)) else None,
             'spent': pl.get('spent') if isinstance(pl.get('spent'), (int, float)) else None,
             'date': str(pl.get('date') or '')[:10],
+            'transport': str(pl.get('transport') or '')[:20],
             'ext': {str(k)[:64]: str(v2)[:80] for k, v2 in list((pl.get('ext') or {}).items())[:8] if str(k).startswith('ext-')},
             'votes': {by: 'sobres'}, 'stopVotes': {}})
         STATE['plans'] = STATE['plans'][-80:]
@@ -198,6 +199,10 @@ def apply_op(op, p):
         for t in (p.get('to') or [])[:40]:
             t = str(t)[:24]
             if t and t not in swl: swl.append(t)
+    elif op == 'setTransport':
+        pl = find_plan(p.get('planId'))
+        if not pl: return 'datos'
+        pl['transport'] = str(p.get('mode') or '')[:20]
     elif op == 'delPlan':
         STATE['plans'] = [x for x in STATE['plans'] if x['id'] != p.get('planId')]
     elif op == 'reserve':
