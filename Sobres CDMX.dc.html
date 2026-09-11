@@ -209,7 +209,20 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="padding:40px 0 8px">
 <div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">CIUDAD DE MÉXICO · {{ todayLabel }} · {{ catCount }} LUGARES EN EL CATÁLOGO</div>
 <h1 style="font:800 clamp(42px,7vw,96px)/0.98 var(--font-heading);letter-spacing:-.03em;margin:14px 0 12px;text-wrap:balance">¿Qué hacemos hoy, {{ firstName }}?</h1>
-<p style="font:400 17px/1.5 var(--font-body);color:var(--color-neutral-700);max-width:560px;margin:0 0 28px">Dinos quiénes van, dónde andan y cuánto quieren gastar. Te regresamos las mejores opciones de tu zona — no 200 resultados.</p>
+<p style="font:400 17px/1.5 var(--font-body);color:var(--color-neutral-700);max-width:560px;margin:0 0 20px">Dinos quiénes van, dónde andan y cuánto quieren gastar. Te regresamos las mejores opciones de tu zona — no 200 resultados.</p>
+
+<div style="border:2px solid var(--color-accent);background:#fff;padding:16px 18px;margin-bottom:26px;max-width:760px">
+<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap">
+<span style="font:800 11px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">✨ SOBRES AI</span>
+<span style="font:500 12.5px var(--font-body);color:var(--color-neutral-700)">Escríbelo como se lo dirías a un amigo y te armo el plan completo</span>
+</div>
+<textarea value="{{ aiTxt }}" onInput="{{ setAiTxt }}" rows="3" placeholder="Ej: mañana con mis amigos, somos 5, de 11am a 2am, por la Roma o Polanco, un museo, comer mariscos, drinks en Bar Órbita y cerrar en Departamento" style="width:100%;box-sizing:border-box;padding:12px 13px;border:2px solid var(--color-neutral-300);font:500 14px/1.5 var(--font-body);resize:vertical">{{ aiTxt }}</textarea>
+<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:10px;align-items:center">
+<button style="display:flex;align-items:center;gap:12px;padding:13px 20px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 15px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ aiGo }}"><span>{{ aiBtnLabel }}</span><span>→</span></button>
+<button style="padding:12px 14px;background:transparent;border:2px solid var(--color-neutral-300);font:600 12.5px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ aiEjemplo }}">Ver un ejemplo</button>
+<span style="font:500 11.5px var(--font-body);color:var(--color-neutral-600)">O usa los filtros de abajo si prefieres</span>
+</div>
+</div>
 </div>
 
 <div style="border:2px solid var(--color-text);background:#fff;margin-bottom:14px">
@@ -563,6 +576,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="padding:30px 0 18px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px">
 <div>
 <div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">MIS PLANES</div>
+<sc-if value="{{ hasAiSummary }}" hint-placeholder-val="{{ false }}"><div style="border-left:4px solid var(--color-accent);background:#fff;padding:10px 14px;margin-top:10px;font:500 13px/1.5 var(--font-body);max-width:640px">✨ {{ aiSummary }}</div></sc-if>
 <h1 style="font:800 clamp(26px,4vw,46px)/1.05 var(--font-heading);letter-spacing:-.025em;margin:8px 0 0">{{ planHeadTitle }}</h1>
 </div>
 <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -1186,7 +1200,7 @@ class Component extends DCLogic {
     this.VIBEG = { foodie:['comida','cafe'], nightlife:['copas','fiesta'], cultural:['cultura'], creativo:['cultura','cafe'], chill:['parque','cafe'], aventurero:['juego','parque'], 'romántico':['cultura','comida'], social:['copas','juego','mall'], familiar:['parque','cine','mall','juego'], joyita:[], 'clásico':[] };
     this.SEGLBL = { comida:'Comida', cafe:'Café', copas:'Copas', fiesta:'Fiesta', cultura:'Cultura', cine:'Cine', parque:'Parque', juego:'Juegos', mall:'Plaza' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
     try { const raw = localStorage.getItem('sobres_v2'); if (raw) { const s = JSON.parse(raw); ['saved','savedPlans','counters','dietSel','offers','pubs','gOpts','gVotes','gVoters'].forEach(k => { if (s[k]) st[k] = s[k]; }); } } catch(e) {}
     try { const un = localStorage.getItem('sobres_user'); if (un) st.userName = un; } catch(e) {}
     this.state = st;
@@ -1414,6 +1428,182 @@ class Component extends DCLogic {
       const s = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180) * Math.cos(b.lat*Math.PI/180) * Math.sin(dLng/2)**2;
       return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s)); }
     return Math.hypot((a.x-b.x)*0.27, (a.y-b.y)*0.36); }
+  cuisine(v) { const n = (v.n || '').toLowerCase();
+    const M = [[/sushi|japon|izakaya|ramen|nobu|makoto|kaito/,'japonesa'],[/taquer|tacos|pastor|suadero|campechan/,'tacos'],
+      [/marisc|pescad|ostion|fisher|contramar|mariscocho|beluga|ultramarinos|cabrera/,'mariscos'],
+      [/pizz|italian|pasta|trattor|becco|negroni|trevi|sartoria/,'italiana'],[/china|hunan|wok|chang/,'china'],
+      [/argentin|parrilla|cortes|madero|sonora grill|prime|steak/,'cortes y parrilla'],
+      [/franc|bistr|brasser|cluny|havre/,'francesa'],[/españ|vasc|guria|tapas/,'española'],
+      [/pozol|birria|carnitas|barbacoa|cochinita|turix|mexican|fonda|cantina|bajio|nicos|quintonil|pujol/,'mexicana'],
+      [/veg|ensalad|green|bowl|salud/,'saludable'],[/burger|hamburgu|shake shack/,'hamburguesas'],
+      [/caf|panader|rosetta|panem|mattea|tostador/,'café y pan'],[/churr|helad|haagen|santa clara|postre|nieve/,'postres'],
+      [/arabe|libanes|barraquech|shawarma/,'árabe'],[/peru|ceviche|tiradito/,'peruana']];
+    for (const [re, lbl] of M) if (re.test(n)) return lbl;
+    if (v.cat === 'Taquería') return 'tacos'; if (v.cat === 'Café') return 'café y pan';
+    if (v.cat === 'Cantina') return 'cantina mexicana'; if (v.cat === 'Mercado') return 'antojitos de mercado';
+    return ''; }
+  priceBand(v) { const p = v.pp || 0; if (!p) return 'entrada libre';
+    if (p < 200) return 'barato (~$' + p + ' pp)'; if (p < 500) return 'precio medio (~$' + p + ' pp)';
+    if (p < 900) return 'algo caro (~$' + p + ' pp)'; return 'caro (~$' + p + ' pp)'; }
+  describe(v) {
+    const d = (v.d || '').trim();
+    const generico = /^(recinto verificado|ranking|restaurante reconocido|verificado en el sic|sic es una)/i.test(d);
+    if (d.length > 60 && !generico) return d;
+    const parts = [];
+    const cui = this.cuisine(v);
+    const CATTXT = { 'Restaurante': cui ? `Restaurante de comida ${cui}` : 'Restaurante',
+      'Taquería': 'Taquería', 'Cantina': 'Cantina', 'Café': cui ? `Café y ${cui}` : 'Café',
+      'Bar': 'Bar de copas', 'Bar de autor': 'Bar de coctelería de autor', 'Speakeasy': 'Bar escondido (speakeasy)',
+      'Mezcalería': 'Mezcalería', 'Rooftop': 'Terraza con vista', 'Antro': 'Antro para bailar',
+      'Salón de baile': 'Salón de baile con música en vivo', 'Museo': 'Museo', 'Galería': 'Galería de arte',
+      'Teatro': 'Teatro', 'Foro': 'Foro de conciertos y eventos', 'Biblioteca': 'Biblioteca pública',
+      'Librería': 'Librería', 'Centro cultural': 'Centro cultural', 'Cine': 'Cine',
+      'Centro comercial': 'Centro comercial', 'Parque': 'Parque al aire libre', 'Mercado': 'Mercado de comida',
+      'Boliche': 'Boliche', 'Billar': 'Salón de billar', 'Atracción': 'Atracción de la ciudad',
+      'Espectáculo': 'Espectáculo en vivo', 'Taller': 'Taller / experiencia', 'Tour': 'Tour guiado' };
+    parts.push((CATTXT[v.cat] || v.cat) + ' en ' + (v.col || this.zLabel(v.z)) + '.');
+    parts.push(this.priceBand(v).charAt(0).toUpperCase() + this.priceBand(v).slice(1) + '.');
+    const quien = { amigos: 'con amigos', date: 'en date', familia: 'en familia', compa: 'con compañeros', solo: 'solo' };
+    const w = (v.who || []).map(k => quien[k]).filter(Boolean);
+    const cuando = { manana: 'en la mañana', tarde: 'por la tarde', noche: 'de noche', finde: 'el finde' };
+    const t = (v.tm || []).map(k => cuando[k]).filter(Boolean);
+    if (w.length) parts.push('Va bien ' + w.slice(0, 2).join(' o ') + (t.length ? ', ' + t.slice(0, 2).join(' o ') : '') + '.');
+    if (d && generico) parts.push(d);
+    return parts.join(' '); }
+  aiParse(txt) {
+    const t = ' ' + this.strip(txt) + ' ';
+    const out = { zones: [], vibes: [], who: null, size: null, from: null, to: null, date: null, budget: null, named: [], cats: [], raw: txt };
+    // ── con quién ──
+    if (/\bdate\b|novi|pareja|romantic|crush/.test(t)) out.who = 'date';
+    else if (/famili|mis pap|hermano|primo/.test(t)) out.who = 'familia';
+    else if (/compa(n|ñ)er|del trabajo|la oficina|equipo/.test(t)) out.who = 'compa';
+    else if (/\bsolo\b|\bsola\b|yo mismo/.test(t)) out.who = 'solo';
+    else if (/amig|cuate|banda|raza|con mi gente/.test(t)) out.who = 'amigos';
+    const ns = t.match(/\b(\d{1,2})\s*(person|amig|cuate|gente|somos)/); if (ns) out.size = Math.min(12, Math.max(1, +ns[1]));
+    const som = t.match(/somos\s+(\d{1,2})/); if (som) out.size = Math.min(12, Math.max(1, +som[1]));
+    // ── zonas ──
+    this.ZONES.forEach(z => { const key = this.strip(z[1]).split(' ')[0];
+      if (key.length > 3 && t.includes(key)) out.zones.push(z[0]); });
+    if (/toda la ciudad|donde sea|cualquier lado/.test(t)) out.zones = [];
+    // ── fecha ──
+    const hoy = new Date();
+    if (/mañana|manana/.test(t)) { const d = new Date(hoy); d.setDate(d.getDate() + 1); out.date = d; }
+    else if (/pasado mañana|pasado manana/.test(t)) { const d = new Date(hoy); d.setDate(d.getDate() + 2); out.date = d; }
+    else if (/hoy|ahorita|al rato|esta noche/.test(t)) out.date = hoy;
+    const DIAS = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+    DIAS.forEach((dn, idx) => { if (new RegExp('\\b' + dn).test(t) && !out.date) {
+      const d = new Date(hoy); const diff = (idx - d.getDay() + 7) % 7 || 7; d.setDate(d.getDate() + diff); out.date = d; } });
+    if (/finde|fin de semana/.test(t) && !out.date) { const d = new Date(hoy); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); out.date = d; }
+    // ── horas ──
+    const hrs = [...t.matchAll(/(\d{1,2})(?::(\d{2}))?\s*(am|pm|hrs|horas|h)?/g)]
+      .map(m => { let h = +m[1]; const mm = m[2] ? +m[2] / 60 : 0; const ap = m[3];
+        if (ap === 'pm' && h < 12) h += 12; if (ap === 'am' && h === 12) h = 0;
+        return { h: h + mm, hadAp: !!ap && (ap === 'am' || ap === 'pm') }; })
+      .filter(x => x.h >= 0 && x.h <= 23.99);
+    const rango = t.match(/(?:de|desde)\s*(?:las\s*)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:a|hasta|hast)\s*(?:las\s*)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/);
+    if (rango) { let a = +rango[1] + (rango[2] ? +rango[2] / 60 : 0); let b = +rango[4] + (rango[5] ? +rango[5] / 60 : 0);
+      if (rango[3] === 'pm' && a < 12) a += 12; if (rango[3] === 'am' && a === 12) a = 0;
+      if (rango[6] === 'pm' && b < 12) b += 12; if (rango[6] === 'am' && b === 12) b = 0;
+      if (b <= a) b += 24; out.from = a; out.to = Math.min(a + 16, b); }
+    else if (/tarde|madrugada|hasta tarde|cerrar/.test(t) && hrs.length) { out.from = hrs[0].h; out.to = Math.max(hrs[0].h + 6, 26); }
+    // ── presupuesto ──
+    const bm = t.match(/(\d{2,5})\s*(pesos|varos|mxn|pp|por persona)/) || t.match(/(?:presupuesto|maximo|max|hasta)\s*(?:de\s*)?\$?\s*(\d{2,5})/);
+    if (bm) out.budget = +bm[1];
+    if (/barat|econom|poco dinero|sin gastar/.test(t)) out.budget = out.budget || 300;
+    if (/lujo|caro|sin limite|derroch|elegante/.test(t)) out.budget = out.budget || 99999;
+    // ── vibras ──
+    const VB = { foodie:/comer|comida|restaurante|cenar|desayun|foodie|gastronom|marisc|taco|sushi|pizza/,
+      nightlife:/antro|bailar|fiesta|bar|drinks|copas|tragos|cocteles|noche loca|rumba/,
+      cultural:/museo|cultura|expo|teatro|arte|galeria|histor/, creativo:/creativ|taller|alternativ|indie/,
+      'romántico':/romantic|date|pareja|novi|intimo/, chill:/tranqui|chill|relaj|calmad|caminar|parque/,
+      aventurero:/aventur|adrenalin|deport|bici|escalar|juegos/, social:/social|conocer gente|ambiente|grupo/,
+      familiar:/famili|niños|ninos|kids/, joyita:/joyita|escondid|secreto|poca gente/ };
+    Object.keys(VB).forEach(k => { if (VB[k].test(t)) out.vibes.push(k); });
+    // ── categorías pedidas explícitamente, en orden de aparición ──
+    // cada patrón puede fijar categorías exactas y/o un tipo de cocina
+    const CATW = [
+      [/museo|exposicion|expo/, 'cultura', ['Museo'], null, null, ['Galería']],
+      [/teatro|obra de teatro/, 'cultura', ['Teatro']],
+      [/parque|caminar|aire libre|jardin|bosque/, 'parque', null],
+      [/cine|pelicula|peli/, 'cine', ['Cine']],
+      [/desayun|brunch/, 'comida', null, 'desayuno'],
+      [/marisc|ceviche|ostion|pescado/, 'comida', null, null, 'mariscos'],
+      [/sushi|japones|ramen/, 'comida', null, null, 'japonesa'],
+      [/pizza|italian|pasta/, 'comida', null, null, 'italiana'],
+      [/tacos|taquer|pastor/, 'comida', ['Taquería'], null],
+      [/comer|comida|almorz|restaurante|cenar|cena/, 'comida', null],
+      [/cafe(?!\s*drama)|cafeter/, 'cafe', ['Café']],
+      [/boliche/, 'juego', ['Boliche']], [/billar/, 'juego', ['Billar']],
+      [/antro|bailar|fiesta|club|reventon/, 'fiesta', null],
+      [/bar\b|drinks|copas|tragos|coctel|mezcal/, 'copas', null],
+      [/plaza|centro comercial|mall|shopping/, 'mall', null]];
+    CATW.forEach(row => { const [re, g, cats, meal, cui, alt] = row; const m = re.exec(t);
+      if (m) out.cats.push({ g, at: m.index, cats: cats || null, cui: cui || null, alt: alt || null }); });
+    out.cats.sort((a, b) => a.at - b.at);
+    const spec = x => (x.cui ? 2 : 0) + (x.cats ? 1 : 0);
+    out.cats = out.cats.filter(x => !out.cats.some(y => y !== x && y.g === x.g && (spec(y) > spec(x) || (spec(y) === spec(x) && y.at < x.at))));
+    // ── lugares mencionados por nombre ──
+    const C = this.cat();
+    C.forEach(v => { const nv = this.strip(v.n.split('·')[0]).trim();
+      if (nv.length >= 5 && t.includes(nv)) out.named.push({ v, at: t.indexOf(nv) }); });
+    out.named.sort((a, b) => a.at - b.at);
+    out.named = out.named.filter((x, i, arr) => arr.findIndex(y => y.v.id === x.v.id) === i);
+    return out; }
+
+  aiBuild(txt) {
+    const p = this.aiParse(txt);
+    const st = {};
+    if (p.who) st.who = p.who;
+    if (p.size) st.groupSize = p.size;
+    if (p.zones.length) { st.zonesSel = p.zones; st.zone = p.zones[0]; }
+    if (p.vibes.length) st.vibes = p.vibes.slice(0, 3);
+    if (p.from != null) { st.planFrom = p.from; st.planTo = p.to; }
+    if (p.date) { const d = p.date; st.planDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const hoyISO = this.todayISO(); st.when = st.planDate === hoyISO ? 'noche' : 'fecha'; st.customDate = st.planDate; }
+    if (p.budget) { st.budgetCustom = p.budget; st.budget = 'b1k'; }
+    this.setState(st);
+    // construir el plan con lo que se entendió
+    setTimeout(() => {
+      const rng = this.range();
+      const all = this.cat().filter(v => this.budgetOk(v) && this.inZone(v));
+      // mezclar en el orden EXACTO en que el usuario los escribió
+      const seq = p.named.map(x => ({ at: x.at, fixed: x.v }))
+        .concat(p.cats.map(cc => ({ at: cc.at, slot: cc })))
+        .sort((a, b) => a.at - b.at);
+      const stopsArr = []; const used = {};
+      const namedAll = p.named.map(x => x.v);   // lo que el usuario pidió por nombre, aunque venga después
+      seq.forEach(item => {
+        if (item.fixed) { if (!used[item.fixed.id]) { stopsArr.push(item.fixed); used[item.fixed.id] = 1; } return; }
+        const cc = item.slot;
+        const catsOk = v => cc.cats ? cc.cats.includes(v.cat) : (this.G[cc.g] || []).includes(v.cat);
+        const cubre = v => catsOk(v) && (!cc.cui || this.cuisine(v) === cc.cui);
+        // ya cubierto por algo puesto o por un lugar que el usuario nombró más adelante
+        if (stopsArr.some(cubre) || namedAll.some(cubre)) return;
+        let cands = all.filter(v => !used[v.id] && catsOk(v));
+        if (!cands.length && cc.alt) cands = all.filter(v => !used[v.id] && cc.alt.includes(v.cat));
+        if (cc.cui) { const f = cands.filter(v => this.cuisine(v) === cc.cui); if (f.length) cands = f; }
+        cands.sort((a, b) => this.rank(b, this.DSEED) - this.rank(a, this.DSEED));
+        if (cands[0]) { stopsArr.push(cands[0]); used[cands[0].id] = 1; } });
+      let stops = stopsArr;
+      if (stops.length < 2) { const r = this.engine(0); if (r.plans[0]) r.plans[0].stops.forEach(v => { if (!used[v.id] && stops.length < 3) { stops.push(v); used[v.id] = 1; } }); }
+      stops = stops.slice(0, 6);
+      // repartir horarios dentro del rango pedido
+      const n = stops.length; const span = Math.max(1.5, (rng[1] - rng[0]) / Math.max(1, n));
+      const times = stops.map((_, i) => Math.min(27.5, rng[0] + span * i));
+      this.setState({ planCustom: { stops, times, spent: stops.reduce((a, b) => a + b.pp, 0) },
+        planStops: n, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null,
+        planReadOnly: false, openedPlanBy: '', aiOpen: false, aiBusy: false,
+        aiSummary: this.aiSummary(p, stops) });
+      this.nav('plan');
+    }, 30); }
+
+  aiSummary(p, stops) { const bits = [];
+    if (p.who) bits.push(this.WHO.find(w => w[0] === p.who)[1].toLowerCase() + (p.size ? ` (${p.size})` : ''));
+    if (p.zones.length) bits.push(p.zones.map(z => this.zLabel(z)).join(' y '));
+    if (p.from != null) bits.push(this.time12(p.from) + '–' + this.time12(p.to));
+    if (p.budget && p.budget < 90000) bits.push('≤ $' + p.budget + ' pp');
+    const named = p.named.length ? ' Respeté los lugares que pediste: ' + p.named.map(x => x.v.n).join(', ') + '.' : '';
+    return `Entendí: ${bits.join(' · ') || 'plan libre'}.${named} Armé ${stops.length} paradas — cámbialas o muévele la hora si quieres.`; }
   realSlots(v) { const a = v.oh ? v.oh[0] : 12, b = v.oh ? v.oh[1] : 23;
     const out = []; const span = Math.max(1, b - a);
     const picks = span <= 3 ? [a + span/2] : [a + span*0.25, a + span*0.5, a + span*0.75];
@@ -1489,7 +1679,7 @@ class Component extends DCLogic {
       const rt = this.rating(v); const myPrev = rt && rt.mine ? rt.mine.s : 0; const starSel = s.myStars || myPrev;
       const slots = this.realSlots(v).map(t => ({ label: t, style: this.chip(s.modalSlot === t), pick: () => this.setState({ modalSlot: t }) }));
       const combos = this.cat().filter(x => x.id !== v.id && x.z === v.z && x.cat !== v.cat).sort((p,q) => Math.hypot(v.x-p.x,v.y-p.y) - Math.hypot(v.x-q.x,v.y-q.y)).slice(0,5).map(c => ({ letter: c.n[0], name: c.n, meta: `${c.cat} · ${c.col} · ${c.pp===0?'Gratis':'~$'+c.pp+' pp'}`, open: () => openV(c.id) }));
-      detail = Object.assign({ slotId: 'photo-' + v.id, photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'ESPACIO PARA FOTO REAL'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: v.d || '', why: this.why(v),
+      detail = Object.assign({ slotId: 'photo-' + v.id, photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'ESPACIO PARA FOTO REAL'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: this.describe(v), why: this.why(v),
         facts: [{k:'DIRECCIÓN',v: v.addr || v.col},{k:'TIPO',v: v.cat},{k:'LLEGADA',v: s.zone === 'all' ? 'En ' + this.zLabel(v.z) : '~' + this.dist(v) + ' min desde ' + this.zLabel(s.zone)},{k:'PRECIO (EST.)',v: v.pp===0?'Gratis':'~$'+v.pp+' pp'},{k:'HORARIO',v: v.hrs},{k:'FUENTE',v: v.src || (v.fic ? 'Perfil demo' : v.pub ? 'Venue (demo)' : 'Curaduría Sobres')}],
         tags: v.tags.map(t => ({ label: t })), slots, combos, cta: v.pp === 0 ? 'Apartar visita' : 'Reservar', hasWeb: !!v.web, web: v.web || '#', voteGo: () => this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }), addToPlan: () => this.setState({ addVenueId: v.id }),
         hasAvg: !!rt, rateAvg: rt ? rt.avg : '', rateN: rt ? String(rt.n) : '0',
@@ -1704,6 +1894,12 @@ class Component extends DCLogic {
       todayLabel: new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase(),
       whoOpts, zoneOpts, whenOpts, budgetOpts, vibeOpts, showSize: ['amigos','familia','compa'].includes(s.who), groupSizeLabel: `${s.groupSize}\u00a0personas`, sizeUp: () => this.setState({ groupSize: Math.min(12, s.groupSize+1) }), sizeDown: () => this.setState({ groupSize: Math.max(2, s.groupSize-1) }),
       showDateInput: s.when === 'fecha', customDate: s.customDate, setDate: e => { this.setState({ customDate: e.target.value }); if (e.target.value) this.loadTm(e.target.value); },
+      aiTxt: s.aiTxt, setAiTxt: e => this.setState({ aiTxt: e.target.value }),
+      aiGo: () => { const t = (s.aiTxt || '').trim(); if (t.length < 8) { this.toast('Escríbeme con más detalle qué quieres hacer'); return; }
+        this.setState({ aiBusy: true }); setTimeout(() => this.aiBuild(t), 40); },
+      aiBusy: s.aiBusy, aiBtnLabel: s.aiBusy ? 'Armando tu plan…' : 'Ármame el plan',
+      aiEjemplo: () => this.setState({ aiTxt: 'Mañana con mis amigos, somos 5, de 11am a 2am, por la Roma o Polanco: un museo, comer mariscos, unos drinks en Bar Órbita y cerrar en Departamento' }),
+      hasAiSummary: !!s.aiSummary, aiSummary: s.aiSummary,
       summaryLine: this.summary(), runSearch: () => this.runSearch(), surpriseGo: () => this.runSearch({ surprise: true }), resurprise: () => this.runSearch({ surprise: true }), catSections, hasCatSections: catSections.length > 0,
       fromOpts, toOpts, planFromVal: String(Math.round(rng[0])), planToVal: String(Math.round(rng[1])),
       setPlanFrom: e => { const v2 = +e.target.value; this.setState({ planFrom: v2, planTo: Math.max(this.state.planTo == null ? this.rangeDefault()[1] : this.state.planTo, v2 + 2) }); },
