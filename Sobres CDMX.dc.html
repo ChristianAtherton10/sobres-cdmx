@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#faf5ec">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -16,7 +18,10 @@
 <script src="data/lugares.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
-body{margin:0;background:var(--color-bg,#f3f2f2);color:var(--color-text,#201e1d);font-family:var(--font-body,'Archivo',sans-serif)}
+:root{color-scheme:light only}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--color-bg,#faf5ec);color:var(--color-text,#2b211b);font-family:var(--font-body,'Archivo',sans-serif)}
+@media (prefers-color-scheme:dark){:root{color-scheme:light only}body{background:var(--color-bg,#faf5ec);color:var(--color-text,#2b211b)}}
 a{color:var(--color-accent-700,#a21f0b)}a:hover{color:var(--color-accent,#ec3013)}
 ::selection{background:rgba(200,68,44,.18)}
 input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
@@ -115,21 +120,26 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-for list="{{ modalSlots }}" as="s" hint-placeholder-count="3"><button style="{{ s.style }}" onClick="{{ s.pick }}">{{ s.label }}</button></sc-for>
 </div>
 
-<a href="{{ resOtUrl }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 15px var(--font-body);text-decoration:none;margin-bottom:8px"><span>Reservar en OpenTable</span><span>↗</span></a>
+<sc-if value="{{ resOnOT }}" hint-placeholder-val="{{ true }}">
+<a href="{{ resOtUrl }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 15px var(--font-body);text-decoration:none;margin-bottom:8px"><span>Buscar mesa en OpenTable</span><span>↗</span></a>
+</sc-if>
+<sc-if value="{{ resNoBook }}" hint-placeholder-val="{{ false }}">
+<div style="border:2px solid var(--color-neutral-300);background:var(--color-neutral-100,#f8f3ea);padding:13px 15px;margin-bottom:10px;font:600 13px/1.5 var(--font-body)">{{ resNoBookMsg }}</div>
+</sc-if>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
 <sc-if value="{{ resHasWeb }}" hint-placeholder-val="{{ false }}"><a href="{{ resWeb }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="flex:1;min-width:130px;text-align:center;padding:11px 12px;background:#fff;border:2px solid var(--color-text);font:700 13px var(--font-body);text-decoration:none;color:var(--color-text)">Sitio del lugar ↗</a></sc-if>
 <a href="{{ resMapsUrl }}" target="_blank" rel="noopener" style="flex:1;min-width:130px;text-align:center;padding:11px 12px;background:#fff;border:2px solid var(--color-text);font:700 13px var(--font-body);text-decoration:none;color:var(--color-text)">Ver en Maps ↗</a>
 <button style="flex:1;min-width:130px;padding:11px 12px;background:transparent;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ modalClose }}">Cerrar</button>
 </div>
-<p style="font:400 11px/1.45 var(--font-body);color:var(--color-neutral-600);margin:0">Abrimos OpenTable con tu fecha, hora y número de personas ya cargados: ahí ves la disponibilidad real y confirmas. Si el lugar no está en OpenTable (pasa con muchos bares y antros), usa el sitio del lugar.</p>
+<p style="font:400 11px/1.45 var(--font-body);color:var(--color-neutral-600);margin:0">{{ resFoot }}</p>
 </div></div>
 </sc-if>
 
 <header style="border-bottom:2px solid var(--color-text);background:var(--color-bg);position:sticky;top:0;z-index:50">
-<div style="max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;height:60px">
+<div style="max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;height:68px">
 <button onClick="{{ brandGo }}" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0;flex:none">
-<span style="width:14px;height:14px;background:var(--color-accent);display:inline-block"></span>
-<span style="font:800 19px var(--font-heading);letter-spacing:-.02em">SOBRES</span>
+<span style="width:22px;height:22px;background:#c8442c;display:inline-block;border-radius:5px;flex:none"></span>
+<span style="font:800 27px var(--font-heading);letter-spacing:-.025em;color:#2b211b">SOBRES</span>
 <span style="font:600 9px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600)">{{ brandSub }}</span>
 </button>
 <nav style="display:{{ topNavDisplay }};gap:2px">
@@ -217,7 +227,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </div>
 </div>
 <div style="padding:16px 20px;border-bottom:1.5px solid var(--color-neutral-300)">
-<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:10px">¿POR DÓNDE? · SOLO TE DAMOS LUGARES DE LA ZONA QUE ELIJAS</div>
+<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:10px">¿POR DÓNDE? · PUEDES ELEGIR VARIAS ZONAS</div>
 <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button style="{{ o.style }}" style-hover="border-color:var(--color-text)" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
 </div>
 <div style="padding:16px 20px;border-bottom:1.5px solid var(--color-neutral-300);display:flex;flex-wrap:wrap;gap:28px">
@@ -277,7 +287,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div class="hidescroll" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px">
 <sc-for list="{{ recItems }}" as="it" hint-placeholder-count="4">
 <button onClick="{{ it.open }}" style="flex:0 0 208px;text-align:left;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:0" style-hover="box-shadow:var(--shadow-md)">
-<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
+<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font-size:34px;line-height:1">{{ it.icon }}</span><span style="font:700 10px var(--font-body);letter-spacing:.14em;opacity:.85">{{ it.cat }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
 <div style="padding:11px 12px 13px">
 <div style="font:700 14.5px/1.2 var(--font-body);margin-bottom:4px">{{ it.name }}</div>
 <div style="font:500 11.5px var(--font-body);color:var(--color-neutral-600);margin-bottom:7px">{{ it.meta }}</div>
@@ -297,7 +307,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div class="hidescroll" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px">
 <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
 <button onClick="{{ it.open }}" style="flex:0 0 208px;text-align:left;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:0" style-hover="box-shadow:var(--shadow-md)">
-<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
+<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font-size:34px;line-height:1">{{ it.icon }}</span><span style="font:700 10px var(--font-body);letter-spacing:.14em;opacity:.85">{{ it.cat }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
 <div style="padding:11px 12px 13px">
 <div style="font:700 14.5px/1.2 var(--font-body);margin-bottom:4px">{{ it.name }}</div>
 <div style="font:500 11.5px var(--font-body);color:var(--color-neutral-600);margin-bottom:7px">{{ it.meta }}</div>
@@ -416,7 +426,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-for list="{{ rVenues }}" as="v" hint-placeholder-count="4">
 <div style="background:#fff;border:2px solid var(--color-text);display:flex;flex-direction:column">
 <button onClick="{{ v.open }}" style="border:none;padding:0;cursor:pointer;text-align:left;background:none">
-<div style="{{ v.tileStyle }}"><sc-if value="{{ v.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ v.photo }}" alt="" loading="lazy" onError="{{ v.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ v.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 52px var(--font-heading)">{{ v.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:12px;bottom:9px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ v.cat }}</span><sc-if value="{{ v.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="font:700 10.5px var(--font-body);position:absolute;right:10px;top:9px;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px">{{ v.badge }}</span></sc-if></div>
+<div style="{{ v.tileStyle }}"><sc-if value="{{ v.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ v.photo }}" alt="" loading="lazy" onError="{{ v.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ v.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font-size:40px;line-height:1">{{ v.icon }}</span><span style="font:700 11px var(--font-body);letter-spacing:.14em;opacity:.85">{{ v.cat }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:12px;bottom:9px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ v.cat }}</span><sc-if value="{{ v.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="font:700 10.5px var(--font-body);position:absolute;right:10px;top:9px;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px">{{ v.badge }}</span></sc-if></div>
 </button>
 <div style="padding:13px 14px 6px;flex:1">
 <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font:800 17px/1.15 var(--font-heading)">{{ v.name }}</span><span style="font:700 12px var(--font-body);flex:none">{{ v.price }}</span></div>
@@ -453,7 +463,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div class="hidescroll" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px">
 <sc-for list="{{ cs.items }}" as="it" hint-placeholder-count="4">
 <button onClick="{{ it.open }}" style="flex:0 0 208px;text-align:left;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:0" style-hover="box-shadow:var(--shadow-md)">
-<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font:800 44px var(--font-heading)">{{ it.letter }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
+<div style="{{ it.tileStyle }}"><sc-if value="{{ it.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.photo }}" alt="" loading="lazy" onError="{{ it.photoFail }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><sc-if value="{{ it.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font-size:34px;line-height:1">{{ it.icon }}</span><span style="font:700 10px var(--font-body);letter-spacing:.14em;opacity:.85">{{ it.cat }}</span></sc-if><span style="font:700 9px var(--font-body);letter-spacing:.14em;position:absolute;left:10px;bottom:8px;background:#fff;color:var(--color-text);border:1.5px solid var(--color-text);padding:3px 6px">{{ it.cat }}</span></div>
 <div style="padding:11px 12px 13px">
 <div style="font:700 14.5px/1.2 var(--font-body);margin-bottom:4px">{{ it.name }}</div>
 <div style="font:500 11.5px var(--font-body);color:var(--color-neutral-600);margin-bottom:7px">{{ it.meta }}</div>
@@ -994,8 +1004,8 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="padding:30px 0 0;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;margin-bottom:18px">
 <div>
 <div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">SOBRES PARA VENUES</div>
-<h1 style="font:800 clamp(30px,4.5vw,52px)/1 var(--font-heading);letter-spacing:-.025em;margin:8px 0 4px">La Distral · Vermutería</h1>
-<div style="font:600 13px var(--font-body);color:var(--color-neutral-600)">Roma Norte · Bar · Perfil de ejemplo (ficticio) para la demo B2B</div>
+<h1 style="font:800 clamp(30px,4.5vw,52px)/1 var(--font-heading);letter-spacing:-.025em;margin:8px 0 4px">{{ vHeadName }}</h1>
+<div style="font:600 13px var(--font-body);color:var(--color-neutral-600)">{{ vHeadSub }}</div>
 </div>
 <div style="margin-left:auto;display:flex;border:2px solid var(--color-text);background:#fff;flex-wrap:wrap">
 <sc-for list="{{ vTabs }}" as="t" hint-placeholder-count="4"><button style="{{ t.style }}" onClick="{{ t.pick }}">{{ t.label }}</button></sc-for>
@@ -1176,11 +1186,7 @@ class Component extends DCLogic {
     this.VIBEG = { foodie:['comida','cafe'], nightlife:['copas','fiesta'], cultural:['cultura'], creativo:['cultura','cafe'], chill:['parque','cafe'], aventurero:['juego','parque'], 'romántico':['cultura','comida'], social:['copas','juego','mall'], familiar:['parque','cine','mall','juego'], joyita:[], 'clásico':[] };
     this.SEGLBL = { comida:'Comida', cafe:'Café', copas:'Copas', fiesta:'Fiesta', cultura:'Cultura', cine:'Cine', parque:'Parque', juego:'Juegos', mall:'Plaza' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[
-      {id:'o1',badge:'SOLO HOY',title:'2x1 en vermú y conservas',detail:'Hoy 6–8 pm · 20 lugares',venue:'La Distral · Roma Norte',on:true},
-      {id:'o2',badge:'CUPO HOY',title:'Torno + mezcal · 6 lugares',detail:'Hoy 7:30 pm · 90 min',venue:'Barro Vivo · Roma Norte',on:true},
-      {id:'o3',badge:'ÚLTIMO MINUTO',title:'Ruta de tacos: 4 lugares',detail:'Hoy 7:00 pm · 4 paradas',venue:'Ruta de tacos a pie · Roma',on:true}
-    ], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
     try { const raw = localStorage.getItem('sobres_v2'); if (raw) { const s = JSON.parse(raw); ['saved','savedPlans','counters','dietSel','offers','pubs','gOpts','gVotes','gVoters'].forEach(k => { if (s[k]) st[k] = s[k]; }); } } catch(e) {}
     try { const un = localStorage.getItem('sobres_user'); if (un) st.userName = un; } catch(e) {}
     this.state = st;
@@ -1268,6 +1274,13 @@ class Component extends DCLogic {
   chip(on) { return `padding:9px 14px;border:2px solid ${on?'var(--color-text)':'var(--color-neutral-300)'};background:${on?'var(--color-text)':'#fff'};color:${on?'#fff':'var(--color-text)'};font:600 13px var(--font-body);cursor:pointer;white-space:nowrap`; }
   strip(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
   budgetMax() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const b = this.BUD.find(x => x[0] === s.budget); return b ? b[2] : 99999; }
+  zoneList() { const s = this.state; if (s.zone === 'all') return this.ZONES.map(z => z[0]);
+    const l = (s.zonesSel && s.zonesSel.length) ? s.zonesSel : [s.zone]; return l; }
+  inZone(v) { return this.state.zone === 'all' || this.zoneList().includes(v.z); }
+  zonesLabel() { const s = this.state; if (s.zone === 'all') return 'Toda la ciudad';
+    const l = this.zoneList(); if (l.length === 1) return this.zLabel(l[0]);
+    if (l.length === 2) return this.zLabel(l[0]) + ' y ' + this.zLabel(l[1]);
+    return l.slice(0, -1).map(z => this.zLabel(z)).join(', ') + ' y ' + this.zLabel(l[l.length - 1]); }
   zLabel(k) { if (k === 'all') return 'Toda la ciudad'; const z = this.ZONES.find(x => x[0] === k); return z ? z[1] : k; }
   dist(v) { const zk = this.state.zone === 'all' ? v.z : this.state.zone; const z = this.ZONES.find(x => x[0] === zk) || this.ZONES[0]; const km = Math.hypot((z[2]-v.x)*0.27, (z[3]-v.y)*0.36); return Math.min(75, Math.round(5 + km*3.2)); }
   openNow(v) { const h = this.state.hour; return (v.oh[0] <= h && h < v.oh[1]) || (v.oh[1] > 24 && (h >= v.oh[0] || h < v.oh[1]-24)); }
@@ -1283,7 +1296,7 @@ class Component extends DCLogic {
     const slot = w === 'noche' ? 'noche' : (s.hour < 12 ? 'manana' : s.hour < 18 ? 'tarde' : 'noche');
     return v.tm.includes(slot); }
   budgetOk(v) { const max = this.budgetMax(); if (this.state.budget === 'free' && !this.state.budgetCustom) return v.pp === 0; return v.pp <= max * 1.15; }
-  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (v.z === s.zone) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc; }
+  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc; }
   groupOrder(seg, pi, seed) { const s = this.state; const base = (this.SEGG[seg] || ['comida']).slice();
     const want = {}; (s.vibes || []).forEach(vb => (this.VIBEG[vb] || []).forEach(g => { want[g] = (want[g] || 0) + 1; }));
     const noFoodie = (s.vibes || []).length > 0 && !s.vibes.includes('foodie') && !s.vibes.includes('romántico');
@@ -1291,8 +1304,9 @@ class Component extends DCLogic {
       .sort((a, b) => b.sc - a.sc).map(x => x.g); }
   engine(seed) { seed = seed || 0; this._surpriseRun = seed > 0; const dseed = seed * 7919 + (this.DSEED || 1); const s = this.state; const all = this.cat().filter(v => this.budgetOk(v) && this.timingOk(v));
     const cityWide = s.zone === 'all';
-    let zones = cityWide ? this.ZONES.map(z => z[0]) : [s.zone]; let pool = cityWide ? all.slice() : all.filter(v => v.z === s.zone); let expandNote = '';
-    if (!cityWide && pool.length < 8) { const adj = this.ADJ[s.zone] || []; const added = []; for (const az of adj) { if (pool.length >= 8) break; zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az)); }
+    const sel = this.zoneList();
+    let zones = cityWide ? this.ZONES.map(z => z[0]) : sel.slice(); let pool = cityWide ? all.slice() : all.filter(v => sel.includes(v.z)); let expandNote = '';
+    if (!cityWide && pool.length < 8) { const adj = sel.reduce((a, z) => a.concat(this.ADJ[z] || []), []).filter(z => !sel.includes(z)); const added = []; for (const az of adj) { if (pool.length >= 8) break; zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az)); }
       if (added.length) expandNote = 'Pocas opciones con esos filtros en ' + this.zLabel(s.zone) + ' — ampliamos solo a zonas vecinas: ' + added.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).'; }
     const inZones = v => cityWide || zones.includes(v.z);
     const ranked = pool.map(v => ({ v, r: this.rank(v, dseed) })).sort((a,b) => b.r - a.r).map(x => x.v);
@@ -1336,8 +1350,8 @@ class Component extends DCLogic {
   whoLabel() { const w = this.WHO.find(x => x[0] === this.state.who); const l = w ? w[1] : ''; return ['amigos','compa','familia'].includes(this.state.who) ? `${this.state.groupSize} ${l.toLowerCase()}` : l; }
   budLabel() { if (this.state.budgetCustom) return `≤ $${this.state.budgetCustom} pp`; const b = this.BUD.find(x => x[0] === this.state.budget); return b ? (b[0]==='free'?'Gratis':b[0]==='b1k'?'$1,000+ pp':`≤ $${b[2]} pp`) : ''; }
   whenLabel() { const s = this.state; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
-  summary() { const s = this.state; const r = this.range(); return `${this.whoLabel()} · ${this.zLabel(s.zone)} · ${this.whenLabel()} ${this.time12(r[0])}–${this.time12(r[1])} · ${this.budLabel()}${s.vibes.length ? ' · ' + s.vibes.join(' + ') : ''}`; }
-  why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : v.z === s.zone ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.pp === 0) parts.push('entrada libre'); else parts.push(`~$${v.pp} pp dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
+  summary() { const s = this.state; const r = this.range(); return `${this.whoLabel()} · ${this.zonesLabel()} · ${this.whenLabel()} ${this.time12(r[0])}–${this.time12(r[1])} · ${this.budLabel()}${s.vibes.length ? ' · ' + s.vibes.join(' + ') : ''}`; }
+  why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : this.zoneList().includes(v.z) ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.pp === 0) parts.push('entrada libre'); else parts.push(`~$${v.pp} pp dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
   runSearch(extra) { const s = this.state; const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0; const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, visibleCount: this.props.resultadosMax ?? 6, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed); try { (rr.venues || []).slice(0, 8).forEach(v => this.track(v.id, 'a')); } catch(e) {} return rr; })() }); this.persist(); this.nav('results'); if (s.when === 'fecha' && s.customDate) this.loadTm(s.customDate); }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
   time12(h) { const hh = Math.floor(h) % 24, m = Math.round((h % 1) * 60); const ap = hh >= 12 ? 'pm' : 'am'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return `${h12}:${m.toString().padStart(2,'0')} ${ap}`; }
@@ -1353,7 +1367,28 @@ class Component extends DCLogic {
     if (this.state.swapSeed && stops.length) { const pool = r.ranked.filter(v => !stops.includes(v)); const i = this.state.swapSeed % stops.length; const cand = pool.find(v => v.cat === stops[i].cat) || pool[0]; if (cand) stops = stops.map((x, j) => j === i ? cand : x); }
     const tm = (p.times && p.times.length === stops.length) ? p.times : this.planTimes(stops.length);
     return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
-  tile(v, h) { const acc = !this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat); return `position:relative;width:100%;height:${h}px;display:flex;align-items:center;justify-content:center;background:${acc?'var(--color-neutral-800,#3a3735)':'var(--color-neutral-200)'};color:${acc?'#f3f2f2':'var(--color-neutral-500)'};border-bottom:2px solid var(--color-text);overflow:hidden`; }
+  catTone(cat) { const T = {
+      'Restaurante':['#8e2d18','#c8442c'], 'Taquería':['#a33a12','#d9702f'], 'Fonda de autor':['#8e2d18','#c05a2c'],
+      'Izakaya':['#5c2340','#93386a'], 'Mercado':['#7a4a12','#c08a2e'], 'Churrería':['#7a3d12','#c2792e'],
+      'Cantina':['#6b2f1a','#a85a2c'], 'Café':['#5a3a22','#96683c'],
+      'Bar':['#243a5e','#3f6ea8'], 'Bar de autor':['#1f3350','#42688f'], 'Speakeasy':['#1c2438','#3d4a6b'],
+      'Mezcalería':['#3c4a1e','#6f8235'], 'Rooftop':['#1f4a52','#3f8791'], 'Antro':['#2c1a42','#5c3a91'],
+      'Salón de baile':['#43184a','#8a3a93'], 'Museo':['#1f3b33','#3d7a67'], 'Galería':['#2e2a3f','#5c5578'],
+      'Teatro':['#4a1626','#93304c'], 'Foro':['#3a1338','#7a2a70'], 'Biblioteca':['#26332a','#4f6b56'],
+      'Librería':['#2b3326','#586b4c'], 'Centro cultural':['#213542','#456b80'], 'Cine':['#1a1a24','#3f3f5c'],
+      'Centro comercial':['#3a3320','#6e6140'], 'Parque':['#1e3d22','#3f7a48'],
+      'Al aire libre':['#1e3d22','#468253'], 'Atracción':['#4a3212','#8a6224'], 'Boliche':['#2a2a3d','#555a85'],
+      'Billar':['#1e3326','#3f6b4c'], 'Espectáculo':['#4a1616','#933434'], 'Taller':['#3d2a16','#7a5a2e'],
+      'Tour':['#2a3a1e','#5a7a3c'], 'Sitio histórico':['#3d2f1e','#7a6144'] };
+    return T[cat] || ['#3a3028','#6b5a49']; }
+  catIcon(cat) { const I = { 'Restaurante':'🍽️','Taquería':'🌮','Fonda de autor':'🍲','Izakaya':'🍶','Mercado':'🧺',
+      'Churrería':'🍫','Cantina':'🍻','Café':'☕','Bar':'🍸','Bar de autor':'🍸','Speakeasy':'🥃','Mezcalería':'🌵',
+      'Rooftop':'🌇','Antro':'🔊','Salón de baile':'💃','Museo':'🏛️','Galería':'🖼️','Teatro':'🎭','Foro':'🎤',
+      'Biblioteca':'📚','Librería':'📖','Centro cultural':'🎨','Cine':'🎬','Centro comercial':'🛍️','Parque':'🌳',
+      'Al aire libre':'🌤️','Atracción':'📍','Boliche':'🎳','Billar':'🎱','Espectáculo':'🤼','Taller':'🛠️',
+      'Tour':'🚶','Sitio histórico':'🏰' }; return I[cat] || '📍'; }
+  tile(v, h) { const t = this.catTone(v.cat);
+    return `position:relative;width:100%;height:${h}px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,${t[0]} 0%,${t[1]} 100%);color:#fff;border-bottom:2px solid var(--color-text);overflow:hidden;text-align:center;padding:10px`; }
   cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { try { navigator.clipboard.writeText(`sobres.mx/l/${v.id}`); } catch(e) {} this.toast(`Link copiado: sobres.mx/l/${v.id}`); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
   slot24(t) { const m = /(\d+):(\d+)\s*(am|pm)/i.exec(t || ''); if (!m) return '20:00'; let h = (+m[1]) % 12; if (/pm/i.test(m[3])) h += 12; return String(h).padStart(2, '0') + ':' + m[2]; }
   otUrl(v, hhmm, covers, dateISO) { const d = dateISO || this.state.planDate || this.todayISO();
@@ -1379,6 +1414,17 @@ class Component extends DCLogic {
       const s = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180) * Math.cos(b.lat*Math.PI/180) * Math.sin(dLng/2)**2;
       return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s)); }
     return Math.hypot((a.x-b.x)*0.27, (a.y-b.y)*0.36); }
+  realSlots(v) { const a = v.oh ? v.oh[0] : 12, b = v.oh ? v.oh[1] : 23;
+    const out = []; const span = Math.max(1, b - a);
+    const picks = span <= 3 ? [a + span/2] : [a + span*0.25, a + span*0.5, a + span*0.75];
+    picks.forEach(t => { const r = Math.round(t * 2) / 2; if (!out.includes(r)) out.push(r); });
+    return out.map(t => this.time12(t)); }
+  bookable(v) { return this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat); }
+  onOpenTable(v) { return ['Restaurante','Fonda de autor','Izakaya','Cantina','Bar de autor'].includes(v.cat) && (v.pp || 0) >= 300; }
+  openDays(v) { const h = (v.hrs || '').toLowerCase();
+    if (h.includes('lun') || h.includes('mar') || h.includes('mié') || h.includes('sáb') || h.includes('dom')) return v.hrs;
+    if (h.includes('24 h')) return 'Todos los días, 24 horas';
+    return 'Todos los días · ' + this.time12(v.oh ? v.oh[0] : 12) + '–' + this.time12(v.oh ? v.oh[1] : 23); }
   goReserve(v) { this.setState({ modal: v.id, modalSlot: null, resDate: this.state.planDate || this.todayISO(), resPeople: this.state.groupSize || 2 }); return; }
   searchIn(q, limit) { const n = this.strip(q); if (n.length < 2) return []; return this.cat().map(v => { const name = this.strip(v.n); let r = -1; if (name.startsWith(n)) r = 3; else if (name.includes(n)) r = 2; else if (this.strip(v.col).includes(n) || this.strip(v.cat).includes(n)) r = 1; return { v, r }; }).filter(x => x.r > 0).sort((a,b) => b.r - a.r || (b.v.score||0) - (a.v.score||0)).slice(0, limit || 8).map(x => x.v); }
   renderVals() {
@@ -1392,7 +1438,13 @@ class Component extends DCLogic {
     const bottomNav = navDef.map(([id,label]) => ({ label: label==='Mis planes'?'Planes':label, style: `flex:1;padding:13px 4px 15px;background:${view===id?'var(--color-text)':'transparent'};color:${view===id?'#fff':'var(--color-text)'};border:none;font:700 11.5px var(--font-body);cursor:pointer;letter-spacing:.04em`, go: () => id==='plan' ? goPlan() : (id==='map' && s.zone !== 'all' && s.results) ? this.nav('map', { mapZone: s.zone }) : this.nav(id) }));
     const mkChips = (list, sel, set) => list.map(([id,label]) => ({ label, style: this.chip(sel === id), pick: () => set(id) }));
     const whoOpts = mkChips(this.WHO, s.who, id => this.setState({ who: id }));
-    const zoneOpts = [{ label: 'Toda la ciudad', style: this.chip(s.zone === 'all'), pick: () => this.setState({ zone: 'all' }) }].concat(this.ZONES.map(z => ({ label: z[1], style: this.chip(s.zone === z[0]), pick: () => this.setState({ zone: z[0] }) })));
+    const zoneOpts = [{ label: 'Toda la ciudad', style: this.chip(s.zone === 'all'), pick: () => this.setState({ zone: 'all', zonesSel: [] }) }]
+      .concat(this.ZONES.map(z => { const on = s.zone !== 'all' && this.zoneList().includes(z[0]);
+        return { label: (on && this.zoneList().length > 1 ? '✓ ' : '') + z[1], style: this.chip(on),
+          pick: () => { const cur = s.zone === 'all' ? [] : this.zoneList().slice();
+            const i2 = cur.indexOf(z[0]);
+            if (i2 >= 0) { if (cur.length === 1) return; cur.splice(i2, 1); } else cur.push(z[0]);
+            this.setState({ zonesSel: cur, zone: cur[0] }); } }; }));
     const whenOpts = mkChips(this.WHEN, s.when, id => { this.setState({ when: id, planFrom: null, planTo: null }); if (id === 'fecha' && s.customDate) this.loadTm(s.customDate); });
     const rng = this.range();
     const fromOpts = []; for (let h = 7; h <= 23; h++) fromOpts.push({ v: String(h), label: this.time12(h) });
@@ -1401,9 +1453,9 @@ class Component extends DCLogic {
     const vibeOpts = this.VIBES.map(vb => ({ label: vb, style: this.chip(s.vibes.includes(vb)), pick: () => { const v = s.vibes.slice(); const i = v.indexOf(vb); if (i >= 0) v.splice(i,1); else if (v.length < 3) v.push(vb); else { v.shift(); v.push(vb); } this.setState({ vibes: v }); } }));
     const openV = id => this.nav('detail', { detailId: id, backView: view });
     const photoFail = id => () => this.setState(st => { const p = Object.assign({}, st.photos); delete p[id]; return { photos: p }; });
-    const miniCard = v => { const ph = s.photos[v.id]; const rtg = this.rating(v); return { letter: v.n[0], hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), meta: `${v.col} · ${this.dist(v)} min · ${v.pp === 0 ? 'Gratis' : '~$'+v.pp+' pp'}`, av: (rtg ? '★ ' + rtg.avg + ' · ' : '') + v.av, tileStyle: this.tile(v, 108), open: () => openV(v.id) }; };
+    const miniCard = v => { const ph = s.photos[v.id]; const rtg = this.rating(v); return { letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), meta: `${v.col} · ${this.dist(v)} min · ${v.pp === 0 ? 'Gratis' : '~$'+v.pp+' pp'}`, av: (rtg ? '★ ' + rtg.avg + ' · ' : '') + v.av, tileStyle: this.tile(v, 108), open: () => openV(v.id) }; };
     const C = this.cat();
-    const zoneC = s.zone === 'all' ? C : C.filter(v => v.z === s.zone);
+    const zoneC = C.filter(v => this.inZone(v));
     const feedSections = view !== 'home' ? [] : [
       { title: 'Cerca de ti · ' + this.zLabel(s.zone), note: 'SOLO LUGARES DE TU ZONA · TOP 2025', items: zoneC.sort((a,b) => (b.score||0)-(a.score||0)).slice(0,10).map(miniCard) },
       { title: 'Esta noche', note: 'ABIERTO Y CON AMBIENTE HOY', items: C.filter(v => v.tm.includes('noche') && !v.date).sort((a,b) => (b.score||0)-(a.score||0)).slice(0,10).map(miniCard) },
@@ -1425,7 +1477,7 @@ class Component extends DCLogic {
       resultsLine = `${r.poolN} lugares del catálogo (${r.total}) pasan tus filtros — te enseñamos los mejores ${shown.length}, no un directorio.`;
       const times = n => this.planTimes(n);
       plans = r.plans.map((p, i) => { const ts = p.times || times(p.stops.length); const max = this.budgetMax(); return { tag: `PLAN ${i+1}${p.label ? ' · ' + p.label.toUpperCase() : ''}`, total: `~$${p.spent} pp · ${(p.stops.length*2-0.5).toFixed(1)} h`, why: p.spent <= max ? `${p.stops.length} paradas cercanas entre sí, ${this.budLabel().toLowerCase()} en total — no otra vez lo de siempre.` : `${p.stops.length} paradas cercanas entre sí, ~$${p.spent} pp en total — tantito arriba de tu tope; quita una parada para bajar.`, stops: p.stops.map((v, j) => ({ time: this.time12(ts[j]), letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}`, pp: v.pp === 0 ? 'Gratis' : '$'+v.pp })), open: () => { this.setState({ planIdx: i, planStops: p.stops.length, swapSeed: 0, planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null, planReadOnly: false, openedPlanBy: '', results: r }); this.nav('plan'); }, vote: () => this.setState({ planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planStops: p.stops.length, swapSeed: 0, planNone: false, swapIdx: null, planReadOnly: false, openedPlanBy: '', sendOpen: true, results: r }) }; });
-      rVenues = shown.map(v => { const a = this.cardActions(v); const ph = s.photos[v.id]; const rtg = this.rating(v); const badge = rtg ? '★ ' + rtg.avg + ' (' + rtg.n + ')' : (v.tier === 'A' ? 'TOP 2025' : ''); return Object.assign({ letter: v.n[0], hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), hasBadge: !!badge, badge, price: v.pp === 0 ? 'Gratis' : '~$' + v.pp + ' pp', meta: `${v.col} · ${this.dist(v)} min · ${v.hrs}`, tags: v.tags.map(t => ({ label: t })), why: this.why(v), av: (v.fic ? 'PERFIL DE EJEMPLO · ' : v.pub ? 'PUBLICADO POR EL VENUE · ' : '') + v.av, tileStyle: this.tile(v, 148) }, a); });
+      rVenues = shown.map(v => { const a = this.cardActions(v); const ph = s.photos[v.id]; const rtg = this.rating(v); const badge = rtg ? '★ ' + rtg.avg + ' (' + rtg.n + ')' : (v.tier === 'A' ? 'TOP 2025' : ''); return Object.assign({ letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), hasBadge: !!badge, badge, price: v.pp === 0 ? 'Gratis' : '~$' + v.pp + ' pp', meta: `${v.col} · ${this.dist(v)} min · ${v.hrs}`, tags: v.tags.map(t => ({ label: t })), why: this.why(v), av: (v.fic ? 'PERFIL DE EJEMPLO · ' : v.pub ? 'PUBLICADO POR EL VENUE · ' : '') + v.av, tileStyle: this.tile(v, 148) }, a); });
     }
     const qfDef = [['open','Abierto ahora'],['cheap','≤ $500'],['gems','Joyitas']];
     const quickFilters = qfDef.map(([k,label]) => ({ label, style: this.chip(s.qf[k]).replace('9px 14px','7px 12px'), pick: () => { const qf = Object.assign({}, s.qf); qf[k] = !qf[k]; this.setState({ qf }); } }));
@@ -1435,7 +1487,7 @@ class Component extends DCLogic {
     let detail = null;
     if (s.detailId) { const v = this.cat().find(x => x.id === s.detailId); if (v) { const a = this.cardActions(v); const ph = s.photos[v.id];
       const rt = this.rating(v); const myPrev = rt && rt.mine ? rt.mine.s : 0; const starSel = s.myStars || myPrev;
-      const slots = (v.tm.includes('noche') ? ['7:00 pm','8:30 pm','9:45 pm'] : ['11:00 am','1:00 pm','4:30 pm']).map(t => ({ label: t, style: this.chip(s.modalSlot === t), pick: () => this.setState({ modalSlot: t }) }));
+      const slots = this.realSlots(v).map(t => ({ label: t, style: this.chip(s.modalSlot === t), pick: () => this.setState({ modalSlot: t }) }));
       const combos = this.cat().filter(x => x.id !== v.id && x.z === v.z && x.cat !== v.cat).sort((p,q) => Math.hypot(v.x-p.x,v.y-p.y) - Math.hypot(v.x-q.x,v.y-q.y)).slice(0,5).map(c => ({ letter: c.n[0], name: c.n, meta: `${c.cat} · ${c.col} · ${c.pp===0?'Gratis':'~$'+c.pp+' pp'}`, open: () => openV(c.id) }));
       detail = Object.assign({ slotId: 'photo-' + v.id, photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'ESPACIO PARA FOTO REAL'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: v.d || '', why: this.why(v),
         facts: [{k:'DIRECCIÓN',v: v.addr || v.col},{k:'TIPO',v: v.cat},{k:'LLEGADA',v: s.zone === 'all' ? 'En ' + this.zLabel(v.z) : '~' + this.dist(v) + ' min desde ' + this.zLabel(s.zone)},{k:'PRECIO (EST.)',v: v.pp===0?'Gratis':'~$'+v.pp+' pp'},{k:'HORARIO',v: v.hrs},{k:'FUENTE',v: v.src || (v.fic ? 'Perfil demo' : v.pub ? 'Venue (demo)' : 'Curaduría Sobres')}],
@@ -1447,14 +1499,15 @@ class Component extends DCLogic {
         sendRate: () => { const st = s.myStars || myPrev; if (!st) { this.toast('Elige de 1 a 5 estrellas'); return; } this.mutate('rate', { user: s.userName, venueId: v.id, stars: st, txt: s.myTxt, venueName: v.n }).then(x => { if (x) this.toast('Reseña publicada — ya la ven todos'); }); this.setState({ myTxt: '' }); },
         reviews: rt ? rt.entries.slice(0, 8).map(e2 => ({ user: e2.user, stars: '★'.repeat(e2.s), txt: e2.txt || '', hasTxt: !!e2.txt })) : [] }, a, { reserve: () => this.goReserve(v) }); } }
     let modalOn = false, modalTitle = '', modalBody = '', modalSlots = [];
-    let resOtUrl = '#', resMapsUrl = '#', resWeb = '#', resHasWeb = false;
+    let resOtUrl = '#', resMapsUrl = '#', resWeb = '#', resHasWeb = false, resOnOT = false, resBookable = false;
     const resPeople = s.resPeople || s.groupSize || 2;
     const resDate = s.resDate || s.planDate || this.todayISO();
     if (s.modal) { const v = this.cat().find(x => x.id === s.modal); if (v) { modalOn = true; modalTitle = v.n;
       modalBody = `${v.cat} · ${v.col}${v.addr ? ' · ' + v.addr : ''}`;
-      const opts = v.tm.includes('noche') ? ['7:00 pm','8:30 pm','9:45 pm'] : ['11:00 am','1:00 pm','4:30 pm'];
+      const opts = this.realSlots(v);
       const cur = s.modalSlot || opts[1];
       modalSlots = opts.map(t => ({ label: t, style: this.chip(cur === t), pick: () => this.setState({ modalSlot: t }) }));
+      resOnOT = this.onOpenTable(v); resBookable = this.bookable(v);
       resOtUrl = this.otUrl(v, this.slot24(cur), resPeople, resDate);
       resMapsUrl = this.mapsUrl(v);
       resHasWeb = !!(v.web && /^https?:/.test(v.web)); resWeb = resHasWeb ? v.web : '#'; } }
@@ -1544,6 +1597,7 @@ class Component extends DCLogic {
     const vTabs = vTabDef.map(([id,label], i) => ({ label, style: `padding:11px 15px;border:none;border-left:${i>0?'2px solid var(--color-text)':'none'};background:${s.venueTab===id?'var(--color-text)':'#fff'};color:${s.venueTab===id?'#fff':'var(--color-text)'};font:700 12.5px var(--font-body);cursor:pointer`, pick: () => this.setState({ venueTab: id }) }));
     // ── MÉTRICAS REALES: se calculan de lo que la gente hace en Sobres ──
     const allStats = (s.sync && s.sync.stats) || {};
+    const myVenueName = (((s.sync && s.sync.venues) || []).filter(v => !s.userName || v.by === s.userName)[0] || {}).n || '';
     const myVenues = ((s.sync && s.sync.venues) || []).filter(v => !s.userName || v.by === s.userName);
     const mineIds = myVenues.map(v => v.id);
     const scope = mineIds.length ? mineIds : Object.keys(allStats);
@@ -1633,6 +1687,11 @@ class Component extends DCLogic {
       searchQ: s.searchQ, setSearchQ: e => this.setState({ searchQ: e.target.value }), searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
       toast: s.toast, toastStyle: `position:fixed;left:50%;transform:translateX(-50%);bottom:${s.isMobile?'72px':'24px'};z-index:100;background:var(--color-text);color:#fff;padding:12px 18px;font:600 13px var(--font-body);box-shadow:var(--shadow-lg);transition:opacity .25s;opacity:${s.toast?'1':'0'};pointer-events:none;max-width:90vw`,
       resOtUrl, resMapsUrl, resWeb, resHasWeb, resPeople: String(resPeople), resDate,
+      resOnOT, resNoBook: !resBookable,
+      resNoBookMsg: resBookable ? '' : 'Este lugar no toma reservas: se entra directo. Usa el mapa para llegar y checa el horario arriba.',
+      resFoot: resOnOT
+        ? 'Abrimos OpenTable con tu fecha, hora y número de personas ya cargados: ahí ves disponibilidad real y confirmas. Si no aparece, es que el lugar no trabaja con OpenTable — usa su sitio.'
+        : (resBookable ? 'Este lugar normalmente no usa OpenTable. Lo más seguro es escribirles por su sitio o redes; muchos bares en CDMX reservan por WhatsApp.' : 'Los horarios salen del horario real del lugar registrado en el catálogo.'),
       setResDate: e => this.setState({ resDate: e.target.value }),
       resMore: () => this.setState({ resPeople: Math.min(20, resPeople + 1) }),
       resLess: () => this.setState({ resPeople: Math.max(1, resPeople - 1) }),
@@ -1667,7 +1726,7 @@ class Component extends DCLogic {
       demo1: () => this.setState({ who:'amigos', groupSize:4, zone:'roma', when:'noche', budget:'b1000', budgetCustom:700, vibes:['foodie','joyita'] }, () => this.runSearch()),
       demo2: () => this.setState({ who:'date', zone:'polanco', when:'noche', budget:'b1k', budgetCustom:1200, vibes:['romántico','creativo'] }, () => this.runSearch()),
       feedSections, offers,
-      resultsLine, hasExpandNote: !!expandNote, expandNote, plans, rVenues, quickFilters, canMore, moreResults: () => this.setState({ visibleCount: (s.visibleCount || 6) + 8 }), zoneName: r && r.expandNote ? this.zLabel(s.zone) + ' y alrededores' : this.zLabel(s.zone), goHome: () => this.nav('home'),
+      resultsLine, hasExpandNote: !!expandNote, expandNote, plans, rVenues, quickFilters, canMore, moreResults: () => this.setState({ visibleCount: (s.visibleCount || 6) + 8 }), zoneName: r && r.expandNote ? this.zonesLabel() + ' y alrededores' : this.zonesLabel(), goHome: () => this.nav('home'),
       showDated, dateLabel: s.customDate ? this.fmtDate(s.customDate) : '', datedItems, tmEvents, showTmNote: showDated && s.tmEvents === null,
       detail: detail || { slotId:'x', photoSrc:'', photoCredit:'', photoHref:'', photoNote:'', kicker:'', name:'', desc:'', why:'', facts:[], tags:[], slots:[], combos:[], cta:'', hasWeb:false, web:'#', reserve:()=>{}, save:()=>{}, saveLabel:'', share:()=>{}, mapGo:()=>{}, voteGo:()=>{}, hasAvg:false, rateAvg:'', rateN:'0', canRate:false, rateNeedName:false, rateOffline:true, starBtns:[], myTxt:'', setMyTxt:()=>{}, sendRate:()=>{}, reviews:[] },
       detailCols: s.isMobile ? '1fr' : 'minmax(300px,440px) 1fr', goBack: () => this.nav(s.backView || 'home'),
@@ -1748,6 +1807,10 @@ class Component extends DCLogic {
         this.proposePlan(cand); },
       insights, pStats, dietOpts, providers,
       vTabs, vIsResumen: s.venueTab === 'resumen', vIsInv: s.venueTab === 'inv', vIsNew: s.venueTab === 'new', vIsAna: s.venueTab === 'ana',
+      vHeadName: (myVenues[0] && myVenues[0].n) || 'Tu negocio en Sobres',
+      vHeadSub: myVenues.length
+        ? `${myVenues[0].cat} · ${this.zLabel(myVenues[0].zone)} · publicado por ti`
+        : 'Aún no has publicado nada — ve a "Publicar" y registra tu negocio, evento o experiencia',
       kpis, segs, tueCta: () => this.setState({ venueTab: 'new' }),
       liveUsers: String(Object.keys((s.sync && s.sync.users) || {}).length),
       livePlans: String(((s.sync && s.sync.plans) || []).length),
@@ -1759,7 +1822,7 @@ class Component extends DCLogic {
         if (!top && !wt) return 'Publica tu negocio y empieza a medir quién te busca en Sobres.';
         return `La gente está buscando sobre todo en ${this.zLabel(top || 'roma')}${wt ? ' y sale ' + (whoLbls[wt] || wt).toLowerCase() : ''} — publica algo ahí y aparece en sus planes.`; })(),
       vOffers, promoT: s.promoT, promoD: s.promoD, setPromoT: e => this.setState({ promoT: e.target.value }), setPromoD: e => this.setState({ promoD: e.target.value }),
-      addPromo: () => { if (!s.promoT) { this.toast('Ponle título a la promo'); return; } const l = [{ id:'p'+Date.now(), badge:'SOLO HOY', title: s.promoT, detail: s.promoD || 'Hoy', venue:'La Distral · Roma Norte', on:true }].concat(s.offers); this.setState({ offers: l, promoT:'', promoD:'' }, () => this.persist()); this.toast('Promo publicada en "Último minuto"'); },
+      addPromo: () => { if (!s.promoT) { this.toast('Ponle título a la promo'); return; } const l = [{ id:'p'+Date.now(), badge:'SOLO HOY', title: s.promoT, detail: s.promoD || 'Hoy', venue: (myVenueName || 'Tu negocio'), on:true }].concat(s.offers); this.setState({ offers: l, promoT:'', promoD:'' }, () => this.persist()); this.toast('Promo publicada en "Último minuto"'); },
       fxNombre: fx.nombre, fxDesc: fx.desc, fxFecha: fx.fecha, fxHora: fx.hora, fxLugar: fx.lugar, fxPrecio: fx.precio, fxCap: fx.cap,
       fxCat: fx.cat, fxZona: fx.zona, setFxWeb: setFx('web'), setFxOh0: setFx('oh0'), setFxOh1: setFx('oh1'), fxWeb: fx.web, fxOh0: fx.oh0, fxOh1: fx.oh1,
       setFxCat: setFx('cat'), setFxNombre: setFx('nombre'), setFxDesc: setFx('desc'), setFxFecha: setFx('fecha'), setFxHora: setFx('hora'), setFxLugar: setFx('lugar'), setFxZona: setFx('zona'), setFxPrecio: setFx('precio'), setFxCap: setFx('cap'),
