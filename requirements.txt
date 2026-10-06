@@ -1,1 +1,0 @@
-# Sobres CDMX no usa librerías externas: todo es biblioteca estándar de Python.

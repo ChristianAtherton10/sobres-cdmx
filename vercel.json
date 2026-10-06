@@ -1,20 +1,56 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "functions": {
     "api/*.py": {
       "includeFiles": "lib/**"
     }
   },
   "headers": [
-    { "source": "/data/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] },
-    { "source": "/_ds/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] },
-    { "source": "/(support|image-slot).js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] },
-    { "source": "/",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-    { "source": "/index.html",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/_ds/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/(support|image-slot).js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
   ]
 }

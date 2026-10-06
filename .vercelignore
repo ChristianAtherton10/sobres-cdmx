@@ -6,3 +6,5 @@ render.yaml
 state.json
 state.json.tmp
 .claude/
+.env*.local
+.vercel
