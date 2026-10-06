@@ -44,6 +44,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Cargar el catálogo real (define window.SOBRES_LUGARES)
   const datos = fs.readFileSync(path.join(ROOT, 'data', 'lugares.js'), 'utf8');
   new Function('window', datos)(win);
+  // Capa de auditoría (define window.SOBRES_AUDITORIA)
+  const aud = fs.readFileSync(path.join(ROOT, 'data', 'auditoria.js'), 'utf8');
+  new Function('window', aud)(win);
 
   const Component = new Function(...Object.keys(sandbox),
     m[1] + '\n;return Component;')(...Object.values(sandbox));
@@ -61,6 +64,10 @@ function makeApp(stateOverrides = {}, opts = {}) {
       av: o.tier === 'A' ? 'Alta demanda · reserva directa' : 'Verificar disponibilidad', ext:true };
   });
   app.ZGEO = {}; (D.zones || []).forEach(z => { app.ZGEO[z[0]] = [z[2], z[3]]; });
+
+  // Misma aplicación de la auditoría que hace componentDidMount en el navegador.
+  app.EXT = app.aplicarAuditoria(app.EXT);
+  app.V = app.aplicarAuditoria(app.V);
 
   Object.assign(app.state, stateOverrides);
   app._store = store;

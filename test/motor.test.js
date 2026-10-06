@@ -45,6 +45,11 @@ test('el historial se mantiene entre Rehacer, Sorpréndeme y "dame algo diferent
 
 // Enumera, con reglas propias (no las del motor), todas las combinaciones de dos
 // paradas válidas: zona + horario + presupuesto + un tipo de parada distinto.
+// Enumerador INDEPENDIENTE del motor: recorre el catálogo entero por fuerza
+// bruta aplicando sólo las restricciones DECLARADAS (zona, poder hacer la
+// actividad a esa hora, compatibilidad de vibra, consumo + propina dentro del
+// tope, tramo alcanzable y no repetir función). No usa la selección del motor,
+// así que sirve para medir si el motor deja combinaciones válidas sin mostrar.
 function combinacionesValidas(app) {
   const r = app.state.results;
   const max = app.budgetMax();
@@ -53,16 +58,27 @@ function combinacionesValidas(app) {
   const step = (rng[1] - rng[0]) / n;
   const t0 = rng[0], t1 = rng[0] + step;
   const excl = app.exclSet();
-  const pool = app.cat().filter(v => !excl.has(v.id) && app.budgetOk(v) && app.timingOk(v) && r.zones.includes(v.z));
-  const grupoDe = v => Object.keys(app.G).find(g => app.G[g].includes(v.cat));
-  const gs0 = app.SEGG[app.segFor(t0)] || ['comida'];
-  const gs1 = app.SEGG[app.segFor(t1)] || ['comida'];
-  const A = pool.filter(v => { const g = grupoDe(v); return g && gs0.includes(g) && app.atHour(v, t0); });
-  const B = pool.filter(v => { const g = grupoDe(v); return g && gs1.includes(g) && app.atHour(v, t1); });
+  const VM = app.vibeModel();
+  const pool = app.cat().filter(v => !excl.has(v.id) && app.budgetOk(v) && app.timingOk(v)
+    && r.zones.includes(v.z) && app.vibeAdmite(v, VM) && !v.cursoCerrado);
+  // Actividades posibles en cada momento, según la tabla declarada.
+  const actsEn = (v, t) => app.actsUtiles(v, VM)
+    .filter(k => (app.SEGACT[app.segFor(t)] || []).indexOf(k) >= 0);
+  const A = pool.filter(v => actsEn(v, t0).length && app.atHour(v, t0));
+  const B = pool.filter(v => actsEn(v, t1).length && app.atHour(v, t1));
   const out = new Set();
   A.forEach(a => B.forEach(b => {
-    if (a.id === b.id || grupoDe(a) === grupoDe(b)) return;
-    if (a.pp + b.pp > max) return;
+    if (a.id === b.id) return;
+    // ¿Existe algún par de actividades con función distinta?
+    const fa = actsEn(a, t0).map(k => app.funcionAct(k, t0));
+    const fb = actsEn(b, t1).map(k => app.funcionAct(k, t1));
+    if (!fa.some(x => fb.some(y => x !== y))) return;
+    if (!app.cabeEnTope([a, b], max).ok) return;
+    const km = app.legKm(a, b);
+    if (km != null) {
+      const min = app.minutosTramo(km);
+      if (min != null && app.duracionAct(a) * 60 + min > (t1 - t0) * 60 + 21) return;
+    }
     out.add([a.id, b.id].sort().join('|'));
   }));
   return out;
@@ -408,10 +424,50 @@ test('sin ubicación válida no se calcula ruta', () => {
   assert(app.minutosTramo(app.legKm(ex, real)) === null, 'calculó tiempo sin ubicación');
 });
 
-test('un lugar gratis sigue diciendo Gratis, no "por confirmar"', () => {
+test('el precio se muestra con su procedencia, no como cifra firme', () => {
   const app = makeApp(BASE, { dseed: 5 });
-  assert(app.precioTxt({ pp: 0 }) === 'Gratis');
-  assert(app.precioTxt({ pp: 450 }) === '~$450 pp');
+  // Verificado contra taquilla: se afirma.
+  assert(app.precioTxt({ pp: 0, pEstado: 'verificado', pMin: 0, pMax: 0 }) === 'Entrada libre (verificado)',
+    app.precioTxt({ pp: 0, pEstado: 'verificado', pMin: 0, pMax: 0 }));
+  assert(/verificado/.test(app.precioTxt({ pp: 160, pEstado: 'verificado', pMin: 60, pMax: 320 })));
+  // Valor por defecto de la categoría: se marca como estimado.
+  assert(app.precioTxt({ pp: 0, pEstado: 'inferido' }) === 'Entrada libre (estimado)');
+  assert(app.precioTxt({ pp: 450, pEstado: 'inferido' }) === '~$450 pp (estimado)');
+  // Sin evidencia: nunca "Gratis".
+  const t = app.precioTxt({ pp: 0, ppUnknown: true, pFalta: 'cover' });
+  assert(t === 'Precio por confirmar', t);
+  assert(!/gratis/i.test(t), 'un precio desconocido no puede decir Gratis');
+});
+
+test('los precios auditados sustituyen al valor por defecto de la categoría', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const byId = id => app.cat().find(v => v.id === id);
+  const frida = byId('cdmx-0200');
+  assert(frida.pp === 160 && frida.ppAnterior === 85, 'Frida Kahlo: ' + frida.pp + ' (antes ' + frida.ppAnterior + ')');
+  assert(frida.pEstado === 'verificado' && frida.pFuente && frida.pUrl, 'falta fuente verificable');
+  const antro = byId('cdmx-0161');
+  assert(antro.pp === 105 && antro.pEstado === 'verificado', 'Antropología: ' + antro.pp);
+  const sou = byId('cdmx-0151');
+  assert(sou.pp === 0 && sou.pEstado === 'verificado', 'Soumaya es gratis y el defecto le cobraba $85');
+  // El caso que reportó el usuario.
+  const ultra = byId('cdmx-2135');
+  assert(ultra.pp === 1000 && ultra.pMax === 1500 && ultra.ppAnterior === 550, 'Ultramarinos: ' + ultra.pp);
+  assert(ultra.addr.indexOf('Mérida') >= 0, 'la dirección también estaba mal: ' + ultra.addr);
+  assert(ultra.oh[1] === 20, 'el horario también estaba mal: cierra a las ' + ultra.oh[1]);
+  // Six Flags estaba por DEBAJO del mínimo real.
+  const sf = byId('cdmx-2091');
+  assert(sf.pp >= 1100 && sf.ppAnterior === 900, 'Six Flags: ' + sf.pp);
+});
+
+test('un precio estimado no se presenta como total seguro', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const inf = app.cat().filter(v => v.pEstado === 'inferido' && !v.ppUnknown).slice(0, 2);
+  const c = app.costoPlan(inf);
+  assert(!c.seguro, 'un total apoyado en valores por defecto no puede declararse seguro');
+  assert(c.estimados.some(x => /estimad/.test(x)), 'debe decir que hay precios estimados: ' + c.estimados);
+  const ver = [app.cat().find(v => v.id === 'cdmx-0151')];
+  const c2 = app.costoPlan(ver);
+  assert(c2.inferidos.length === 0, 'el verificado no cuenta como estimado');
 });
 
 test('no quedan duplicados del mismo lugar en el catálogo', () => {
@@ -870,6 +926,330 @@ test('todas las combinaciones producen un plan válido (o lo explican)', () => {
     });
   }))));
   assert(problemas.length === 0, n + ' combinaciones, ' + problemas.length + ' problemas: ' + problemas.slice(0, 5).join(' | '));
+});
+
+
+
+// ───────── 10 · Vibras: la actividad, no la etiqueta ─────────
+// Estas pruebas NO usan las reglas del motor para juzgarlo: afirman sobre la
+// CATEGORÍA del lugar y sobre el catálogo auditado, por fuera de vibeModel().
+section('10 · Vibras: afinidad real con la actividad');
+
+const CATS_COPAS = ['Bar','Bar de autor','Speakeasy','Mezcalería','Rooftop','Antro','Salón de baile','Cantina'];
+
+test('chill + cultural no mete bares ni antros como relleno', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'all', zonesSel:[], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['chill','cultural'], planFrom:17, planTo:26 }, { dseed: 31 });
+  app.runSearch();
+  let revisados = 0;
+  for (let i = 0; i <= 10; i++) {
+    (app.state.results.plans || []).forEach(p => {
+      p.stops.forEach(v => {
+        revisados++;
+        assert(CATS_COPAS.indexOf(v.cat) < 0, 'parada de copas con chill+cultural: ' + v.n + ' [' + v.cat + ']');
+      });
+    });
+    if (i < 10) app.regenerate();
+  }
+  assert(revisados > 20, 'la prueba necesita revisar paradas de verdad, revisó ' + revisados);
+});
+
+test('una petición explícita de copas sí actualiza el contexto', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['chill','cultural'], planFrom:19, planTo:26 }, { dseed: 32 });
+  app.setState({ aiPide: ['copas'] });
+  app.runSearch();
+  const hay = (app.state.results.plans || []).some(p => p.stops.some(v => app.actsDe(v).indexOf('copas') >= 0));
+  assert(hay, 'si el usuario pide copas explícitamente, deben poder entrar');
+});
+
+test('aventurero entrega una actividad protagonista de aventura, o dice que falta', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'all', zonesSel:[], when:'manana',
+    budget:'b1k', budgetCustom:null, vibes:['aventurero'], planFrom:11, planTo:23 }, { dseed: 33 });
+  app.runSearch();
+  const plans = app.state.results.plans || [];
+  assert(plans.length >= 3, 'deben salir tres planes, salieron ' + plans.length);
+  // Aventura de verdad = reto, recorrido activo o parque de atracciones, con datos
+  // propios. Un parque, una plaza o un cine NO cuentan.
+  const AVENTURA = ['Escape room','Parque de diversiones','Tour'];
+  plans.forEach(p => {
+    const prot = p.stops.filter(v => AVENTURA.indexOf(v.cat) >= 0);
+    assert(prot.length >= 1, 'plan sin actividad de aventura: ' + p.stops.map(v => v.n + ' [' + v.cat + ']'));
+    const generico = p.stops.every(v => ['Parque','Atracción','Cine','Centro comercial','Museo'].indexOf(v.cat) >= 0);
+    assert(!generico, 'parque + plaza + cine no es un plan aventurero: ' + p.stops.map(v => v.n));
+  });
+});
+
+test('aventurero en una zona sin oferta lo dice en vez de disfrazarlo', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'polanco', zonesSel:['polanco'], when:'manana',
+    budget:'b1k', budgetCustom:null, vibes:['aventurero'], planFrom:11, planTo:23 }, { dseed: 34 });
+  app.runSearch();
+  const r = app.state.results;
+  assert(r.protHay === 0, 'la prueba asume que Polanco no tiene aventura auditada, tiene ' + r.protHay);
+  assert(r.avisoProt && /no tiene ninguna actividad/.test(r.avisoProt), 'falta el aviso: ' + r.avisoProt);
+  assert(/Enigma|Six Flags/.test(r.avisoProt), 'el aviso debe decir dónde sí la hay');
+  (r.plans || []).forEach(p => assert(p.protagonista === false, 'no puede marcarse como plan de aventura'));
+});
+
+test('creativo entrega un taller donde se hace algo, no una galería', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'all', zonesSel:[], when:'manana',
+    budget:'b1k', budgetCustom:null, vibes:['creativo'], planFrom:11, planTo:23 }, { dseed: 35 });
+  app.runSearch();
+  const plans = app.state.results.plans || [];
+  assert(plans.length >= 3, 'deben salir tres planes, salieron ' + plans.length);
+  plans.forEach(p => {
+    const talleres = p.stops.filter(v => v.cat === 'Taller');
+    assert(talleres.length >= 1, 'plan creativo sin taller: ' + p.stops.map(v => v.n + ' [' + v.cat + ']'));
+    talleres.forEach(v => assert(v.sesion, v.n + ' debería necesitar reserva de sesión'));
+  });
+});
+
+test('un curso de varias semanas no entra como plan de una tarde', () => {
+  const app = makeApp({ who:'solo', groupSize:1, zone:'all', zonesSel:[], when:'manana',
+    budget:'b1k', budgetCustom:null, vibes:['creativo'], planFrom:11, planTo:23 }, { dseed: 36 });
+  app.runSearch();
+  for (let i = 0; i <= 6; i++) {
+    (app.state.results.plans || []).forEach(p => p.stops.forEach(v =>
+      assert(!v.cursoCerrado, 'metió un curso completo como parada: ' + v.n)));
+    if (i < 6) app.regenerate();
+  }
+  // Pero sigue existiendo en el catálogo, con su unidad bien puesta.
+  const curso = app.cat().find(v => v.id === 'cdmx-3031');
+  assert(!curso || curso.pUnidad === 'curso', 'el curso debe guardarse con unidad propia');
+});
+
+// ───────── 11 · Identidad de negocios homónimos ─────────
+section('11 · Identidad: Panem antro vs Panem Bakery & Bistro');
+
+test('la identidad fabricada de Panem salió del catálogo', () => {
+  const app = makeApp({}, { dseed: 41 });
+  const cat = app.cat();
+  ['cdmx-2005','cdmx-2006','cdmx-2088'].forEach(id =>
+    assert(!cat.some(v => v.id === id), 'sigue el registro fabricado ' + id));
+  assert(!cat.some(v => /panem bakery|panem roma|panem del valle/i.test(v.n)),
+    'sigue habiendo una panadería Panem en CDMX que no existe');
+});
+
+test('el Panem real de Campos Elíseos es un antro, con su horario', () => {
+  const app = makeApp({}, { dseed: 41 });
+  const v = app.cat().find(x => x.id === 'cdmx-3001');
+  assert(v, 'falta el registro del negocio que sí ocupa esa dirección');
+  assert(v.cat === 'Antro', 'debe ser antro, es ' + v.cat);
+  assert(v.oh[0] === 23, 'abre a las 23:00, no antes: ' + v.oh);
+  assert(v.ppUnknown, 'no publica cover: el precio debe quedar por confirmar');
+  // Lo que reportó el usuario: NO puede ser una pausa de café de las 5:30 pm.
+  assert(!app.atHour(v, 17.5), 'un antro cerrado no puede entrar a las 5:30 pm');
+  assert(app.actsDe(v).indexOf('cafe') < 0, 'un antro no ofrece café');
+});
+
+test('ningún plan pone a Panem como parada de café', () => {
+  const app = makeApp({ who:'date', groupSize:2, zone:'polanco', zonesSel:['polanco'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['chill'], planFrom:16, planTo:21 }, { dseed: 42 });
+  app.runSearch();
+  for (let i = 0; i <= 6; i++) {
+    (app.state.results.plans || []).forEach(p => p.stops.forEach((v, j) => {
+      if (!/panem/i.test(v.n)) return;
+      const a = (p.acts || [])[j];
+      assert(a !== 'cafe' && a !== 'desayuno', 'Panem como café: ' + v.n + ' a las ' + app.time12(p.times[j]));
+    }));
+    if (i < 6) app.regenerate();
+  }
+});
+
+// ───────── 12 · Cobertura y descubrimiento de LUGARES ─────────
+section('12 · Descubrimiento de lugares, no sólo de combinaciones');
+
+test('once tandas en Santa Fe descubren muchos más destinos que antes', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'santafe', zonesSel:['santafe'], when:'noche',
+    budget:'b1000', budgetCustom:null, vibes:['foodie','nightlife'], planFrom:19, planTo:26 }, { dseed: 51 });
+  app.runSearch();
+  const lugares = new Set(), finales = new Set(), combos = new Set();
+  for (let i = 0; i <= 10; i++) {
+    (app.state.results.plans || []).forEach(p => {
+      combos.add(app.comboSig(p.stops));
+      if (p.stops.length) finales.add(p.stops[p.stops.length - 1].id);
+      p.stops.forEach(v => lugares.add(v.id));
+    });
+    if (i < 10) app.regenerate();
+  }
+  // Antes: 32 combinaciones pero sólo 3 destinos finales distintos.
+  assert(finales.size >= 8, 'sólo ' + finales.size + ' destinos finales distintos');
+  assert(lugares.size >= 15, 'sólo ' + lugares.size + ' lugares distintos en 11 tandas');
+  assert(combos.size >= 25, 'sólo ' + combos.size + ' combinaciones distintas');
+});
+
+test('cada tanda trae lugares nuevos mientras queden elegibles sin mostrar', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'manana',
+    budget:'b1k', budgetCustom:null, vibes:[], planFrom:11, planTo:23 }, { dseed: 52 });
+  app.runSearch();
+  let tandasSinNuevo = 0;
+  for (let i = 0; i < 8; i++) {
+    app.regenerate();
+    const r = app.state.results;
+    if (r.plans && r.plans.length && r.lugaresNuevos === 0) {
+      tandasSinNuevo++;
+      // Si no hay lugares nuevos, la app TIENE que decirlo.
+      assert(r.soloRecombina, 'recombinó sin avisarlo en la tanda ' + i);
+      assert(/no lugares nuevos/.test(r.expandNote || ''), 'falta el aviso: ' + r.expandNote);
+    }
+  }
+  assert(tandasSinNuevo <= 2, 'demasiadas tandas sin ningún lugar nuevo: ' + tandasSinNuevo);
+});
+
+test('los tres planes de una tanda no comparten todas las paradas', () => {
+  [['roma', 11, 23], ['polanco', 11, 23], ['coyoacan', 11, 23]].forEach(([z, a, b]) => {
+    const app = makeApp({ who:'amigos', groupSize:4, zone:z, zonesSel:[z], when:'manana',
+      budget:'b1k', budgetCustom:null, vibes:[], planFrom:a, planTo:b }, { dseed: 53 });
+    app.runSearch();
+    const plans = app.state.results.plans || [];
+    if (plans.length < 2) return;
+    const firmas = new Set(plans.map(p => app.comboSig(p.stops)));
+    assert(firmas.size === plans.length, z + ': dos planes de la misma tanda son iguales');
+    // Al menos una parada protagonista distinta entre el primero y el segundo.
+    const a0 = new Set(plans[0].stops.map(v => v.id));
+    const distintos = plans[1].stops.filter(v => !a0.has(v.id)).length;
+    assert(distintos >= 1, z + ': el segundo plan es el primero reordenado');
+  });
+});
+
+// ───────── 13 · Viabilidad: no se genera lo imposible ─────────
+section('13 · Viabilidad antes de ofrecer, no como aviso al pie');
+
+test('ningún tramo exige más tiempo del que hay entre dos paradas', () => {
+  [['caminando','coyoacan'], ['caminando','roma'], ['metro','all'], ['uber','polanco']].forEach(([tr, z]) => {
+    const app = makeApp({ who:'solo', groupSize:1, zone:z, zonesSel:z === 'all' ? [] : [z], when:'ahora',
+      budget:'b1k', budgetCustom:null, vibes:[], transporte:tr, planFrom:11, planTo:19 }, { dseed: 61 });
+    app.runSearch();
+    for (let i = 0; i <= 5; i++) {
+      (app.state.results.plans || []).forEach(p => p.stops.forEach((v, j) => {
+        if (j === 0) return;
+        const km = app.legKm(p.stops[j - 1], v); if (km == null) return;
+        const min = app.minutosTramo(km); if (min == null) return;
+        const hueco = (p.times[j] - p.times[j - 1]) * 60;
+        const necesita = app.duracionAct(p.stops[j - 1]) * 60 + min;
+        assert(necesita <= hueco + 21, tr + '/' + z + ': ' + p.stops[j - 1].n + ' → ' + v.n
+          + ' necesita ' + Math.round(necesita) + ' min y el hueco es ' + Math.round(hueco));
+      }));
+      if (i < 5) app.regenerate();
+    }
+  });
+});
+
+test('llegar a la hora de cierre no cuenta como abierto', () => {
+  const app = makeApp({}, { dseed: 62 });
+  const v = { oh: [10, 18], act: ['visita'] };
+  assert(app.atHour(v, 16), 'a las 4 pm sí cabe una visita');
+  assert(!app.atHour(v, 18), 'llegar a las 6 pm cuando cierra a las 6 pm no es válido');
+  assert(!app.atHour(v, 17.5), 'media hora antes del cierre no alcanza para una visita');
+  assert(!app.atHour(v, 9), 'antes de abrir tampoco');
+  // Una experiencia con salida fija sólo existe a su hora.
+  const tour = app.cat().find(x => x.id === 'cdmx-3020');
+  assert(tour && tour.sesiones, 'el tour debe tener salida fija');
+  assert(app.atHour(tour, 9.5), 'a su hora de salida sí');
+  assert(!app.atHour(tour, 13), 'a media tarde no hay salida');
+});
+
+test('ningún plan propone un lugar cerrado a su hora', () => {
+  const combos = [['roma','noche'], ['santafe','ahora'], ['coyoacan','manana'], ['polanco','noche']];
+  combos.forEach(([z, w]) => {
+    const app = makeApp({ who:'amigos', groupSize:4, zone:z, zonesSel:[z], when:w,
+      budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 63 });
+    app.runSearch();
+    for (let i = 0; i <= 5; i++) {
+      (app.state.results.plans || []).forEach(p => p.stops.forEach((v, j) =>
+        assert(app.atHour(v, p.times[j]), z + '/' + w + ': ' + v.n + ' cerrado a las ' + app.time12(p.times[j]))));
+      if (i < 5) app.regenerate();
+    }
+  });
+});
+
+// ───────── 14 · Presupuesto: una sola validación ─────────
+section('14 · Validación única de presupuesto en todos los caminos');
+
+test('ninguna propuesta se presenta por encima del tope', () => {
+  [300, 600, 1000].forEach(tope => {
+    const app = makeApp({ who:'amigos', groupSize:7, zone:'santafe', zonesSel:['santafe'], when:'manana',
+      budget:'b1k', budgetCustom:tope, vibes:[], transporte:'didi', planFrom:13, planTo:17 }, { dseed: 71 });
+    app.runSearch();
+    for (let i = 0; i <= 10; i++) {
+      (app.state.results.plans || []).forEach(p => {
+        const v = app.cabeEnTope(p.stops, tope);
+        assert(v.ok, 'tope $' + tope + ' y el plan va en $' + v.total + ': ' + p.stops.map(x => x.n));
+      });
+      if (i < 10) app.regenerate();
+    }
+  });
+});
+
+test('cambiar el número de paradas no rompe el tope', () => {
+  const app = makeApp({ who:'amigos', groupSize:7, zone:'santafe', zonesSel:['santafe'], when:'manana',
+    budget:'b1k', budgetCustom:300, vibes:[], transporte:'didi', planFrom:13, planTo:17 }, { dseed: 72 });
+  app.runSearch();
+  [2, 3, 4, 5].forEach(n => {
+    app.setState({ planStops: n });
+    const p = app.getPlan();
+    if (!p || !p.stops.length) return;
+    const v = app.cabeEnTope(p.stops, 300);
+    assert(v.ok, n + ' paradas se van a $' + v.total + ' con tope $300: ' + p.stops.map(x => x.n));
+  });
+});
+
+test('gratis es cero, y un precio desconocido no es gratis', () => {
+  const app = makeApp({ who:'familia', groupSize:4, zone:'coyoacan', zonesSel:['coyoacan'], when:'manana',
+    budget:'b1000', budgetCustom:null, vibes:['cultural','familiar'], planFrom:10, planTo:14 }, { dseed: 73 });
+  // Por lenguaje natural.
+  const p = app.aiParse('Somos una familia de 4, dos adultos y dos ninos. Queremos un plan gratis en Coyoacan manana de 10 am a 2 pm, cultural y familiar, sin alcohol.');
+  assert(p.budget === 0, '"gratis" debe ser tope 0, fue ' + p.budget);
+  assert(p.sinAlcohol, 'debe entender "sin alcohol"');
+  app.aiBuild('Somos una familia de 4, dos adultos y dos ninos. Queremos un plan gratis en Coyoacan manana de 10 am a 2 pm, cultural y familiar, sin alcohol.');
+  assert(app.state.budgetCustom === 0 && app.state.budget === 'free', 'el tope del estado debe quedar en 0');
+  const stops = (app.state.planCustom || { stops: [] }).stops;
+  stops.forEach(v => {
+    assert(!v.ppUnknown, 'un precio desconocido no puede entrar en un plan gratis: ' + v.n);
+    assert((v.pp || 0) === 0, v.n + ' cuesta $' + v.pp + ' en un plan gratis');
+  });
+  // Y el tope sobrevive al Rehacer.
+  app.regenerate();
+  ((app.state.planCustom || { stops: [] }).stops).forEach(v =>
+    assert((v.pp || 0) === 0 && !v.ppUnknown, 'tras Rehacer se perdió el tope 0: ' + v.n));
+});
+
+test('la intención sobrevive al Rehacer y el resumen sale del plan vigente', () => {
+  const app = makeApp({ who:'date', groupSize:2, zone:'polanco', zonesSel:['polanco'], when:'noche',
+    budget:'b600', budgetCustom:null, vibes:[] }, { dseed: 74 });
+  app.aiBuild('Somos una pareja de 2 personas. Queremos cenar y despues tomar un cafe en Polanco hoy de 8 pm a medianoche. Maximo 600 por persona. Vamos en transporte publico.');
+  const resumenes = []; const primeras = [];
+  for (let i = 0; i < 4; i++) {
+    const st = (app.state.planCustom || { stops: [] }).stops;
+    assert(st.length >= 1, 'no armó nada en la vuelta ' + i);
+    // La cena pedida tiene que seguir siendo una cena.
+    assert(app.FOOD.indexOf(st[0].cat) >= 0, 'la cena se convirtió en ' + st[0].cat + ' (' + st[0].n + ')');
+    primeras.push(st[0].id);
+    const esperado = app.costoPlan(st);
+    const m = (app.state.aiSummary || '').match(/Desde \$(\d+)/);
+    assert(m, 'el resumen debe decir el costo del plan vigente: ' + app.state.aiSummary);
+    assert(+m[1] === esperado.consumo + esperado.propina,
+      'el resumen dice $' + m[1] + ' y el plan vigente cuesta $' + (esperado.consumo + esperado.propina));
+    resumenes.push(m[1]);
+    app.regenerate();
+  }
+  assert(new Set(primeras).size >= 3, 'Rehacer repite la misma cena: ' + primeras);
+});
+
+test('el contexto acumula exclusiones sin borrar la intención anterior', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'santafe', zonesSel:['santafe'], when:'noche',
+    budget:'b1000', budgetCustom:null, vibes:[] }, { dseed: 75 });
+  app.aiBuild('Somos 4 amigos en Santa Fe. Queremos cenar y tomar algo hoy de 8 pm a medianoche con maximo 1000 por persona. No quiero Puerto Madero.');
+  const n1 = (app.state.aiExcluded || []).length;
+  assert(n1 >= 1, 'no entendió la primera exclusión');
+  app.aiBuild('tampoco quiero Sonora Grill');
+  const ex = app.state.aiExcluded || [];
+  assert(ex.length > n1, 'la segunda exclusión borró la primera: ' + ex.length + ' vs ' + n1);
+  // Y la intención (cenar + tomar algo) sigue viva.
+  const cats = (app.state.aiCtx.cats || []).map(c => c.g);
+  assert(cats.length >= 1, 'se perdieron las actividades pedidas');
+  assert(app.state.groupSize === 4 && app.state.zone === 'santafe' && app.state.budgetCustom === 1000,
+    'se perdió el contexto: ' + app.state.groupSize + '/' + app.state.zone + '/' + app.state.budgetCustom);
 });
 
 report();
