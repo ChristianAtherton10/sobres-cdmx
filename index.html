@@ -2280,7 +2280,7 @@ class Component extends DCLogic {
   }
 
   summary() { const s = this.state; const r = this.range(); return `${this.whoLabel()} · ${this.zonesLabel()} · ${this.whenLabel()} ${this.time12(r[0])}–${this.time12(r[1])} · ${this.budLabel()}${s.vibes.length ? ' · ' + s.vibes.join(' + ') : ''}`; }
-  why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : this.zoneList().includes(v.z) ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.pp === 0) parts.push('entrada libre'); else parts.push(`~$${v.pp} pp dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
+  why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : this.zoneList().includes(v.z) ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.ppUnknown) parts.push('falta confirmar el precio'); else if (v.pp === 0) parts.push(v.pEstado === 'verificado' ? 'entrada libre' : 'entrada libre según su categoría, sin confirmar'); else parts.push(`${this.precioTxt(v)}, dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
   // Identidad de la búsqueda actual. Si cambia, el historial se reinicia para no
   // encerrar al usuario en resultados viejos de otros filtros.
   searchCtx() { const s = this.state; return [s.who, s.groupSize, s.zone, (s.zonesSel || []).join(','), s.when, s.customDate, s.budget, s.budgetCustom, (s.vibes || []).join(','), (s.aiExcluded || []).join(',')].join('~'); }
@@ -3114,8 +3114,8 @@ class Component extends DCLogic {
     const zoneLabels = this.ZONES.map(z => ({ x: String(z[2] - 5), y: String(z[3] - (zoomed ? 8 : 3.2)), label: z[1].toUpperCase(), style: `font:700 ${zoomed ? '1.1' : '2.3'}px var(--font-body);letter-spacing:.3px;fill:#9d9995` })).filter(z => !zoomed || z.label === Zsel[1].toUpperCase());
     const mapStroke = zoomed ? '0.5' : '1.4';
     const pv = s.pinId ? C.find(x => x.id === s.pinId) : null;
-    const pinSel = pv ? Object.assign({ letter: pv.n[0], name: pv.n, meta: `${pv.cat} · ${pv.col} · ${pv.addr ? pv.addr + ' · ' : ''}${this.dist(pv)} min · ${pv.pp===0?'Gratis':'~$'+pv.pp+' pp'}`, av: pv.av }, this.cardActions(pv)) : { letter:'', name:'', meta:'', av:'', open:()=>{}, save:()=>{}, saveLabel:'' };
-    const savedVenues = s.saved.map(id => C.find(v => v.id === id)).filter(Boolean).map(v => { const a = this.cardActions(v); return { letter: v.n[0], name: v.n, meta: `${v.cat} · ${v.col} · ${v.pp===0?'Gratis':'~$'+v.pp+' pp'}`, open: a.open, del: () => { const sv = s.saved.filter(x => x !== v.id); this.setState({ saved: sv }, () => this.persist()); } }; });
+    const pinSel = pv ? Object.assign({ letter: pv.n[0], name: pv.n, meta: `${pv.cat} · ${pv.col} · ${pv.addr ? pv.addr + ' · ' : ''}${this.dist(pv)} min · ${this.precioTxt(pv)}`, av: pv.av }, this.cardActions(pv)) : { letter:'', name:'', meta:'', av:'', open:()=>{}, save:()=>{}, saveLabel:'' };
+    const savedVenues = s.saved.map(id => C.find(v => v.id === id)).filter(Boolean).map(v => { const a = this.cardActions(v); return { letter: v.n[0], name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, open: a.open, del: () => { const sv = s.saved.filter(x => x !== v.id); this.setState({ saved: sv }, () => this.persist()); } }; });
     const savedPlans = s.savedPlans.map((sp, i) => ({
       tag: 'PLAN GUARDADO' + (sp.date ? ' · ' + this.fmtDate(sp.date).toUpperCase() : ''),
       total: sp.total, route: sp.route,
@@ -3148,7 +3148,7 @@ class Component extends DCLogic {
     const rawPlans = sOn ? ((s.sync && s.sync.plans) || []) : s.gPlans;
     const visPlans = rawPlans.filter(p => !sOn || p.by === me || (p.sharedWith || []).includes(me) || followed.includes(p.id));
     const gQAll = this.searchIn(s.gQ, 5);
-    const gQResults = gQAll.map(v => ({ name: v.n, meta: `${v.cat} · ${v.col} · ${v.pp===0?'Gratis':'~$'+v.pp+' pp'}`, add: () => { this.setState({ gQ: '' }); this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }); } }));
+    const gQResults = gQAll.map(v => ({ name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, add: () => { this.setState({ gQ: '' }); this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }); } }));
     const gQAlready = false;
     const fpId = this._followParam || '';
     const focusId = s.focusPlanId || fpId;
@@ -3163,7 +3163,7 @@ class Component extends DCLogic {
       const stopRows = (p.stops || []).map(id => { const v = C.find(x => x.id === id); const d = sv[id] || {}; const upN = Object.values(d).filter(x => x === 'up').length, dnN = Object.values(d).filter(x => x === 'down').length; const myS = d[me];
         const sb = on => `padding:6px 11px;border:1.5px solid ${on ? 'var(--color-text)' : 'var(--color-neutral-300)'};background:${on ? 'var(--color-text)' : '#fff'};color:${on ? '#fff' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:pointer;white-space:nowrap`;
         const voteS = kind => () => { const k2 = myS === kind ? null : kind; if (sOn) { this.mutate('voteStop', { user: me, planId: p.id, venueId: id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const sv2 = JSON.parse(JSON.stringify(x.stopVotes || {})); const dd = sv2[id] = sv2[id] || {}; if (k2) dd[me] = k2; else delete dd[me]; return Object.assign({}, x, { stopVotes: sv2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
-        return { name: v ? v.n : ((p.ext && p.ext[id]) || 'Opción externa'), meta: v ? `${v.cat} · ${v.col} · ${v.pp === 0 ? 'Gratis' : '~$' + v.pp + ' pp'}` : 'Agregado a mano · fuera del catálogo', up: String(upN), down: String(dnN), upStyle: sb(myS === 'up'), downStyle: sb(myS === 'down'), voteUp: voteS('up'), voteDown: voteS('down'), open: () => { if (v) openV(v.id); } }; });
+        return { name: v ? v.n : ((p.ext && p.ext[id]) || 'Opción externa'), meta: v ? `${v.cat} · ${v.col} · ${this.precioTxt(v)}` : 'Agregado a mano · fuera del catálogo', up: String(upN), down: String(dnN), upStyle: sb(myS === 'up'), downStyle: sb(myS === 'down'), voteUp: voteS('up'), voteDown: voteS('down'), open: () => { if (v) openV(v.id); } }; });
       const shareChips = myFr.map(f => { const sent = (p.sharedWith || []).includes(f); return { label: sent ? '✓ ' + f : '→ ' + f, style: `padding:6px 11px;border:1.5px solid ${sent ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sent ? 'var(--color-accent)' : '#fff'};color:${sent ? '#fff' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:${sent ? 'default' : 'pointer'}`, send: () => { if (sent) return; if (!sOn) { this.toast('El envío en vivo funciona con el link del salón'); return; } this.mutate('sharePlan', { user: me, planId: p.id, to: [f] }).then(() => this.toast(`Enviado a ${f} — le llega a su dispositivo`)); } }; });
       const voterNames = Object.keys(votes);
       return { letter: (p.name || 'P').replace('Plan: ', '')[0], name: p.name, byLine: `${p.date && !(p.meta || '').includes('·') ? this.fmtDate(p.date) + ' · ' : ''}${p.meta ? p.meta + ' · ' : ''}propone ${p.by}`, isConf: conf,
@@ -3255,7 +3255,7 @@ class Component extends DCLogic {
     const days = last7.map(x => ({ d: x.d, barStyle: `height:${Math.max(3, Math.round(x.n / dMax * 100))}%;background:${x.n === dMax && x.n > 0 ? 'var(--color-accent)' : 'var(--color-neutral-800,#3a3735)'};width:100%` }));
     const fx = s.fx;
     const setFx = k => e => this.setState({ fx: Object.assign({}, this.state.fx, { [k]: e.target.value }) });
-    const searchResults = this.searchIn(s.searchQ, 8).map(v => ({ letter: v.n[0], name: v.n, meta: `${v.cat} · ${v.col}${v.addr ? ' · ' + v.addr : ''} · ${v.pp === 0 ? 'Gratis' : '~$'+v.pp+' pp'} · ${v.hrs}`, open: () => { openV(v.id); } }));
+    const searchResults = this.searchIn(s.searchQ, 8).map(v => ({ letter: v.n[0], name: v.n, meta: `${v.cat} · ${v.col}${v.addr ? ' · ' + v.addr : ''} · ${this.precioTxt(v)} · ${v.hrs}`, open: () => { openV(v.id); } }));
     const pubList = ((s.sync && s.sync.venues) || []).slice().reverse().map(v => { const st = ((s.sync && s.sync.stats) || {})[v.id] || {};
       return { name: v.n, meta: `${v.cat} · ${this.zLabel(v.zone)}${v.date ? ' · ' + this.fmtDate(v.date) : ''} · ${st.v || 0} vistas · ${st.r || 0} clics a reservar`,
         del: () => this.mutate('delVenue', { venueId: v.id }).then(() => this.toast('Publicación eliminada')) }; });
@@ -3457,7 +3457,7 @@ class Component extends DCLogic {
       qrToggle: () => this.setState({ qrOpen: !s.qrOpen }), qrOpen: s.qrOpen, qrSrc: 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent((typeof location !== 'undefined' ? location.origin + location.pathname : '')),
       qrPlanGo: () => { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; } this.ensureProposed(p).then(id => this.setState({ qrPlanUrl: this.planLink(id) })); },
       qrPlanOn: !!s.qrPlanUrl, qrPlanSrc: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(s.qrPlanUrl || ''),
-      planQResults: (s.swapIdx != null && s.planQ.length < 2 ? this.swapSuggest(s.swapIdx) : this.searchIn(s.planQ, 6)).map(v => ({ name: v.n, meta: `${v.cat} · ${v.col} · ${v.pp === 0 ? 'Gratis' : '~$' + v.pp + ' pp'}`, add: () => { this.setState({ planQ: '' }); this.addStop(v); } })),
+      planQResults: (s.swapIdx != null && s.planQ.length < 2 ? this.swapSuggest(s.swapIdx) : this.searchIn(s.planQ, 6)).map(v => ({ name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, add: () => { this.setState({ planQ: '' }); this.addStop(v); } })),
       sentPlans: rawPlans.filter(p => p.by === me && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · ${Object.values(p.votes || {}).filter(x => x === 'sobres').length} sobres · enviado a ${(p.sharedWith || []).length ? (p.sharedWith || []).join(', ') : 'nadie aún'}`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }), del: () => { if (sOn) this.mutate('delPlan', { planId: p.id }); else this.setState({ gPlans: s.gPlans.filter(x => x.id !== p.id) }, () => this.persist()); this.toast('Plan borrado'); } })),
       recvPlans: rawPlans.filter(p => p.by !== me && (p.sharedWith || []).includes(me) && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · te lo envió ${p.by}`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
       confPlans: rawPlans.filter(p => (p.by === me || (p.sharedWith || []).includes(me)) && this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · ${[p.by].concat(p.sharedWith || []).filter((x, i, a) => a.indexOf(x) === i).join(', ')} dijeron que sí 🎉`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
@@ -3565,7 +3565,7 @@ class Component extends DCLogic {
       funnel, days
     };
   }
-  addGOpt(v) { const s = this.state; const opt = { id: v.id, name: v.n, meta: `${v.cat} · ${v.col} · ${v.pp===0?'Gratis':'~$'+v.pp+' pp'}`, vid: v.id };
+  addGOpt(v) { const s = this.state; const opt = { id: v.id, name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, vid: v.id };
     if (s.syncOn && s.userName) { const opts = (s.sync && s.sync.votesOpts) || []; if (opts.some(o => o.id === v.id)) { this.toast('Ya está en la votación'); return; } this.mutate('addOpt', { user: s.userName, opt }).then(() => this.toast(`${v.n} propuesto al grupo — lo ven todos`)); return; }
     if (s.gOpts.some(o => o.id === v.id)) { this.toast('Ya está en la votación'); return; } this.setState({ gOpts: s.gOpts.concat([opt]) }, () => this.persist()); this.toast(`${v.n} propuesto al grupo`); }
   planOptId(p) { return 'plan-' + (this.state.planDate || this.todayISO()) + '-' + p.stops.map(v => v.id).join('~').slice(0, 100); }
