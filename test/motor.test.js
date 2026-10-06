@@ -1402,4 +1402,75 @@ test('guardar un plan deja de llamarlo borrador', () => {
   assert(/PLAN GUARDADO/.test(app.renderVals().planEstado), 'al reguardar volvió a borrador');
 });
 
+
+// ───────── 16 · Cerrar el plan y abrirlo limpio ─────────
+section('16 · Concretar el plan (UX)');
+
+function planListo(dseed, who, size) {
+  const app = makeApp({ who: who || 'amigos', groupSize: size || 4, zone:'roma', zonesSel:['roma'],
+    when:'noche', budget:'b1k', budgetCustom:null, vibes:[], view:'plan', planView:'edit' }, { dseed: dseed });
+  app.runSearch();
+  const p = app.state.results.plans[0];
+  app.setState({ view:'plan', planView:'edit', planCustom: { stops: p.stops, times: p.times, spent: p.spent },
+    planStops: p.stops.length, planNone:false, planLocked:false });
+  return app;
+}
+
+test('un plan para una sola persona no ofrece enviarlo', () => {
+  const solo = planListo(95, 'solo', 1);
+  const v = solo.renderVals();
+  assert(v.puedeEnviar === false, 'un plan solo no se envía a nadie');
+  assert(/mi plan/i.test(v.cerrarLabel), 'el botón debe hablar de concretarlo: ' + v.cerrarLabel);
+  const grupo = planListo(95, 'amigos', 4);
+  assert(grupo.renderVals().puedeEnviar === true, 'con amigos sí se puede enviar');
+});
+
+test('cerrar el plan lo bloquea y ofrece apartar cada parada', () => {
+  const app = planListo(96, 'amigos', 4);
+  assert(app.renderVals().planCanEdit, 'antes de cerrarlo se puede editar');
+  app.renderVals().savePlan();
+  app.setState({ view:'plan', planView:'edit' });
+  const v = app.renderVals();
+  assert(v.planLocked, 'tras cerrarlo el plan queda bloqueado');
+  assert(!v.planCanEdit, 'y ya no muestra los controles de armado');
+  assert(!v.paradasOn, 'ni el selector de número de paradas');
+  assert(v.reservaItems.length === app.state.planCustom.stops.length, 'falta alguna parada por apartar');
+  v.reservaItems.forEach(r => assert(r.cta && r.hora && r.name, 'cada parada necesita hora, nombre y acción'));
+  assert(/Nada apartado/.test(v.reservaProgreso), 'arranca sin nada apartado: ' + v.reservaProgreso);
+  // Apartar una se nota en el progreso.
+  v.reservaItems[0].go();
+  // Apartar una parada que no se reserva abre su ficha; volvemos al plan.
+  app.setState({ view: 'plan', planView: 'edit' });
+  const v2 = app.renderVals();
+  assert(v2.reservaItems[0].hecho, 'la parada apartada debe quedar marcada');
+  assert(!/Nada apartado/.test(v2.reservaProgreso), 'el progreso debe moverse: ' + v2.reservaProgreso);
+});
+
+test('Editar vuelve a abrir los controles, y tocar el plan lo saca de guardado', () => {
+  const app = planListo(97, 'amigos', 4);
+  app.renderVals().savePlan();
+  app.setState({ view:'plan', planView:'edit' });
+  assert(app.renderVals().planLocked, 'quedó bloqueado');
+  app.renderVals().planDesbloquear();
+  app.setState({ view:'plan', planView:'edit' });
+  assert(app.renderVals().planCanEdit, 'Editar devuelve los controles');
+  // Cambiar una hora lo vuelve borrador.
+  app.setState({ planLocked: true });
+  app.setStopTime(0, 19);
+  assert(!app.state.planLocked, 'cambiar el plan lo regresa a borrador');
+});
+
+test('un plan guardado se abre limpio desde Mis planes', () => {
+  const app = planListo(98, 'amigos', 4);
+  app.renderVals().savePlan();
+  app.setState({ planLocked: false, planCustom: null, planCustomFrom: null, view: 'plan', planView: 'list' });
+  const guardado = app.renderVals().savedPlans[0];
+  assert(guardado, 'el guardado debe aparecer en Mis planes');
+  guardado.open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  const v = app.renderVals();
+  assert(v.planLocked, 'abrir un guardado NO debe soltar todos los controles de armado');
+  assert(!v.planCanEdit && !v.paradasOn, 'se abre limpio');
+});
+
 report();
