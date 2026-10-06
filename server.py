@@ -174,6 +174,7 @@ def apply_op(op, p):
             'spent': pl.get('spent') if isinstance(pl.get('spent'), (int, float)) else None,
             'date': str(pl.get('date') or '')[:10],
             'transport': str(pl.get('transport') or '')[:20],
+            'people': int(pl.get('people') or 0),
             'ext': {str(k)[:64]: str(v2)[:80] for k, v2 in list((pl.get('ext') or {}).items())[:8] if str(k).startswith('ext-')},
             'votes': {by: 'sobres'}, 'stopVotes': {}})
         STATE['plans'] = STATE['plans'][-80:]
