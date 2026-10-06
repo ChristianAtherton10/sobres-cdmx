@@ -183,6 +183,21 @@ def apply_op(op, p):
             'spent': pl.get('spent') if isinstance(pl.get('spent'), (int, float)) else None,
             'date': str(pl.get('date') or '')[:10],
             'transport': str(pl.get('transport') or '')[:20],
+            # Contexto del EMISOR. Sin esto el receptor rellenaba con sus propios
+            # valores por defecto: 5 personas llegaban como 4, un tope de $1,500
+            # se leía como ≤ $600 y UberXL se volvía UberX. El defecto no estaba
+            # en el frontend: el servidor nunca guardaba estos campos.
+            'people': int(pl['people']) if isinstance(pl.get('people'), (int, float)) else 0,
+            'who': str(pl.get('who') or '')[:16],
+            'zone': str(pl.get('zone') or '')[:24],
+            'zonesSel': [str(z)[:24] for z in (pl.get('zonesSel') or [])[:12]],
+            'vibes': [str(v3)[:20] for v3 in (pl.get('vibes') or [])[:3]],
+            'budget': str(pl.get('budget') or '')[:12],
+            'budgetCustom': int(pl['budgetCustom']) if isinstance(pl.get('budgetCustom'), (int, float)) else None,
+            # Componentes de costo tal como los calculó el emisor, etiquetados.
+            'costo': {k2: (v4 if isinstance(v4, (int, float, bool)) else [str(x)[:80] for x in v4][:6])
+                      for k2, v4 in list((pl.get('costo') or {}).items())[:8]
+                      if isinstance(v4, (int, float, bool, list))},
             'ext': {str(k)[:64]: str(v2)[:80] for k, v2 in list((pl.get('ext') or {}).items())[:8] if str(k).startswith('ext-')},
             'votes': {by: 'sobres'}, 'stopVotes': {}})
         STATE['plans'] = STATE['plans'][-80:]
