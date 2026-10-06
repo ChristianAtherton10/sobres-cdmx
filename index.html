@@ -3483,8 +3483,11 @@ class Component extends DCLogic {
         };
         const igual = s.savedPlans.find(x => (x.stopIds || []).join() === copia.stopIds.join()
           && (x.date || '') === copia.date);
-        if (igual) { this.toast('Ese plan ya estaba guardado'); return; }
-        this.setState({ savedPlans: s.savedPlans.concat([copia]) }, () => this.persist());
+        // El encabezado tiene que reflejar el estado real: al guardar deja de ser
+        // borrador. Antes savePlan no apuntaba a la copia guardada y la pantalla
+        // seguía diciendo "BORRADOR · SIN GUARDAR" con el plan ya guardado.
+        if (igual) { this.setState({ planCustomFrom: igual.id }); this.toast('Ese plan ya estaba guardado'); return; }
+        this.setState({ savedPlans: s.savedPlans.concat([copia]), planCustomFrom: copia.id }, () => this.persist());
         this.toast('Plan guardado — se queda tal cual, aunque rehagas el borrador');
       },
       votePlan: () => this.proposePlan(this.getPlan()),

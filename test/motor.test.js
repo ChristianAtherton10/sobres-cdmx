@@ -1382,4 +1382,24 @@ test('"$1,000+" ya no se presenta como un tope', () => {
   assert(/450/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
 });
 
+
+test('guardar un plan deja de llamarlo borrador', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:[], view:'plan', planView:'edit' }, { dseed: 91 });
+  app.runSearch();
+  const p = app.state.results.plans[0];
+  app.setState({ view:'plan', planView:'edit', planCustom: { stops: p.stops, times: p.times, spent: p.spent },
+    planStops: p.stops.length, planNone:false });
+  assert(/BORRADOR/.test(app.renderVals().planEstado), 'antes de guardar sí es borrador');
+  app.renderVals().savePlan();
+  app.setState({ view:'plan', planView:'edit' });
+  const est = app.renderVals().planEstado;
+  assert(/PLAN GUARDADO/.test(est), 'tras guardar el encabezado dice: ' + est);
+  assert((app.state.savedPlans || []).length === 1, 'debe quedar exactamente un guardado');
+  // Guardar dos veces no duplica ni vuelve a llamarlo borrador.
+  app.renderVals().savePlan();
+  assert((app.state.savedPlans || []).length === 1, 'se duplicó el guardado');
+  assert(/PLAN GUARDADO/.test(app.renderVals().planEstado), 'al reguardar volvió a borrador');
+});
+
 report();
