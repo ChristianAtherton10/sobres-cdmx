@@ -1210,8 +1210,10 @@ class Component extends DCLogic {
     upd(); window.addEventListener('resize', upd);
     { let ft = 0; const loadFotos = () => { if (window.SOBRES_FOTOS) { this.setState(st => ({ photos: Object.assign({}, window.SOBRES_FOTOS, st.photos) })); return; } if (ft++ < 40) setTimeout(loadFotos, 250); }; loadFotos(); }
 
-    this._poll = () => { fetch('/api/state' + (this.state.userName ? '?u=' + encodeURIComponent(this.state.userName) : ''), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => { if (st && st.rev !== undefined) { if (this.checkEpoch(st)) return; const first = !this.state.syncOn; this.setState({ sync: st, syncOn: true }); if (first && this.state.userName) this.mutate('join', { name: this.state.userName }, true); this.checkInbox(st); } }).catch(() => {}); };
-    this._poll(); this._pollI = setInterval(this._poll, 4000);
+    this._poll = () => { if (document.hidden) return; fetch('/api/state' + (this.state.userName ? '?u=' + encodeURIComponent(this.state.userName) : ''), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => { if (st && st.rev !== undefined) { if (this.checkEpoch(st)) return; const first = !this.state.syncOn; this.setState({ sync: st, syncOn: true }); if (first && this.state.userName) this.mutate('join', { name: this.state.userName }, true); this.checkInbox(st); } }).catch(() => {}); };
+    this._poll(); this._pollI = setInterval(this._poll, 6000);
+    this._onVis = () => { if (!document.hidden) this._poll(); };
+    document.addEventListener('visibilitychange', this._onVis);
     try { const pp = new URLSearchParams(location.search).get('plan'); if (pp) { this._followParam = pp; this.followPlan(pp); if (this.state.userName) this.setState({ view: 'group' }); } } catch(e) {}
     let tries = 0; const load = () => { const D = window.SOBRES_LUGARES; if (!D) { if (tries++ < 25) setTimeout(load, 250); return; }
       const F = D.fields; this.EXT = D.rows.map(r => { const o = {}; F.forEach((f,i) => o[f] = r[i]); return { id:o.id, n:o.n, cat:o.cat, z:o.zone, col:o.col, addr:o.addr, web:o.web, pp:o.pp, oh:[o.oh0,o.oh1], hrs:o.hrs, tags:o.tags, who:o.who, tm:o.tm, x:o.x, y:o.y, lat:o.lat, lng:o.lng, score:o.score, tier:o.tier, d:o.basis, src:o.src, rt:null, av: o.tier === 'A' ? 'Alta demanda · reserva directa' : 'Verificar disponibilidad', ext:true }; });
@@ -2135,7 +2137,7 @@ class Component extends DCLogic {
       out.push(pick); used[pick.id] = 1; spent += pick.pp; }
     return out; }
   componentDidUpdate() { if (this.state.view === 'map' && window.L) { clearTimeout(this._mt); this._mt = setTimeout(() => this.ensureMap(), 30); } }
-  componentWillUnmount() { clearInterval(this._pollI); }
+  componentWillUnmount() { clearInterval(this._pollI); try { document.removeEventListener('visibilitychange', this._onVis); } catch(e) {} }
   ensureMap() { const L = window.L; if (!L) return; const el = document.getElementById('lmap'); if (!el) return;
     if (!this._map || this._mapEl !== el) {
       this._map = L.map(el, { zoomControl: true, attributionControl: true }).setView([19.4, -99.17], 12);

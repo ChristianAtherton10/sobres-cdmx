@@ -1,26 +1,35 @@
-#!/usr/bin/env python3
-# Sobres CDMX — servidor: sirve la página y sincroniza el estado social entre dispositivos.
+# Sobres CDMX — lógica compartida de las funciones serverless de Vercel.
 #
-# PERSISTENCIA:
-#   - Por defecto guarda en state.json (disco local).
-#   - En Render el disco es efímero: si defines las variables de entorno
-#     UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN, el estado se guarda
-#     además en Upstash Redis y sobrevive reinicios, redespliegues y "spin down".
-#
-# Corre local: python3 server.py [puerto]   (default 4321)
-import json, os, sys, time, threading, signal, urllib.request
+# DIFERENCIA CLAVE CON server.py (Render):
+#   En Render el servidor vivía siempre prendido y guardaba el estado en memoria,
+#   escribiendo a Redis cada 8 s. En Vercel cada petición puede caer en una
+#   instancia nueva y sin memoria, así que:
+#     · /api/state  lee el estado (con caché corta en memoria para no gastar cuota)
+#     · /api/mutate lee → aplica → escribe en Redis DENTRO de la misma petición,
+#       protegido por un candado para que dos votos simultáneos no se pisen.
+#   Por eso en Vercel la base de datos (Upstash Redis) es OBLIGATORIA:
+#   sin ella no hay dónde guardar nada entre peticiones.
+import json, os, time, random, threading, urllib.request
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-STATE_PATH = os.environ.get('SOBRES_STATE') or os.path.join(ROOT, 'state.json')
-LOCK = threading.RLock()
 
-REDIS_URL = (os.environ.get('UPSTASH_REDIS_REST_URL') or '').rstrip('/')
-REDIS_TOKEN = os.environ.get('UPSTASH_REDIS_REST_TOKEN') or ''
-REDIS_KEY = os.environ.get('SOBRES_REDIS_KEY') or 'sobres_state_v1'
+def _env(*names):
+    for n in names:
+        v = os.environ.get(n)
+        if v and v.strip():
+            return v.strip()
+    return ''
+
+
+# Acepta los nombres de Upstash directo y los que inyecta la integración de Vercel.
+REDIS_URL = _env('UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL', 'REDIS_REST_URL').rstrip('/')
+REDIS_TOKEN = _env('UPSTASH_REDIS_REST_TOKEN', 'KV_REST_API_TOKEN', 'REDIS_REST_TOKEN')
+REDIS_KEY = _env('SOBRES_REDIS_KEY') or 'sobres_state_v1'
+LOCK_KEY = REDIS_KEY + '_lock'
 REDIS_ON = bool(REDIS_URL and REDIS_TOKEN)
 
-SAVE_EVERY = 8.0          # segundos entre escrituras remotas (protege la cuota gratis)
-_dirty = threading.Event()
+CACHE_TTL = float(_env('SOBRES_CACHE_TTL') or 2.5)   # segundos que reusamos el estado leído
+_MX = threading.Lock()
+_CACHE = {'state': None, 'at': 0.0}
 
 
 def blank_state():
@@ -28,87 +37,87 @@ def blank_state():
             'venues': [], 'stats': {}, 'rev': 0, 'epoch': int(time.time())}
 
 
-# ───────────────────────── almacenamiento remoto (Upstash REST) ─────────────────────────
-def redis_get():
-    if not REDIS_ON: return None
+# ───────────────────────── Upstash Redis por REST ─────────────────────────
+def _cmd(*args, **kw):
+    """Manda un comando de Redis. Formato de arreglo: ['SET','clave','valor',...]."""
+    timeout = kw.get('timeout', 10)
+    body = json.dumps([str(a) for a in args], ensure_ascii=False).encode('utf-8')
+    req = urllib.request.Request(REDIS_URL, data=body, method='POST',
+                                 headers={'Authorization': 'Bearer ' + REDIS_TOKEN,
+                                          'Content-Type': 'application/json'})
+    return json.load(urllib.request.urlopen(req, timeout=timeout)).get('result')
+
+
+def _fill(s):
+    for k, v in blank_state().items():
+        s.setdefault(k, v)
+    return s
+
+
+def read_state(force=False):
+    """Estado actual. Usa caché en memoria para no gastar cuota en cada poll."""
+    if not REDIS_ON:
+        if _CACHE['state'] is None:
+            _CACHE['state'] = blank_state()
+        return _CACHE['state']
+    now = time.time()
+    if not force and _CACHE['state'] is not None and (now - _CACHE['at']) < CACHE_TTL:
+        return _CACHE['state']
     try:
-        req = urllib.request.Request(f'{REDIS_URL}/get/{REDIS_KEY}',
-                                     headers={'Authorization': f'Bearer {REDIS_TOKEN}'})
-        res = json.load(urllib.request.urlopen(req, timeout=15)).get('result')
-        return json.loads(res) if res else None
+        raw = _cmd('GET', REDIS_KEY)
+        s = _fill(json.loads(raw)) if raw else blank_state()
     except Exception as e:
         print('[redis] lectura falló:', e, flush=True)
-        return None
+        if _CACHE['state'] is not None:
+            return _CACHE['state']          # mejor servir algo viejo que fallar
+        s = blank_state()
+    _CACHE['state'] = s
+    _CACHE['at'] = time.time()
+    return s
 
 
-def redis_set(obj):
-    if not REDIS_ON: return False
+def write_state(s):
+    _CACHE['state'] = s
+    _CACHE['at'] = time.time()
+    if not REDIS_ON:
+        return False
     try:
-        body = json.dumps(obj, ensure_ascii=False).encode()
-        req = urllib.request.Request(f'{REDIS_URL}/set/{REDIS_KEY}', data=body, method='POST',
-                                     headers={'Authorization': f'Bearer {REDIS_TOKEN}',
-                                              'Content-Type': 'application/octet-stream'})
-        urllib.request.urlopen(req, timeout=20).read()
+        _cmd('SET', REDIS_KEY, json.dumps(s, ensure_ascii=False), timeout=15)
         return True
     except Exception as e:
         print('[redis] escritura falló:', e, flush=True)
         return False
 
 
-def load_state():
-    remote = redis_get()
-    if remote:
-        for k, v in blank_state().items(): remote.setdefault(k, v)
-        print(f"[estado] recuperado de Redis: {len(remote.get('users', {}))} usuarios, "
-              f"{len(remote.get('plans', []))} planes", flush=True)
-        return remote
-    try:
-        with open(STATE_PATH) as f:
-            s = json.load(f)
-        for k, v in blank_state().items(): s.setdefault(k, v)
-        print('[estado] recuperado de state.json', flush=True)
-        return s
-    except Exception:
-        print('[estado] arrancando en blanco', flush=True)
-        return blank_state()
+def _acquire(tries=25, wait=0.08):
+    """Candado corto para que dos cambios simultáneos no se pisen."""
+    if not REDIS_ON:
+        return True
+    tok = '%x' % random.getrandbits(64)
+    for _ in range(tries):
+        try:
+            if _cmd('SET', LOCK_KEY, tok, 'NX', 'PX', 5000, timeout=6) is not None:
+                return tok
+        except Exception:
+            return True          # si Redis se queja, seguimos sin candado
+        time.sleep(wait)
+    return True                  # se acabó la espera: seguimos (no dejamos caer la app)
 
 
-STATE = load_state()
+def _release(tok):
+    if REDIS_ON and tok is not True:
+        try:
+            _cmd('DEL', LOCK_KEY, timeout=6)
+        except Exception:
+            pass
 
 
-def save_local():
-    try:
-        tmp = STATE_PATH + '.tmp'
-        with open(tmp, 'w') as f: json.dump(STATE, f, ensure_ascii=False)
-        os.replace(tmp, STATE_PATH)
-    except Exception:
-        pass
-
-
-def flush_remote():
-    if not REDIS_ON: return
-    with LOCK:
-        snap = json.loads(json.dumps(STATE))
-    redis_set(snap)
-
-
-def _writer_loop():
-    while True:
-        _dirty.wait()
-        time.sleep(SAVE_EVERY)
-        _dirty.clear()
-        flush_remote()
+STATE = blank_state()
 
 
 def save_state():
-    save_local()
-    _dirty.set()
-
-
-def _bye(*a):
-    print('[estado] guardando antes de apagar…', flush=True)
-    save_local(); flush_remote()
-    sys.exit(0)
+    """En Vercel la escritura la hace mutate(); aquí no hay nada que hacer."""
+    return None
 
 
 # ───────────────────────── helpers ─────────────────────────
@@ -252,73 +261,39 @@ def apply_op(op, p):
         return 'op desconocida'
     STATE['rev'] += 1
     save_state()
-    return None
 
 
-# ───────────────────────── HTTP ─────────────────────────
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
-
-
-class H(SimpleHTTPRequestHandler):
-    def __init__(self, *a, **kw): super().__init__(*a, directory=ROOT, **kw)
-    def log_message(self, *a): pass
-
-    def end_headers(self):
-        if self.path.startswith('/data/') or self.path.endswith('.js') or self.path.endswith('.css'):
-            self.send_header('Cache-Control', 'public, max-age=3600')
-        else:
-            self.send_header('Cache-Control', 'no-cache')
-        super().end_headers()
-
-    def _json(self, code, obj):
-        b = json.dumps(obj, ensure_ascii=False).encode()
-        self.send_response(code)
-        self.send_header('Content-Type', 'application/json; charset=utf-8')
-        self.send_header('Cache-Control', 'no-store')
-        self.send_header('Content-Length', str(len(b)))
-        self.end_headers(); self.wfile.write(b)
-
-    def do_GET(self):
-        if self.path.startswith('/api/health'):
-            return self._json(200, {'ok': True, 'redis': REDIS_ON,
-                                    'users': len(STATE['users']), 'plans': len(STATE['plans'])})
-        if self.path.startswith('/api/state'):
-            u = None
-            try:
-                from urllib.parse import urlparse, parse_qs
-                u = parse_qs(urlparse(self.path).query).get('u', [None])[0]
-            except Exception:
-                pass
-            with LOCK:
-                if u and u in STATE['users']:
-                    STATE['users'][u]['seen'] = int(time.time() * 1000)
-                return self._json(200, STATE)
-        if self.path == '/' or self.path.startswith('/?'):
-            self.path = '/index.html'
-        return super().do_GET()
-
-    def do_POST(self):
-        if self.path != '/api/mutate': return self._json(404, {'error': 'no'})
+# ───────────────────────── API usada por las funciones ─────────────────────────
+def mutate(op, payload):
+    """Lee → aplica la operación → escribe, de forma atómica. Devuelve (error, estado)."""
+    global STATE
+    with _MX:
+        tok = _acquire()
         try:
-            n = int(self.headers.get('Content-Length', 0))
-            body = json.loads(self.rfile.read(n) or b'{}')
-        except Exception:
-            return self._json(400, {'error': 'json inválido'})
-        with LOCK:
-            err = apply_op(body.get('op'), body.get('payload') or {})
-            if err: return self._json(400, {'error': err})
-            return self._json(200, STATE)
+            STATE = read_state(force=True)
+            err = apply_op(op, payload)
+            if err:
+                return err, STATE
+            write_state(STATE)
+            return None, STATE
+        finally:
+            _release(tok)
 
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT') or (sys.argv[1] if len(sys.argv) > 1 else 4321))
-    if REDIS_ON:
-        threading.Thread(target=_writer_loop, daemon=True).start()
-        print('[estado] persistencia remota ACTIVA (Upstash Redis)', flush=True)
-    else:
-        print('[estado] persistencia remota apagada — solo state.json (se pierde al reiniciar en Render)', flush=True)
-    for sig in (signal.SIGTERM, signal.SIGINT):
-        try: signal.signal(sig, _bye)
-        except Exception: pass
-    print(f'Sobres CDMX corriendo en http://localhost:{port}', flush=True)
-    ThreadingHTTPServer(('0.0.0.0', port), H).serve_forever()
+def reply(h, code, obj):
+    """Contesta JSON desde un BaseHTTPRequestHandler de Vercel."""
+    b = json.dumps(obj, ensure_ascii=False).encode('utf-8')
+    h.send_response(code)
+    h.send_header('Content-Type', 'application/json; charset=utf-8')
+    h.send_header('Cache-Control', 'no-store')
+    h.send_header('Content-Length', str(len(b)))
+    h.end_headers()
+    h.wfile.write(b)
+
+
+def query_param(path, name):
+    try:
+        from urllib.parse import urlparse, parse_qs
+        return parse_qs(urlparse(path).query).get(name, [None])[0]
+    except Exception:
+        return None

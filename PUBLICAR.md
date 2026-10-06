@@ -1,103 +1,96 @@
-# Publicar Sobres CDMX en internet (gratis, permanente)
+# Publicar Sobres en Vercel
 
-Tu proyecto ya está listo para subirse. Son 2 pasos: GitHub → Render.
+> Antes estaba en Render. Vercel sirve la página desde su red mundial, así que
+> **ya no hay que esperar ~50 segundos a que "despierte"**: abre al instante.
 
----
+## Lo que cambia (importante)
 
-## PASO 1 — Subir el código a GitHub
+En Render el servidor estaba siempre prendido y guardaba todo en su memoria.
+En Vercel no hay un servidor prendido: cada petición levanta una función que
+nace sin memoria. Por eso **la base de datos ya no es opcional**.
 
-### 1.1 Crea el repositorio
-1. Entra a **https://github.com/new** (si no tienes cuenta, créala — es gratis)
-2. **Repository name:** `sobres-cdmx`
-3. Déjalo en **Public**
-4. **NO** marques ninguna casilla de "Add a README", "Add .gitignore" ni "Choose a license"
-5. Click en **Create repository**
+Sin base de datos conectada, en Vercel no se guarda nada (ni nombres, ni amigos,
+ni reseñas). Con ella conectada, se guarda todo para siempre.
 
-### 1.2 Sube el código
-GitHub te va a mostrar una página con comandos. Ignórala y corre esto en la Terminal,
-**cambiando `TU-USUARIO` por tu usuario de GitHub**:
-
-```
-cd ~/sobres-cdmx
-git remote add origin https://github.com/TU-USUARIO/sobres-cdmx.git
-git branch -M main
-git push -u origin main
-```
-
-Te va a pedir usuario y contraseña:
-- **Username:** tu usuario de GitHub
-- **Password:** ⚠️ NO es tu contraseña normal. Necesitas un "token":
-  1. Ve a **https://github.com/settings/tokens/new**
-  2. Note: `sobres`
-  3. Expiration: `No expiration`
-  4. Marca la casilla **`repo`**
-  5. Click **Generate token** abajo
-  6. Copia el token (empieza con `ghp_`) y pégalo como contraseña
+Son 3 pasos. El paso 2 es el que no te puedes saltar.
 
 ---
 
-## PASO 2 — Publicarlo en Render
+## Paso 1 — Conectar el repo a Vercel
 
-1. Entra a **https://render.com** → **Get Started** → entra con tu cuenta de GitHub
-2. En el dashboard: **New +** → **Web Service**
-3. Conecta tu GitHub y elige el repo **`sobres-cdmx`**
-4. Llena así:
-   - **Name:** `sobres-cdmx` (esto define tu link)
-   - **Region:** Oregon (o la que salga)
-   - **Branch:** `main`
-   - **Runtime / Language:** **Python 3**
-   - **Build Command:** *(déjalo vacío)*
-   - **Start Command:** `python3 server.py`
-   - **Instance Type:** **Free**
-5. Click **Create Web Service**
-6. Espera ~2 minutos. Cuando diga **Live**, tu link es:
+1. Entra a **https://vercel.com** → **Sign Up** / **Log In** → entra **con GitHub**.
+2. Click en **Add New…** → **Project**.
+3. En la lista de repos busca **`sobres-cdmx`** → click en **Import**.
+4. Vercel detecta todo solo. **No cambies nada** de lo que te proponga:
+   - Framework Preset: `Other`
+   - Build Command: vacío
+   - Output Directory: vacío
+   - Install Command: vacío
+5. **Todavía no le des Deploy.** Primero haz el Paso 2 (así solo despliega una vez).
 
-   ### https://sobres-cdmx.onrender.com
+## Paso 2 — Conectar la base de datos (obligatorio)
 
-Ese link es **permanente**. Nunca más tienes que prender ni apagar nada.
+La forma más fácil es desde el propio Vercel, sin crear cuenta aparte:
 
----
+1. En tu proyecto de Vercel, pestaña **Storage**.
+2. Click en **Create Database** → elige **Upstash** → **Redis** → **Continue**.
+3. Nombre: `sobres`. Región: la más cercana a Vercel (por defecto está bien).
+4. Click en **Connect** / **Create**.
 
-## Cosas que debes saber
+Vercel inyecta solas las llaves (`KV_REST_API_URL` y `KV_REST_API_TOKEN`) y el
+código de Sobres ya sabe leer esos nombres. No tienes que copiar nada.
 
-**Se duerme si nadie lo usa.** En el plan gratis, si pasan ~15 minutos sin visitas,
-el sitio se "duerme". La siguiente persona que entre va a esperar ~30-50 segundos
-mientras despierta. Después va rapidísimo.
+> **Si prefieres hacerlo a mano** (cuenta propia en upstash.com), mira
+> `GUARDAR-DATOS.md`. Solo recuerda pegar las variables en
+> **Settings → Environment Variables** de Vercel, no en Render.
 
-👉 **Truco para presentar:** abre el link tú 2 minutos antes de la clase para que
-ya esté despierto cuando entren todos.
+⚠️ Esas llaves son contraseñas: no las publiques ni las mandes en capturas.
 
-**El estado se puede borrar solo.** Los usuarios, amigos, planes y votos se guardan
-en el disco del servidor, pero Render en plan gratis puede reiniciar la instancia
-(al dormirse mucho tiempo o al hacer cambios). Si eso pasa, todos vuelven a
-"¿Cuál es tu nombre?" — la app sigue funcionando perfecto, solo se pierde
-lo que habían creado. Para la clase no es problema.
+## Paso 3 — Desplegar y comprobar
 
----
+1. Click en **Deploy** y espera 1–2 minutos.
+2. Abre tu nueva dirección (algo como `https://sobres-cdmx.vercel.app`).
+3. Comprueba la base de datos abriendo:
+   **`https://TU-DIRECCION.vercel.app/api/health`**
 
-## Cómo actualizar el sitio después
+   Debe decir **`"redis": true`**.
 
-Cada vez que cambies algo del proyecto:
+   - `"redis": true` → ✅ listo, ya nada se borra.
+   - `"redis": false` → faltan las variables. Vuelve al Paso 2, y después
+     entra a **Deployments → … → Redeploy** para que las tome.
 
-```
-cd ~/sobres-cdmx
-git add -A
-git commit -m "cambios"
-git push
-```
-
-Render detecta el push y actualiza el sitio solo en ~2 minutos.
+4. Prueba rápida: pon tu nombre, califica un lugar, cierra todo, vuelve a entrar.
+   Tu nombre y tu reseña deben seguir ahí.
 
 ---
 
-## Reiniciar todo (borrar usuarios y planes)
+## De aquí en adelante
 
-Con el sitio ya publicado, corre esto cambiando el link por el tuyo:
+Cada vez que hagas `git push` a `main`, Vercel vuelve a publicar solo
+(igual que hacía Render). Tarda ~1 minuto.
 
-```
+## Apagar Render
+
+Cuando Vercel ya te funcione, entra a **https://dashboard.render.com** →
+servicio `sobres-cdmx` → **Settings** → hasta abajo **Delete Service**.
+(El archivo `render.yaml` se queda en el repo por si algún día quieres volver;
+no estorba.)
+
+## Cómo está armado (por si lo necesitas)
+
+- `index.html` — toda la página (antes se llamaba `Sobres CDMX.dc.html`).
+- `api/state.py` — devuelve el estado social (lo que pide la página cada 6 s).
+- `api/mutate.py` — aplica cambios: unirse, amigos, reseñas, votos, planes.
+- `api/health.py` — diagnóstico: dice si la base de datos está conectada.
+- `lib/sobres.py` — la lógica compartida por las tres funciones.
+- `server.py` — **solo para tu compu** (`python3 server.py`). Vercel no lo usa.
+
+## Reiniciar antes de una clase
+
+Borra usuarios, amigos, planes y votos — conserva los negocios publicados:
+
+```bash
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"op":"reset","payload":{"pin":"sobres-reset"}}' \
-  https://sobres-cdmx.onrender.com/api/mutate
+  -d '{"op":"reset","payload":{"pin":"sobres-reset","keepVenues":true}}' \
+  https://TU-DIRECCION.vercel.app/api/mutate
 ```
-
-Todos los dispositivos se reinician solos en unos segundos.

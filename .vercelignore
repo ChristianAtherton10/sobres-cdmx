@@ -1,0 +1,8 @@
+# Cosas que solo sirven en tu compu o en Render — no hacen falta en Vercel.
+server.py
+render.yaml
+*.command
+*.md
+state.json
+state.json.tmp
+.claude/
