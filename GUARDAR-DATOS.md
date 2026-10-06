@@ -1,5 +1,9 @@
 # Que Sobres NO se reinicie (guardar amigos, planes y reseñas para siempre)
 
+> ✅ **Esto ya está hecho** (2026-10-05): la base `upstash-kv-almond-queen`
+> está conectada y `/api/health` responde `"redis": true`. Esta guía queda solo
+> por si algún día hay que rehacerlo o migrar a otra cuenta.
+
 > **Si ya seguiste el Paso 2 de `PUBLICAR.md` (Storage → Upstash desde Vercel),
 > ya está hecho y no necesitas esta guía.** Esto es la versión manual, por si
 > prefieres tu propia cuenta de Upstash.
@@ -57,7 +61,7 @@ los nombres y las reseñas desaparecen en cuanto cambias de pantalla.
 
 Abre en el navegador:
 
-**`https://TU-DIRECCION.vercel.app/api/health`**
+****https://sobres-cdmx-sobres-33f0.vercel.app/api/health****
 
 Debe decir `"redis": true`.
 
@@ -93,7 +97,7 @@ Borra usuarios, amigos, planes y votos — pero **conserva los negocios publicad
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"op":"reset","payload":{"pin":"sobres-reset","keepVenues":true}}' \
-  https://TU-DIRECCION.vercel.app/api/mutate
+  https://sobres-cdmx-sobres-33f0.vercel.app/api/mutate
 ```
 
 Si quieres borrar TODO, incluyendo los negocios publicados, quita `,"keepVenues":true`.
