@@ -1265,7 +1265,7 @@ class Component extends DCLogic {
   track(id, kind) { if (!id || !this.state.syncOn) return; this._tq = this._tq || []; this._tq.push({ id, k: kind });
     clearTimeout(this._tt2); this._tt2 = setTimeout(() => { const evs = (this._tq || []).splice(0, 60); if (!evs.length) return;
       this.mutate('track', { events: evs, who: this.state.who, zone: this.state.zone }, true); }, 1200); }
-  mutate(op, payload, quiet) { return fetch('/api/mutate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op, payload }) }).then(r => r.ok ? r.json() : Promise.reject()).then(st => { this.setState({ sync: st, syncOn: true }); return st; }).catch(() => { if (!quiet) this.toast('Sin conexión con el servidor del salón'); }); }
+  mutate(op, payload, quiet) { return fetch('/api/mutate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op, payload }) }).then(r => r.ok ? r.json() : Promise.reject()).then(st => { this.setState({ sync: st, syncOn: true }); this.evOp(op, payload); return st; }).catch(() => { if (!quiet) this.toast('Sin conexión con el servidor del salón'); }); }
   joinAs(name) { const n = (name || '').trim().slice(0, 24); if (!n) { this.toast('Escribe tu nombre'); return; } try { localStorage.setItem('sobres_user', n); const ep = this.state.sync && this.state.sync.epoch; if (ep) localStorage.setItem('sobres_epoch', String(ep)); } catch(e) {} this.setState({ userName: n, nameInput: '' }); if (this.state.syncOn) this.mutate('join', { name: n }); if (this._followParam) { this.nav('group'); this.toast(`Listo, ${n} — aquí está el plan que te enviaron`); } else { this.toast(`Listo, ${n} — ¿qué hacemos hoy?`); } }
   checkEpoch(st) { if (!st.epoch) return false; let e0 = null; try { e0 = localStorage.getItem('sobres_epoch'); } catch(e) {}
     if (String(st.epoch) === e0) return false;
@@ -1293,7 +1293,36 @@ class Component extends DCLogic {
   fmtDate(iso) { try { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' }); } catch(e) { return iso; } }
   persist() { try { const {saved,savedPlans,counters,dietSel,offers,pubs,gOpts,gVotes,gVoters} = this.state; localStorage.setItem('sobres_v2', JSON.stringify({saved,savedPlans,counters,dietSel,offers,pubs,gOpts,gVotes,gVoters})); } catch(e) {} }
   toast(t) { this.setState({ toast: t }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2800); }
-  nav(view, extra) { this.setState(Object.assign({ view, pinId: null, searchQ: '', myStars: 0, myTxt: '', focusPlanId: null }, extra || {})); try { window.scrollTo(0,0); } catch(e) {} }
+  // ── Analítica (Google Analytics 4). Solo datos anónimos: nunca nombres de
+  // personas, reseñas ni texto que escriban los usuarios sobre sí mismos.
+  ev(name, params) { try { if (typeof window.gtag === 'function') window.gtag('event', name, params || {}); } catch(e) {} }
+
+  evSearch(q) { try { clearTimeout(this._evSq); } catch(e) {}
+    const t = (q || '').trim(); if (t.length < 3) return;
+    this._evSq = setTimeout(() => this.ev('buscar', { termino: t.toLowerCase().slice(0, 60) }), 1200); }
+
+  evOp(op, p) { p = p || {};
+    const m = {
+      rate:         () => ['calificar',         { lugar: (p.venueName || '').slice(0,80), estrellas: p.stars }],
+      proposePlan:  () => ['plan_creado',       { paradas: ((p.plan && p.plan.stops) || []).length, transporte: (p.plan && p.plan.transport) || '' }],
+      sharePlan:    () => ['plan_enviado',      { personas: (p.to || []).length }],
+      votePlan:     () => ['votar_plan',        { voto: p.kind || 'quitado' }],
+      voteStop:     () => ['votar_parada',      { voto: p.kind || 'quitado' }],
+      reserve:      () => ['reservar',          { lugar: (p.venueName || '').slice(0,80), personas: p.people }],
+      publishVenue: () => ['negocio_publicado', { categoria: (p.venue && p.venue.cat) || '' }],
+      friend:       () => ['agregar_amigo',     { activo: !!p.on }]
+    };
+    const f = m[op]; if (!f) return;
+    try { const a = f(); this.ev(a[0], a[1]); } catch(e) {} }
+
+  nav(view, extra) {
+    try {
+      if (view === 'detail' && extra && extra.detailId) {
+        const v = this.cat().find(x => x.id === extra.detailId);
+        if (v) this.ev('ver_lugar', { lugar: v.n, categoria: v.cat, zona: v.z });
+      } else { this.ev('cambiar_seccion', { seccion: view }); }
+    } catch(e) {}
+    this.setState(Object.assign({ view, pinId: null, searchQ: '', myStars: 0, myTxt: '', focusPlanId: null }, extra || {})); try { window.scrollTo(0,0); } catch(e) {} }
   todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
   planConfirmed(p) { const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
   chip(on) { return `padding:9px 14px;border:2px solid ${on?'var(--color-text)':'var(--color-neutral-300)'};background:${on?'var(--color-text)':'#fff'};color:${on?'#fff':'var(--color-text)'};font:600 13px var(--font-body);cursor:pointer;white-space:nowrap`; }
@@ -1605,6 +1634,9 @@ class Component extends DCLogic {
         planStops: n, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null,
         planReadOnly: false, openedPlanBy: '', aiOpen: false, aiBusy: false,
         aiSummary: this.aiSummary(p, stops) });
+      this.ev('sobres_ai_plan', { paradas: stops.length,
+        pedido: (p.cats || []).map(c => c.g).filter(Boolean).join(',').slice(0, 90) || '(sin categoria)',
+        por_nombre: (p.named || []).length, con_quien: p.who || '' });
       this.nav('plan');
     }, 30); }
 
@@ -1885,7 +1917,7 @@ class Component extends DCLogic {
       navItems, bottomNav, brandGo: () => this.nav(view === 'venues' ? 'venues' : 'home'), brandSub: view === 'venues' ? 'PARA VENUES' : 'CDMX',
       venueSwitchLabel: view === 'venues' ? '← Lado consumidor' : 'Para venues', venueSwitchGo: () => this.nav(view === 'venues' ? 'home' : 'venues'), venueBtnBg: view === 'venues' ? 'var(--color-text)' : 'transparent', venueBtnFg: view === 'venues' ? '#fff' : 'var(--color-text)',
       demoBadge: (this.props.insigniasDemo ?? true) && !s.isMobile, catCount: String(this.cat().length),
-      searchQ: s.searchQ, setSearchQ: e => this.setState({ searchQ: e.target.value }), searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
+      searchQ: s.searchQ, setSearchQ: e => { const q = e.target.value; this.setState({ searchQ: q }); this.evSearch(q); }, searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
       toast: s.toast, toastStyle: `position:fixed;left:50%;transform:translateX(-50%);bottom:${s.isMobile?'72px':'24px'};z-index:100;background:var(--color-text);color:#fff;padding:12px 18px;font:600 13px var(--font-body);box-shadow:var(--shadow-lg);transition:opacity .25s;opacity:${s.toast?'1':'0'};pointer-events:none;max-width:90vw`,
       resOtUrl, resMapsUrl, resWeb, resHasWeb, resPeople: String(resPeople), resDate,
       resOnOT, resNoBook: !resBookable,
@@ -1907,6 +1939,7 @@ class Component extends DCLogic {
       showDateInput: s.when === 'fecha', customDate: s.customDate, setDate: e => { this.setState({ customDate: e.target.value }); if (e.target.value) this.loadTm(e.target.value); },
       aiTxt: s.aiTxt, setAiTxt: e => this.setState({ aiTxt: e.target.value }),
       aiGo: () => { const t = (s.aiTxt || '').trim(); if (t.length < 8) { this.toast('Escríbeme con más detalle qué quieres hacer'); return; }
+        this.ev('sobres_ai_usado', { palabras: t.split(/\s+/).length });
         this.setState({ aiBusy: true }); setTimeout(() => this.aiBuild(t), 40); },
       aiBusy: s.aiBusy, aiBtnLabel: s.aiBusy ? 'Armando tu plan…' : 'Ármame el plan',
       aiEjemplo: () => this.setState({ aiTxt: 'Mañana con mis amigos, somos 5, de 11am a 2am, por la Roma o Polanco: un museo, comer mariscos, unos drinks en Bar Órbita y cerrar en Departamento' }),
