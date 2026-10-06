@@ -396,7 +396,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ showTmNote }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-neutral-300);background:#fff;padding:12px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap">
 <span style="font:800 10px var(--font-body);letter-spacing:.14em;color:var(--color-accent)">TICKETMASTER</span>
-<span style="font:500 12.5px/1.5 var(--font-body);color:var(--color-neutral-700)">Los conciertos y boletos exactos de esa fecha se activan pegando una API key gratuita en <span style="font-family:ui-monospace,monospace">data/providers.js</span> — la conexión ya está implementada. Mientras, el catálogo fijo de abajo ya está filtrado para ese día.</span>
+<span style="font:500 12.5px/1.5 var(--font-body);color:var(--color-neutral-700)">Los conciertos y boletos exactos de esa fecha todavía no están conectados. Mientras tanto, el catálogo fijo de abajo ya está filtrado para ese día.</span>
 </div>
 </sc-if>
 <sc-for list="{{ tmEvents }}" as="e" hint-placeholder-count="0">
@@ -508,7 +508,15 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="display:grid;grid-template-columns:{{ detailCols }};gap:26px;margin-bottom:30px">
 <div>
 <div style="position:relative;border:2px solid var(--color-text);background:#fff">
-<div style="width:100%;aspect-ratio:4/3"><image-slot id="{{ detail.slotId }}" shape="rect" src="{{ detail.photoSrc }}" credit="{{ detail.photoCredit }}" credit-href="{{ detail.photoHref }}" placeholder="Arrastra aquí una foto real del lugar" style="width:100%;height:100%"></image-slot></div>
+<sc-if value="{{ detail.hasPhoto }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;aspect-ratio:4/3;overflow:hidden"><img src="{{ detail.photoSrc }}" alt="Foto de {{ detail.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+</sc-if>
+<sc-if value="{{ detail.noPhoto }}" hint-placeholder-val="{{ false }}">
+<div role="img" aria-label="{{ detail.cat }} — sin foto disponible" style="width:100%;aspect-ratio:4/3;background:{{ detail.tileBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff">
+<span style="font-size:40px;line-height:1">{{ detail.icon }}</span>
+<span style="font:700 11px var(--font-body);letter-spacing:.14em">{{ detail.cat }}</span>
+</div>
+</sc-if>
 <span style="position:absolute;left:10px;top:10px;font:700 9px var(--font-body);letter-spacing:.14em;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px;pointer-events:none">FOTO · {{ detail.photoNote }}</span>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px"><sc-for list="{{ detail.tags }}" as="t" hint-placeholder-count="3"><span style="font:600 11px var(--font-body);letter-spacing:.06em;padding:4px 9px;background:var(--color-neutral-200)">{{ t.label }}</span></sc-for></div>
@@ -1017,7 +1025,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </div>
 <div style="border-top:2px solid var(--color-text);padding-top:14px;margin-bottom:50px;max-width:760px">
 <h2 style="font:800 20px var(--font-heading);margin:0 0 6px">Datos y fuentes</h2>
-<p style="font:500 13px/1.6 var(--font-body);color:var(--color-neutral-700);margin:0 0 12px">Catálogo base: {{ catCount }} lugares verificados del dataset "CDMX 2025 Discovery Seed" (fuentes: Guía MICHELIN 2025, 50 Best, SIC/Secretaría de Cultura, Time Out) + curaduría propia. Precios y horarios marcados como estimados/típicos hasta conectar APIs en vivo. Keys en <span style="font-family:ui-monospace,monospace">data/providers.js</span>:</p>
+<p style="font:500 13px/1.6 var(--font-body);color:var(--color-neutral-700);margin:0 0 12px">Catálogo base: {{ catCount }} lugares verificados del dataset "CDMX 2025 Discovery Seed" (fuentes: Guía MICHELIN 2025, 50 Best, SIC/Secretaría de Cultura, Time Out) + curaduría propia. Los precios y horarios son <strong>estimados del catálogo, no disponibilidad confirmada</strong>: confírmalos con el lugar antes de ir. Estado de las fuentes en vivo:</p>
 <sc-for list="{{ providers }}" as="p" hint-placeholder-count="4">
 <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1.5px solid var(--color-neutral-300)"><span style="font:700 13px var(--font-body);min-width:190px">{{ p.name }}</span><span style="font:500 12px var(--font-body);color:var(--color-neutral-600);flex:1;min-width:200px">{{ p.use }}</span><span style="font:700 10px var(--font-body);letter-spacing:.1em;color:var(--color-accent-700)">{{ p.status }}</span></div>
 </sc-for>
@@ -1212,7 +1220,7 @@ class Component extends DCLogic {
     this.VIBEG = { foodie:['comida','cafe'], nightlife:['copas','fiesta'], cultural:['cultura'], creativo:['cultura','cafe'], chill:['parque','cafe'], aventurero:['juego','parque'], 'romántico':['cultura','comida'], social:['copas','juego','mall'], familiar:['parque','cine','mall','juego'], joyita:[], 'clásico':[] };
     this.SEGLBL = { comida:'Comida', cafe:'Café', copas:'Copas', fiesta:'Fiesta', cultura:'Cultura', cine:'Cine', parque:'Parque', juego:'Juegos', mall:'Plaza' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú','Pablo'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiN:0, planCustomFrom:null, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
     try { const raw = localStorage.getItem('sobres_v2'); if (raw) { const s = JSON.parse(raw); ['saved','savedPlans','counters','dietSel','offers','pubs','gOpts','gVotes','gVoters'].forEach(k => { if (s[k]) st[k] = s[k]; }); } } catch(e) {}
     try { const un = localStorage.getItem('sobres_user'); if (un) st.userName = un; } catch(e) {}
     this.state = st;
@@ -1222,11 +1230,15 @@ class Component extends DCLogic {
     upd(); window.addEventListener('resize', upd);
     { let ft = 0; const loadFotos = () => { if (window.SOBRES_FOTOS) { this.setState(st => ({ photos: Object.assign({}, window.SOBRES_FOTOS, st.photos) })); return; } if (ft++ < 40) setTimeout(loadFotos, 250); }; loadFotos(); }
 
-    this._poll = () => { if (document.hidden) return; fetch('/api/state' + (this.state.userName ? '?u=' + encodeURIComponent(this.state.userName) : ''), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => { if (st && st.rev !== undefined) { if (this.checkEpoch(st)) return; const first = !this.state.syncOn; this.setState({ sync: st, syncOn: true }); if (first && this.state.userName) this.mutate('join', { name: this.state.userName }, true); this.checkInbox(st); } }).catch(() => {}); };
+    this._poll = () => { if (document.hidden && this.state.syncOn) return; fetch('/api/state' + (this.state.userName ? '?u=' + encodeURIComponent(this.state.userName) : ''), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => { if (st && st.rev !== undefined) { if (this.checkEpoch(st)) return; const first = !this.state.syncOn; this.setState({ sync: st, syncOn: true }); if (first && this.state.userName) this.mutate('join', { name: this.state.userName }, true); this.checkInbox(st); } }).catch(() => {}); };
     this._poll(); this._pollI = setInterval(this._poll, 6000);
     this._onVis = () => { if (!document.hidden) this._poll(); };
     document.addEventListener('visibilitychange', this._onVis);
     try { const pp = new URLSearchParams(location.search).get('plan'); if (pp) { this._followParam = pp; this.followPlan(pp); if (this.state.userName) this.setState({ view: 'group' }); } } catch(e) {}
+    try { const lg = new URLSearchParams(location.search).get('lugar');
+      if (lg) { let t = 0; const abrir = () => { const v = this.cat().find(x => x.id === lg);
+        if (v) this.nav('detail', { detailId: lg, backView: 'home' });
+        else if (t++ < 25) setTimeout(abrir, 250); }; abrir(); } } catch(e) {}
     let tries = 0; const load = () => { const D = window.SOBRES_LUGARES; if (!D) { if (tries++ < 25) setTimeout(load, 250); return; }
       const F = D.fields; this.EXT = D.rows.map(r => { const o = {}; F.forEach((f,i) => o[f] = r[i]); return { id:o.id, n:o.n, cat:o.cat, z:o.zone, col:o.col, addr:o.addr, web:o.web, pp:o.pp, oh:[o.oh0,o.oh1], hrs:o.hrs, tags:o.tags, who:o.who, tm:o.tm, x:o.x, y:o.y, lat:o.lat, lng:o.lng, score:o.score, tier:o.tier, d:o.basis, src:o.src, rt:null, av: o.tier === 'A' ? 'Alta demanda · reserva directa' : 'Verificar disponibilidad', ext:true }; });
       const M = D.matches || {}; this.V.forEach(v => { const m = M[v.id]; if (m) { v.addr = m.addr || v.addr; v.web = m.web || v.web; if (m.x) { v.x = m.x; v.y = m.y; } if (m.lat) { v.lat = m.lat; v.lng = m.lng; } } });
@@ -1269,7 +1281,7 @@ class Component extends DCLogic {
     clearTimeout(this._tt2); this._tt2 = setTimeout(() => { const evs = (this._tq || []).splice(0, 60); if (!evs.length) return;
       this.mutate('track', { events: evs, who: this.state.who, zone: this.state.zone }, true); }, 1200); }
   mutate(op, payload, quiet) { return fetch('/api/mutate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op, payload }) }).then(r => r.ok ? r.json() : Promise.reject()).then(st => { this.setState({ sync: st, syncOn: true }); this.evOp(op, payload); return st; }).catch(() => { if (!quiet) this.toast('Sin conexión con el servidor del salón'); }); }
-  joinAs(name) { const n = (name || '').trim().slice(0, 24); if (!n) { this.toast('Escribe tu nombre'); return; } try { localStorage.setItem('sobres_user', n); const ep = this.state.sync && this.state.sync.epoch; if (ep) localStorage.setItem('sobres_epoch', String(ep)); } catch(e) {} this.setState({ userName: n, nameInput: '' }); if (this.state.syncOn) this.mutate('join', { name: n }); if (this._followParam) { this.nav('group'); this.toast(`Listo, ${n} — aquí está el plan que te enviaron`); } else { this.toast(`Listo, ${n} — ¿qué hacemos hoy?`); } }
+  joinAs(name) { const n = (name || '').trim().slice(0, 24); if (!n) { this.toast('Escribe tu nombre'); return; } try { localStorage.setItem('sobres_user', n); const ep = this.state.sync && this.state.sync.epoch; if (ep) localStorage.setItem('sobres_epoch', String(ep)); } catch(e) {} this.setState({ userName: n, nameInput: '' }); this.mutate('join', { name: n }, true); if (this._followParam) { this.nav('group'); this.toast(`Listo, ${n} — aquí está el plan que te enviaron`); } else { this.toast(`Listo, ${n} — ¿qué hacemos hoy?`); } }
   checkEpoch(st) { if (!st.epoch) return false; let e0 = null; try { e0 = localStorage.getItem('sobres_epoch'); } catch(e) {}
     if (String(st.epoch) === e0) return false;
     try { localStorage.setItem('sobres_epoch', String(st.epoch)); } catch(e) {}
@@ -1326,6 +1338,10 @@ class Component extends DCLogic {
       } else { this.ev('cambiar_seccion', { seccion: view }); }
     } catch(e) {}
     this.setState(Object.assign({ view, pinId: null, searchQ: '', myStars: 0, myTxt: '', focusPlanId: null }, extra || {})); try { window.scrollTo(0,0); } catch(e) {} }
+  // Enlace real al lugar dentro de este sitio (antes copiaba 'sobres.mx/l/…',
+  // un dominio que no existe).
+  linkLugar(id) { try { return location.origin + location.pathname + '?lugar=' + encodeURIComponent(id); }
+    catch(e) { return '?lugar=' + id; } }
   todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
   planConfirmed(p) { const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
   chip(on) { return `padding:9px 14px;border:2px solid ${on?'var(--color-text)':'var(--color-neutral-300)'};background:${on?'var(--color-text)':'#fff'};color:${on?'#fff':'var(--color-text)'};font:600 13px var(--font-body);cursor:pointer;white-space:nowrap`; }
@@ -1375,6 +1391,10 @@ class Component extends DCLogic {
     const regen = opts.regen || 0;
     const dseed = seed * 7919 + regen * 104729 + (this.DSEED || 1);
     const avoidC = new Set(opts.avoidCombos || []);
+    const nShown = Math.max(0, Math.min(5, s.planStops || 0));
+    const firmasDe = st => { const a = [this.comboSig(st)];
+      if (nShown && st.length > nShown) a.push(this.comboSig(st.slice(0, nShown)));
+      return a; };
     const avoidV = new Set(opts.avoidVenues || []);
     const excl = this.exclSet();
 
@@ -1419,6 +1439,11 @@ class Component extends DCLogic {
     // Construye un itinerario candidato. `variant` mueve la elección dentro de los
     // mejores candidatos, para que dos pasadas no den siempre lo mismo.
     const buildOne = (variant, capParada) => {
+      // Cuando hay historial, recorremos la rejilla de candidatos como un
+      // cuentakilómetros (parada 1 × parada 2 × ...) en vez de desplazar todas
+      // las paradas con el mismo número: así no se repite una diagonal y se
+      // alcanzan TODAS las combinaciones válidas.
+      const barrido = avoidC.size > 0; let odo = variant;
       const stops = []; let spent = 0; const label = []; const usedGk = []; const stopT = [];
       let lastFoodT = null, foodN = 0;
       for (let ti = 0; ti < times.length; ti++) {
@@ -1437,14 +1462,15 @@ class Component extends DCLogic {
             && spent + v.pp <= max && (capParada == null || v.pp <= capParada));
           let pick = null;
           if (fit.length) {
-            const bestN = Math.min(12, fit.length);
-            const best = fit.slice(0, Math.max(bestN, 1) * 3)
+            const bestN = Math.min(fit.length, 12 + variant * 2);
+            const best = fit.slice()
               .sort((a, b) => this.rank(b, dseed) - this.rank(a, dseed))
               .slice(0, bestN);
             // Preferimos lo que el usuario aún no ha visto.
             const frescos = best.filter(v => !avoidV.has(v.id));
             const urna = frescos.length ? frescos : best;
-            pick = urna[(variant * 7 + dseed) % urna.length];
+            if (barrido) { pick = urna[odo % urna.length]; odo = Math.floor(odo / urna.length); }
+            else pick = urna[(variant * 7 + dseed) % urna.length];
           }
           if (!pick) pick = cands.find(v => !stops.includes(v) && this.atHour(v, t) && v.pp === 0 && spent <= max);
           if (pick) {
@@ -1460,47 +1486,70 @@ class Component extends DCLogic {
 
     // Muchas pasadas (antes 4) para poder ofrecer 3 planes distintos de verdad.
     const hechos = []; const vistos = new Set(); let repetidos = 0;
-    for (let variant = 0; variant < 48 && hechos.length < 3; variant++) {
+    const desde = (regen || 0) * 3;   // continúa el barrido donde quedó
+    for (let k = 0; k < 220 && hechos.length < 3; k++) {
+      const variant = desde + k;
       let c = buildOne(variant);
       if (c.stops.length < 2) c = buildOne(variant, max / 2);
       if (c.stops.length < 2) c = buildOne(variant, max / 3);
       if (c.stops.length < 2) continue;
       if (c.spent > max) continue;
-      const sg = this.comboSig(c.stops);
-      if (vistos.has(sg)) continue;
-      vistos.add(sg);
-      if (avoidC.has(sg)) { repetidos++; continue; }   // ya se la mostramos antes
-      c.sig = sg; hechos.push(c);
+      const fs = firmasDe(c.stops); const sg = fs[0];
+      if (fs.some(f => vistos.has(f))) continue;
+      fs.forEach(f => vistos.add(f));
+      if (fs.some(f => avoidC.has(f))) { repetidos++; continue; }   // ya se la mostramos
+      c.sig = sg; c.sigs = fs; hechos.push(c);
     }
 
     // Si no quedan combinaciones nuevas, lo decimos — no relajamos restricciones.
     let exhausted = false;
     let plans = hechos;
     if (!plans.length) {
-      exhausted = repetidos > 0;
-      for (let variant = 0; variant < 48 && plans.length < 3; variant++) {
+      for (let k = 0; k < 220 && plans.length < 3; k++) {
+        const variant = desde + k;
         let c = buildOne(variant);
         if (c.stops.length < 2) c = buildOne(variant, max / 2);
         if (c.stops.length < 2) c = buildOne(variant, max / 3);
         if (c.stops.length < 2 || c.spent > max) continue;
-        const sg = this.comboSig(c.stops);
+        const fs = firmasDe(c.stops); const sg = fs[0];
         if (plans.some(p => p.sig === sg)) continue;
-        c.sig = sg; plans.push(c);
+        c.sig = sg; c.sigs = fs; plans.push(c);
       }
+      // Si lo que acabamos de ofrecer ya se había mostrado, hay que decirlo.
+      exhausted = plans.some(p => (p.sigs || [p.sig]).some(f => avoidC.has(f)));
     }
     if (!plans.length && top.length >= 2) {
       const dos = top.slice(0, 2);
       if (dos[0].pp + dos[1].pp <= max) plans.push({ stops: dos, spent: dos[0].pp + dos[1].pp, label: 'Lo mejor con tus filtros', sig: this.comboSig(dos) });
     }
+    // ¿Qué restricción está limitando de verdad? Se mide cuántos lugares de la
+    // zona quedan fuera por cada causa, para nombrar la que más pesa.
+    let limita = null;
+    {
+      const enZona = this.cat().filter(v => !excl.has(v.id) && (cityWide || zones.includes(v.z)));
+      const porBud = enZona.filter(v => !this.budgetOk(v)).length;
+      const porHora = enZona.filter(v => this.budgetOk(v) && !this.timingOk(v)).length;
+      const porZona = this.cat().length - enZona.length;
+      const cand = [
+        { k: 'presupuesto', n: porBud, txt: 'el presupuesto (' + this.budLabel() + ') deja fuera ' + porBud + ' lugares de la zona' },
+        { k: 'horario', n: porHora, txt: 'el horario (' + this.time12(this.range()[0]) + '–' + this.time12(this.range()[1]) + ') deja fuera ' + porHora + ' lugares' },
+        { k: 'zona', n: cityWide ? 0 : porZona, txt: 'la zona (' + this.zonesLabel() + ') deja fuera ' + porZona + ' lugares del catálogo' }
+      ].filter(x => x.n > 0).sort((a, b) => b.n - a.n);
+      if (excl.size) cand.push({ k: 'exclusiones', n: excl.size, txt: 'tus exclusiones quitan ' + excl.size + ' lugares' });
+      limita = cand[0] || null;
+    }
     if (exhausted && !expandNote) {
-      expandNote = 'Ya te mostramos todas las combinaciones que caben con estos filtros. Para ver algo realmente nuevo, amplía la zona, el horario o el presupuesto.';
+      expandNote = 'Ya viste todas las combinaciones posibles con estos filtros. Lo que más limita: '
+        + (limita ? limita.txt : 'los filtros actuales')
+        + '. Amplía ' + (limita ? limita.k : 'alguno de los filtros') + ' para ver opciones nuevas.';
     }
 
     // Alternativas que SÍ encajan salvo por el presupuesto — se muestran aparte.
     const overBudget = ranked.filter(v => v.pp > max).slice(0, 6);
 
     return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
-      expandNote, ranked, zones, exhausted, overBudget, sigs: plans.slice(0, 3).map(p => p.sig) };
+      expandNote, ranked, zones, exhausted, overBudget, limita,
+      sigs: plans.slice(0, 3).reduce((a, p) => a.concat(p.sigs || [p.sig]), []).filter(Boolean) };
   }
   buildAround(v) { const r = this.state.results || this.engine(); const max = this.budgetMax(); const near = (a, list, used) => list.filter(x => !used.includes(x) && x.id !== a.id).sort((p,q) => Math.hypot(a.x-p.x,a.y-p.y) - Math.hypot(a.x-q.x,a.y-q.y));
     const all = this.cat(); const food = all.filter(x => this.FOOD.includes(x.cat)); const drinks = all.filter(x => this.DRINK.includes(x.cat));
@@ -1582,7 +1631,7 @@ class Component extends DCLogic {
       'Tour':'🚶','Sitio histórico':'🏰' }; return I[cat] || '📍'; }
   tile(v, h) { const t = this.catTone(v.cat);
     return `position:relative;width:100%;height:${h}px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,${t[0]} 0%,${t[1]} 100%);color:#fff;border-bottom:2px solid var(--color-text);overflow:hidden;text-align:center;padding:10px`; }
-  cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { try { navigator.clipboard.writeText(`sobres.mx/l/${v.id}`); } catch(e) {} this.toast(`Link copiado: sobres.mx/l/${v.id}`); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
+  cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { const u = this.linkLugar(v.id); try { navigator.clipboard.writeText(u); } catch(e) {} this.toast('Link copiado: ' + u); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
   slot24(t) { const m = /(\d+):(\d+)\s*(am|pm)/i.exec(t || ''); if (!m) return '20:00'; let h = (+m[1]) % 12; if (/pm/i.test(m[3])) h += 12; return String(h).padStart(2, '0') + ':' + m[2]; }
   otUrl(v, hhmm, covers, dateISO) { const d = dateISO || this.state.planDate || this.todayISO();
     const q = 'term=' + encodeURIComponent(v.n + (v.col ? ' ' + v.col : '')) + '&covers=' + (covers || this.state.groupSize || 2) + '&dateTime=' + encodeURIComponent(d + 'T' + (hhmm || '20:00'));
@@ -1603,7 +1652,8 @@ class Component extends DCLogic {
   mapsUrl(v) { return (v.lat && v.lng)
     ? `https://www.google.com/maps/search/?api=1&query=${v.lat},${v.lng}`
     : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v.n + ', ' + (v.col || 'CDMX')); }
-  legKm(a, b) { if (a.lat && a.lng && b.lat && b.lng) { const R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+  legKm(a, b) { if (a.sinUbicacion || b.sinUbicacion) return null;   // sin ubicación válida no hay ruta
+    if (a.lat && a.lng && b.lat && b.lng) { const R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
       const s = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180) * Math.cos(b.lat*Math.PI/180) * Math.sin(dLng/2)**2;
       return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s)); }
     return Math.hypot((a.x-b.x)*0.27, (a.y-b.y)*0.36); }
@@ -1680,6 +1730,8 @@ class Component extends DCLogic {
     this.ZONES.forEach(z => { const key = this.strip(z[1]).split(' ')[0];
       if (key.length > 3 && t.includes(key)) out.zones.push(z[0]); });
     if (/toda la ciudad|donde sea|cualquier lado/.test(t)) out.zones = [];
+    // ¿Está pidiendo explícitamente algo que no haya visto?
+    out.fresh = /algo diferente|algo distinto|otra cosa|otras opciones|otro plan|cambiame|cambiamelo|no me gusto|dame mas|ensename otras|sorprendeme/.test(t);
     // ── fecha ──
     const hoy = new Date();
     if (/mañana|manana/.test(t)) { const d = new Date(hoy); d.setDate(d.getDate() + 1); out.date = d; }
@@ -1820,6 +1872,9 @@ class Component extends DCLogic {
       const stopsArr = []; const used = {}; const noCupo = [];
       const tope = (p.budget && p.budget < 90000) ? p.budget : this.budgetMax();
       const gasto = () => stopsArr.reduce((a, v) => a + (v.pp || 0), 0);
+      // Historial: 'dame algo diferente' no puede devolver siempre lo mismo.
+      const vistosV = new Set(p.fresh ? (this.state.seenVenues || []) : []);
+      const giro = p.fresh ? (this.state.aiN || 0) : 0;
       const namedAll = p.named.map(x => x.v);   // lo que el usuario pidió por nombre, aunque venga después
       seq.forEach(item => {
         if (item.fixed) {
@@ -1840,12 +1895,19 @@ class Component extends DCLogic {
         cands.sort((a, b) => this.rank(b, this.DSEED) - this.rank(a, this.DSEED));
         // Respetar el tope del itinerario completo, no sólo el precio de cada lugar.
         const cabe = cands.filter(v => gasto() + (v.pp || 0) <= tope);
-        const elegido = cabe[0] || null;
+        const frescos = cabe.filter(v => !vistosV.has(v.id));
+        const urna = frescos.length ? frescos : cabe;
+        const elegido = urna.length ? urna[(giro * 3 + stopsArr.length) % urna.length] : null;
         if (elegido) { stopsArr.push(elegido); used[elegido.id] = 1; }
         else if (cands.length) { noCupo.push(cands[0]); } });
       let stops = stopsArr;
       // Relleno de emergencia: también tiene que respetar presupuesto y horarios.
-      if (stops.length < 2) { const r = this.engine(0); if (r.plans[0]) r.plans[0].stops.forEach(v => {
+      if (stops.length < 2) { const r = this.engine(0, {
+        regen: (this.state.regenN || 0) + (p.fresh ? (this.state.aiN || 0) + 1 : 0),
+        avoidCombos: p.fresh ? (this.state.seenCombos || []) : [],
+        avoidVenues: p.fresh ? (this.state.seenVenues || []) : [] });
+        this._aiExhausted = !!r.exhausted; this._aiNota = r.expandNote || '';
+        if (r.plans[0]) r.plans[0].stops.forEach(v => {
         if (used[v.id] || stops.length >= 3) return;
         if (gasto() + (v.pp || 0) > tope) { noCupo.push(v); return; }
         if (!this.atHour(v, horaDe(stops.length))) return;
@@ -1873,7 +1935,12 @@ class Component extends DCLogic {
       this.setState({ planCustom: { stops, times, spent: stops.reduce((a, b) => a + b.pp, 0) },
         planStops: n, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null,
         planReadOnly: false, openedPlanBy: '', aiOpen: false, aiBusy: false,
-        aiSummary: this.aiSummary(p, stops) });
+        aiSummary: this.aiSummary(p, stops), aiN: (this.state.aiN || 0) + 1,
+        seenCtx: this.searchCtx(),
+        seenCombos: this.histOf({ sigs: [this.comboSig(stops)], plans: [{ stops }] },
+          this.state.seenCombos, this.state.seenVenues).c,
+        seenVenues: this.histOf({ sigs: [this.comboSig(stops)], plans: [{ stops }] },
+          this.state.seenCombos, this.state.seenVenues).v });
       this.ev('sobres_ai_plan', { paradas: stops.length,
         pedido: (p.cats || []).map(c => c.g).filter(Boolean).join(',').slice(0, 90) || '(sin categoria)',
         por_nombre: (p.named || []).length, con_quien: p.who || '' });
@@ -1940,10 +2007,10 @@ class Component extends DCLogic {
     const fromOpts = []; for (let h = 7; h <= 23; h++) fromOpts.push({ v: String(h), label: this.time12(h) });
     const toOpts = []; for (let h = Math.floor(rng[0]) + 2; h <= 28; h++) toOpts.push({ v: String(h), label: this.time12(h) + (h >= 24 ? ' (día sig.)' : '') });
     const budgetOpts = this.BUD.map(([id,label]) => ({ label, style: this.chip(s.budget === id && !s.budgetCustom), pick: () => this.setState({ budget: id, budgetCustom: null }) }));
-    const vibeOpts = this.VIBES.map(vb => ({ label: vb, style: this.chip(s.vibes.includes(vb)), pick: () => { const v = s.vibes.slice(); const i = v.indexOf(vb); if (i >= 0) v.splice(i,1); else if (v.length < 3) v.push(vb); else { v.shift(); v.push(vb); } this.setState({ vibes: v }); } }));
+    const vibeOpts = this.VIBES.map(vb => ({ label: vb, style: this.chip(s.vibes.includes(vb)), pick: () => { const v = s.vibes.slice(); const i = v.indexOf(vb); if (i >= 0) v.splice(i,1); else if (v.length < 3) v.push(vb); else { const fuera = v.shift(); v.push(vb); this.toast('Máximo 3 vibras — quité "' + fuera + '" para poner "' + vb + '"'); } this.setState({ vibes: v }); } }));
     const openV = id => this.nav('detail', { detailId: id, backView: view });
     const photoFail = id => () => this.setState(st => { const p = Object.assign({}, st.photos); delete p[id]; return { photos: p }; });
-    const miniCard = v => { const ph = s.photos[v.id]; const rtg = this.rating(v); return { letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), meta: `${v.col} · ${this.dist(v)} min · ${v.pp === 0 ? 'Gratis' : '~$'+v.pp+' pp'}`, av: (rtg ? '★ ' + rtg.avg + ' · ' : '') + v.av, tileStyle: this.tile(v, 108), open: () => openV(v.id) }; };
+    const miniCard = v => { const ph = s.photos[v.id]; const rtg = this.rating(v); return { letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), meta: `${v.col} · ${this.dist(v)} min · ${this.precioTxt(v)}`, av: (rtg ? '★ ' + rtg.avg + ' · ' : '') + v.av, tileStyle: this.tile(v, 108), open: () => openV(v.id) }; };
     const C = this.cat();
     const zoneC = C.filter(v => this.inZone(v));
     const feedSections = view !== 'home' ? [] : [
@@ -1964,23 +2031,34 @@ class Component extends DCLogic {
       if (s.qf.open) vs = vs.filter(v => this.openNow(v)); if (s.qf.cheap) vs = vs.filter(v => v.pp <= 500); if (s.qf.gems) vs = vs.filter(v => v.tags.includes('joyita'));
       const shown = vs.slice(0, s.visibleCount || 12);
       canMore = vs.length > shown.length;
-      resultsLine = `${r.poolN} lugares del catálogo (${r.total}) pasan tus filtros — te enseñamos los mejores ${shown.length}, no un directorio.`;
+      if (!shown.length) {
+        const rapidos = [s.qf.open && 'Abierto ahora', s.qf.cheap && 'Barato', s.qf.gems && 'Joyitas'].filter(Boolean);
+        resultsLine = rapidos.length
+          ? `Ningún lugar de ${this.zonesLabel()} cumple "${rapidos.join(' + ')}". Quita ese filtro y te quedan ${r.venues.length} opciones.`
+          : `Ningún lugar pasa tus filtros en ${this.zonesLabel()}. ${r.expandNote || 'Amplía la zona, el horario o el presupuesto.'}`;
+      } else {
+        resultsLine = `${r.poolN} lugares del catálogo (${r.total}) pasan tus filtros — te enseñamos los mejores ${shown.length}, no un directorio.`;
+      }
       const times = n => this.planTimes(n);
-      plans = r.plans.map((p, i) => { const ts = p.times || times(p.stops.length); const max = this.budgetMax(); return { tag: `PLAN ${i+1}${p.label ? ' · ' + p.label.toUpperCase() : ''}`, total: `~$${p.spent} pp · ${(p.stops.length*2-0.5).toFixed(1)} h`, why: p.spent <= max ? `${p.stops.length} paradas cercanas entre sí, ${this.budLabel().toLowerCase()} en total — no otra vez lo de siempre.` : `${p.stops.length} paradas cercanas entre sí, ~$${p.spent} pp en total — tantito arriba de tu tope; quita una parada para bajar.`, stops: p.stops.map((v, j) => ({ time: this.time12(ts[j]), letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}`, pp: v.pp === 0 ? 'Gratis' : '$'+v.pp })), open: () => { this.setState({ planIdx: i, planStops: p.stops.length, swapSeed: 0, planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null, planReadOnly: false, openedPlanBy: '', results: r }); this.nav('plan'); }, vote: () => this.setState({ planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planStops: p.stops.length, swapSeed: 0, planNone: false, swapIdx: null, planReadOnly: false, openedPlanBy: '', sendOpen: true, results: r }) }; });
-      rVenues = shown.map(v => { const a = this.cardActions(v); const ph = s.photos[v.id]; const rtg = this.rating(v); const badge = rtg ? '★ ' + rtg.avg + ' (' + rtg.n + ')' : (v.tier === 'A' ? 'TOP 2025' : ''); return Object.assign({ letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), hasBadge: !!badge, badge, price: v.pp === 0 ? 'Gratis' : '~$' + v.pp + ' pp', meta: `${v.col} · ${this.dist(v)} min · ${v.hrs}`, tags: v.tags.map(t => ({ label: t })), why: this.why(v), av: (v.fic ? 'PERFIL DE EJEMPLO · ' : v.pub ? 'PUBLICADO POR EL VENUE · ' : '') + v.av, tileStyle: this.tile(v, 148) }, a); });
+      plans = r.plans.map((p, i) => { const ts = p.times || times(p.stops.length); const max = this.budgetMax(); return { tag: `PLAN ${i+1}${p.label ? ' · ' + p.label.toUpperCase() : ''}`, total: `~$${p.spent} pp · ${(p.stops.length*2-0.5).toFixed(1)} h`, why: p.spent <= max ? `${p.stops.length} paradas cercanas entre sí, ${this.budLabel().toLowerCase()} en total — no otra vez lo de siempre.` : `${p.stops.length} paradas cercanas entre sí, ~$${p.spent} pp en total — tantito arriba de tu tope; quita una parada para bajar.`, stops: p.stops.map((v, j) => ({ time: this.time12(ts[j]), letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}`, pp: this.precioTxt(v) })), open: () => { this.setState({ planIdx: i, planStops: p.stops.length, swapSeed: 0, planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null, planReadOnly: false, openedPlanBy: '', results: r }); this.nav('plan'); }, vote: () => this.setState({ planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planStops: p.stops.length, swapSeed: 0, planNone: false, swapIdx: null, planReadOnly: false, openedPlanBy: '', sendOpen: true, results: r }) }; });
+      rVenues = shown.map(v => { const a = this.cardActions(v); const ph = s.photos[v.id]; const rtg = this.rating(v); const badge = rtg ? '★ ' + rtg.avg + ' (' + rtg.n + ')' : (v.tier === 'A' ? 'TOP 2025' : ''); return Object.assign({ letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), hasBadge: !!badge, badge, price: this.precioTxt(v), meta: `${v.col} · ${this.dist(v)} min · ${v.hrs}`, tags: v.tags.map(t => ({ label: t })), why: this.why(v), av: (v.fic ? 'PERFIL DE EJEMPLO · ' : v.pub ? 'PUBLICADO POR EL VENUE · ' : '') + v.av, tileStyle: this.tile(v, 148) }, a); });
     }
     const qfDef = [['open','Abierto ahora'],['cheap','≤ $500'],['gems','Joyitas']];
     const quickFilters = qfDef.map(([k,label]) => ({ label, style: this.chip(s.qf[k]).replace('9px 14px','7px 12px'), pick: () => { const qf = Object.assign({}, s.qf); qf[k] = !qf[k]; this.setState({ qf }); } }));
     const showDated = view === 'results' && s.when === 'fecha' && !!s.customDate;
-    const datedItems = showDated ? this.cat().filter(v => v.date === s.customDate).map(v => ({ badge: v.cat.toUpperCase() + ' · ' + this.fmtDate(v.date).toUpperCase(), name: v.n, meta: `${v.col} · ${v.hrs} · ${v.pp === 0 ? 'Gratis' : '~$'+v.pp+' pp'}`, open: () => openV(v.id) })) : [];
+    const datedItems = showDated ? this.cat().filter(v => v.date === s.customDate).map(v => ({ badge: v.cat.toUpperCase() + ' · ' + this.fmtDate(v.date).toUpperCase(), name: v.n, meta: `${v.col} · ${v.hrs} · ${this.precioTxt(v)}`, open: () => openV(v.id) })) : [];
     const tmEvents = (s.tmEvents || []).map(e => ({ name: e.name, meta: `${e.venue} · ${this.fmtDate(e.date)} ${e.time ? '· ' + e.time : ''}`, url: e.url }));
     let detail = null;
     if (s.detailId) { const v = this.cat().find(x => x.id === s.detailId); if (v) { const a = this.cardActions(v); const ph = s.photos[v.id];
       const rt = this.rating(v); const myPrev = rt && rt.mine ? rt.mine.s : 0; const starSel = s.myStars || myPrev;
       const slots = this.realSlots(v).map(t => ({ label: t, style: this.chip(s.modalSlot === t), pick: () => this.setState({ modalSlot: t }) }));
-      const combos = this.cat().filter(x => x.id !== v.id && x.z === v.z && x.cat !== v.cat).sort((p,q) => Math.hypot(v.x-p.x,v.y-p.y) - Math.hypot(v.x-q.x,v.y-q.y)).slice(0,5).map(c => ({ letter: c.n[0], name: c.n, meta: `${c.cat} · ${c.col} · ${c.pp===0?'Gratis':'~$'+c.pp+' pp'}`, open: () => openV(c.id) }));
-      detail = Object.assign({ slotId: 'photo-' + v.id, photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'ESPACIO PARA FOTO REAL'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: this.describe(v), why: this.why(v),
-        facts: [{k:'DIRECCIÓN',v: v.addr || v.col},{k:'TIPO',v: v.cat},{k:'LLEGADA',v: s.zone === 'all' ? 'En ' + this.zLabel(v.z) : '~' + this.dist(v) + ' min desde ' + this.zLabel(s.zone)},{k:'PRECIO (EST.)',v: v.pp===0?'Gratis':'~$'+v.pp+' pp'},{k:'HORARIO',v: v.hrs},{k:'FUENTE',v: v.src || (v.fic ? 'Perfil demo' : v.pub ? 'Venue (demo)' : 'Curaduría Sobres')}],
+      const combos = this.cat().filter(x => x.id !== v.id && x.z === v.z && x.cat !== v.cat).sort((p,q) => Math.hypot(v.x-p.x,v.y-p.y) - Math.hypot(v.x-q.x,v.y-q.y)).slice(0,5).map(c => ({ letter: c.n[0], name: c.n, meta: `${c.cat} · ${c.col} · ${this.precioTxt(c)}`, open: () => openV(c.id) }));
+      detail = Object.assign({ slotId: 'photo-' + v.id,
+        hasPhoto: !!(ph && ph.src), noPhoto: !(ph && ph.src),
+        tileBg: 'linear-gradient(135deg,' + this.catTone(v.cat)[0] + ',' + this.catTone(v.cat)[1] + ')',
+        icon: this.catIcon(v.cat),
+        photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'SIN FOTO VERIFICADA'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: this.describe(v), why: this.why(v),
+        facts: [{k:'DIRECCIÓN',v: v.addr || v.col},{k:'TIPO',v: v.cat},{k:'LLEGADA',v: s.zone === 'all' ? 'En ' + this.zLabel(v.z) : '~' + this.dist(v) + ' min desde ' + this.zLabel(s.zone)},{k:'PRECIO (EST.)',v: this.precioTxt(v)},{k:'HORARIO',v: v.hrs},{k:'FUENTE',v: v.src || (v.fic ? 'Perfil demo' : v.pub ? 'Venue (demo)' : 'Curaduría Sobres')}],
         tags: v.tags.map(t => ({ label: t })), slots, combos, cta: v.pp === 0 ? 'Apartar visita' : 'Reservar', hasWeb: !!v.web, web: v.web || '#', voteGo: () => this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }), addToPlan: () => this.setState({ addVenueId: v.id }),
         hasAvg: !!rt, rateAvg: rt ? rt.avg : '', rateN: rt ? String(rt.n) : '0',
         canRate: s.syncOn && !!s.userName, rateNeedName: s.syncOn && !s.userName, rateOffline: !s.syncOn,
@@ -2005,12 +2083,14 @@ class Component extends DCLogic {
     const plan0Exists = s.sendOpen ? this.getPlan() : null;
     let itinerary = [], planTotal = '', planMeta = '', planTitle = 'Tu plan', planWhy = '';
     const TOPT = []; for (let th = 7; th <= 28; th += 0.5) TOPT.push({ v: String(th), label: this.time12(th) });
-    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly, canEdit: !s.planReadOnly, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~90 MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col} · ${v.av}`, pp: v.pp === 0 ? 'Gratis' : '$' + v.pp + ' pp', travel: i < plan.stops.length - 1 ? '+ ' + Math.max(4, Math.round(this.legKm(v, plan.stops[i+1]) * 3.2 + 4)) + ' min al siguiente' : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
+    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly, canEdit: !s.planReadOnly, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~90 MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col} · ${v.av}`, pp: this.precioTxt(v), travel: i < plan.stops.length - 1 ? (() => { const mm = this.minutosTramo(this.legKm(v, plan.stops[i+1])); return mm == null ? 'falta la ubicación' : '+ ' + mm + ' min ' + this.provNombre(); })() : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
       hasLeg: i < plan.stops.length - 1,
       legLabel: i < plan.stops.length - 1 ? (() => { const nx = plan.stops[i+1]; const km = this.legKm(v, nx);
-        return `${km < 1 ? Math.round(km*1000) + ' m' : km.toFixed(1) + ' km'} · ~${Math.max(4, Math.round(km * 3.2 + 4))} min hasta ${nx.n.split(' ·')[0]}`; })() : '',
-      legWalk: i < plan.stops.length - 1 && this.legKm(v, plan.stops[i+1]) <= 1.2,
-      rideLabel: 'Pedir ' + this.rideClass(s.groupSize).name,
+        if (km == null) return 'Falta la ubicación de una parada — no podemos calcular la ruta';
+        const mm = this.minutosTramo(km);
+        return `${km < 1 ? Math.round(km*1000) + ' m' : km.toFixed(1) + ' km'} · ~${mm} min ${this.provNombre()} hasta ${nx.n.split(' ·')[0]}`; })() : '',
+      legWalk: i < plan.stops.length - 1 && (this.legKm(v, plan.stops[i+1]) || 99) <= 1.2,
+      rideLabel: s.transporte === 'didi' ? 'Abrir DiDi' : 'Pedir ' + this.rideClass(s.groupSize).name,
       rideUrl: i < plan.stops.length - 1 ? this.uberUrl(plan.stops[i+1], this.rideClass(s.groupSize)) : '#',
       didiGo: i < plan.stops.length - 1 ? (() => this.didiGo(plan.stops[i+1])) : (() => {}),
       mapsLeg: i < plan.stops.length - 1 ? `https://www.google.com/maps/dir/?api=1&origin=${v.lat && v.lng ? v.lat + ',' + v.lng : encodeURIComponent(v.n)}&destination=${plan.stops[i+1].lat && plan.stops[i+1].lng ? plan.stops[i+1].lat + ',' + plan.stops[i+1].lng : encodeURIComponent(plan.stops[i+1].n)}&travelmode=${this.state.transporte === 'caminando' ? 'walking' : this.state.transporte === 'metro' ? 'transit' : 'driving'}` : '#' })); planTotal = `~$${plan.spent} pp`; planMeta = `${plan.stops.length} paradas · ${(plan.stops.length * 2 - 0.5).toFixed(1)} h aprox · ${this.whoLabel()}${['amigos','familia','compa'].includes(s.who) ? ` · ~$${plan.spent * s.groupSize} total del grupo` : ''}`; planTitle = plan.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '); planWhy = s.planReadOnly ? `Este plan te lo envió ${s.openedPlanBy || 'un amigo'}. Solo se puede ver y votar — si tienes otra idea, ve a la votación y dale "+ Proponer algo más".` : `Armado para ${this.whoLabel().toLowerCase()}: paradas cercanas entre sí, total ${this.budLabel().toLowerCase()}. Cambia una parada por otra parecida, quítala, o agrega más abajo. Cuando esté listo: "Enviar plan".`; }
@@ -2030,8 +2110,30 @@ class Component extends DCLogic {
     const pv = s.pinId ? C.find(x => x.id === s.pinId) : null;
     const pinSel = pv ? Object.assign({ letter: pv.n[0], name: pv.n, meta: `${pv.cat} · ${pv.col} · ${pv.addr ? pv.addr + ' · ' : ''}${this.dist(pv)} min · ${pv.pp===0?'Gratis':'~$'+pv.pp+' pp'}`, av: pv.av }, this.cardActions(pv)) : { letter:'', name:'', meta:'', av:'', open:()=>{}, save:()=>{}, saveLabel:'' };
     const savedVenues = s.saved.map(id => C.find(v => v.id === id)).filter(Boolean).map(v => { const a = this.cardActions(v); return { letter: v.n[0], name: v.n, meta: `${v.cat} · ${v.col} · ${v.pp===0?'Gratis':'~$'+v.pp+' pp'}`, open: a.open, del: () => { const sv = s.saved.filter(x => x !== v.id); this.setState({ saved: sv }, () => this.persist()); } }; });
-    const savedPlans = s.savedPlans.map((sp, i) => ({ tag: 'PLAN GUARDADO', total: sp.total, route: sp.route, open: () => { this.setState({ results: this.engine(), planIdx: 0, planCustom: null }); this.nav('plan'); }, del: () => { const l = s.savedPlans.slice(); l.splice(i,1); this.setState({ savedPlans: l }, () => this.persist()); } }));
-    if (view === 'group' && !sOn && !s.gPlans.length && r && r.plans && r.plans[0]) { const p0 = r.plans[0]; const gp = { id: this.planOptId(p0), name: 'Plan: ' + p0.stops.map(v => v.n.split(' ·')[0]).join(' → '), meta: `${p0.stops.length} paradas · ~$${p0.spent} pp`, by: 'Pablo', ts: Date.now(), stops: p0.stops.map(v => v.id), times: p0.times || [], from: this.range()[0], to: this.range()[1], spent: p0.spent, votes: { Pablo: 'sobres' }, stopVotes: {} }; setTimeout(() => this.setState({ gPlans: [gp] }, () => this.persist()), 0); }
+    const savedPlans = s.savedPlans.map((sp, i) => ({
+      tag: 'PLAN GUARDADO' + (sp.date ? ' · ' + this.fmtDate(sp.date).toUpperCase() : ''),
+      total: sp.total, route: sp.route,
+      // Abrir restaura la copia guardada tal cual. Antes corría el motor otra
+      // vez y mostraba un plan nuevo, no el que habías guardado.
+      open: () => {
+        if (!sp.stopIds || !sp.stopIds.length) { this.toast('Ese guardado es de una versión vieja y ya no se puede abrir'); return; }
+        const cat = this.cat();
+        const stops = sp.stopIds.map(id => cat.find(v => v.id === id)).filter(Boolean);
+        if (stops.length !== sp.stopIds.length) { this.toast('Algunos lugares de ese plan ya no están en el catálogo'); }
+        if (!stops.length) return;
+        this.setState({
+          planCustom: { stops, times: (sp.times || []).slice(0, stops.length), spent: stops.reduce((a, v) => a + v.pp, 0) },
+          planStops: stops.length, planNone: false, planCustomFrom: sp.id,
+          planDate: sp.date || this.todayISO(), groupSize: sp.people || s.groupSize,
+          who: sp.who || s.who, transporte: sp.transporte || s.transporte,
+          zone: sp.zone || s.zone, zonesSel: (sp.zonesSel || []).slice(),
+          planFrom: sp.from != null ? sp.from : null, planTo: sp.to != null ? sp.to : null,
+          planReadOnly: false, openedPlanId: null, swapIdx: null, planView: 'edit'
+        }, () => this.nav('plan'));
+      },
+      del: () => { const l = s.savedPlans.slice(); l.splice(i, 1); this.setState({ savedPlans: l }, () => this.persist()); } }));
+        // (Antes aquí se auto-creaba un plan atribuido a 'Pablo' con su voto ya puesto.
+    //  Era un dato inventado: ahora, si nadie ha propuesto, se dice tal cual.)
     const users = (s.sync && s.sync.users) || {};
     const me = s.userName || 'Tú';
     const myFr = ((users[me] || {}).friends) || [];
@@ -2067,12 +2169,28 @@ class Component extends DCLogic {
         proposeMore: () => { this.toast('Escoge o arma otro plan y dale "Enviar plan"'); this.nav(s.results ? 'results' : 'home'); },
         rowStyle: `background:#fff;border:2px solid ${conf ? 'var(--color-accent)' : 'var(--color-text)'};padding:16px 18px;margin-bottom:14px${conf ? ';box-shadow:0 0 0 3px var(--color-accent-200,#fde8e2);animation:planpop .55s ease' : sob >= 2 && sob > noj ? ';box-shadow:inset 5px 0 0 var(--color-accent)' : ''}`,
         countLabel: `${sob} sobres · ${noj} no jalo`, hasVoterLine: voterNames.length > 0,
-        voterLine: 'Votaron: ' + voterNames.map(k => `${k} (${votes[k] === 'sobres' ? 'sobres' : 'no jalo'})`).join(', '), yes: sob, plan: p }; });
+        voterLine: 'Votaron: ' + voterNames.map(k => `${k} (${votes[k] === 'sobres' ? 'sobres' : 'no jalo'})`).join(', '), yes: sob, no: noj, conf, plan: p }; });
     const hasGPlans = gPlans.length > 0;
     const fpRaw = fpId ? rawPlans.find(p => p.id === fpId) : null;
     const hasLinkPlan = !!(fpRaw && fpRaw.by !== me && view === 'group');
-    let best = null; gPlans.forEach(o => { if (o.yes > 0 && (!best || o.yes > best.yes)) best = o; });
-    const gConsensus = best ? `${best.name} — ${best.yes} sobres` : (hasGPlans ? 'Aún sin votos — denle "Sobres, me late" a su favorito' : 'Nadie ha propuesto un plan todavía');
+    const REGLA = 'Gana el plan con más "Sobres, me late". Si hay empate, nadie gana hasta desempatar.';
+    const todas = visPlans.map(pl => { const vv = Object.values(pl.votes || {});
+      return { id: pl.id, name: pl.name, yes: vv.filter(x => x === 'sobres').length,
+        no: vv.filter(x => x === 'nojalo').length, conf: this.planConfirmed(pl),
+        hasPlan: true, openPlan: () => this.setState({ focusPlanId: pl.id }) }; });
+    const maxYes = todas.reduce((m, o) => Math.max(m, o.yes), 0);
+    const empatados = maxYes > 0 ? todas.filter(o => o.yes === maxYes) : [];
+    const best = empatados.length === 1 ? empatados[0] : null;
+    const confirmado = todas.find(o => o.conf) || null;
+    const votosTotales = todas.reduce((a, o) => a + o.yes + o.no, 0);
+    const enContra = todas.reduce((a, o) => a + o.no, 0);
+    let gEstado, gConsensus;
+    if (!todas.length) { gEstado = 'sin-propuestas'; gConsensus = 'Nadie ha propuesto un plan todavía'; }
+    else if (confirmado) { gEstado = 'confirmado'; gConsensus = 'Confirmado: ' + confirmado.name; }
+    else if (votosTotales === 0) { gEstado = 'sin-votos'; gConsensus = 'Nadie ha votado todavía — denle "Sobres, me late" a su favorito. ' + REGLA; }
+    else if (maxYes === 0) { gEstado = 'solo-contra'; gConsensus = 'Hay ' + enContra + ' voto' + (enContra === 1 ? '' : 's') + ' en contra y ninguno a favor — propongan otra cosa'; }
+    else if (empatados.length > 1) { gEstado = 'empate'; gConsensus = 'Empate a ' + maxYes + ' entre ' + empatados.map(o => o.name).join(' y ') + '. ' + REGLA; }
+    else { gEstado = 'lider'; gConsensus = 'Va ganando ' + best.name + ' — ' + best.yes + ' sobres' + (best.no ? ' y ' + best.no + ' no jalo' : '') + '. ' + REGLA; }
     const insights = [ { k: 'PORQUE SUELES ELEGIR', v: this.insightZone() }, { k: 'TU VIBRA MÁS FRECUENTE', v: this.insightVibe() }, { k: 'CON QUIÉN SALES', v: this.insightWho() } ];
     const c = s.counters;
     const pStats = [{ v: String(c.searches), k: 'BÚSQUEDAS' }, { v: String(s.saved.length + c.saves), k: 'GUARDADOS' }, { v: '$' + Math.round(c.budSum / Math.max(1,c.budN)), k: 'PRESUPUESTO TÍPICO PP' }, { v: String(s.savedPlans.length + s.reserved.length), k: 'PLANES Y RESERVAS' }];
@@ -2228,7 +2346,7 @@ class Component extends DCLogic {
       detail: detail || { slotId:'x', photoSrc:'', photoCredit:'', photoHref:'', photoNote:'', kicker:'', name:'', desc:'', why:'', facts:[], tags:[], slots:[], combos:[], cta:'', hasWeb:false, web:'#', reserve:()=>{}, save:()=>{}, saveLabel:'', share:()=>{}, mapGo:()=>{}, voteGo:()=>{}, hasAvg:false, rateAvg:'', rateN:'0', canRate:false, rateNeedName:false, rateOffline:true, starBtns:[], myTxt:'', setMyTxt:()=>{}, sendRate:()=>{}, reviews:[] },
       detailCols: s.isMobile ? '1fr' : 'minmax(300px,440px) 1fr', goBack: () => this.nav(s.backView || 'home'),
       planTitle, stopOpts, itinerary, planTotal, planMeta, planWhy,
-      transportOpts: [['propio','🚗 Mi coche'],['uber','🚕 Uber'],['didi','🚖 DiDi'],['caminando','🚶 Caminando'],['metro','🚇 Metro']]
+      transportOpts: [['propio','🚗 Mi coche'],['uber','🚕 Uber'],['didi','🚖 DiDi'],['caminando','🚶 Caminando'],['metro','🚇 Transporte público']]
         .map(([id, label]) => ({ label, style: this.chip(s.transporte === id).replace('9px 14px','8px 12px'),
           pick: () => { this.setState({ transporte: id }); if (s.openedPlanId && s.syncOn) this.mutate('setTransport', { planId: s.openedPlanId, mode: id }, true); } })),
       rideHint: (() => { const rc = this.rideClass(s.groupSize); return `${s.groupSize} personas → ${rc.name} (${rc.note})`; })(),
@@ -2271,7 +2389,28 @@ class Component extends DCLogic {
       hasSentPlans: rawPlans.some(p => p.by === me && !this.planConfirmed(p)), hasRecvPlans: rawPlans.some(p => p.by !== me && (p.sharedWith || []).includes(me) && !this.planConfirmed(p)),
       hasConfPlans: rawPlans.some(p => (p.by === me || (p.sharedWith || []).includes(me)) && this.planConfirmed(p)),
       hasAnyPlans: rawPlans.some(p => p.by === me || (p.sharedWith || []).includes(me)),
-      savePlan: () => { const p = this.getPlan(); if (!p) return; const sp = s.savedPlans.concat([{ route: p.stops.map(v=>v.n).join(' → '), total: `~$${p.spent} pp` }]); this.setState({ savedPlans: sp }, () => this.persist()); this.toast('Plan guardado en tu colección'); },
+      // Guardar hace una COPIA COMPLETA E INDEPENDIENTE: ids de las paradas,
+      // horas, fecha, personas, transporte, zona y costo. Antes sólo se
+      // guardaban dos cadenas de texto, por eso al abrir no había nada que
+      // recuperar y salía el borrador del momento.
+      savePlan: () => {
+        const p = this.getPlan(); if (!p || !p.stops.length) return;
+        const rng = this.range();
+        const copia = {
+          id: 'sp-' + Date.now(), ts: Date.now(),
+          route: p.stops.map(v => v.n).join(' → '), total: '~$' + p.spent + ' pp',
+          stopIds: p.stops.map(v => v.id), times: (p.times || []).slice(), spent: p.spent,
+          nStops: p.stops.length, date: s.planDate || this.todayISO(),
+          people: s.groupSize, who: s.who, transporte: s.transporte,
+          zone: s.zone, zonesSel: (s.zonesSel || []).slice(),
+          from: rng[0], to: rng[1]
+        };
+        const igual = s.savedPlans.find(x => (x.stopIds || []).join() === copia.stopIds.join()
+          && (x.date || '') === copia.date);
+        if (igual) { this.toast('Ese plan ya estaba guardado'); return; }
+        this.setState({ savedPlans: s.savedPlans.concat([copia]) }, () => this.persist());
+        this.toast('Plan guardado — se queda tal cual, aunque rehagas el borrador');
+      },
       votePlan: () => this.proposePlan(this.getPlan()),
       redoPlan: () => this.regenerate(),
       mapCats, mapZones, openNowStyle: this.chip(s.openNow).replace('9px 14px','8px 12px'), openNowToggle: () => this.setState({ openNow: !s.openNow, pinId: null }),
@@ -2296,7 +2435,15 @@ class Component extends DCLogic {
       senderFriendLabel: fpRaw && myFr.includes(fpRaw.by) ? `✓ ${fpRaw.by} ya es tu amigo` : fpRaw ? `+ Agregar a ${fpRaw.by} como amigo` : '',
       addSenderFriend: () => { if (!fpRaw) return; if (myFr.includes(fpRaw.by)) { this.toast(`${fpRaw.by} ya es tu amigo`); return; } this.mutate('friend', { user: me, friend: fpRaw.by, on: true }).then(() => this.toast(`${fpRaw.by} agregado como amigo`)); },
       gFootNote: sOn ? 'En vivo: cada quien entra desde su celular con el link del salón. Tus planes los ven solo tus amigos, a quien se los mandes o quien abra su link — se sincroniza solo cada pocos segundos.' : 'Sin conexión al servidor del salón: los votos se quedan en este dispositivo. Con el link del salón, todo se sincroniza en vivo.',
-      gConfirm: () => { if (!best) { this.toast('Primero voten — denle "Sobres, me late" a un plan'); return; } this.toast(`Ganó: ${best.name}`); if (best.hasPlan) best.openPlan(); },
+      gEstado, gRegla: REGLA,
+      gConfirm: () => {
+        if (!todas.length) { this.toast('Primero propongan un plan'); return; }
+        if (votosTotales === 0) { this.toast('Todavía nadie vota — denle "Sobres, me late" a un plan'); return; }
+        if (maxYes === 0) { this.toast('Todos los votos son en contra: no hay plan que cerrar'); return; }
+        if (empatados.length > 1) { this.toast('Empate a ' + maxYes + ' entre ' + empatados.length + ' planes — desempaten antes de cerrar'); return; }
+        this.toast('Cerrado: ' + best.name + ' con ' + best.yes + ' sobres' + (best.no ? ' contra ' + best.no : ''));
+        if (best.hasPlan) best.openPlan();
+      },
       gAutoPropose: () => { const rr = s.results || this.engine(); const existing = {}; rawPlans.forEach(o => existing[o.id] = 1);
         let cand = (rr.plans || []).find(p => !existing[this.planOptId(p)]);
         if (!cand) { const r2 = this.engine(((s.surpriseN || 0) + Math.floor(Math.random() * 97) + 1)); cand = (r2.plans || []).find(p => !existing[this.planOptId(p)]) || (r2.plans || [])[0]; }
@@ -2368,8 +2515,31 @@ class Component extends DCLogic {
     const ext = {}; p.stops.forEach(v => { if (String(v.id).indexOf('ext-') === 0) ext[v.id] = v.n; });
     const date = this.state.planDate || this.todayISO();
     return { id, name: (p.stops.length === 1 ? '' : 'Plan: ') + p.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '), meta: `${this.fmtDate(date)} · ${p.stops.length} parada${p.stops.length > 1 ? 's' : ''} · ~$${p.spent} pp`, stops: p.stops.map(v => v.id), times: (p.times || []).slice(0, p.stops.length), from: rng[0], to: rng[1], spent: p.spent, date, ext }; }
-  mkExt(id, name) { const zk = this.state.zone === 'all' ? 'roma' : this.state.zone; const Z = this.ZONES.find(z => z[0] === zk) || this.ZONES[0]; const g = (this.ZGEO || {})[zk];
-    return { id, n: name, cat: 'Fuera del catálogo', z: zk, col: 'Agregado por ti', addr: '', web: '', pp: 0, oh: [0, 28], hrs: 'Horario libre', tags: [], who: [], tm: ['manana','tarde','noche','finde'], x: Z[2], y: Z[3], lat: g ? g[0] : null, lng: g ? g[1] : null, score: 70, av: 'Agregado manualmente', d: '' }; }
+  // Una parada escrita a mano NO tiene precio, dirección ni ubicación conocidos.
+  // Antes se le ponía pp:0 (se mostraba 'Gratis') y las coordenadas del centro
+  // de la zona, así que aparecía en el mapa y generaba ruta como si fuera real.
+  mkExt(id, name) { const zk = this.state.zone === 'all' ? 'roma' : this.state.zone; const Z = this.ZONES.find(z => z[0] === zk) || this.ZONES[0];
+    return { id, n: name, cat: 'Fuera del catálogo', z: zk, col: 'Agregado por ti', addr: '', web: '',
+      pp: 0, ppUnknown: true, oh: [0, 28], hrsUnknown: true, hrs: 'Horario por confirmar',
+      tags: [], who: [], tm: ['manana','tarde','noche','finde'], x: Z[2], y: Z[3],
+      lat: null, lng: null, sinUbicacion: true, manual: true, score: null,
+      av: 'Agregado por ti — falta confirmar precio, dirección y horario', d: '' }; }
+
+  // Texto de precio honesto: desconocido ≠ gratis.
+  precioTxt(v) { return v.ppUnknown ? 'Precio por confirmar' : (v.pp === 0 ? 'Gratis' : '~$' + v.pp + ' pp'); }
+
+  // Minutos de un tramo SEGÚN el transporte elegido. Antes era un factor fijo
+  // de 3.2 min/km para todos, por eso cambiar a 'caminando' no movía el tiempo.
+  minutosTramo(km) {
+    if (km == null || isNaN(km)) return null;
+    const V = { caminando: [12.5, 1], metro: [4.5, 9], propio: [3.4, 4], uber: [3.2, 5], didi: [3.2, 5] };
+    const m = V[this.state.transporte] ? this.state.transporte : 'uber';
+    return Math.max(2, Math.round(km * V[m][0] + V[m][1]));
+  }
+
+  // Nombre del proveedor para los textos, para no decir 'UberX' cuando es DiDi.
+  provNombre() { const m = this.state.transporte;
+    return m === 'didi' ? 'DiDi' : m === 'metro' ? 'transporte público' : m === 'caminando' ? 'a pie' : m === 'propio' ? 'tu coche' : 'Uber'; }
   curTimes(p) { return (p.times && p.times.length === p.stops.length) ? p.times.slice() : this.planTimes(p.stops.length); }
   sortPlan(stops, times) { const pairs = stops.map((v, i) => [times[i] != null ? times[i] : 12, v]).sort((a, b) => a[0] - b[0]);
     this.setState({ planCustom: { stops: pairs.map(x => x[1]), times: pairs.map(x => x[0]), spent: stops.reduce((a, b) => a + b.pp, 0) }, planStops: stops.length, swapSeed: 0 }); }
@@ -2429,7 +2599,7 @@ class Component extends DCLogic {
     while (out.length < targetN) { const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
       const gks = (this.SEGG[seg] || ['comida']).slice(); const rot = out.length % gks.length; const ordered = gks.slice(rot).concat(gks.slice(0, rot));
       let pick = null;
-      for (const gk of ordered) { const cands = all.filter(v => !used[v.id] && (this.G[gk] || []).includes(v.cat) && this.atHour(v, t) && (s.zone === 'all' || v.z === base.z || v.z === s.zone || (this.ADJ[base.z] || []).includes(v.z)))
+      for (const gk of ordered) { const cands = all.filter(v => !used[v.id] && (this.G[gk] || []).includes(v.cat) && this.atHour(v, t) && this.inZone(v))
           .sort((p, q) => Math.hypot(base.x - p.x, base.y - p.y) - Math.hypot(base.x - q.x, base.y - q.y));
         // Presupuesto estricto: antes permitía max * 1.5 y, si nada cabía, metía
         // cands[0] a cualquier precio — de ahí los planes de $780 con tope de $600.

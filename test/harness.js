@@ -19,6 +19,8 @@ function makeApp(stateOverrides = {}, opts = {}) {
     removeItem: k => { delete store[k]; }
   };
   if (opts.dseed != null) store['sobres_dseed'] = String(opts.dseed);
+  // Permite simular una recarga de página: se arranca con lo que quedó guardado.
+  if (opts.storage) Object.assign(store, opts.storage);
 
   const win = { innerWidth: 1200, localStorage, addEventListener() {}, removeEventListener() {} };
   const doc = { hidden: false, addEventListener() {}, removeEventListener() {}, querySelectorAll: () => [] };
@@ -61,6 +63,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
   app.ZGEO = {}; (D.zones || []).forEach(z => { app.ZGEO[z[0]] = [z[2], z[3]]; });
 
   Object.assign(app.state, stateOverrides);
+  app._store = store;
   return app;
 }
 

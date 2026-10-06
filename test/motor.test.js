@@ -15,11 +15,63 @@ section('1 · Variedad (antes: Rehacer alternaba entre 2 planes)');
 
 test('10 Rehacer seguidos dan 10 combinaciones distintas', () => {
   const app = makeApp(BASE, { dseed: 1234 });
-  app.state.results = app.engine(0);
+  app.runSearch();                 // como en la app real: fija el contexto de búsqueda
   app.state.planStops = 2;
   const vistos = new Set();
   for (let i = 0; i < 10; i++) { vistos.add(sig(app.getPlan())); app.regenerate(); }
   assert(vistos.size === 10, 'sólo ' + vistos.size + ' combinaciones distintas de 10');
+});
+
+test('el historial se mantiene entre Rehacer, Sorpréndeme y "dame algo diferente"', () => {
+  const app = makeApp(BASE, { dseed: 1234 });
+  app.runSearch(); app.state.planStops = 2;
+  const vistos = new Set(); const dup = [];
+  const anota = etq => { const p = app.getPlan(); if (!p) return; const f = sig(p);
+    if (vistos.has(f)) dup.push(etq); vistos.add(f); };
+  anota('inicial');
+  for (let i = 0; i < 9; i++) { app.regenerate(); anota('rehacer' + i); }
+  // editar a mano y seguir regenerando
+  const cur = app.getPlan();
+  const otro = app.state.results.ranked.find(v => !cur.stops.includes(v));
+  app.setState({ planCustom: { stops: [cur.stops[0], otro], times: cur.times, spent: cur.stops[0].pp + otro.pp } });
+  for (let i = 0; i < 3; i++) { app.regenerate(); anota('tras-editar' + i); }
+  for (let i = 0; i < 3; i++) { app.runSearch({ surprise: true }); anota('sorpresa' + i); }
+  for (let i = 0; i < 3; i++) { app.aiBuild('dame algo diferente, 4 amigos en santa fe hoy en la noche, maximo 1000 por persona'); anota('ai' + i); }
+  assert(dup.length === 0, 'repitió en: ' + dup.join(', '));
+});
+
+test('cubre la mayor parte del espacio válido y tarda en repetir', () => {
+  // Medición previa a los cambios: 32 combinaciones y primera repetición en el
+  // paso 11.  El barrido sistemático sube la cobertura y retrasa la repetición.
+  const app = makeApp(BASE, { dseed: 1234 });
+  app.runSearch(); app.state.planStops = 2;
+  const vistos = new Set(); let primeraRep = -1;
+  for (let i = 0; i < 60; i++) {
+    const p = app.getPlan(); if (!p) break;
+    const f = sig(p);
+    if (vistos.has(f) && primeraRep < 0) primeraRep = i;
+    vistos.add(f); app.regenerate();
+  }
+  assert(vistos.size >= 33, 'sólo alcanzó ' + vistos.size + ' combinaciones distintas');
+  assert(primeraRep < 0 || primeraRep >= 15, 'repitió demasiado pronto, en el paso ' + primeraRep);
+});
+
+test('al repetir, siempre lo avisa y nombra la restricción que limita', () => {
+  const app = makeApp(BASE, { dseed: 1234 });
+  app.runSearch(); app.state.planStops = 2;
+  const vistos = new Set();
+  for (let i = 0; i < 60; i++) {
+    const p = app.getPlan(); if (!p) break;
+    const f = sig(p);
+    if (vistos.has(f)) {
+      assert(app.state.results.exhausted, 'repitió en el paso ' + i + ' sin avisar');
+      const nota = app.state.results.expandNote || '';
+      assert(/zona|presupuesto|horario|exclusiones/.test(nota), 'la nota no nombra la restricción: ' + nota);
+      assert(/amplía/i.test(nota), 'la nota no ofrece ampliar: ' + nota);
+      return;
+    }
+    vistos.add(f); app.regenerate();
+  }
 });
 
 test('reordenar las mismas paradas NO cuenta como plan nuevo', () => {
@@ -219,7 +271,167 @@ test('la etiqueta de zona y los resultados vienen del mismo dato', () => {
   assert(fuera.length === 0, 'resultados de otra zona: ' + [...new Set(fuera.map(v => v.z))]);
 });
 
-// ───────────────────────── 6. Matriz del reporte ─────────────────────────
+// ───────────────────────── 6. Guardar y recuperar planes ─────────────────────────
+section('6 · Guardar y recuperar planes');
+
+const planGuardable = (dseed = 1234) => {
+  const app = makeApp(BASE, { dseed });
+  app.runSearch(); app.state.planStops = 2;
+  return app;
+};
+
+test('guardar hace una copia completa, no dos cadenas de texto', () => {
+  const app = planGuardable();
+  app.renderVals().savePlan();
+  const sp = app.state.savedPlans[0];
+  ['stopIds', 'times', 'spent', 'date', 'people', 'who', 'transporte', 'zone', 'from', 'to']
+    .forEach(k => assert(sp[k] !== undefined, 'falta el campo ' + k));
+  assert(sp.stopIds.length === 2, 'guardó ' + sp.stopIds.length + ' paradas');
+});
+
+test('regenerar el borrador NO altera el plan guardado', () => {
+  const app = planGuardable();
+  const antes = names(app.getPlan()).join(' → ');
+  app.renderVals().savePlan();
+  for (let i = 0; i < 4; i++) app.regenerate();
+  assert(names(app.getPlan()).join(' → ') !== antes, 'el borrador no cambió, la prueba no sirve');
+  assert(app.state.savedPlans[0].route === antes, 'el guardado se contaminó: ' + app.state.savedPlans[0].route);
+});
+
+test('abrir un guardado recupera exactamente esa copia', () => {
+  const app = planGuardable();
+  const original = names(app.getPlan()).join(' → ');
+  const horas = (app.getPlan().times || []).slice();
+  app.renderVals().savePlan();
+  for (let i = 0; i < 4; i++) app.regenerate();
+  app.renderVals().savedPlans[0].open();
+  const abierto = app.getPlan();
+  assert(names(abierto).join(' → ') === original, 'abrió ' + names(abierto).join(' → '));
+  assert(JSON.stringify((abierto.times || []).slice(0, 2)) === JSON.stringify(horas.slice(0, 2)), 'no restauró las horas');
+});
+
+test('el guardado sobrevive a recargar la página', () => {
+  const app = planGuardable();
+  const original = names(app.getPlan()).join(' → ');
+  app.renderVals().savePlan();
+  const app2 = makeApp(BASE, { dseed: 1234, storage: app._store });   // recarga
+  assert(app2.state.savedPlans.length === 1, 'no persistió');
+  app2.runSearch();
+  app2.renderVals().savedPlans[0].open();
+  assert(names(app2.getPlan()).join(' → ') === original, 'tras recargar abrió otra cosa');
+});
+
+test('guardar dos veces el mismo plan no lo duplica', () => {
+  const app = planGuardable();
+  app.renderVals().savePlan();
+  app.renderVals().savePlan();
+  assert(app.state.savedPlans.length === 1, 'quedaron ' + app.state.savedPlans.length);
+});
+
+test('borrar un guardado no toca los demás', () => {
+  const app = planGuardable();
+  app.renderVals().savePlan();
+  app.regenerate(); app.renderVals().savePlan();
+  assert(app.state.savedPlans.length === 2, 'esperaba 2 guardados');
+  const queda = app.state.savedPlans[1].route;
+  app.renderVals().savedPlans[0].del();
+  assert(app.state.savedPlans.length === 1 && app.state.savedPlans[0].route === queda, 'borró el equivocado');
+});
+
+// ───────────────────────── 7. Catálogo y paradas manuales ─────────────────────────
+section('7 · Catálogo y paradas manuales');
+
+test('una parada manual no inventa precio, horario ni ubicación', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const ex = app.mkExt('ext-1', 'Casa de mi primo');
+  assert(ex.ppUnknown === true, 'no marcó el precio como desconocido');
+  assert(app.precioTxt(ex) === 'Precio por confirmar', 'muestra "' + app.precioTxt(ex) + '"');
+  assert(ex.lat === null && ex.lng === null, 'le inventó coordenadas');
+  assert(ex.sinUbicacion === true, 'no marcó que falta ubicación');
+});
+
+test('sin ubicación válida no se calcula ruta', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const ex = app.mkExt('ext-1', 'Casa de mi primo');
+  const real = app.cat()[0];
+  assert(app.legKm(ex, real) === null, 'calculó distancia sin ubicación');
+  assert(app.minutosTramo(app.legKm(ex, real)) === null, 'calculó tiempo sin ubicación');
+});
+
+test('un lugar gratis sigue diciendo Gratis, no "por confirmar"', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  assert(app.precioTxt({ pp: 0 }) === 'Gratis');
+  assert(app.precioTxt({ pp: 450 }) === '~$450 pp');
+});
+
+test('no quedan duplicados del mismo lugar en el catálogo', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const cat = app.cat().filter(v => v.lat && v.lng);
+  const raiz = n => n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[·,.]/g, ' ').replace(/\s+/g, ' ').trim().split(' ').sort().join(' ');
+  const dups = [];
+  const m = {};
+  cat.forEach(v => { const k = raiz(v.n) + '|' + v.z + '|' + v.cat; if (m[k]) dups.push(v.n); else m[k] = v; });
+  assert(dups.length === 0, 'duplicados: ' + dups.join(', '));
+});
+
+// ───────────────────────── 8. Transporte ─────────────────────────
+section('8 · Transporte');
+
+test('el tiempo de trayecto cambia con el transporte', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const t = {};
+  ['caminando', 'metro', 'uber', 'propio'].forEach(m => { app.state.transporte = m; t[m] = app.minutosTramo(4.5); });
+  assert(t.caminando > t.uber * 2, 'caminando ' + t.caminando + ' vs uber ' + t.uber + ': no distingue');
+  assert(t.metro !== t.uber, 'metro y uber dan lo mismo');
+});
+
+test('los textos nombran al proveedor correcto', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  app.state.transporte = 'didi'; assert(app.provNombre() === 'DiDi', app.provNombre());
+  app.state.transporte = 'uber'; assert(app.provNombre() === 'Uber', app.provNombre());
+  app.state.transporte = 'caminando'; assert(app.provNombre() === 'a pie', app.provNombre());
+});
+
+// ───────────────────────── 9. Votaciones ─────────────────────────
+section('9 · Votaciones');
+
+const grupo = gPlans => {
+  const app = makeApp({ ...BASE, userName: 'Christian', view: 'group' }, { dseed: 5 });
+  app.state.gPlans = gPlans;
+  return app.renderVals();
+};
+const prop = (id, name, votes) => ({ id, name, meta: '2 paradas', by: 'Christian',
+  ts: Date.now(), stops: ['cdmx-0001'], votes: votes || {} });
+
+test('distingue sin propuestas, sin votos, sólo en contra, empate y líder', () => {
+  assert(grupo([]).gEstado === 'sin-propuestas', 'sin propuestas');
+  assert(grupo([prop('a', 'A'), prop('b', 'B')]).gEstado === 'sin-votos', 'sin votos');
+  assert(grupo([prop('a', 'A', { Christian: 'nojalo' })]).gEstado === 'solo-contra', 'sólo en contra');
+  assert(grupo([prop('a', 'A', { Christian: 'sobres' }), prop('b', 'B', { Pablo: 'sobres' })]).gEstado === 'empate', 'empate');
+  assert(grupo([prop('a', 'A', { Christian: 'sobres', Pablo: 'sobres' }), prop('b', 'B', { Ana: 'sobres' })]).gEstado === 'lider', 'líder');
+});
+
+test('un voto en contra ya no se reporta como "sin votos"', () => {
+  const V = grupo([prop('a', 'A', { Christian: 'nojalo' })]);
+  assert(!/sin votos|Nadie ha votado/i.test(V.gConsensus), 'dice: ' + V.gConsensus);
+  assert(/en contra/i.test(V.gConsensus), 'no menciona los votos en contra: ' + V.gConsensus);
+});
+
+test('el empate no se resuelve solo y la regla es visible', () => {
+  const V = grupo([prop('a', 'A', { Christian: 'sobres' }), prop('b', 'B', { Pablo: 'sobres' })]);
+  assert(/empate/i.test(V.gConsensus), V.gConsensus);
+  assert(/desempat/i.test(V.gRegla + V.gConsensus), 'no explica el desempate');
+});
+
+test('compartir un lugar da un enlace del sitio, no un dominio inventado', () => {
+  const app = makeApp(BASE, { dseed: 5 });
+  const u = app.linkLugar('cdmx-0001');
+  assert(!/sobres\.mx/.test(u), 'sigue usando sobres.mx: ' + u);
+  assert(/lugar=cdmx-0001/.test(u), 'no apunta al lugar: ' + u);
+});
+
+// ───────────────────────── 10. Matriz del reporte ─────────────────────────
 section('6 · Matriz: perfiles, tamaños, zonas y momentos');
 
 test('todas las combinaciones producen un plan válido (o lo explican)', () => {
