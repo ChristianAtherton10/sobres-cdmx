@@ -2387,6 +2387,7 @@ class Component extends DCLogic {
           planDate: sp.date || this.todayISO(), groupSize: sp.people || s.groupSize,
           who: sp.who || s.who, transporte: sp.transporte || s.transporte,
           zone: sp.zone || s.zone, zonesSel: (sp.zonesSel || []).slice(),
+          budget: sp.budget || s.budget, budgetCustom: sp.budgetCustom !== undefined ? sp.budgetCustom : s.budgetCustom,
           planFrom: sp.from != null ? sp.from : null, planTo: sp.to != null ? sp.to : null,
           planReadOnly: false, openedPlanId: null, swapIdx: null, planView: 'edit'
         }, () => this.nav('plan'));
@@ -2688,6 +2689,7 @@ class Component extends DCLogic {
           nStops: p.stops.length, date: s.planDate || this.todayISO(),
           people: s.groupSize, who: s.who, transporte: s.transporte,
           zone: s.zone, zonesSel: (s.zonesSel || []).slice(),
+          budget: s.budget, budgetCustom: s.budgetCustom,
           from: rng[0], to: rng[1]
         };
         const igual = s.savedPlans.find(x => (x.stopIds || []).join() === copia.stopIds.join()

@@ -356,6 +356,21 @@ test('el guardado sobrevive a recargar la página', () => {
   assert(names(app2.getPlan()).join(' → ') === original, 'tras recargar abrió otra cosa');
 });
 
+test('el guardado conserva el presupuesto con el que se armó', () => {
+  const app = makeApp({ ...BASE, budget: 'b1k', budgetCustom: 1000, view: 'plan' }, { dseed: 9 });
+  app.runSearch(); app.state.view = 'plan'; app.state.planStops = 2;
+  app.renderVals().savePlan();
+  const g = app.state.savedPlans[0];
+  assert(g.budgetCustom === 1000, 'no guardó el tope: ' + g.budgetCustom);
+  // recarga con otro tope activo
+  const b = makeApp({ ...BASE, budget: 'b600', budgetCustom: null }, { dseed: 9, storage: app._store });
+  b.runSearch(); b.state.view = 'plan';
+  b.renderVals().savedPlans[0].open(); b.state.view = 'plan';
+  assert(b.budgetMax() === 1000, 'tras abrir muestra tope $' + b.budgetMax() + ' en vez de $1000');
+  const tot = b.costoPlan(b.getPlan().stops);
+  assert(tot.consumo === g.spent, 'el costo al abrir (' + tot.consumo + ') no coincide con el guardado (' + g.spent + ')');
+});
+
 test('guardar dos veces el mismo plan no lo duplica', () => {
   const app = planGuardable();
   app.renderVals().savePlan();
