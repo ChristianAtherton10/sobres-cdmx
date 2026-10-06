@@ -1346,6 +1346,15 @@ class Component extends DCLogic {
         this.ponPrecioInferido(v);
       }
       if (!v.act) { v.act = this.actInferidas(v); v.actVer = false; }
+      // Una categoría que YA ES la actividad (Taller, Tour, Escape room, Parque
+      // de diversiones) es evidencia propia: no es la asociación vaga que metía
+      // al Ángel de la Independencia en "aventurero". Cuenta como protagonista,
+      // pero si no trae horario de sesión se marca para confirmarlo.
+      if (!v.actVer && ['Taller','Tour','Escape room','Parque de diversiones'].indexOf(v.cat) >= 0) {
+        v.actVer = true;
+        if (!v.sesion) { v.sesion = true; v.sesionPorConfirmar = true;
+          v.av = 'Confirma el horario de la sesión antes de ir'; }
+      }
       out.push(v);
     }
     // Oferta nueva verificada (retos, recorridos, talleres, el antro real)
@@ -1523,13 +1532,21 @@ class Component extends DCLogic {
   // Actividades posibles en cada momento del día, en orden de preferencia.
   // Sustituye a SEGG (que era por categoría física) y además PRIORIZA las
   // protagonistas de la vibra en vez de limitarse a sumarles puntos.
-  actOrder(seg, pi, seed, M) {
+  actOrder(seg, pi, seed, M, ti) {
     const m = M || this.vibeModel();
     const base = (this.SEGACT[seg] || ['comida']).slice();
     const usable = m.libre ? base : base.filter(k => !m.no.has(k));
     const lista = usable.length ? usable : base.filter(k => m.ok && m.ok.has(k));
+    // La protagonista va primero, pero su ventaja ROTA con la variante: si
+    // ponerla en la primera parada deja el plan sin salida (un tour de 4 h a las
+    // 10 am no deja hueco para nada más), otras variantes la prueban más tarde
+    // en vez de devolver siempre el mismo callejón sin salida.
+    // La rebaja sólo aplica a la PRIMERA parada: si la protagonista ahí deja el
+    // plan sin salida, otras variantes la prueban después — pero en las paradas
+    // siguientes conserva toda su prioridad.
+    const vuelta = (ti === 0 || ti == null) ? ((pi || 0) % 3) : 0;
     return lista.map((k, i) => { let sc = 0;
-      if (m.prot.indexOf(k) >= 0) sc += 12;            // protagonista primero
+      if (m.prot.indexOf(k) >= 0) sc += 12 - vuelta * 5;
       else if (m.ok && m.ok.has(k)) sc += 3;
       sc -= i * 0.6; sc += ((pi + seed + i) % 3) * 0.8;
       return { k, sc }; }).sort((a, b) => b.sc - a.sc).map(x => x.k);
@@ -1899,7 +1916,7 @@ class Component extends DCLogic {
       let lastFoodT = null, foodN = 0;
       for (let ti = 0; ti < times.length; ti++) {
         const t = times[ti];
-        const seg = this.segFor(t); const groups = this.actOrder(seg, variant, dseed, VM);
+        const seg = this.segFor(t); const groups = this.actOrder(seg, variant, dseed, VM, stops.length);
         for (let gi = 0; gi < groups.length; gi++) {
           const gk = groups[gi];
           // Comida/cena/desayuno comparten cupo: dos restaurantes seguidos no.
@@ -1930,7 +1947,12 @@ class Component extends DCLogic {
           // Presupuesto con la MISMA función que el resto de la app: consumo +
           // entradas + propina conocida. Antes el motor sumaba sólo el consumo y
           // por eso un plan de $280 + 10% de propina pasaba con un tope de $300.
-          const fit = cands.filter(v => !stops.includes(v) && this.atHour(v, t) && llega(v)
+          // Una actividad larga (un taller de 3 h, un tour de 4) no se descarta:
+          // se queda con las horas que necesita y la siguiente parada se corre.
+          // Antes la rejilla fija de ~2.4 h la hacía imposible, y encima entraba
+          // por la puerta de atrás del respaldo "algo sin precio".
+          const cabeEnLaVentana = v => t + this.duracionAct(v) <= to + 0.5;
+          const fit = cands.filter(v => !stops.includes(v) && this.atHour(v, t) && llega(v) && cabeEnLaVentana(v)
             && this.cabeEnTope(stops.concat([v]), max).ok && (capParada == null || v.pp <= capParada));
           let pick = null;
           if (fit.length) {
@@ -1966,12 +1988,15 @@ class Component extends DCLogic {
           }
           // El respaldo "algo gratis" también tiene que ser alcanzable: por aquí
           // se colaba un taller a 12 km / 151 min a pie en un hueco de 120 min.
-          if (!pick) pick = cands.find(v => !stops.includes(v) && this.atHour(v, t) && llega(v)
+          if (!pick) pick = cands.find(v => !stops.includes(v) && this.atHour(v, t) && llega(v) && cabeEnLaVentana(v)
             && (v.pp === 0 || v.ppUnknown) && this.cabeEnTope(stops.concat([v]), max).ok);
           if (pick) {
             stops.push(pick); spent += pick.pp; usedGk.push(fn); stopT.push(t); stopA.push(gk);
             if (esComer) { foodN++; lastFoodT = t; }
             label.push(this.ACTLBL[gk] || 'Plan');
+            // Se consumen los huecos que de verdad ocupa esta parada.
+            const fin = t + this.duracionAct(pick);
+            while (times[ti + 1] != null && times[ti + 1] < fin - 0.1) ti++;
             break;
           }
         }
@@ -1983,6 +2008,13 @@ class Component extends DCLogic {
     const hechos = []; const vistos = new Set(); let repetidos = 0;
     const desde = (regen || 0) * 3;   // continúa el barrido donde quedó
     const VUELTAS = avoidC.size ? 2000 : 220;   // barrido exhaustivo cuando hay historial
+    // Si la vibra exige una actividad protagonista y SÍ la hay con estos filtros,
+    // la primera pasada sólo acepta planes que la traigan. Antes bastaba con que
+    // el plan cumpliera zona y horario, y se colaba un plan "aventurero" de
+    // mercado + parque teniendo escape rooms disponibles.
+    const hayProt = Object.keys(VM.exige || {}).length > 0 && pool.some(v => this.esProtagonista(v, VM));
+    for (let pasada = 0; pasada < (hayProt ? 2 : 1) && hechos.length < 3; pasada++) {
+    const soloProt = hayProt && pasada === 0;
     for (let k = 0; k < VUELTAS && hechos.length < 3; k++) {
       const variant = desde + k;
       let c = buildOne(variant);
@@ -1994,7 +2026,9 @@ class Component extends DCLogic {
       if (fs.some(f => vistos.has(f))) continue;
       fs.forEach(f => vistos.add(f));
       if (fs.some(f => avoidC.has(f))) { repetidos++; continue; }   // ya se la mostramos
+      if (soloProt && !c.stops.some(v => this.esProtagonista(v, VM))) { fs.forEach(f => vistos.delete(f)); continue; }
       c.sig = sg; c.sigs = fs; hechos.push(c); marcarLote(c.stops);
+    }
     }
 
     // Si el barrido codicioso no encontró nada nuevo, enumeramos EXHAUSTIVAMENTE
