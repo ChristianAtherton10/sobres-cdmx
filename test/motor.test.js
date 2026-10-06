@@ -1127,7 +1127,7 @@ test('ningún tramo exige más tiempo del que hay entre dos paradas', () => {
         const min = app.minutosTramo(km); if (min == null) return;
         const hueco = (p.times[j] - p.times[j - 1]) * 60;
         const necesita = app.duracionAct(p.stops[j - 1]) * 60 + min;
-        assert(necesita <= hueco + 21, tr + '/' + z + ': ' + p.stops[j - 1].n + ' → ' + v.n
+        assert(necesita <= hueco + app.MARGEN() + 1, tr + '/' + z + ': ' + p.stops[j - 1].n + ' → ' + v.n
           + ' necesita ' + Math.round(necesita) + ' min y el hueco es ' + Math.round(hueco));
       }));
       if (i < 5) app.regenerate();
@@ -1250,6 +1250,136 @@ test('el contexto acumula exclusiones sin borrar la intención anterior', () => 
   assert(cats.length >= 1, 'se perdieron las actividades pedidas');
   assert(app.state.groupSize === 4 && app.state.zone === 'santafe' && app.state.budgetCustom === 1000,
     'se perdió el contexto: ' + app.state.groupSize + '/' + app.state.zone + '/' + app.state.budgetCustom);
+});
+
+
+// ───────── 15 · El motor y los avisos usan la MISMA regla ─────────
+section('15 · Coherencia entre lo que se construye y lo que se avisa');
+
+test('cambiar el número de paradas no contradice el aviso de viabilidad', () => {
+  const app = makeApp({ who:'compa', groupSize:7, zone:'santafe', zonesSel:['santafe'], when:'manana',
+    budget:'b1k', budgetCustom:300, vibes:[], transporte:'didi', planFrom:13, planTo:17 }, { dseed: 81 });
+  app.runSearch();
+  [2, 3, 4, 5].forEach(n => {
+    app.setState({ planStops: n });
+    const p = app.getPlan();
+    if (!p || p.stops.length < 2) return;
+    const tm = (p.times && p.times.length === p.stops.length) ? p.times : app.planTimes(p.stops.length);
+    const v = app.viabilidad(p.stops, tm);
+    assert(v.ok, n + ' paradas: el plan se entrega con un aviso de inviabilidad — ' + v.problemas[0]);
+    assert(app.cabeEnTope(p.stops, 300).ok, n + ' paradas se pasan del tope');
+  });
+});
+
+test('extendPlan respeta vibra, horario y presupuesto como la búsqueda', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'all', zonesSel:[], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['chill','cultural'], planFrom:17, planTo:26 }, { dseed: 82 });
+  app.runSearch();
+  const CATS_COPAS2 = ['Bar','Bar de autor','Speakeasy','Mezcalería','Rooftop','Antro','Salón de baile','Cantina'];
+  [3, 4, 5].forEach(n => {
+    app.setState({ planStops: n });
+    const p = app.getPlan(); if (!p) return;
+    p.stops.forEach((v, i) => {
+      assert(CATS_COPAS2.indexOf(v.cat) < 0, 'extendPlan metió copas con chill+cultural: ' + v.n);
+      assert(app.atHour(v, p.times[i]), 'extendPlan metió un lugar cerrado: ' + v.n);
+    });
+  });
+});
+
+test('una parada manual no genera enlaces a destinos inventados', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 83 });
+  const ext = app.mkExt('ext-qa', 'Parada manual QA sin ubicación');
+  assert(app.uberUrl(ext) === '', 'Uber no debe abrirse con un nombre inventado');
+  assert(app.mapsUrl(ext) === '', 'Maps no debe buscar el nombre escrito a mano');
+  assert(ext.ppUnknown && app.precioTxt(ext) === 'Precio por confirmar');
+  assert(app.legKm(ext, { lat: 19.4, lng: -99.16 }) === null, 'sin ubicación no hay distancia');
+});
+
+test('el contexto completo viaja al compartir y se restaura sin defaults', () => {
+  const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'fecha',
+    customDate:'2026-10-07', budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'],
+    transporte:'uber', planFrom:18, planTo:26 }, { dseed: 84 });
+  app.runSearch();
+  const plan = app.state.results.plans[0];
+  const payload = app.buildPlanPayload({ stops: plan.stops, times: plan.times, spent: plan.spent });
+  ['people','who','zone','zonesSel','vibes','budget','budgetCustom','transport','date','from','to','costo']
+    .forEach(k => assert(payload[k] !== undefined, 'el payload no lleva ' + k));
+  assert(payload.people === 5, 'personas: ' + payload.people);
+  assert(payload.budgetCustom === 1500, 'tope: ' + payload.budgetCustom);
+  // El receptor abre con SUS defaults (4 personas, otro tope) y debe quedarse con los del emisor.
+  [1, 2, 5, 7].forEach(n => {
+    const rx = makeApp({ who:'amigos', groupSize:4, zone:'condesa', zonesSel:['condesa'], when:'noche',
+      budget:'b600', budgetCustom:null, vibes:[], transporte:'didi' }, { dseed: 85 });
+    const pl = Object.assign({}, payload, { people: n, ids: payload.stops });
+    rx.openPlanOpt({ plan: pl });
+    assert(rx.state.groupSize === n, n + ' personas llegaron como ' + rx.state.groupSize);
+    assert(rx.state.budgetCustom === 1500, 'el tope llegó como ' + rx.state.budgetCustom);
+    assert(rx.state.transporte === 'uber', 'el transporte llegó como ' + rx.state.transporte);
+    assert(rx.state.zone === 'roma', 'la zona llegó como ' + rx.state.zone);
+    const st = rx.state.planCustom.stops;
+    assert(app.comboSig(st) === app.comboSig(plan.stops), 'las paradas no son las mismas');
+    assert(rx.state.aiSummary === '', 'abrir no debe conservar la explicación de otra recomendación');
+  });
+});
+
+test('proponer al grupo usa el mismo payload que el enlace', () => {
+  const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:1500, vibes:[], transporte:'uber', planFrom:18, planTo:26 }, { dseed: 86 });
+  app.runSearch();
+  const plan = app.state.results.plans[0];
+  app.setState({ userName: 'QA', planCustom: { stops: plan.stops, times: plan.times, spent: plan.spent } });
+  app.proposePlan({ stops: plan.stops, times: plan.times, spent: plan.spent });
+  const gp = (app.state.gPlans || [])[0];
+  assert(gp, 'no se propuso nada');
+  ['people','budgetCustom','transport','zone','costo'].forEach(k =>
+    assert(gp[k] !== undefined, 'proposePlan perdió ' + k));
+  assert(gp.people === 5 && gp.budgetCustom === 1500, 'proposePlan: ' + gp.people + '/' + gp.budgetCustom);
+});
+
+test('Solo = 1 y Date = 2 también en los selectores manuales', () => {
+  const app = makeApp({ who:'familia', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b600', budgetCustom:null, vibes:[] }, { dseed: 87 });
+  const v = app.renderVals();
+  const solo = v.whoOpts.find(o => /solo/i.test(o.label));
+  solo.pick();
+  assert(app.state.groupSize === 1, 'Solo dejó ' + app.state.groupSize + ' personas');
+  const v2 = app.renderVals();
+  v2.whoOpts.find(o => /date/i.test(o.label)).pick();
+  assert(app.state.groupSize === 2, 'Date dejó ' + app.state.groupSize + ' personas');
+  // Y con DiDi el texto no habla de UberX.
+  app.setState({ transporte: 'didi', groupSize: 5 });
+  assert(!/uber/i.test(app.renderVals().rideHint), 'con DiDi no se menciona Uber: ' + app.renderVals().rideHint);
+});
+
+test('el encabezado comunica la vibra, no la lista de filtros', () => {
+  const app = makeApp({ who:'amigos', groupSize:5, zone:'all', zonesSel:[], when:'ahora',
+    budget:'b1k', budgetCustom:null, vibes:['creativo'], planFrom:12, planTo:18 }, { dseed: 88 });
+  app.runSearch();
+  const t = app.tituloPlan();
+  assert(!/·/.test(t), 'el título sigue concatenando filtros: ' + t);
+  assert(/creativ/i.test(t), 'el título debe nombrar la vibra: ' + t);
+  assert(t.length < 46, 'título demasiado largo: ' + t);
+  // Los filtros siguen existiendo, en el resumen secundario.
+  const f = app.filtroItems().map(x => x.k);
+  ['Quiénes','Zona','Cuándo','Presupuesto','Transporte'].forEach(k =>
+    assert(f.indexOf(k) >= 0, 'falta ' + k + ' en el resumen de filtros'));
+  // Sin vibra, un título neutro.
+  app.setState({ vibes: [] });
+  assert(/curados/i.test(app.tituloPlan()), 'sin vibra: ' + app.tituloPlan());
+  assert(/armado/i.test(app.tituloPlan('editor')), 'editor: ' + app.tituloPlan('editor'));
+});
+
+test('"$1,000+" ya no se presenta como un tope', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 89 });
+  assert(!/1,000\+/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
+  assert(/sin tope/i.test(app.budLabel()), 'budLabel: ' + app.budLabel());
+  // Y el máximo manual existe y manda.
+  const v = app.renderVals();
+  v.setBudgetCustom({ target: { value: '450' } });
+  assert(app.state.budgetCustom === 450, 'no tomó el máximo manual');
+  assert(/450/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
 });
 
 report();

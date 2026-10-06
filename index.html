@@ -1710,23 +1710,46 @@ class Component extends DCLogic {
   // faltan componentes (propina es estimada; cover y transporte no están en los datos).
   // ¿Cabe el itinerario en el tiempo? Traslado + visita mínima entre paradas,
   // y el final dentro de la ventana pedida.
+  // UNA sola regla de viabilidad, la misma que usa el motor al construir:
+  // estancia mínima de la parada + traslado tienen que caber en el hueco, con
+  // 20 min de margen. Antes el motor y este aviso usaban criterios distintos y
+  // se contradecían en pantalla.
+  MARGEN() { return 20; }   // minutos de holgura aceptados
+  // La ÚNICA función que decide si un tramo cabe. La usan el motor al construir,
+  // el editor al cambiar paradas y el aviso del itinerario, para que no digan
+  // cosas distintas sobre el mismo plan.
+  alcanzaTramo(a, b, huecoHoras) {
+    if (!a || !b || huecoHoras == null) return true;
+    const km = this.legKm(a, b); if (km == null) return true;   // sin ubicación no se inventa
+    const min = this.minutosTramo(km); if (min == null) return true;
+    const necesita = this.duracionAct(a) * 60 + min;
+    return necesita <= huecoHoras * 60 + this.MARGEN() + 1e-6;
+  }
+  // ¿La estancia en este lugar termina dentro de la ventana que pidió el usuario?
+  // Misma holgura que el aviso del itinerario, para que no se contradigan.
+  cabeEnVentana(v, t, fin) {
+    const to = fin != null ? fin : this.range()[1];
+    return t + this.duracionAct(v) <= to + this.MARGEN() / 60 + 1e-6;
+  }
   viabilidad(stops, times) {
     const problemas = [];
     const rng = this.range();
-    const VISITA = 1;   // hora mínima por parada
     for (let i = 0; i < stops.length - 1; i++) {
       const km = this.legKm(stops[i], stops[i + 1]);
       const min = this.minutosTramo(km);
       if (min == null) continue;
+      const estancia = this.duracionAct(stops[i]) * 60;
       const hueco = (times[i + 1] - times[i]) * 60;
-      if (hueco < min + VISITA * 60) {
+      if (!this.alcanzaTramo(stops[i], stops[i + 1], times[i + 1] - times[i])) {
         problemas.push('De ' + stops[i].n.split(' ·')[0] + ' a ' + stops[i + 1].n.split(' ·')[0]
-          + ' son ~' + min + ' min ' + this.provNombre() + ' y sólo hay ' + Math.round(hueco)
+          + ' son ~' + min + ' min ' + this.provNombre() + ', más ~' + Math.round(estancia)
+          + ' min ahí, y sólo hay ' + Math.round(hueco)
           + ' min entre las dos horas: no alcanza para la visita y el traslado.');
       }
     }
-    const fin = times.length ? times[times.length - 1] + VISITA : rng[0];
-    if (fin > rng[1] + 0.01) {
+    const ult = stops[stops.length - 1];
+    const fin = times.length && ult ? times[times.length - 1] + this.duracionAct(ult) : rng[0];
+    if (ult && !this.cabeEnVentana(ult, times[times.length - 1], rng[1])) {
       problemas.push('El plan terminaría cerca de las ' + this.time12(fin)
         + ' y pediste hasta las ' + this.time12(rng[1]) + '.');
     }
@@ -1940,10 +1963,7 @@ class Component extends DCLogic {
           // hueco entre las dos horas. Antes se armaban planes con tramos de 151
           // minutos a pie en huecos de 120 y se avisaba después.
           const hueco = ti > 0 ? (t - (stopT[stopT.length - 1] != null ? stopT[stopT.length - 1] : t)) : null;
-          const llega = v => { if (!base || hueco == null) return true;
-            const km = this.legKm(base, v); if (km == null) return true;   // sin ubicación: no se inventa
-            const min = this.minutosTramo(km); if (min == null) return true;
-            return (this.duracionAct(base) + min / 60) <= hueco + 0.34; };   // 20 min de margen
+          const llega = v => this.alcanzaTramo(base, v, hueco);
           // Presupuesto con la MISMA función que el resto de la app: consumo +
           // entradas + propina conocida. Antes el motor sumaba sólo el consumo y
           // por eso un plan de $280 + 10% de propina pasaba con un tope de $300.
@@ -1951,7 +1971,7 @@ class Component extends DCLogic {
           // se queda con las horas que necesita y la siguiente parada se corre.
           // Antes la rejilla fija de ~2.4 h la hacía imposible, y encima entraba
           // por la puerta de atrás del respaldo "algo sin precio".
-          const cabeEnLaVentana = v => t + this.duracionAct(v) <= to + 0.5;
+          const cabeEnLaVentana = v => this.cabeEnVentana(v, t, to);
           const fit = cands.filter(v => !stops.includes(v) && this.atHour(v, t) && llega(v) && cabeEnLaVentana(v)
             && this.cabeEnTope(stops.concat([v]), max).ok && (capParada == null || v.pp <= capParada));
           let pick = null;
@@ -2047,8 +2067,7 @@ class Component extends DCLogic {
         const ga = grupoDe(a), gb = grupoDe(b);
         if (ga === gb) continue;                       // no repetir tipo de parada
         if (!this.cabeEnTope([a, b], max).ok) continue;   // consumo + propina, no sólo consumo
-        { const km = this.legKm(a, b); const min = km == null ? null : this.minutosTramo(km);
-          if (min != null && (this.duracionAct(a) + min / 60) > (t1 - times[0]) + 0.34) continue; }
+        if (!this.alcanzaTramo(a, b, t1 - times[0])) continue;
         out.push({ stops: [a, b], spent: a.pp + b.pp, times: [times[0], t1],
           label: [this.SEGLBL[ga] || 'Plan', this.SEGLBL[gb] || 'Plan'].join(' + ') });
       }
@@ -3063,6 +3082,12 @@ class Component extends DCLogic {
       // Avisos honestos: traslados que no caben, final fuera de la ventana, y
       // menos paradas de las que pediste (con el motivo).
       const _av = [];
+      // Si lo que hay en pantalla se pasa del tope, se dice ANTES de guardarlo
+      // o enviarlo. Da igual si llegó por búsqueda, por el editor o por cambiar
+      // el número de paradas: es la misma validación.
+      const _vb = this.cabeEnTope(plan.stops, this.budgetMax());
+      if (!_vb.ok) _av.push('⚠️ Este plan va en $' + _vb.total + ' pp (consumo + propina) y tu tope es $'
+        + _vb.tope + ': se pasa por $' + _vb.exceso + '. Quita o cambia una parada, o sube el tope.');
       const _vi = this.viabilidad(plan.stops, ts);
       _vi.problemas.forEach(x => _av.push('⚠️ ' + x));
       if (s.planStops > plan.stops.length) {
@@ -3783,20 +3808,35 @@ class Component extends DCLogic {
     return stops.some((x, i) => this.funcionDe(x, times[i] != null ? times[i] : t) === f);
   }
 
-  extendPlan(stops, targetN) { const s = this.state; const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
-    const max = this.budgetMax(); let spent = out.reduce((a, b) => a + b.pp, 0);
-    const all = this.cat(); const used = {}; out.forEach(v => used[v.id] = 1);
+  // Cambiar el número de paradas pasa por las MISMAS reglas que la búsqueda:
+  // compatibilidad de vibra, horario con estancia completa, viabilidad del
+  // traslado y presupuesto con propina. Antes miraba sólo el consumo y
+  // ordenaba por categoría física, así que subir de 1 a 3 paradas devolvía
+  // $301 con tope de $300 y el pie seguía diciendo "≤ $300".
+  extendPlan(stops, targetN) { const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
+    const max = this.budgetMax(); const VM = this.vibeModel();
+    const all = this.cat().filter(v => this.vibeAdmite(v, VM) && !v.cursoCerrado);
+    const used = {}; out.forEach(v => used[v.id] = 1);
     const times = this.planTimes(targetN);
     while (out.length < targetN) { const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
-      const gks = (this.SEGG[seg] || ['comida']).slice(); const rot = out.length % gks.length; const ordered = gks.slice(rot).concat(gks.slice(0, rot));
+      const aks = this.actOrder(seg, out.length, this.DSEED || 1, VM, out.length);
+      const hueco = base ? (t - times[out.length - 1]) : null;
+      const alcanza = v => this.alcanzaTramo(base, v, hueco);
+      // La estancia de la última parada tiene que terminar dentro de la ventana:
+      // antes se añadía una cuarta parada que acababa 51 min después del final.
+      const rng = this.range();
+      const cabeEnLaVentana = v => this.cabeEnVentana(v, t, rng[1]);
       let pick = null;
-      for (const gk of ordered) { const cands = all.filter(v => !used[v.id] && (this.G[gk] || []).includes(v.cat) && this.atHour(v, t) && this.inZone(v) && !this.repiteFuncion(out, times, v, t))
+      for (const ak of aks) {
+        const cands = all.filter(v => !used[v.id] && this.actsUtiles(v, VM).indexOf(ak) >= 0
+            && this.atHour(v, t) && this.inZone(v) && alcanza(v) && cabeEnLaVentana(v)
+            && !this.repiteFuncion(out, times, v, t)
+            && this.cabeEnTope(out.concat([v]), max).ok)
           .sort((p, q) => Math.hypot(base.x - p.x, base.y - p.y) - Math.hypot(base.x - q.x, base.y - q.y));
-        // Presupuesto estricto: antes permitía max * 1.5 y, si nada cabía, metía
-        // cands[0] a cualquier precio — de ahí los planes de $780 con tope de $600.
-        pick = cands.find(v => spent + v.pp <= max) || cands.find(v => v.pp === 0 && spent <= max) || null; if (pick) break; }
+        if (cands.length) { pick = cands[0]; break; }
+      }
       if (!pick) break;
-      out.push(pick); used[pick.id] = 1; spent += pick.pp; }
+      out.push(pick); used[pick.id] = 1; }
     return out; }
   componentDidUpdate() { if (this.state.view === 'map' && window.L) { clearTimeout(this._mt); this._mt = setTimeout(() => this.ensureMap(), 30); } }
   componentWillUnmount() { clearInterval(this._pollI); try { document.removeEventListener('visibilitychange', this._onVis); } catch(e) {} }
