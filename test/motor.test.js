@@ -490,14 +490,18 @@ test('el total no se presenta como completo si faltan costos', () => {
   assert(/NO incluye/.test(V.planMeta), 'no lista lo que falta: ' + V.planMeta);
 });
 
-test('a pie el total sí es completo, e incluye propina estimada', () => {
+test('a pie desaparece el hueco del transporte y se estima propina', () => {
   const app = conPlan();
   app.state.transporte = 'caminando';
-  const c = app.costoPlan(app.getPlan().stops);
-  assert(c.completo === true, 'faltan: ' + c.faltan.join(', '));
+  const stops = app.getPlan().stops;
+  const c = app.costoPlan(stops);
+  assert(!c.faltan.some(x => /transporte/i.test(x)), 'a pie no debería faltar transporte: ' + c.faltan);
   assert(c.propina > 0, 'no estimó propina');
   assert(c.total === c.consumo + c.propina, 'el total no cuadra');
   assert(app.renderVals().planMeta.includes('propina'), 'no muestra la propina');
+  // Sin lugares de cover desconocido, el total sí cierra
+  const sinCover = stops.filter(v => !['Antro', 'Salón de baile', 'Espectáculo'].includes(v.cat));
+  if (sinCover.length === stops.length) assert(c.completo === true, 'faltan: ' + c.faltan.join(', '));
 });
 
 test('una parada sin precio se identifica, no se suma como gratis', () => {
@@ -614,6 +618,167 @@ test('los botones de icono tienen etiqueta accesible', () => {
     if (!/aria-label/.test(m[0])) sin.push(txt.trim());
   }
   assert(sin.length === 0, 'botones de icono sin etiqueta: ' + sin.join(' '));
+});
+
+// ───────────────────────── 8e. Intención, contexto y actividades ───────────────
+section('8e · Intención, contexto y secuencia de actividades');
+
+test('entiende el transporte pedido y lo aplica', () => {
+  const casos = [['transporte publico', 'metro'], ['vamos en didi', 'didi'], ['pedimos uber', 'uber'],
+    ['preferimos caminar', 'caminando'], ['llevamos mi coche', 'propio']];
+  casos.forEach(([txt, esperado]) => {
+    const app = makeApp({ ...BASE, transporte: 'uber' }, { dseed: 1 });
+    const p = app.aiParse(app.strip('cena en la roma hoy, ' + txt));
+    assert(p.transporte === esperado, txt + ' → ' + p.transporte);
+  });
+  const app = makeApp({ ...BASE, zone: 'polanco', zonesSel: ['polanco'], transporte: 'didi' }, { dseed: 1234 });
+  app.aiBuild('pareja, cenar en polanco hoy de 8pm a 11pm, maximo 900 por persona, vamos en transporte publico');
+  assert(app.state.transporte === 'metro', 'no aplicó el transporte: ' + app.state.transporte);
+});
+
+test('solo = 1 persona y date = 2, salvo que digan otra cosa', () => {
+  const app = makeApp(BASE, { dseed: 1 });
+  assert(app.aiParse('voy solo a cenar').size === 1, 'solo');
+  assert(app.aiParse('salgo en un date').size === 2, 'date');
+  assert(app.aiParse('somos 7 amigos').size === 7, 'explícito');
+});
+
+test('el presupuesto incluye la propina que la app suma', () => {
+  const app = makeApp({ ...BASE, zone: 'polanco', zonesSel: ['polanco'] }, { dseed: 1234 });
+  app.aiBuild('pareja, cenar y tomar cafe en polanco hoy de 6pm a 11pm, maximo 600 por persona');
+  const c = app.costoPlan(app.state.planCustom.stops);
+  assert(c.consumo + c.propina <= 600, 'consumo+propina = ' + (c.consumo + c.propina) + ' > 600');
+  const resumen = app.state.aiSummary || '';
+  const m = resumen.match(/\$(\d+) pp \(consumo/);
+  if (m) assert(+m[1] === c.consumo + c.propina, 'el resumen dice $' + m[1] + ' y el cálculo ' + (c.consumo + c.propina));
+});
+
+test('si una actividad pedida no cabe, lo explica y no la sustituye', () => {
+  const app = makeApp({ ...BASE, zone: 'polanco', zonesSel: ['polanco'] }, { dseed: 1234 });
+  app.aiBuild('pareja, cenar y despues tomar un cafe en polanco hoy de 8pm a medianoche, maximo 600 por persona');
+  const stops = app.state.planCustom.stops;
+  const hayCafe = stops.some(v => v.cat === 'Café');
+  const resumen = app.state.aiSummary || '';
+  if (!hayCafe) {
+    assert(/café|cafe/i.test(resumen) && /(No hay|no tiene|cierra)/i.test(resumen),
+      'no explicó por qué falta el café: ' + resumen);
+    const sustituto = stops.filter(v => ['Foro', 'Museo', 'Cine', 'Teatro'].includes(v.cat));
+    assert(sustituto.length === 0, 'sustituyó el café por ' + sustituto.map(v => v.cat));
+  }
+});
+
+test('no repite la función de una parada al ampliar el plan', () => {
+  const app = makeApp({ ...BASE, who: 'compa', groupSize: 7, zone: 'santafe', zonesSel: ['santafe'],
+    when: 'manana', budget: 'b300', budgetCustom: 300 }, { dseed: 777 });
+  app.setState({ planFrom: 13, planTo: 17 });
+  app.runSearch();
+  [2, 3, 4, 5].forEach(n => {
+    app.state.planStops = n;
+    const p = app.getPlan(); if (!p) return;
+    const fs = p.stops.map((v, i) => app.funcionDe(v, p.times[i]));
+    assert(new Set(fs).size === fs.length, n + ' paradas repiten función: ' + fs.join(', '));
+  });
+});
+
+test('dos comidas completas del mismo periodo no pasan', () => {
+  const app = makeApp({ ...BASE, zone: 'santafe', zonesSel: ['santafe'], vibes: ['foodie'] }, { dseed: 3 });
+  app.runSearch();
+  for (let i = 0; i < 8; i++) {
+    (app.state.results.plans || []).forEach(p => {
+      const comidas = p.stops.map((v, j) => app.funcionDe(v, (p.times || [])[j] || 19)).filter(f => f === 'comida' || f === 'cena');
+      assert(comidas.length <= 1, 'dos comidas: ' + p.stops.map(v => v.n));
+    });
+    app.regenerate();
+  }
+});
+
+test('el ejemplo integrado entrega las cuatro actividades que pide', () => {
+  const app = makeApp(BASE, { dseed: 1234 });
+  app.renderVals().aiEjemplo();
+  const txt = app.state.aiTxt;
+  app.aiBuild(txt);
+  const stops = app.state.planCustom.stops;
+  const nombres = stops.map(v => v.n.toLowerCase()).join(' ');
+  assert(stops.length >= 4, 'sólo armó ' + stops.length + ' paradas: ' + stops.map(v => v.n));
+  assert(/órbita|orbita/.test(nombres), 'falta Órbita');
+  assert(/departamento/.test(nombres), 'falta Departamento');
+  assert(stops.some(v => v.cat === 'Museo'), 'falta el museo');
+  assert(stops.some(v => app.cuisine(v) === 'mariscos'), 'faltan los mariscos');
+  stops.forEach((v, i) => assert(app.atHour(v, app.state.planCustom.times[i]),
+    v.n + ' cerrado a las ' + app.time12(app.state.planCustom.times[i])));
+  const c = app.costoPlan(stops);
+  assert(c.consumo + c.propina <= 1500, 'se pasa del tope: ' + (c.consumo + c.propina));
+});
+
+test('desechar el borrador limpia paradas, explicación e identificación', () => {
+  const app = makeApp({ ...BASE, view: 'plan' }, { dseed: 1234 });
+  app.aiBuild('mañana con mis amigos por la roma, un museo y comer mariscos');
+  app.state.view = 'plan';
+  assert(app.state.aiSummary, 'la prueba necesita un resumen previo');
+  app.trashPlan(); app.state.view = 'plan';
+  assert(!app.state.aiSummary, 'quedó la explicación del AI');
+  assert(!app.state.aiTxt, 'quedó el texto de la intención');
+  assert(!app.state.planCustomFrom, 'quedó la identificación');
+  assert(/SIN PLAN/.test(app.renderVals().planEstado), 'sigue diciendo BORRADOR: ' + app.renderVals().planEstado);
+});
+
+test('crear nuevo plan empieza realmente vacío', () => {
+  const app = makeApp({ ...BASE, view: 'plan' }, { dseed: 1234 });
+  app.aiBuild('mañana con mis amigos por la roma, un museo y comer mariscos');
+  app.state.view = 'plan';
+  app.renderVals().newPlanAuto(); app.state.view = 'plan';
+  assert(app.getPlan().stops.length === 0, 'no empezó vacío');
+  assert(!app.state.aiSummary, 'arrastró la explicación anterior');
+});
+
+test('avisa cuando pediste noche y no hay dónde tomar algo', () => {
+  const app = makeApp({ ...BASE, zone: 'santafe', zonesSel: ['santafe'], budget: 'b300',
+    budgetCustom: 250, vibes: ['foodie', 'nightlife'] }, { dseed: 1234 });
+  app.runSearch();
+  const r = app.state.results;
+  const hay = (r.plans || []).some(p => p.stops.some(v => app.sirveCopas(v) === 'si'));
+  if (!hay) assert(r.avisoCopas, 'no avisó que faltan copas');
+});
+
+test('la hora de "ahora mismo" coincide en resumen y selectores', () => {
+  const app = makeApp({ ...BASE, when: 'ahora' }, { dseed: 1 });
+  [8.5, 9, 13.25, 20].forEach(h => {
+    app.state.hour = h; app.state.planFrom = null; app.state.planTo = null;
+    const r = app.range();
+    const V = app.renderVals();
+    assert(+V.planFromVal === r[0] && +V.planToVal === r[1],
+      'hora ' + h + ': resumen ' + r + ' vs selectores ' + V.planFromVal + '/' + V.planToVal);
+  });
+});
+
+test('sin ubicación válida no se traza ruta en Maps', () => {
+  const app = makeApp({ ...BASE, zone: 'roma', zonesSel: ['roma'] }, { dseed: 5 });
+  app.runSearch(); app.state.planStops = 2;
+  const p = app.getPlan();
+  const msgs = []; const orig = app.toast.bind(app); app.toast = m => { msgs.push(m); return orig(m); };
+  app.setState({ planCustom: { stops: [p.stops[0], app.mkExt('ext-1', 'Casa de mi primo')], times: p.times, spent: p.stops[0].pp } });
+  app.mapsRoute();
+  assert(/Falta la dirección/.test(msgs[0] || ''), 'no bloqueó la ruta: ' + msgs[0]);
+});
+
+test('el perfil no muestra textos técnicos de API keys', () => {
+  const fs = require('fs'), path = require('path');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  // Sólo el texto visible: los imports del código no los ve nadie.
+  const visible = html.slice(0, html.indexOf('data-dc-script'))
+    + html.slice(html.indexOf('data-dc-script')).replace(/import\([^)]*\)/g, '');
+  ['PENDIENTE DE KEY', 'falta la key', 'API key', 'providers.js</span>'].forEach(t =>
+    assert(!visible.includes(t), 'sigue apareciendo "' + t + '" a la vista del usuario'));
+});
+
+test('las fichas Soumaya distinguen sede y actividad', () => {
+  const app = makeApp(BASE, { dseed: 1 });
+  const fichas = app.cat().filter(v => /soumaya/i.test(v.n));
+  assert(fichas.length >= 3, 'se perdieron fichas: ' + fichas.length);
+  const nombres = fichas.map(v => v.n);
+  assert(new Set(nombres).size === nombres.length, 'hay títulos repetidos');
+  fichas.forEach(v => assert(/carso|loreto|auditorio|fundación/i.test(v.n),
+    'ficha sin sede ni actividad en el título: ' + v.n));
 });
 
 // ───────────────────────── 9. Votaciones ─────────────────────────
