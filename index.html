@@ -78,7 +78,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-for list="{{ planFriendChips }}" as="pf" hint-placeholder-count="3"><button style="{{ pf.style }}" style-hover="border-color:var(--color-accent);color:var(--color-accent)" onClick="{{ pf.send }}">{{ pf.label }}</button></sc-for>
 </div>
 <div style="position:relative;margin-top:10px">
-<input value="{{ sendQ }}" onInput="{{ setSendQ }}" placeholder="Buscar amigo por su nombre…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
+<input aria-label="Buscar amigo por su nombre" value="{{ sendQ }}" onInput="{{ setSendQ }}" placeholder="Buscar amigo por su nombre…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
 <sc-if value="{{ sendQOpen }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-text);border-top:none;background:#fff;max-height:180px;overflow-y:auto">
 <sc-for list="{{ sendQResults }}" as="sq" hint-placeholder-count="2">
@@ -119,7 +119,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 
 <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
 <div><div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">FECHA</div>
-<input type="date" value="{{ resDate }}" onChange="{{ setResDate }}" style="padding:9px 10px;border:2px solid var(--color-text);background:#fff;font:700 13px var(--font-body);cursor:pointer"></div>
+<input aria-label="Fecha del plan" type="date" value="{{ resDate }}" onChange="{{ setResDate }}" style="padding:9px 10px;border:2px solid var(--color-text);background:#fff;font:700 13px var(--font-body);cursor:pointer"></div>
 <div><div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">PERSONAS</div>
 <span style="display:inline-flex;align-items:center;border:2px solid var(--color-text)">
 <button aria-label="Quitar uno" style="width:32px;height:38px;border:none;background:#fff;font:700 16px var(--font-body);cursor:pointer" onClick="{{ resLess }}">−</button>
@@ -160,7 +160,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex:1;justify-content:flex-end;min-width:0">
 <sc-if value="{{ showTopSearch }}" hint-placeholder-val="{{ true }}">
 <div style="position:relative;flex:1;max-width:340px;min-width:140px">
-<input value="{{ searchQ }}" onInput="{{ setSearchQ }}" placeholder="Busca un lugar, evento, experiencia…" style="width:100%;box-sizing:border-box;padding:9px 30px 9px 12px;border:2px solid var(--color-text);background:#fff;font:600 12.5px var(--font-body)">
+<input aria-label="Busca un lugar, evento, experiencia" value="{{ searchQ }}" onInput="{{ setSearchQ }}" placeholder="Busca un lugar, evento, experiencia…" style="width:100%;box-sizing:border-box;padding:9px 30px 9px 12px;border:2px solid var(--color-text);background:#fff;font:600 12.5px var(--font-body)">
 <sc-if value="{{ searchHasQ }}" hint-placeholder-val="{{ false }}"><button aria-label="Borrar la búsqueda" onClick="{{ searchClear }}" style="position:absolute;right:4px;top:4px;bottom:4px;width:24px;border:none;background:none;font:700 13px var(--font-body);cursor:pointer;color:var(--color-neutral-600)">✕</button></sc-if>
 <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:2px solid var(--color-text);box-shadow:var(--shadow-lg);z-index:80;max-height:340px;overflow-y:auto">
@@ -183,7 +183,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </div>
 <sc-if value="{{ showMobileSearch }}" hint-placeholder-val="{{ false }}">
 <div style="max-width:1280px;margin:0 auto;padding:0 20px 10px;position:relative">
-<input value="{{ searchQ }}" onInput="{{ setSearchQ }}" placeholder="Busca un lugar, evento, experiencia…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-text);background:#fff;font:600 13px var(--font-body)">
+<input aria-label="Busca un lugar, evento, experiencia" value="{{ searchQ }}" onInput="{{ setSearchQ }}" placeholder="Busca un lugar, evento, experiencia…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-text);background:#fff;font:600 13px var(--font-body)">
 <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;top:calc(100% - 6px);left:20px;right:20px;background:#fff;border:2px solid var(--color-text);box-shadow:var(--shadow-lg);z-index:80;max-height:300px;overflow-y:auto">
 <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="4">
@@ -206,7 +206,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <h1 style="font:800 clamp(40px,7vw,84px)/1 var(--font-heading);letter-spacing:-.03em;margin:0 0 14px">¿Cuál es tu nombre?</h1>
 <p style="font:400 16px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0 0 22px">Con tu nombre tus amigos te encuentran, calificas lugares con estrellas y votan juntos los planes.</p>
 <div style="display:flex;gap:10px;flex-wrap:wrap;width:100%">
-<input value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Escribe tu nombre…" style="flex:1;min-width:200px;padding:16px 18px;border:2px solid var(--color-text);background:#fff;font:700 18px var(--font-body)">
+<input aria-label="Escribe tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Escribe tu nombre…" style="flex:1;min-width:200px;padding:16px 18px;border:2px solid var(--color-text);background:#fff;font:700 18px var(--font-body)">
 <button style="display:flex;align-items:center;gap:14px;padding:16px 24px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 18px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600);border-color:var(--color-accent-600)" onClick="{{ joinGo }}"><span>Entrar</span><span>→</span></button>
 </div>
 </section>
@@ -260,7 +260,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:10px">¿CUÁNDO?</div>
 <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
 <sc-for list="{{ whenOpts }}" as="o" hint-placeholder-count="5"><button style="{{ o.style }}" style-hover="border-color:var(--color-text)" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for>
-<sc-if value="{{ showDateInput }}" hint-placeholder-val="{{ false }}"><input type="date" value="{{ customDate }}" onChange="{{ setDate }}" style="padding:8px 10px;border:2px solid var(--color-text);background:#fff;font:600 13px var(--font-body)"></sc-if>
+<sc-if value="{{ showDateInput }}" hint-placeholder-val="{{ false }}"><input aria-label="Fecha del plan" type="date" value="{{ customDate }}" onChange="{{ setDate }}" style="padding:8px 10px;border:2px solid var(--color-text);background:#fff;font:600 13px var(--font-body)"></sc-if>
 </div>
 </div>
 <div>
@@ -535,16 +535,16 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ detail.hasAvg }}" hint-placeholder-val="{{ false }}"><span style="font:800 20px var(--font-heading)">★ {{ detail.rateAvg }}</span><span style="font:600 12px var(--font-body);color:var(--color-neutral-600)">{{ detail.rateN }} reseñas</span></sc-if>
 </div>
 <sc-if value="{{ detail.canRate }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;align-items:center;gap:2px;margin-bottom:8px"><sc-for list="{{ detail.starBtns }}" as="st" hint-placeholder-count="5"><button style="{{ st.style }}" onClick="{{ st.pick }}">{{ st.label }}</button></sc-for></div>
+<div style="display:flex;align-items:center;gap:2px;margin-bottom:8px"><sc-for list="{{ detail.starBtns }}" as="st" hint-placeholder-count="5"><button aria-label="{{ st.aria }}" style="{{ st.style }}" onClick="{{ st.pick }}">{{ st.label }}</button></sc-for></div>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
-<input value="{{ detail.myTxt }}" onInput="{{ detail.setMyTxt }}" placeholder="Escribe una reseña corta (opcional)…" style="flex:1;min-width:200px;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
+<input aria-label="Escribe una reseña corta (opcional)" value="{{ detail.myTxt }}" onInput="{{ detail.setMyTxt }}" placeholder="Escribe una reseña corta (opcional)…" style="flex:1;min-width:200px;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
 <button style="padding:10px 14px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 13px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ detail.sendRate }}">Publicar</button>
 </div>
 </sc-if>
 <sc-if value="{{ detail.rateNeedName }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
 <span style="font:600 12.5px var(--font-body);color:var(--color-neutral-700)">Pon tu nombre para calificar:</span>
-<input value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:9px 11px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
+<input aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:9px 11px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
 <button style="padding:9px 13px;background:var(--color-text);color:#fff;border:2px solid var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ joinGo }}">Entrar</button>
 </div>
 </sc-if>
@@ -605,7 +605,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </sc-if>
 <sc-if value="{{ planCanEdit }}" hint-placeholder-val="{{ false }}">
 <span style="font:700 10px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600)">FECHA</span>
-<input type="date" value="{{ planDateVal }}" onChange="{{ setPlanDate }}" style="padding:9px 10px;border:2px solid var(--color-text);background:#fff;font:700 13px var(--font-body);cursor:pointer">
+<input aria-label="Fecha del plan" type="date" value="{{ planDateVal }}" onChange="{{ setPlanDate }}" style="padding:9px 10px;border:2px solid var(--color-text);background:#fff;font:700 13px var(--font-body);cursor:pointer">
 </sc-if>
 <sc-if value="{{ planRO }}" hint-placeholder-val="{{ false }}">
 <span style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;border:2px solid var(--color-accent);background:#fff;padding:8px 13px"><span style="font:700 9px var(--font-body);letter-spacing:.14em;color:var(--color-accent)">FECHA DEL PLAN</span><span style="font:700 13px var(--font-body)">{{ roDate }}</span></span>
@@ -682,7 +682,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:{{ swapLabelColor }}">{{ swapLabel }}</div>
 <sc-if value="{{ swapMode }}" hint-placeholder-val="{{ false }}"><button style="margin-left:auto;padding:4px 9px;border:1.5px solid var(--color-neutral-300);background:#fff;font:700 11px var(--font-body);cursor:pointer" onClick="{{ cancelSwap }}">✕ Cancelar</button></sc-if>
 </div>
-<input value="{{ planQ }}" onInput="{{ setPlanQ }}" placeholder="Busca: Ryoshi, boliche, Cineteca, La Mexicana…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
+<input aria-label="Busca: Ryoshi, boliche, Cineteca, La Mexicana" value="{{ planQ }}" onInput="{{ setPlanQ }}" placeholder="Busca: Ryoshi, boliche, Cineteca, La Mexicana…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
 <sc-if value="{{ planQOpen }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-text);border-top:none;max-height:220px;overflow-y:auto;background:#fff">
 <sc-for list="{{ planQResults }}" as="pr" hint-placeholder-count="3">
@@ -876,14 +876,14 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ groupNeedName }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-accent);background:#fff;padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
 <span style="font:700 12.5px var(--font-body)">Pon tu nombre para entrar a la votación en vivo:</span>
-<input value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:9px 11px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
+<input aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:9px 11px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
 <button style="padding:9px 13px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ joinGo }}">Entrar</button>
 </div>
 </sc-if>
 <sc-if value="{{ showLoosePropose }}" hint-placeholder-val="{{ true }}">
 <div style="border:2px solid var(--color-text);background:#fff;padding:14px 16px;margin-bottom:18px;position:relative">
 <div style="font:700 10px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:8px">PROPONER UN LUGAR SUELTO · "YO QUIERO IR A…"</div>
-<input value="{{ gQ }}" onInput="{{ setGQ }}" placeholder="Escribe el nombre: Contramar, MUAC, lucha libre…" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)">
+<input aria-label="Escribe el nombre: Contramar, MUAC, lucha libre" value="{{ gQ }}" onInput="{{ setGQ }}" placeholder="Escribe el nombre: Contramar, MUAC, lucha libre…" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)">
 <sc-if value="{{ gQOpen }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-text);border-top:none;max-height:240px;overflow-y:auto">
 <sc-for list="{{ gQResults }}" as="r" hint-placeholder-count="3">
@@ -963,7 +963,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ needJoin }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-accent);background:#fff;padding:16px 18px;margin-bottom:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
 <span style="font:700 14px var(--font-body)">Ponte un nombre para calificar lugares, agregar amigos y votar:</span>
-<input value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 14px var(--font-body)">
+<input aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 14px var(--font-body)">
 <button style="padding:10px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ joinGo }}">Entrar →</button>
 </div>
 </sc-if>
@@ -985,7 +985,7 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 </div>
 </sc-if>
 <div style="position:relative;max-width:420px">
-<input value="{{ friendQ }}" onInput="{{ setFriendQ }}" placeholder="Busca a tus amigos por su nombre…" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)">
+<input aria-label="Busca a tus amigos por su nombre" value="{{ friendQ }}" onInput="{{ setFriendQ }}" placeholder="Busca a tus amigos por su nombre…" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)">
 <sc-if value="{{ friendQOpen }}" hint-placeholder-val="{{ false }}">
 <div style="border:2px solid var(--color-text);border-top:none;background:#fff">
 <sc-for list="{{ friendResults }}" as="fr" hint-placeholder-count="2">
@@ -1077,8 +1077,8 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <sc-if value="{{ vIsInv }}" hint-placeholder-val="{{ false }}">
 <div style="max-width:860px;margin-bottom:50px">
 <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;border:2px solid var(--color-text);background:#fff;padding:16px;margin-bottom:18px">
-<div style="flex:2;min-width:200px"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">TÍTULO DE LA PROMO</label><input value="{{ promoT }}" onInput="{{ setPromoT }}" placeholder="2x1 en vermú" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
-<div style="flex:2;min-width:200px"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">DETALLE · HORARIO · CUPO</label><input value="{{ promoD }}" onInput="{{ setPromoD }}" placeholder="Hoy 6–8 pm · 20 mesas" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
+<div style="flex:2;min-width:200px"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">TÍTULO DE LA PROMO</label><input aria-label="2x1 en vermú" value="{{ promoT }}" onInput="{{ setPromoT }}" placeholder="2x1 en vermú" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
+<div style="flex:2;min-width:200px"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">DETALLE · HORARIO · CUPO</label><input aria-label="Hoy 6–8 pm · 20 mesas" value="{{ promoD }}" onInput="{{ setPromoD }}" placeholder="Hoy 6–8 pm · 20 mesas" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
 <button style="padding:12px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 13px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ addPromo }}">Publicar hoy →</button>
 </div>
 <sc-for list="{{ vOffers }}" as="o" hint-placeholder-count="3">
@@ -1101,15 +1101,15 @@ input,select,button,textarea{font-family:var(--font-body,'Archivo',sans-serif)}
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">TIPO</label><select value="{{ fxCat }}" onChange="{{ setFxCat }}" style="width:100%;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"><option>Restaurante</option><option>Bar</option><option>Antro</option><option>Café</option><option>Evento</option><option>Concierto</option><option>Experiencia</option><option>Pop-up</option><option>Promoción</option></select></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">NOMBRE</label><input value="{{ fxNombre }}" onInput="{{ setFxNombre }}" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 <div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">DESCRIPCIÓN</label><textarea onInput="{{ setFxDesc }}" rows="2" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:500 13px var(--font-body);resize:vertical">{{ fxDesc }}</textarea></div>
-<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">FECHA</label><input type="date" value="{{ fxFecha }}" onChange="{{ setFxFecha }}" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
-<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">HORA</label><input value="{{ fxHora }}" onInput="{{ setFxHora }}" placeholder="8:00 pm" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
-<div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">LUGAR / DIRECCIÓN</label><input value="{{ fxLugar }}" onInput="{{ setFxLugar }}" placeholder="Ámsterdam 123, Condesa" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">FECHA</label><input aria-label="Fecha del plan" type="date" value="{{ fxFecha }}" onChange="{{ setFxFecha }}" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">HORA</label><input aria-label="8:00 pm" value="{{ fxHora }}" onInput="{{ setFxHora }}" placeholder="8:00 pm" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">LUGAR / DIRECCIÓN</label><input aria-label="Ámsterdam 123, Condesa" value="{{ fxLugar }}" onInput="{{ setFxLugar }}" placeholder="Ámsterdam 123, Condesa" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">ZONA</label><select value="{{ fxZona }}" onChange="{{ setFxZona }}" style="width:100%;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body);background:#fff"><option value="roma">Roma Norte</option><option value="romasur">Roma Sur</option><option value="condesa">Condesa</option><option value="polanco">Polanco</option><option value="juarez">Juárez</option><option value="centro">Centro</option><option value="chapultepec">Chapultepec</option><option value="coyoacan">Coyoacán</option><option value="sanangel">San Ángel</option><option value="delvalle">Del Valle · Nápoles</option><option value="cu">CU · Sur</option><option value="santafe">Santa Fe · Poniente</option></select></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">PRECIO PP (MXN)</label><input value="{{ fxPrecio }}" onInput="{{ setFxPrecio }}" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 <div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">CUPO</label><input value="{{ fxCap }}" onInput="{{ setFxCap }}" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
-<div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">SITIO WEB O LINK DE RESERVAS</label><input value="{{ fxWeb }}" onInput="{{ setFxWeb }}" placeholder="https://tunegocio.com — al picar Reservar los manda aquí" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
-<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">ABRE (24H)</label><input value="{{ fxOh0 }}" onInput="{{ setFxOh0 }}" placeholder="13" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
-<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">CIERRA (24H)</label><input value="{{ fxOh1 }}" onInput="{{ setFxOh1 }}" placeholder="23 · usa 26 para 2am" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div style="grid-column:1/-1"><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">SITIO WEB O LINK DE RESERVAS</label><input aria-label="https://tunegocio.com — al picar Reservar los manda aquí" value="{{ fxWeb }}" onInput="{{ setFxWeb }}" placeholder="https://tunegocio.com — al picar Reservar los manda aquí" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">ABRE (24H)</label><input aria-label="13" value="{{ fxOh0 }}" onInput="{{ setFxOh0 }}" placeholder="13" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
+<div><label style="display:block;font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">CIERRA (24H)</label><input aria-label="23 · usa 26 para 2am" value="{{ fxOh1 }}" onInput="{{ setFxOh1 }}" placeholder="23 · usa 26 para 2am" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)"></div>
 </div>
 <div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap">
 <button style="display:flex;gap:26px;padding:13px 17px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ fxPublish }}"><span>Publicar</span><span>→</span></button>
@@ -2301,7 +2301,7 @@ class Component extends DCLogic {
         tags: v.tags.map(t => ({ label: t })), slots, combos, cta: v.pp === 0 ? 'Apartar visita' : 'Reservar', hasWeb: !!v.web, web: v.web || '#', voteGo: () => this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }), addToPlan: () => this.setState({ addVenueId: v.id }),
         hasAvg: !!rt, rateAvg: rt ? rt.avg : '', rateN: rt ? String(rt.n) : '0',
         canRate: s.syncOn && !!s.userName, rateNeedName: s.syncOn && !s.userName, rateOffline: !s.syncOn,
-        starBtns: [1,2,3,4,5].map(k => ({ label: k <= starSel ? '★' : '☆', style: `background:none;border:none;cursor:pointer;font:800 30px var(--font-heading);line-height:1;color:${k <= starSel ? 'var(--color-accent)' : 'var(--color-neutral-400)'};padding:0 2px`, pick: () => this.setState({ myStars: k }) })),
+        starBtns: [1,2,3,4,5].map(k => ({ label: k <= starSel ? '★' : '☆', aria: 'Calificar con ' + k + (k === 1 ? ' estrella' : ' estrellas'), style: `background:none;border:none;cursor:pointer;font:800 30px var(--font-heading);line-height:1;color:${k <= starSel ? 'var(--color-accent)' : 'var(--color-neutral-400)'};padding:0 2px`, pick: () => this.setState({ myStars: k }) })),
         myTxt: s.myTxt, setMyTxt: e => this.setState({ myTxt: e.target.value }),
         sendRate: () => { const st = s.myStars || myPrev; if (!st) { this.toast('Elige de 1 a 5 estrellas'); return; } this.mutate('rate', { user: s.userName, venueId: v.id, stars: st, txt: s.myTxt, venueName: v.n }).then(x => { if (x) this.toast('Reseña publicada — ya la ven todos'); }); this.setState({ myTxt: '' }); },
         reviews: rt ? rt.entries.slice(0, 8).map(e2 => ({ user: e2.user, stars: '★'.repeat(e2.s), txt: e2.txt || '', hasTxt: !!e2.txt })) : [] }, a, { reserve: () => this.goReserve(v) }); } }
@@ -2939,7 +2939,11 @@ class Component extends DCLogic {
     if (key !== this._mapKey) { this._mapKey = key; this._layer.clearLayers();
       vs.forEach(v => { const acc = !this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat); const sel = s.pinId === v.id;
         const m = L.circleMarker([v.lat, v.lng], { radius: sel ? 10 : 6, color: sel ? '#201e1d' : '#ffffff', weight: sel ? 2.5 : 1.4, fillColor: acc ? '#ec3013' : '#201e1d', fillOpacity: 0.94 });
-        m.on('click', () => this.setState({ pinId: v.id })); m.bindTooltip(v.n, { direction: 'top', offset: [0, -6] }); m.addTo(this._layer); });
+        m.on('click', () => this.setState({ pinId: v.id })); m.bindTooltip(v.n, { direction: 'top', offset: [0, -6] }); m.addTo(this._layer);
+        // Nombre accesible del pin para lectores de pantalla.
+        try { const el = m.getElement(); if (el) { el.setAttribute('role', 'button');
+          el.setAttribute('tabindex', '0');
+          el.setAttribute('aria-label', v.n + ' — ' + v.cat + ' en ' + this.zLabel(v.z) + ', ' + this.precioTxt(v)); } } catch(e) {} });
     }
     if (s.mapZone !== this._mapZoneKey) { this._mapZoneKey = s.mapZone;
       if (s.mapZone === 'all') this._map.flyTo([19.4, -99.17], 12, { duration: 0.7 });

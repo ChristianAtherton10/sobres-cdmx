@@ -761,6 +761,20 @@ test('sin ubicación válida no se traza ruta en Maps', () => {
   assert(/Falta la dirección/.test(msgs[0] || ''), 'no bloqueó la ruta: ' + msgs[0]);
 });
 
+test('estrellas, campos y pines tienen nombre accesible', () => {
+  const fs = require('fs'), path = require('path');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const tpl = html.slice(0, html.indexOf('data-dc-script'));
+  const sinEtq = [];
+  (tpl.match(/<input[^>]*>/g) || []).forEach(t => {
+    if (!/aria-label/.test(t) && /placeholder=|type="date"/.test(t)) sinEtq.push(t.slice(0, 60));
+  });
+  assert(sinEtq.length === 0, 'campos sin etiqueta: ' + sinEtq.join(' | '));
+  assert(/starBtns[\s\S]{0,200}aria:/.test(html), 'las estrellas no tienen texto accesible');
+  assert(/aria-label="\{\{ st\.aria \}\}"/.test(tpl), 'el botón de estrella no usa la etiqueta');
+  assert(/aria-label', v\.n \+/.test(html), 'los pines del mapa no tienen nombre accesible');
+});
+
 test('el perfil no muestra textos técnicos de API keys', () => {
   const fs = require('fs'), path = require('path');
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
