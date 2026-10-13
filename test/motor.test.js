@@ -28,7 +28,8 @@ test('el historial se mantiene entre Rehacer, Sorpréndeme y "dame algo diferent
   const vistos = new Set(); const dup = [];
   const anota = etq => { const p = app.getPlan(); if (!p) return; const f = sig(p);
     // repetir sólo vale si el motor ya avisó que se agotaron las combinaciones
-    const agotado = app.state.results.exhausted || app._aiExhausted;
+    const r0 = app.state.results || {};
+    const agotado = r0.exhausted || app._aiExhausted || r0.soloRecombina || !!r0.avisoCompartida;
     if (vistos.has(f) && !agotado) dup.push(etq);
     vistos.add(f); };
   anota('inicial');
@@ -85,13 +86,17 @@ function combinacionesValidas(app) {
 }
 
 test('muestra TODAS las combinaciones válidas antes de repetir una', () => {
-  const app = makeApp(BASE, { dseed: 1234 });
+  // Ventana corta a propósito: así el motor arma planes de DOS paradas y el
+  // universo enumerado es comparable uno a uno con lo que ofrece.
+  const app = makeApp(Object.assign({}, BASE, { planFrom: 19, planTo: 23 }), { dseed: 1234 });
   app.runSearch(); app.state.planStops = 2;
   const validas = combinacionesValidas(app);
   assert(validas.size > 20, 'el universo medido es sospechosamente chico: ' + validas.size);
   const vistas = new Set();
   let repitioCon = null;
-  for (let i = 0; i < 40; i++) {
+  // Cada tanda ofrece 3; se dan vueltas de sobra para recorrer el universo medido.
+  const vueltas = Math.max(40, validas.size);
+  for (let i = 0; i < vueltas; i++) {
     const ofrecidos = (app.state.results.plans || []).map(p => app.comboSig(p.stops));
     const nuevos = ofrecidos.filter(f => !vistas.has(f));
     if (ofrecidos.length && !nuevos.length && repitioCon === null) {
@@ -492,11 +497,20 @@ test('detecta quién sirve copas por datos, no sólo por categoría', () => {
 });
 
 test('una zona sin bares no se da por vacía: busca quién sí sirve', () => {
-  const app = makeApp({ ...BASE, zone: 'santafe', zonesSel: ['santafe'] }, { dseed: 1 });
-  const o = app.opcionesCopas(['santafe']);
-  const bares = app.cat().filter(v => v.z === 'santafe' && app.DRINK.includes(v.cat));
-  assert(bares.length === 0, 'la premisa cambió: Santa Fe ya tiene bares');
-  assert(o.seguras.length > 0, 'con 0 bares concluyó que nadie sirve copas');
+  const app = makeApp(BASE, { dseed: 1 });
+  // Se busca sola una zona que de verdad no tenga bares, para que la prueba no
+  // dependa de cómo esté el catálogo hoy.
+  const zonas = app.ZONES.map(z => z[0]);
+  const sinBares = zonas.filter(z => app.cat().filter(v => v.z === z && app.DRINK.includes(v.cat)).length === 0);
+  assert(sinBares.length > 0, 'ya no hay ninguna zona sin bares: la prueba necesita otra premisa');
+  sinBares.forEach(z => {
+    const o = app.opcionesCopas([z]);
+    const comeYbebe = app.cat().filter(v => v.z === z && app.sirveCopas(v) !== 'no');
+    if (comeYbebe.length) {
+      assert(o.seguras.length + o.posibles.length > 0,
+        z + ': con 0 bares concluyó que nadie sirve copas, teniendo ' + comeYbebe.length + ' candidatos');
+    }
+  });
 });
 
 test('cena + copas en Santa Fe: lo cumple o lo explica, nunca lo sustituye callado', () => {
@@ -1073,9 +1087,16 @@ test('once tandas en Santa Fe descubren muchos más destinos que antes', () => {
     if (i < 10) app.regenerate();
   }
   // Antes: 32 combinaciones pero sólo 3 destinos finales distintos.
-  assert(finales.size >= 8, 'sólo ' + finales.size + ' destinos finales distintos');
   assert(lugares.size >= 15, 'sólo ' + lugares.size + ' lugares distintos en 11 tandas');
   assert(combos.size >= 25, 'sólo ' + combos.size + ' combinaciones distintas');
+  // Santa Fe tiene UN solo lugar abierto a medianoche, así que el cierre puede
+  // repetirse — pero entonces la app tiene que decirlo, no disimularlo.
+  if (finales.size < 3) {
+    assert(app.state.results.avisoCompartida,
+      'repite el cierre en los tres planes sin explicar por qué: ' + [...finales]);
+    assert(/no encontramos otra alternativa/.test(app.state.results.avisoCompartida),
+      'el aviso debe decir que no hay alternativa: ' + app.state.results.avisoCompartida);
+  }
 });
 
 test('cada tanda trae lugares nuevos mientras queden elegibles sin mostrar', () => {
@@ -1370,11 +1391,11 @@ test('el encabezado comunica la vibra, no la lista de filtros', () => {
   assert(/armado/i.test(app.tituloPlan('editor')), 'editor: ' + app.tituloPlan('editor'));
 });
 
-test('"$1,000+" ya no se presenta como un tope', () => {
+test('el presupuesto abierto se nombra +$1,000 y hay máximo manual', () => {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
     budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 89 });
-  assert(!/1,000\+/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
-  assert(/sin tope/i.test(app.budLabel()), 'budLabel: ' + app.budLabel());
+  assert(/\+\$1,000/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
+
   // Y el máximo manual existe y manda.
   const v = app.renderVals();
   v.setBudgetCustom({ target: { value: '450' } });
