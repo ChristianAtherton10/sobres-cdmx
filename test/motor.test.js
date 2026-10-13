@@ -1753,4 +1753,46 @@ test('guardar un plan editado desde la tanda lo deja igual en los tres', () => {
   assert((app.state.savedPlans || []).length === 1, 'debe quedar un guardado');
 });
 
+
+test('el enlace que se muestra siempre coincide con lo que hay en pantalla', () => {
+  const app = conTanda(306);
+  const firmaDeLink = () => {
+    const back = app.leeTandaCorta(app.tandaLink().split('?p=')[1]);
+    return back.p.map(x => x.s.slice().sort().join('|')).join(' // ');
+  };
+  const firmaEnPantalla = () => app.state.results.plans.map(p => app.comboSig(p.stops)).join(' // ');
+  assert(firmaDeLink() === firmaEnPantalla(), 'de entrada ya no coinciden');
+  // Tras editar una propuesta.
+  const v = app.renderVals();
+  v.plans[0].open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  app.removeStop(app.getPlan().stops.length - 1);
+  app.renderVals().planBack();
+  assert(firmaDeLink() === firmaEnPantalla(), 'tras editar, el enlace quedó desfasado');
+  // Tras Rehacer.
+  app.regenerate();
+  assert(firmaDeLink() === firmaEnPantalla(), 'tras regenerar, el enlace quedó desfasado');
+  // Tras Sorpréndeme.
+  app.runSearch({ surprise: true });
+  assert(firmaDeLink() === firmaEnPantalla(), 'tras Sorpréndeme, el enlace quedó desfasado');
+});
+
+test('el enlace a la vista no sobrevive a un cambio de planes', () => {
+  const app = conTanda(307);
+  app.renderVals().copiarTanda();
+  assert(app.state.tandaUrl, 'debe quedar el enlace a la vista');
+  const antes = app.state.tandaUrl;
+  app.regenerate();
+  assert(!app.state.tandaUrl, 'tras Rehacer no puede seguir el enlace viejo en pantalla');
+  app.renderVals().copiarTanda();
+  assert(app.state.tandaUrl !== antes, 'el enlace nuevo debe ser distinto');
+  // Y editar también lo quita.
+  const v = app.renderVals();
+  v.plans[0].open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  app.removeStop(app.getPlan().stops.length - 1);
+  app.renderVals().planBack();
+  assert(!app.state.tandaUrl, 'tras editar tampoco puede seguir el enlace viejo');
+});
+
 report();
