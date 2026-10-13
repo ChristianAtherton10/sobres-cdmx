@@ -1494,4 +1494,71 @@ test('un plan guardado se abre limpio desde Mis planes', () => {
   assert(!v.planCanEdit && !v.paradasOn, 'se abre limpio');
 });
 
+
+// ───────── 17 · Altas del catálogo ─────────
+section('17 · Lugares nuevos: identidad, categoría y días');
+
+test('los cinco lugares entraron una sola vez y con su categoría', () => {
+  const app = makeApp(BASE, { dseed: 1 });
+  const cat = app.cat();
+  [['cdmx-4070','Oly','Restaurante','condesa'],
+   ['cdmx-4071','Aida Café · Santa Fe','Café','santafe'],
+   ['cdmx-4072','Duke','Antro','polanco'],
+   ['cdmx-4073','Kinshasa Roma','Rooftop','roma'],
+   ['cdmx-4074','Jardín Paraíso','Bar','roma']].forEach(([id, n, c, z]) => {
+    const v = cat.find(x => x.id === id);
+    assert(v, 'falta ' + n);
+    assert(v.n === n, n + ' se llama ' + v.n);
+    assert(v.cat === c, n + ' quedó como ' + v.cat + ' y es ' + c);
+    assert(v.z === z, n + ' quedó en ' + v.z + ' y va en ' + z);
+    assert(cat.filter(x => x.n === n).length === 1, n + ' está duplicado');
+  });
+});
+
+test('dos negocios en la misma dirección no se fusionan', () => {
+  const app = makeApp(BASE, { dseed: 1 });
+  const enQro225 = app.cat().filter(v => (v.addr || '').indexOf('Querétaro 225') >= 0);
+  assert(enQro225.length === 2, 'en Querétaro 225 debe haber dos establecimientos, hay ' + enQro225.length);
+  const cats = enQro225.map(v => v.cat).sort();
+  assert(cats.join('|') === 'Mercado|Rooftop', 'se mezclaron: ' + cats);
+});
+
+test('un antro que sólo abre viernes y sábado no entra un martes', () => {
+  const duke = makeApp(BASE, { dseed: 1 }).cat().find(v => v.id === 'cdmx-4072');
+  assert(duke.dias && duke.dias.join() === '5,6', 'Duke debe abrir sólo vie y sáb: ' + duke.dias);
+  // 2026-10-13 es martes; 2026-10-16 es viernes.
+  const mar = makeApp({ ...BASE, when: 'fecha', customDate: '2026-10-13' }, { dseed: 1 });
+  assert(!mar.abreEseDia(duke, '2026-10-13'), 'un martes no abre');
+  assert(!mar.timingOk(duke), 'y por lo tanto no debe pasar el filtro de horario');
+  const vie = makeApp({ ...BASE, when: 'fecha', customDate: '2026-10-16' }, { dseed: 1 });
+  assert(vie.abreEseDia(duke, '2026-10-16'), 'un viernes sí abre');
+  // Y sin dato de días, nadie inventa un cierre.
+  const libre = { oh: [12, 23], act: ['comida'] };
+  assert(mar.abreEseDia(libre, '2026-10-13'), 'sin dato de días no se inventa que cierra');
+});
+
+test('los importes de referencia no se presentan como precio cerrado', () => {
+  const app = makeApp(BASE, { dseed: 1 });
+  const byId = id => app.cat().find(v => v.id === id);
+  // Piso publicado: se muestra, pero el techo no se inventa.
+  const oly = byId('cdmx-4070');
+  assert(oly.pMin === 500 && oly.pMax == null, 'Oly: piso $500 sin techo inventado');
+  assert(/500/.test(app.precioTxt(oly)) && !/estimado/.test(app.precioTxt(oly)), app.precioTxt(oly));
+  assert(/PISO/i.test(oly.pCanasta) || /piso/i.test(oly.pCanasta), 'la canasta debe decir que es un piso');
+  // Banda publicada: se muestra como banda.
+  const aida = byId('cdmx-4071');
+  assert(aida.pMin === 310 && aida.pMax === 500, 'Aida: banda $310–$500');
+  // Pendiente de confirmar: NUNCA se carga como precio.
+  ['cdmx-4073', 'cdmx-4074'].forEach(id => {
+    const v = byId(id);
+    assert(v.ppUnknown, v.n + ' no debe tener precio cargado');
+    assert(app.precioTxt(v) === 'Precio por confirmar', v.n + ': ' + app.precioTxt(v));
+    assert(!/gratis/i.test(app.precioTxt(v)), v.n + ' no puede decir Gratis');
+  });
+  // Y un precio sin confirmar no pasa un plan "gratis".
+  const free = makeApp({ ...BASE, budget: 'free', budgetCustom: 0 }, { dseed: 1 });
+  ['cdmx-4073', 'cdmx-4074', 'cdmx-4072'].forEach(id =>
+    assert(!free.budgetOk(byId(id)), byId(id).n + ' se coló en un plan gratis'));
+});
+
 report();

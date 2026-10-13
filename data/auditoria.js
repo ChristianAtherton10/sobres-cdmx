@@ -891,7 +891,75 @@ window.SOBRES_AUDITORIA = (function () {
       estado: 'inferido',
       fuente: "Maison Artemisia · sitio oficial y 50 Best Discovery",
       url: "https://www.maisonartemisia.com/",
-      fecha: HOY }
+      fecha: HOY },
+
+    /* ===== Los cinco que faltaban, con los datos y fuentes que mandó el usuario
+       (12 de octubre de 2026). Ninguno estaba ya en el catálogo. Los importes son
+       REFERENCIAS de la fuente, no precios garantizados, y así quedan marcados. ===== */
+
+    { id: 'cdmx-4070', n: 'Oly', cat: 'Restaurante', zone: 'condesa', col: 'Hipódromo Condesa',
+      addr: 'Alfonso Reyes 120', web: 'https://olyoly.mx/',
+      lat: 19.41, lng: -99.1718, coordAprox: true,
+      act: ['comida','cena'], oh: [13, 23], hrs: 'Consulta horarios en el lugar',
+      tags: ['foodie','romántico','social'], who: ['amigos','date','compa'], tm: ['tarde','noche'],
+      score: 84, tier: 'B', basis: 'Mediterráneo en la Condesa',
+      precio: { min: 500, rep: 500, max: null, unidad: 'persona', moneda: 'MXN',
+        canasta: 'OpenTable publica la banda "más de $500 por persona". Es un PISO, no un precio cerrado: el gasto real puede ser mayor. No hay carta con precios en línea.' },
+      estado: 'rango',
+      fuente: 'Sitio oficial olyoly.mx y banda de precio publicada en OpenTable (dato aportado por el usuario)',
+      url: 'https://olyoly.mx/', fecha: HOY,
+      nota: 'El horario no está confirmado: el rango de arriba es el típico de su categoría y la ficha lo dice.' },
+
+    { id: 'cdmx-4071', n: 'Aida Café · Santa Fe', cat: 'Café', zone: 'santafe', col: 'Lomas de Santa Fe',
+      addr: 'Av. Vasco de Quiroga 3800 (Centro Santa Fe)', web: 'https://www.aidacafe.mx/',
+      lat: 19.362, lng: -99.274, coordAprox: true,
+      act: ['desayuno','cafe','comida'], oh: [8, 21], hrs: 'Consulta horarios en el lugar',
+      tags: ['chill','foodie','familiar'], who: ['amigos','date','compa','familia','solo'], tm: ['manana','tarde'],
+      score: 80, tier: 'B', basis: 'Café y brunch mexicano dentro de Centro Santa Fe',
+      precio: { min: 310, rep: 310, max: 500, unidad: 'persona', moneda: 'MXN',
+        canasta: 'Banda publicada en OpenTable: $310–$500 por persona. Es una referencia, no un precio garantizado.' },
+      estado: 'rango',
+      fuente: 'Sitio oficial aidacafe.mx y banda de precio publicada en OpenTable (dato aportado por el usuario)',
+      url: 'https://www.aidacafe.mx/', fecha: HOY,
+      nota: 'Se registra la sucursal CONFIRMADA de Santa Fe. No es la referencia vieja de Aida en la Condesa, que no se incluyó por no poder verificarla. Comparte dirección con Centro Santa Fe porque está dentro del centro comercial: son dos establecimientos distintos. Horario sin confirmar.' },
+
+    { id: 'cdmx-4072', n: 'Duke', cat: 'Antro', zone: 'polanco', col: 'Lomas de Chapultepec II Secc',
+      addr: 'Av. Paseo de las Palmas 810', web: 'https://dukepalmas.club/',
+      lat: 19.4225, lng: -99.219, coordAprox: true,
+      act: ['baile','copas'], oh: [23, 27], hrs: 'Vie y Sáb 23:00–03:00',
+      dias: [5, 6],
+      tags: ['nightlife','social'], who: ['amigos','date','compa'], tm: ['noche'],
+      score: 82, tier: 'B', basis: 'Club nocturno en Paseo de las Palmas',
+      precio: { min: 1000, rep: 1000, max: null, unidad: 'persona', moneda: 'MXN',
+        canasta: 'Consumo ANUNCIADO por el lugar: desde $1,000 por persona. Es un piso anunciado, no un precio garantizado, y no incluye lo que se gaste encima.' },
+      estado: 'rango',
+      fuente: 'Sitio del lugar dukepalmas.club: horario y consumo anunciados (dato aportado por el usuario)',
+      url: 'https://dukepalmas.club/', fecha: HOY,
+      nota: 'Abre SÓLO viernes y sábado: el motor ya no lo propone otros días. No es The Duke of Lisbon, que es otro establecimiento. Está en Lomas de Chapultepec; el catálogo no tiene esa zona aparte, así que se agrupa en Polanco (a unos 2 km) y la colonia real va en la ficha.' },
+
+    { id: 'cdmx-4073', n: 'Kinshasa Roma', cat: 'Rooftop', zone: 'roma', col: 'Roma Norte',
+      addr: 'Querétaro 225', web: '',
+      lat: 19.413, lng: -99.165, coordAprox: true,
+      act: ['copas','vista','cena'], oh: [18, 26], hrs: 'Consulta horarios en el lugar',
+      tags: ['nightlife','social','vistas'], who: ['amigos','date','compa'], tm: ['tarde','noche'],
+      score: 83, tier: 'B', basis: 'Rooftop de coctelería con DJs y cocina, en la Roma',
+      precio: { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: null },
+      estado: 'por_confirmar', falta: 'el consumo por persona y el cover si lo hay',
+      fuente: 'Ficha de CDMX365 sobre Kinshasa Roma (dato aportado por el usuario)',
+      url: 'https://cdmx365.com/es/kinshasa-roma', fecha: HOY,
+      nota: 'Comparte la dirección de Mercado Roma porque está en el mismo edificio: son dos establecimientos distintos y no se fusionan. Sirve igual para cena o para noche según la hora. Ni el precio ni el horario están confirmados.' },
+
+    { id: 'cdmx-4074', n: 'Jardín Paraíso', cat: 'Bar', zone: 'roma', col: 'Roma Norte',
+      addr: 'Querétaro 202', web: '',
+      lat: 19.4098, lng: -99.1627, coordAprox: true,
+      act: ['copas','baile'], oh: [18, 26], hrs: 'Consulta horarios en el lugar',
+      tags: ['nightlife','social','chill'], who: ['amigos','date','compa'], tm: ['tarde','noche'],
+      score: 81, tier: 'B', basis: 'Jardín tropical al aire libre que de noche se vuelve pista con DJs',
+      precio: { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: null },
+      estado: 'por_confirmar', falta: 'el consumo por persona (se menciona $400–$600 como referencia sin confirmar)',
+      fuente: 'Reseña de janenovikova.com e Instagram @_jardinmx (datos aportados por el usuario)',
+      url: 'https://www.janenovikova.com/es/resenas/mexico-city/jardin-paraiso/', fecha: HOY,
+      nota: 'La referencia de $400–$600 por persona viene marcada como PENDIENTE DE CONFIRMAR por la fuente, así que no se carga como precio: la ficha dice "Precio por confirmar". Horario sin confirmar.' }
 
   ];
 

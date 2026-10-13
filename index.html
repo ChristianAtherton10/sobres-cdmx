@@ -1468,7 +1468,8 @@ class Component extends DCLogic {
           act: (r.act || []).slice(), actVer: true,
           sesion: !!r.sesion, sesiones: r.sesiones || null, duracionMin: r.duracionMin || null,
           cursoCerrado: !!r.cursoCerrado, sedeVariable: !!r.sedeVariable,
-          dias: r.dias || null, grupoMin: r.grupoMin || null, grupoMax: r.grupoMax || null,
+          dias: r.dias || null, cerrado: r.cerrado || null, coordAprox: !!r.coordAprox,
+          grupoMin: r.grupoMin || null, grupoMax: r.grupoMax || null,
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -1927,8 +1928,28 @@ class Component extends DCLogic {
   zLabel(k) { if (k === 'all') return 'Toda la ciudad'; const z = this.ZONES.find(x => x[0] === k); return z ? z[1] : k; }
   dist(v) { const zk = this.state.zone === 'all' ? v.z : this.state.zone; const z = this.ZONES.find(x => x[0] === zk) || this.ZONES[0]; const km = Math.hypot((z[2]-v.x)*0.27, (z[3]-v.y)*0.36); return Math.min(75, Math.round(5 + km*3.2)); }
   openNow(v) { const h = this.state.hour; return (v.oh[0] <= h && h < v.oh[1]) || (v.oh[1] > 24 && (h >= v.oh[0] || h < v.oh[1]-24)); }
+  // Qué día cae el plan, para no proponer un lugar que ese día no abre.
+  fechaPlanISO() { const s = this.state;
+    if (s.when === 'fecha' && s.customDate) return s.customDate;
+    if (s.planDate) return s.planDate;
+    const d = new Date();
+    if (s.when === 'manana') d.setDate(d.getDate() + 1);
+    if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  diaSemana(iso) { try { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d).getDay(); } catch(e) { return null; } }
+  // Un antro que sólo abre de jueves a sábado no cabe en un plan de martes.
+  // Los campos `dias` (días en que abre) y `cerrado` (días en que NO abre) ya se
+  // guardaban en el catálogo auditado pero nadie los miraba.
+  abreEseDia(v, iso) {
+    const wd = this.diaSemana(iso || this.fechaPlanISO());
+    if (wd == null) return true;
+    if (v.dias && v.dias.length) return v.dias.indexOf(wd) >= 0;
+    if (v.cerrado && v.cerrado.length) return v.cerrado.indexOf(wd) < 0;
+    return true;   // sin dato, no se inventa un cierre
+  }
   isWknd(iso) { try { const [y,m,d] = iso.split('-').map(Number); const wd = new Date(y,m-1,d).getDay(); return wd === 0 || wd === 6; } catch(e) { return false; } }
   timingOk(v) { const s = this.state, w = s.when;
+    if (!this.abreEseDia(v)) return false;
     if (v.date) { if (w === 'fecha' && s.customDate) return v.date === s.customDate; const today = new Date().toISOString().slice(0,10); if (w === 'ahora' || w === 'noche') return v.date === today; return true; }
     if (s.planFrom != null || s.planTo != null) { const r2 = this.range(); const cov = []; if (r2[0] < 12) cov.push('manana'); if (r2[0] < 18 && r2[1] > 12) cov.push('tarde'); if (r2[1] > 18) cov.push('noche'); if (w === 'finde' || (w === 'fecha' && s.customDate && this.isWknd(s.customDate))) cov.push('finde'); const wo = v.tm.length === 1 && v.tm[0] === 'finde'; if (wo && !cov.includes('finde')) return false; return v.tm.some(x => cov.includes(x)); }
     const wkndOnly = v.tm.length === 1 && v.tm[0] === 'finde';
