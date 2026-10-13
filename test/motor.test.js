@@ -1561,4 +1561,80 @@ test('los importes de referencia no se presentan como precio cerrado', () => {
     assert(!free.budgetOk(byId(id)), byId(id).n + ' se coló en un plan gratis'));
 });
 
+
+// ───────── 18 · Compartir los tres planes ─────────
+section('18 · Un enlace con la tanda completa');
+
+test('el enlace lleva los tres planes exactos y sus filtros', () => {
+  const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma','romasur'], when:'noche',
+    budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'], transporte:'uber',
+    planFrom:18, planTo:26, userName:'Christian' }, { dseed: 101 });
+  app.runSearch();
+  const orig = app.state.results.plans;
+  assert(orig.length >= 2, 'la prueba necesita al menos dos planes');
+  const pay = app.tandaPayload();
+  assert(pay && pay.v === 1, 'no armó el payload');
+  assert(pay.p.length === orig.length, 'no viajan todos los planes');
+  pay.p.forEach((pl, i) => assert(pl.s.join() === orig[i].stops.map(v => v.id).join(),
+    'el plan ' + (i+1) + ' no viaja con sus paradas exactas'));
+  ['w','g','z','zs','b','bc','vb','tr','f','t'].forEach(k =>
+    assert(pay[k] !== undefined, 'el enlace no lleva ' + k));
+  assert(pay.bc === 1500 && pay.g === 5, 'tope y personas: ' + pay.bc + '/' + pay.g);
+  const url = app.tandaLink();
+  assert(/\?planes=/.test(url), 'el enlace debe llevar ?planes=: ' + url);
+  assert(url.length < 7000, 'enlace demasiado largo: ' + url.length);
+  // Ida y vuelta.
+  const txt = url.split('?planes=')[1];
+  const back = app.b64dec(txt);
+  assert(JSON.stringify(back) === JSON.stringify(pay), 'el enlace no se decodifica igual');
+});
+
+test('quien lo abre ve los mismos planes y sigue siendo él, no el que lo mandó', () => {
+  const emisor = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'], transporte:'uber',
+    planFrom:18, planTo:26, userName:'Christian' }, { dseed: 102 });
+  emisor.runSearch();
+  const firmas = emisor.state.results.plans.map(p => emisor.comboSig(p.stops));
+  const txt = emisor.tandaLink().split('?planes=')[1];
+
+  // Otro dispositivo, otra persona, otros filtros por defecto.
+  const receptor = makeApp({ who:'solo', groupSize:1, zone:'condesa', zonesSel:['condesa'], when:'manana',
+    budget:'b300', budgetCustom:null, vibes:['chill'], transporte:'caminando',
+    userName:'Beto', catLoaded: 1 }, { dseed: 777 });
+  receptor.abrirTanda(txt);
+  const r = receptor.state.results;
+  assert(r && r.plans.length === firmas.length, 'no llegaron los mismos planes');
+  r.plans.forEach((p, i) => assert(receptor.comboSig(p.stops) === firmas[i],
+    'el plan ' + (i+1) + ' llegó distinto'));
+  // Los filtros del emisor mandan…
+  assert(receptor.state.groupSize === 5 && receptor.state.budgetCustom === 1500
+    && receptor.state.transporte === 'uber' && receptor.state.zone === 'roma',
+    'no se restauraron los filtros: ' + receptor.state.groupSize + '/' + receptor.state.budgetCustom);
+  // …pero la identidad NO.
+  assert(receptor.state.userName === 'Beto', 'el receptor cambió de nombre a ' + receptor.state.userName);
+  assert(receptor.state.tandaDe === 'Christian', 'debe decir quién lo mandó');
+  assert(!receptor.state.planReadOnly && !receptor.state.openedPlanId,
+    'abrir una tanda no es abrir el plan de alguien más');
+  // Y si hace su propia búsqueda, el aviso se va.
+  receptor.runSearch();
+  assert(receptor.state.tandaDe === '', 'el aviso de compartido debe desaparecer al buscar');
+});
+
+test('cada tanda da un enlace distinto', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:[], planFrom:18, planTo:26, userName:'Ana' }, { dseed: 103 });
+  app.runSearch();
+  const vistos = new Set();
+  for (let i = 0; i < 5; i++) { vistos.add(app.tandaLink()); app.regenerate(); }
+  assert(vistos.size >= 4, 'sólo ' + vistos.size + ' enlaces distintos en 5 tandas');
+});
+
+test('un enlace roto no rompe la app', () => {
+  const app = makeApp({ userName: 'Ana', catLoaded: 1 }, { dseed: 104 });
+  app.abrirTanda('esto-no-es-base64-valido!!');
+  assert(true, 'no debe lanzar');
+  app.abrirTanda(app.b64enc({ v: 9, p: [] }));
+  assert(true, 'una versión desconocida tampoco debe lanzar');
+});
+
 report();

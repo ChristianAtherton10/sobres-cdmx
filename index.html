@@ -416,6 +416,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 <section data-screen-label="Resultados">
 <div style="padding:30px 0 6px;display:flex;flex-wrap:wrap;align-items:baseline;gap:16px">
 <div style="max-width:640px">
+<sc-if value="{{ tandaDe }}" hint-placeholder-val="{{ '' }}">
+<div class="sc-rise" style="display:inline-flex;align-items:center;gap:9px;background:var(--color-accent);color:#fff;padding:9px 14px;margin-bottom:12px;font:700 12.5px var(--font-body)">📬 {{ tandaDe }} te compartió estos planes</div>
+</sc-if>
 <div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">{{ tituloKicker }}</div>
 <h1 style="font:800 clamp(26px,3.6vw,42px)/1.05 var(--font-heading);letter-spacing:-.02em;margin:8px 0 6px;overflow-wrap:break-word">{{ tituloPlan }}</h1>
 <div style="font:500 14px var(--font-body);color:var(--color-neutral-700)">{{ subtituloPlan }}</div>
@@ -428,6 +431,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 </div>
 <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
 <button style="padding:10px 14px;background:var(--color-text);color:#fff;border:2px solid var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ resurprise }}">🎲 Sorpréndeme otra vez</button>
+<sc-if value="{{ puedeCompartirTanda }}" hint-placeholder-val="{{ true }}">
+<button style="padding:10px 14px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600);border-color:var(--color-accent-600)" onClick="{{ copiarTanda }}" aria-label="Copiar un enlace con estos tres planes">🔗 Compartir los 3</button>
+<button style="padding:10px 14px;background:transparent;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ waTanda }}" aria-label="Mandar los tres planes por WhatsApp">WhatsApp</button>
+</sc-if>
 <button style="padding:10px 14px;background:transparent;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ goHome }}">← Editar búsqueda</button>
 </div>
 </div>
@@ -1367,7 +1374,7 @@ class Component extends DCLogic {
       compras:'Compras', juego:'Juegos', atraccion:'Atracciones', funcion:'Función',
       taller:'Taller', reto:'Reto', recorrido:'Recorrido' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiN:0, planCustomFrom:null, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, aiCtx:null, aiPide:[], sinAlcohol:false, filtrosOpen:false, extForm:{}, planCostoRecibido:null, navPila:[], planLocked:false, planListoFx:0, confirmados:[], aiOpen2:false, extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiN:0, planCustomFrom:null, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, aiCtx:null, aiPide:[], sinAlcohol:false, filtrosOpen:false, extForm:{}, planCostoRecibido:null, navPila:[], planLocked:false, planListoFx:0, confirmados:[], aiOpen2:false, tandaDe:'', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
     try { const raw = localStorage.getItem('sobres_v2'); if (raw) { const s = JSON.parse(raw); ['saved','savedPlans','counters','dietSel','offers','pubs','gOpts','gVotes','gVoters'].forEach(k => { if (s[k]) st[k] = s[k]; }); } } catch(e) {}
     try { const un = localStorage.getItem('sobres_user'); if (un) st.userName = un; } catch(e) {}
     this.state = st;
@@ -1382,6 +1389,12 @@ class Component extends DCLogic {
     this._onVis = () => { if (!document.hidden) this._poll(); };
     document.addEventListener('visibilitychange', this._onVis);
     try { const pp = new URLSearchParams(location.search).get('plan'); if (pp) { this._followParam = pp; this.followPlan(pp); if (this.state.userName) this.setState({ view: 'group' }); } } catch(e) {}
+    // Tanda compartida: 3 planes dentro del propio enlace. Se espera a que el
+    // catálogo cargue para poder resolver las paradas por id.
+    try { const tp = new URLSearchParams(location.search).get('planes');
+      if (tp) { let n = 0; const abrirT = () => {
+        if (this.state.catLoaded) { this.abrirTanda(tp); return; }
+        if (n++ < 40) setTimeout(abrirT, 250); }; abrirT(); } } catch(e) {}
     try { const lg = new URLSearchParams(location.search).get('lugar');
       if (lg) { let t = 0; const abrir = () => { const v = this.cat().find(x => x.id === lg);
         if (v) this.nav('detail', { detailId: lg, backView: 'home' });
@@ -1790,6 +1803,111 @@ class Component extends DCLogic {
       if (pila.length > 8) pila.shift();
     }
     this.setState(Object.assign({ view, pinId: null, searchQ: '', myStars: 0, myTxt: '', focusPlanId: null, navPila: pila }, extra || {})); try { window.scrollTo(0,0); } catch(e) {} }
+  // ============================================================
+  // COMPARTIR LA TANDA COMPLETA
+  // El enlace de siempre comparte UN plan. Esto comparte los TRES tal como
+  // se armaron, dentro del propio enlace: no se guarda nada en el servidor,
+  // no hace falta cuenta y quien lo abre sigue siendo él mismo — no entra
+  // como el que lo mandó.
+  // ============================================================
+  b64enc(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let bin = ''; bytes.forEach(b => { bin += String.fromCharCode(b); });
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  b64dec(txt) {
+    const b = txt.replace(/-/g, '+').replace(/_/g, '/');
+    const bin = atob(b + '==='.slice((b.length + 3) % 4));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
+  // Lo que viaja: los filtros con los que se armó y las paradas EXACTAS de
+  // cada plan. Nada de identidad: sólo un nombre para decir quién lo mandó.
+  tandaPayload() {
+    const s = this.state; const r = s.results;
+    if (!r || !(r.plans || []).length) return null;
+    const rng = this.range();
+    return { v: 1, by: (s.userName || '').slice(0, 24),
+      w: s.who, g: s.groupSize, z: s.zone, zs: (s.zonesSel || []).slice(),
+      wh: s.when, d: s.customDate || '', pd: s.planDate || '',
+      f: rng[0], t: rng[1], b: s.budget, bc: s.budgetCustom,
+      vb: (s.vibes || []).slice(), tr: s.transporte,
+      xn: (s.aiExclNames || []).slice(0, 6),
+      p: r.plans.slice(0, 3).map(pl => ({
+        s: pl.stops.map(x => x.id),
+        h: (pl.times || []).slice(0, pl.stops.length).map(x => Math.round(x * 100) / 100),
+        l: pl.label || '' })) };
+  }
+  tandaLink() {
+    const pay = this.tandaPayload(); if (!pay) return '';
+    try { return location.origin + location.pathname + '?planes=' + this.b64enc(pay); } catch(e) { return ''; }
+  }
+  copiarTanda() {
+    const u = this.tandaLink();
+    if (!u) { this.toast('Primero haz una búsqueda'); return; }
+    if (u.length > 7000) { this.toast('El enlace salió muy largo — comparte un plan a la vez'); return; }
+    try { navigator.clipboard.writeText(u); } catch(e) {}
+    this.ev('tanda_compartida', { planes: (this.state.results.plans || []).length });
+    this.toast('Enlace copiado — quien lo abra verá estos 3 planes tal cual, con su propio nombre');
+  }
+  waTanda() {
+    const u = this.tandaLink(); if (!u) return;
+    const r = this.state.results;
+    const cuerpo = (r.plans || []).slice(0, 3).map((pl, i) =>
+      (i + 1) + '. ' + pl.stops.map(v => v.n.split(' ·')[0]).join(' → ')).join('\n');
+    const txt = 'Les armé 3 planes en Sobres:\n' + cuerpo + '\n\n' + u;
+    try { window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank'); } catch(e) {}
+  }
+
+  // Abrir una tanda compartida: se restauran los filtros, se corre el motor
+  // para el resto de la pantalla y se SUSTITUYEN los planes por los que
+  // venían en el enlace, para que sean exactamente los mismos.
+  abrirTanda(txt) {
+    let t = null;
+    try { t = this.b64dec(txt); } catch(e) { this.toast('Ese enlace no se entiende'); return; }
+    if (!t || t.v !== 1 || !Array.isArray(t.p)) { this.toast('Ese enlace no se entiende'); return; }
+    const st = {};
+    if (t.w) st.who = t.w;
+    if (t.g) st.groupSize = t.g;
+    if (t.z) st.zone = t.z;
+    if (t.zs) st.zonesSel = t.zs.slice();
+    if (t.wh) st.when = t.wh;
+    if (t.d) st.customDate = t.d;
+    if (t.pd) st.planDate = t.pd;
+    if (t.f != null) { st.planFrom = t.f; st.planTo = t.t; }
+    if (t.b) st.budget = t.b;
+    if (t.bc !== undefined) st.budgetCustom = t.bc;
+    if (t.vb) st.vibes = t.vb.slice();
+    if (t.tr) st.transporte = t.tr;
+    if (t.xn) st.aiExclNames = t.xn.slice();
+    // Nada de identidad: quien abre el enlace sigue siendo quien es.
+    st.tandaDe = (t.by || '').slice(0, 24);
+    st.aiCtx = null; st.aiSummary = ''; st.planCustom = null; st.planCustomFrom = null;
+    st.planLocked = false; st.planReadOnly = false; st.openedPlanId = null; st.openedPlanBy = '';
+    this.setState(st, () => {
+      const C = this.cat();
+      const faltan = [];
+      const planes = t.p.map(pl => {
+        const stops = (pl.s || []).map(id => { const v = C.find(x => x.id === id); if (!v) faltan.push(id); return v; }).filter(Boolean);
+        if (!stops.length) return null;
+        const times = (pl.h && pl.h.length === stops.length) ? pl.h.slice() : this.planTimes(stops.length);
+        return { stops, times, spent: stops.reduce((a, v) => a + (v.ppUnknown ? 0 : v.pp), 0),
+          label: pl.l || '', sig: this.comboSig(stops), sigs: [this.comboSig(stops)] };
+      }).filter(Boolean);
+      if (!planes.length) { this.toast('Los lugares de ese enlace ya no están en el catálogo'); this.nav('home'); return; }
+      const r = this.engine(0, {});
+      r.plans = planes;
+      r.compartida = true;
+      if (faltan.length) r.expandNote = 'Ojo: ' + faltan.length + ' parada(s) de este enlace ya no están en el catálogo y no se pudieron mostrar.';
+      this.setState({ results: r, visibleCount: this.props.resultadosMax ?? 12,
+        planStops: Math.max(2, Math.min(5, planes[0].stops.length)) });
+      this.nav('results');
+      this.ev('tanda_abierta', { planes: planes.length });
+    });
+  }
+
   // Enlace real al lugar dentro de este sitio (antes copiaba 'sobres.mx/l/…',
   // un dominio que no existe).
   linkLugar(id) { try { return location.origin + location.pathname + '?lugar=' + encodeURIComponent(id); }
@@ -2506,7 +2624,7 @@ class Component extends DCLogic {
     const regen = (mismo ? (s.regenN || 0) : 0) + 1;
     const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV });
     const h = this.histOf(r, prevC, prevV);
-    this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v,
+    this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '',
       planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
     if (r.exhausted) this.toast('Ya viste todas las combinaciones con estos filtros — amplía zona, horario o presupuesto');
     this.persist();
@@ -2517,7 +2635,7 @@ class Component extends DCLogic {
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
-    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV }); try { (rr.venues || []).slice(0, 8).forEach(v => this.track(v.id, 'a')); } catch(e) {} this._lastR = rr; return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
+    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV }); try { (rr.venues || []).slice(0, 8).forEach(v => this.track(v.id, 'a')); } catch(e) {} this._lastR = rr; return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
     this.persist(); this.nav('results'); if (s.when === 'fecha' && s.customDate) this.loadTm(s.customDate); }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
   time12(h) { const hh = Math.floor(h) % 24, m = Math.round((h % 1) * 60); const ap = hh >= 12 ? 'pm' : 'am'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return `${h12}:${m.toString().padStart(2,'0')} ${ap}`; }
@@ -3551,6 +3669,11 @@ class Component extends DCLogic {
       // los resultados, que es lo que el usuario está esperando.
       buscarFx: '',
       resultadosFx: 'sc-rise',
+      // Compartir la TANDA completa: los 3 planes van dentro del enlace.
+      puedeCompartirTanda: !!(r && (r.plans || []).length),
+      copiarTanda: () => this.copiarTanda(),
+      waTanda: () => this.waTanda(),
+      tandaDe: s.tandaDe ? ('' + s.tandaDe) : '',
       summaryLine: this.summary(),
       tituloKicker: ((s.results || {}).plans || []).length ? 'TUS PLANES' : 'TU BÚSQUEDA',
       tituloPlan: this.tituloPlan(), subtituloPlan: this.subtituloPlan(),
