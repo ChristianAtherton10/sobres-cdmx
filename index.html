@@ -1391,9 +1391,10 @@ class Component extends DCLogic {
     try { const pp = new URLSearchParams(location.search).get('plan'); if (pp) { this._followParam = pp; this.followPlan(pp); if (this.state.userName) this.setState({ view: 'group' }); } } catch(e) {}
     // Tanda compartida: 3 planes dentro del propio enlace. Se espera a que el
     // catálogo cargue para poder resolver las paradas por id.
-    try { const tp = new URLSearchParams(location.search).get('planes');
+    try { const q = new URLSearchParams(location.search);
+      const corto = q.get('p'), largo = q.get('planes'); const tp = corto || largo;
       if (tp) { let n = 0; const abrirT = () => {
-        if (this.state.catLoaded) { this.abrirTanda(tp); return; }
+        if (this.state.catLoaded) { this.abrirTanda(tp, !!corto); return; }
         if (n++ < 40) setTimeout(abrirT, 250); }; abrirT(); } } catch(e) {}
     try { const lg = new URLSearchParams(location.search).get('lugar');
       if (lg) { let t = 0; const abrir = () => { const v = this.cat().find(x => x.id === lg);
@@ -1823,6 +1824,76 @@ class Component extends DCLogic {
     return JSON.parse(new TextDecoder().decode(bytes));
   }
 
+  // ── Formato corto ──────────────────────────────────────────
+  // JSON + base64 daba enlaces de ~550 caracteres: los nombres de los campos
+  // pesaban más que los datos y base64 infla otro 33%. Esto guarda lo mismo
+  // como texto plano con separadores que la URL no tiene que escapar
+  // (A-Z a-z 0-9 - . _ ~), así que el enlace baja a ~130.
+  C_WHO = { amigos: 'a', date: 'd', familia: 'f', compa: 'c', solo: 's' };
+  C_WHEN = { ahora: 'a', noche: 'n', manana: 'm', finde: 'w', fecha: 'd' };
+  C_TR = { propio: 'p', uber: 'u', didi: 'd', caminando: 'c', metro: 'm' };
+  C_VIBE = { 'romántico': 'ro', chill: 'ch', aventurero: 'av', foodie: 'fo', nightlife: 'ni',
+             cultural: 'cu', creativo: 'cr', social: 'so', joyita: 'jo', familiar: 'fa' };
+  inv(map, v) { return Object.keys(map).find(k => map[k] === v) || null; }
+
+  // Los ids 'cdmx-1234' se guardan como '1234'; los demás van tal cual.
+  cortaId(id) { return /^cdmx-\d+$/.test(id) ? id.slice(5) : id; }
+  largaId(x) { return /^\d+$/.test(x) ? 'cdmx-' + x : x; }
+
+  tandaCorta() {
+    const s = this.state; const r = s.results;
+    if (!r || !(r.plans || []).length) return '';
+    const rng = this.range();
+    const f = rng[0];
+    const zonas = s.zone === 'all' ? 'all' : (s.zonesSel && s.zonesSel.length ? s.zonesSel : [s.zone]).join('.');
+    const fecha = (s.planDate || s.customDate || '').replace(/-/g, '').slice(2);   // 2026-10-12 → 261012
+    const campos = [
+      '1',
+      encodeURIComponent((s.userName || '').slice(0, 24)),
+      (this.C_WHO[s.who] || 'a') + (s.groupSize || 0),
+      zonas,
+      (this.C_WHEN[s.when] || 'n') + (fecha || ''),
+      Math.round(f * 2) + '.' + Math.round(rng[1] * 2),
+      (s.budget || 'b600') + (s.budgetCustom != null ? '.' + s.budgetCustom : ''),
+      (s.vibes || []).map(v => this.C_VIBE[v]).filter(Boolean).join('.'),
+      this.C_TR[s.transporte] || 'u',
+      r.plans.slice(0, 3).map(pl => {
+        const t = pl.times || [];
+        return pl.stops.map(v => this.cortaId(v.id)).join('.')
+          + '-' + pl.stops.map((v, i) => Math.round(((t[i] != null ? t[i] : f) - f) * 60)).join('.');
+      }).join('_')
+    ];
+    return campos.join('~');
+  }
+
+  leeTandaCorta(txt) {
+    const c = String(txt).split('~');
+    if (c[0] !== '1' || c.length < 10) return null;
+    const horas = (c[5] || '').split('.').map(Number);
+    const f = (horas[0] || 0) / 2, t2 = (horas[1] || 0) / 2;
+    const bud = (c[6] || '').split('.');
+    const fecha = (c[4] || '').slice(1);
+    const iso = fecha.length === 6 ? '20' + fecha.slice(0, 2) + '-' + fecha.slice(2, 4) + '-' + fecha.slice(4, 6) : '';
+    const when = this.inv(this.C_WHEN, (c[4] || 'n')[0]) || 'noche';
+    const qn = (c[2] || 'a4');
+    return {
+      v: 1, by: decodeURIComponent(c[1] || ''),
+      w: this.inv(this.C_WHO, qn[0]) || 'amigos', g: parseInt(qn.slice(1), 10) || 4,
+      z: c[3] === 'all' ? 'all' : (c[3] || 'roma').split('.')[0],
+      zs: c[3] === 'all' ? [] : (c[3] || 'roma').split('.'),
+      wh: when, d: when === 'fecha' ? iso : '', pd: iso,
+      f, t: t2, b: bud[0] || 'b600', bc: bud[1] != null ? parseInt(bud[1], 10) : null,
+      vb: (c[7] || '').split('.').filter(Boolean).map(x => this.inv(this.C_VIBE, x)).filter(Boolean),
+      tr: this.inv(this.C_TR, c[8] || 'u') || 'uber', xn: [],
+      p: (c[9] || '').split('_').filter(Boolean).map(bloque => {
+        const par = bloque.split('-');
+        const ids = (par[0] || '').split('.').filter(Boolean).map(x => this.largaId(x));
+        const mins = (par[1] || '').split('.').map(Number);
+        return { s: ids, h: ids.map((_, i) => Math.round((f + (mins[i] || 0) / 60) * 100) / 100), l: '' };
+      }).filter(x => x.s.length)
+    };
+  }
+
   // Lo que viaja: los filtros con los que se armó y las paradas EXACTAS de
   // cada plan. Nada de identidad: sólo un nombre para decir quién lo mandó.
   tandaPayload() {
@@ -1841,6 +1912,9 @@ class Component extends DCLogic {
         l: pl.label || '' })) };
   }
   tandaLink() {
+    const corto = this.tandaCorta();
+    if (corto) { try { return location.origin + location.pathname + '?p=' + corto; } catch(e) {} }
+    // Respaldo: el formato largo de siempre.
     const pay = this.tandaPayload(); if (!pay) return '';
     try { return location.origin + location.pathname + '?planes=' + this.b64enc(pay); } catch(e) { return ''; }
   }
@@ -1864,9 +1938,11 @@ class Component extends DCLogic {
   // Abrir una tanda compartida: se restauran los filtros, se corre el motor
   // para el resto de la pantalla y se SUSTITUYEN los planes por los que
   // venían en el enlace, para que sean exactamente los mismos.
-  abrirTanda(txt) {
+  abrirTanda(txt, corto) {
     let t = null;
-    try { t = this.b64dec(txt); } catch(e) { this.toast('Ese enlace no se entiende'); return; }
+    // `?p=` es el formato corto; `?planes=` el largo de los primeros enlaces,
+    // que se sigue entendiendo para que los ya compartidos no se rompan.
+    try { t = corto ? this.leeTandaCorta(txt) : this.b64dec(txt); } catch(e) { this.toast('Ese enlace no se entiende'); return; }
     if (!t || t.v !== 1 || !Array.isArray(t.p)) { this.toast('Ese enlace no se entiende'); return; }
     const st = {};
     if (t.w) st.who = t.w;

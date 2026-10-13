@@ -1581,12 +1581,42 @@ test('el enlace lleva los tres planes exactos y sus filtros', () => {
     assert(pay[k] !== undefined, 'el enlace no lleva ' + k));
   assert(pay.bc === 1500 && pay.g === 5, 'tope y personas: ' + pay.bc + '/' + pay.g);
   const url = app.tandaLink();
-  assert(/\?planes=/.test(url), 'el enlace debe llevar ?planes=: ' + url);
-  assert(url.length < 7000, 'enlace demasiado largo: ' + url.length);
-  // Ida y vuelta.
-  const txt = url.split('?planes=')[1];
-  const back = app.b64dec(txt);
-  assert(JSON.stringify(back) === JSON.stringify(pay), 'el enlace no se decodifica igual');
+  assert(/\?p=/.test(url), 'el enlace debe llevar ?p=: ' + url);
+  // Formato corto: sin JSON ni base64, y sólo con caracteres que la URL no escapa.
+  const txt = url.split('?p=')[1];
+  assert(/^[A-Za-z0-9\-._~%]+$/.test(txt), 'el enlace lleva caracteres que la URL tiene que escapar');
+  assert(txt.length < 320, 'el enlace corto se pasó de 320: ' + txt.length);
+  assert(txt.length < app.b64enc(pay).length * 0.75,
+    'el formato corto debería pesar bastante menos que el largo: ' + txt.length + ' vs ' + app.b64enc(pay).length);
+  // Ida y vuelta: lo que importa es que vuelvan los mismos planes y filtros.
+  const back = app.leeTandaCorta(txt);
+  assert(back.g === 5 && back.bc === 1500 && back.tr === 'uber' && back.w === 'amigos',
+    'se perdieron filtros: ' + JSON.stringify([back.g, back.bc, back.tr, back.w]));
+  assert(back.zs.join() === 'roma,romasur', 'zonas: ' + back.zs);
+  assert(back.vb.join() === 'foodie,nightlife', 'vibras: ' + back.vb);
+  assert(back.f === pay.f && back.t === pay.t, 'horario: ' + back.f + '–' + back.t);
+  assert(back.p.length === orig.length, 'no viajan todos los planes');
+  back.p.forEach((pl, i) => {
+    assert(pl.s.join() === orig[i].stops.map(v => v.id).join(), 'plan ' + (i+1) + ': paradas distintas');
+    pl.h.forEach((h, j) => assert(Math.abs(h - orig[i].times[j]) < 0.02,
+      'plan ' + (i+1) + ' parada ' + (j+1) + ': la hora cambió ' + h + ' vs ' + orig[i].times[j]));
+  });
+});
+
+test('los enlaces del formato viejo siguen funcionando', () => {
+  const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:1500, vibes:['foodie'], transporte:'uber',
+    planFrom:18, planTo:26, userName:'Christian', catLoaded: 1 }, { dseed: 105 });
+  app.runSearch();
+  const firmas = app.state.results.plans.map(p => app.comboSig(p.stops));
+  const viejo = app.b64enc(app.tandaPayload());   // formato base64 original
+  const rx = makeApp({ who:'solo', groupSize:1, zone:'condesa', zonesSel:['condesa'],
+    userName:'Beto', catLoaded: 1 }, { dseed: 106 });
+  rx.abrirTanda(viejo, false);
+  const r = rx.state.results;
+  assert(r && r.plans.length === firmas.length, 'un enlace viejo dejó de abrir');
+  r.plans.forEach((p, i) => assert(rx.comboSig(p.stops) === firmas[i], 'plan ' + (i+1) + ' llegó distinto'));
+  assert(rx.state.groupSize === 5 && rx.state.userName === 'Beto', 'filtros o identidad mal');
 });
 
 test('quien lo abre ve los mismos planes y sigue siendo él, no el que lo mandó', () => {
@@ -1595,13 +1625,13 @@ test('quien lo abre ve los mismos planes y sigue siendo él, no el que lo mandó
     planFrom:18, planTo:26, userName:'Christian' }, { dseed: 102 });
   emisor.runSearch();
   const firmas = emisor.state.results.plans.map(p => emisor.comboSig(p.stops));
-  const txt = emisor.tandaLink().split('?planes=')[1];
+  const txt = emisor.tandaLink().split('?p=')[1];
 
   // Otro dispositivo, otra persona, otros filtros por defecto.
   const receptor = makeApp({ who:'solo', groupSize:1, zone:'condesa', zonesSel:['condesa'], when:'manana',
     budget:'b300', budgetCustom:null, vibes:['chill'], transporte:'caminando',
     userName:'Beto', catLoaded: 1 }, { dseed: 777 });
-  receptor.abrirTanda(txt);
+  receptor.abrirTanda(txt, true);
   const r = receptor.state.results;
   assert(r && r.plans.length === firmas.length, 'no llegaron los mismos planes');
   r.plans.forEach((p, i) => assert(receptor.comboSig(p.stops) === firmas[i],
@@ -1631,10 +1661,11 @@ test('cada tanda da un enlace distinto', () => {
 
 test('un enlace roto no rompe la app', () => {
   const app = makeApp({ userName: 'Ana', catLoaded: 1 }, { dseed: 104 });
-  app.abrirTanda('esto-no-es-base64-valido!!');
-  assert(true, 'no debe lanzar');
-  app.abrirTanda(app.b64enc({ v: 9, p: [] }));
-  assert(true, 'una versión desconocida tampoco debe lanzar');
+  app.abrirTanda('esto-no-es-base64-valido!!', false);
+  app.abrirTanda('basura~sin~sentido', true);
+  app.abrirTanda('', true);
+  app.abrirTanda(app.b64enc({ v: 9, p: [] }), false);
+  assert(true, 'ningún enlace roto debe lanzar');
 });
 
 report();
