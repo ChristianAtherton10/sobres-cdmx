@@ -434,6 +434,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 <sc-if value="{{ puedeCompartirTanda }}" hint-placeholder-val="{{ true }}">
 <button style="padding:10px 14px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600);border-color:var(--color-accent-600)" onClick="{{ copiarTanda }}" aria-label="Copiar un enlace con estos tres planes">🔗 Compartir los 3</button>
 <button style="padding:10px 14px;background:transparent;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ waTanda }}" aria-label="Mandar los tres planes por WhatsApp">WhatsApp</button>
+<button style="padding:10px 14px;background:transparent;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ guardarTanda }}" aria-label="Guardar los tres planes en Mis planes">💾 Guardar los 3</button>
 </sc-if>
 <button style="padding:10px 14px;background:transparent;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ goHome }}">← Editar búsqueda</button>
 </div>
@@ -480,7 +481,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 <div class="{{ p.fx }}" style="background:#fff;border:2px solid var(--color-text);display:flex;flex-direction:column;{{ p.fxDelay }}">
 <div style="padding:12px 16px;border-bottom:2px solid var(--color-text);display:flex;justify-content:space-between;align-items:center">
 <span style="font:800 12px var(--font-body);letter-spacing:.14em;color:var(--color-accent)">{{ p.tag }}</span>
-<span style="font:700 12.5px var(--font-body)">{{ p.total }}</span>
+<span style="display:flex;align-items:center;gap:7px"><sc-if value="{{ p.editado }}" hint-placeholder-val="{{ false }}"><span class="sc-pop" style="font:700 9.5px var(--font-body);letter-spacing:.1em;background:var(--color-accent);color:#fff;padding:3px 6px">EDITADO</span></sc-if><span style="font:700 12.5px var(--font-body)">{{ p.total }}</span></span>
 </div>
 <div style="padding:6px 16px 4px;flex:1">
 <sc-for list="{{ p.stops }}" as="st" hint-placeholder-count="3">
@@ -493,7 +494,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 <sc-if value="{{ p.why }}" hint-placeholder-val="{{ '' }}"><p style="font:500 12px/1.5 var(--font-body);color:var(--color-accent-700);margin:10px 0">{{ p.why }}</p></sc-if>
 </div>
 <div style="display:flex;border-top:2px solid var(--color-text)">
-<button style="flex:1;padding:12px;background:var(--color-text);color:#fff;border:none;font:600 12.5px var(--font-body);cursor:pointer;text-align:left;padding-left:16px" style-hover="background:var(--color-accent)" onClick="{{ p.open }}">Ver plan →</button>
+<button style="flex:1;padding:12px;background:var(--color-text);color:#fff;border:none;font:600 12.5px var(--font-body);cursor:pointer;text-align:left;padding-left:16px" style-hover="background:var(--color-accent)" onClick="{{ p.open }}" aria-label="{{ p.editAria }}">✏️ Editar este plan</button>
 <button style="flex:1;padding:12px;background:#fff;border:none;border-left:2px solid var(--color-text);font:600 12.5px var(--font-body);cursor:pointer;text-align:left;padding-left:16px" style-hover="background:var(--color-neutral-200)" onClick="{{ p.vote }}">Enviar plan</button>
 </div>
 </div>
@@ -671,7 +672,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 </div>
 <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
 <sc-if value="{{ planEditMode }}" hint-placeholder-val="{{ false }}">
-<button style="padding:10px 14px;background:#fff;border:2px solid var(--color-text);font:600 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ planBack }}">← Regresar</button>
+<button style="padding:10px 14px;background:#fff;border:2px solid var(--color-text);font:600 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ planBack }}">{{ planBackLabel }}</button>
 </sc-if>
 <sc-if value="{{ planCanEdit }}" hint-placeholder-val="{{ false }}">
 <span style="font:700 10px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600)">FECHA</span>
@@ -1374,7 +1375,7 @@ class Component extends DCLogic {
       compras:'Compras', juego:'Juegos', atraccion:'Atracciones', funcion:'Función',
       taller:'Taller', reto:'Reto', recorrido:'Recorrido' };
     this.DSEED = (() => { try { let d = localStorage.getItem('sobres_dseed'); if (!d) { d = String(Math.floor(Math.random() * 8999) + 1); localStorage.setItem('sobres_dseed', d); } return parseInt(d, 10) || 1; } catch(e) { return Math.floor(Math.random() * 8999) + 1; } })();
-    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiN:0, planCustomFrom:null, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, aiCtx:null, aiPide:[], sinAlcohol:false, filtrosOpen:false, extForm:{}, planCostoRecibido:null, navPila:[], planLocked:false, planListoFx:0, confirmados:[], aiOpen2:false, tandaDe:'', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
+    const st = { view: props.vistaInicial === 'venues' ? 'venues' : 'home', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiN:0, planCustomFrom:null, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'uber', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, aiCtx:null, aiPide:[], sinAlcohol:false, filtrosOpen:false, extForm:{}, planCostoRecibido:null, navPila:[], planLocked:false, planListoFx:0, confirmados:[], aiOpen2:false, tandaDe:'', planDesdeTanda:false, extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:7,saves:0,zones:{roma:4,coyoacan:1},vibes:{foodie:3,joyita:2},budN:5,budSum:2900,who:{amigos:4,date:2}}, dietSel:['Terraza sí o sí'], isMobile:false, hour:20 };
     try { const raw = localStorage.getItem('sobres_v2'); if (raw) { const s = JSON.parse(raw); ['saved','savedPlans','counters','dietSel','offers','pubs','gOpts','gVotes','gVoters'].forEach(k => { if (s[k]) st[k] = s[k]; }); } } catch(e) {}
     try { const un = localStorage.getItem('sobres_user'); if (un) st.userName = un; } catch(e) {}
     this.state = st;
@@ -1822,6 +1823,61 @@ class Component extends DCLogic {
     const bytes = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
+  // ── Editar una de las tres propuestas ──────────────────────
+  // "Editar este plan" abre el editor apuntando a ESE lugar de la tanda. Al
+  // volver, lo editado reemplaza esa propuesta, así que lo que se comparte o
+  // se guarda después es lo que el usuario dejó, no lo que armó el motor.
+  guardaEnTanda() {
+    const s = this.state;
+    if (!s.planDesdeTanda || !s.results || !(s.results.plans || []).length) return false;
+    const p = this.getPlan();
+    if (!p || !p.stops.length) return false;
+    const i = Math.max(0, Math.min(s.results.plans.length - 1, s.planIdx || 0));
+    const antes = s.results.plans[i];
+    const cambio = this.comboSig(antes.stops) !== this.comboSig(p.stops)
+      || (antes.times || []).join() !== (p.times || []).join();
+    const plans = s.results.plans.slice();
+    plans[i] = Object.assign({}, antes, {
+      stops: p.stops.slice(), times: (p.times || []).slice(),
+      spent: p.stops.reduce((a, v) => a + (v.ppUnknown ? 0 : (v.pp || 0)), 0),
+      sig: this.comboSig(p.stops), sigs: [this.comboSig(p.stops)],
+      editado: antes.editado || cambio });
+    this.setState({ results: Object.assign({}, s.results, { plans }) });
+    return cambio;
+  }
+  volverATanda() {
+    const cambio = this.guardaEnTanda();
+    this.setState({ planDesdeTanda: false, sendOpen: false, swapIdx: null, planQ: '' });
+    this.nav('results');
+    if (cambio) this.toast('Guardado en la propuesta — lo que compartas o guardes ya lleva tu cambio');
+  }
+
+  // Guardar las tres de un jalón, con lo que tengan editado.
+  guardarTanda() {
+    const s = this.state; const r = s.results;
+    if (!r || !(r.plans || []).length) { this.toast('Primero haz una búsqueda'); return; }
+    const rng = this.range(); const fecha = s.planDate || this.todayISO();
+    const lista = s.savedPlans.slice(); let nuevos = 0, repes = 0;
+    r.plans.forEach((p, i) => {
+      const ids = p.stops.map(v => v.id);
+      if (lista.some(x => (x.stopIds || []).join() === ids.join() && (x.date || '') === fecha)) { repes++; return; }
+      lista.push({ id: 'sp-' + Date.now() + '-' + i, ts: Date.now(),
+        route: p.stops.map(v => v.n).join(' → '), total: '~$' + p.spent + ' pp',
+        stopIds: ids, times: (p.times || []).slice(), spent: p.spent,
+        nStops: p.stops.length, date: fecha,
+        people: s.groupSize, who: s.who, transporte: s.transporte,
+        zone: s.zone, zonesSel: (s.zonesSel || []).slice(),
+        budget: s.budget, budgetCustom: s.budgetCustom, from: rng[0], to: rng[1] });
+      nuevos++;
+    });
+    this.setState({ savedPlans: lista }, () => this.persist());
+    this.ev('tanda_guardada', { nuevos });
+    this.toast(nuevos
+      ? (nuevos === 1 ? 'Guardé 1 plan en Mis planes' : 'Guardé los ' + nuevos + ' planes en Mis planes')
+        + (repes ? ' (' + repes + ' ya estaban)' : '')
+      : 'Esos planes ya estaban guardados');
   }
 
   // ── Formato corto ──────────────────────────────────────────
@@ -2700,7 +2756,7 @@ class Component extends DCLogic {
     const regen = (mismo ? (s.regenN || 0) : 0) + 1;
     const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV });
     const h = this.histOf(r, prevC, prevV);
-    this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '',
+    this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '', planDesdeTanda: false,
       planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
     if (r.exhausted) this.toast('Ya viste todas las combinaciones con estos filtros — amplía zona, horario o presupuesto');
     this.persist();
@@ -2711,7 +2767,7 @@ class Component extends DCLogic {
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
-    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV }); try { (rr.venues || []).slice(0, 8).forEach(v => this.track(v.id, 'a')); } catch(e) {} this._lastR = rr; return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
+    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV }); try { (rr.venues || []).slice(0, 8).forEach(v => this.track(v.id, 'a')); } catch(e) {} this._lastR = rr; return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
     this.persist(); this.nav('results'); if (s.when === 'fecha' && s.customDate) this.loadTm(s.customDate); }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
   time12(h) { const hh = Math.floor(h) % 24, m = Math.round((h % 1) * 60); const ap = hh >= 12 ? 'pm' : 'am'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return `${h12}:${m.toString().padStart(2,'0')} ${ap}`; }
@@ -3377,7 +3433,7 @@ class Component extends DCLogic {
         resultsLine = `${r.poolN} lugares del catálogo (${r.total}) pasan tus filtros — te enseñamos los mejores ${shown.length}, no un directorio.`;
       }
       const times = n => this.planTimes(n);
-      plans = r.plans.map((p, i) => { const ts = p.times || times(p.stops.length); const max = this.budgetMax(); return { fx: 'sc-rise', fxDelay: `animation-delay:${i * 70}ms`, tag: `PLAN ${i+1}${p.label ? ' · ' + p.label.toUpperCase() : ''}`, total: `~$${p.spent} pp · ${(p.stops.length*2-0.5).toFixed(1)} h`, why: p.spent <= max ? '' : `~$${p.spent} pp — tantito arriba de tu tope; quita una parada para bajar.`, stops: p.stops.map((v, j) => ({ time: this.time12(ts[j]), letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}`, pp: this.precioTxt(v) })), open: () => { this.setState({ planIdx: i, planStops: p.stops.length, swapSeed: 0, planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null, planReadOnly: false, planLocked: false, openedPlanBy: '', results: r }); this.nav('plan'); }, vote: () => this.setState({ planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planStops: p.stops.length, swapSeed: 0, planNone: false, swapIdx: null, planReadOnly: false, openedPlanBy: '', sendOpen: true, results: r }) }; });
+      plans = r.plans.map((p, i) => { const ts = p.times || times(p.stops.length); const max = this.budgetMax(); return { fx: 'sc-rise', fxDelay: `animation-delay:${i * 70}ms`, tag: `PLAN ${i+1}${p.label ? ' · ' + p.label.toUpperCase() : ''}`, editado: !!p.editado, editAria: 'Editar el plan ' + (i+1) + ': ' + p.stops.map(v => v.n).join(', '), total: `~$${p.spent} pp · ${(p.stops.length*2-0.5).toFixed(1)} h`, why: p.spent <= max ? '' : `~$${p.spent} pp — tantito arriba de tu tope; quita una parada para bajar.`, stops: p.stops.map((v, j) => ({ time: this.time12(ts[j]), letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}`, pp: this.precioTxt(v) })), open: () => { this.setState({ planIdx: i, planDesdeTanda: true, planStops: p.stops.length, swapSeed: 0, planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null, planView: 'edit', openedPlanId: null, planReadOnly: false, planLocked: false, openedPlanBy: '', results: r }); this.nav('plan'); }, vote: () => this.setState({ planCustom: { stops: p.stops, spent: p.spent, times: p.times || [] }, planStops: p.stops.length, swapSeed: 0, planNone: false, swapIdx: null, planReadOnly: false, openedPlanBy: '', sendOpen: true, results: r }) }; });
       rVenues = shown.map(v => { const a = this.cardActions(v); const ph = s.photos[v.id]; const rtg = this.rating(v); const badge = rtg ? '★ ' + rtg.avg + ' (' + rtg.n + ')' : (v.tier === 'A' ? 'TOP 2025' : ''); return Object.assign({ letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), hasBadge: !!badge, badge, price: this.precioTxt(v), meta: `${v.col} · ${this.dist(v)} min · ${v.hrs}`, tags: v.tags.map(t => ({ label: t })), why: this.why(v), av: (v.fic ? 'PERFIL DE EJEMPLO · ' : v.pub ? 'PUBLICADO POR EL VENUE · ' : '') + v.av, tileStyle: this.tile(v, 148) }, a); });
     }
     const qfDef = [['open','Abierto ahora'],['cheap','≤ $500'],['gems','Joyitas']];
@@ -3891,10 +3947,16 @@ class Component extends DCLogic {
       })(),
       // Regresar del editor vuelve a DONDE se entró (resultados, votación o
       // Mis planes), no siempre a la lista de planes guardados.
-      planBack: () => { const pila = (s.navPila || []); const prev = pila[pila.length - 1];
+      planBack: () => {
+        // Si se entró a editar una de las tres propuestas, al volver se guarda
+        // el cambio en ESA propuesta y se regresa a los tres planes.
+        if (s.planDesdeTanda) { this.volverATanda(); return; }
+        const pila = (s.navPila || []); const prev = pila[pila.length - 1];
         this.setState({ sendOpen: false, swapIdx: null, planQ: '' });
         if (prev === 'results' || prev === 'group' || prev === 'detail') { this.navVolver(); return; }
         this.setState({ planView: 'list' }); },
+      planBackLabel: s.planDesdeTanda ? '← Volver a los 3 planes' : '← Regresar',
+      guardarTanda: () => this.guardarTanda(),
       planHeadTitle: view === 'plan' && s.planView !== 'edit' ? 'Mis planes'
         : (plan && plan.stops.length ? this.tituloPlan('editor') : 'Plan nuevo'),
       planSubTitle: plan && plan.stops.length ? planTitle : '',
@@ -3949,6 +4011,7 @@ class Component extends DCLogic {
         // seguía igual de llena de controles.
         this.setState({ savedPlans: s.savedPlans.concat([copia]), planCustomFrom: copia.id,
           planLocked: true, planListoFx: (s.planListoFx || 0) + 1 }, () => this.persist());
+        this.guardaEnTanda();
       },
       votePlan: () => this.proposePlan(this.getPlan()),
       redoPlan: () => this.regenerate(),

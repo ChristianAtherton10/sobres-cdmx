@@ -1668,4 +1668,89 @@ test('un enlace roto no rompe la app', () => {
   assert(true, 'ningún enlace roto debe lanzar');
 });
 
+
+// ───────── 19 · Editar las tres propuestas ─────────
+section('19 · Editar, guardar y mandar las tres');
+
+function conTanda(dseed) {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'], transporte:'uber',
+    planFrom:18, planTo:26, userName:'Christian' }, { dseed: dseed });
+  app.runSearch();
+  return app;
+}
+
+test('editar una propuesta la reemplaza en la tanda, no en otra', () => {
+  const app = conTanda(301);
+  const v = app.renderVals();
+  assert(v.plans.length >= 2, 'la prueba necesita dos propuestas');
+  const antes = app.state.results.plans.map(p => app.comboSig(p.stops));
+  // Entrar a editar la SEGUNDA.
+  v.plans[1].open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  assert(app.state.planDesdeTanda && app.state.planIdx === 1, 'no quedó apuntando a la propuesta 2');
+  // Quitar su última parada.
+  const p0 = app.getPlan();
+  assert(p0.stops.length >= 2, 'necesita al menos dos paradas para quitar una');
+  app.removeStop(p0.stops.length - 1);
+  // Volver a los tres.
+  app.renderVals().planBack();
+  const plans = app.state.results.plans;
+  assert(app.comboSig(plans[1].stops) !== antes[1], 'la propuesta 2 no se actualizó');
+  assert(plans[1].editado, 'debe quedar marcada como editada');
+  assert(app.comboSig(plans[0].stops) === antes[0], 'se tocó la propuesta 1');
+  if (plans[2]) assert(app.comboSig(plans[2].stops) === antes[2], 'se tocó la propuesta 3');
+  assert(!app.state.planDesdeTanda, 'al volver se suelta el vínculo');
+  assert(app.state.view === 'results', 'debe regresar a los tres planes, quedó en ' + app.state.view);
+});
+
+test('el enlace que se comparte lleva la versión editada', () => {
+  const app = conTanda(302);
+  const v = app.renderVals();
+  v.plans[0].open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  const p0 = app.getPlan();
+  app.removeStop(p0.stops.length - 1);
+  const editado = app.comboSig(app.getPlan().stops);
+  app.renderVals().planBack();
+  // El enlace corto ya debe traer la versión editada.
+  const txt = app.tandaLink().split('?p=')[1];
+  const back = app.leeTandaCorta(txt);
+  assert(back.p[0].s.slice().sort().join('|') === editado,
+    'el enlace sigue llevando la versión vieja: ' + back.p[0].s);
+  // Y quien lo abre ve lo editado.
+  const rx = makeApp({ userName: 'Beto', catLoaded: 1 }, { dseed: 303 });
+  rx.abrirTanda(txt, true);
+  assert(rx.comboSig(rx.state.results.plans[0].stops) === editado, 'el receptor vio la versión vieja');
+});
+
+test('guardar los 3 los manda a Mis planes sin duplicar', () => {
+  const app = conTanda(304);
+  const n = app.state.results.plans.length;
+  app.renderVals().guardarTanda();
+  assert((app.state.savedPlans || []).length === n, 'guardó ' + app.state.savedPlans.length + ' de ' + n);
+  app.state.savedPlans.forEach(sp => {
+    assert(sp.stopIds && sp.stopIds.length, 'un guardado quedó sin paradas');
+    assert(sp.people === 4 && sp.budget === 'b1k' && sp.transporte === 'uber', 'se perdió el contexto');
+  });
+  // Dos veces no duplica.
+  app.renderVals().guardarTanda();
+  assert(app.state.savedPlans.length === n, 'se duplicaron al guardar otra vez');
+});
+
+test('guardar un plan editado desde la tanda lo deja igual en los tres', () => {
+  const app = conTanda(305);
+  const v = app.renderVals();
+  v.plans[2] ? v.plans[2].open() : v.plans[0].open();
+  const idx = app.state.planIdx;
+  app.setState({ view: 'plan', planView: 'edit' });
+  const p0 = app.getPlan();
+  app.removeStop(p0.stops.length - 1);
+  const firma = app.comboSig(app.getPlan().stops);
+  app.renderVals().savePlan();
+  assert(app.comboSig(app.state.results.plans[idx].stops) === firma,
+    'guardar no dejó el cambio en la propuesta');
+  assert((app.state.savedPlans || []).length === 1, 'debe quedar un guardado');
+});
+
 report();
