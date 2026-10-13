@@ -1929,8 +1929,23 @@ class Component extends DCLogic {
   inv(map, v) { return Object.keys(map).find(k => map[k] === v) || null; }
 
   // Los ids 'cdmx-1234' se guardan como '1234'; los demás van tal cual.
-  cortaId(id) { return /^cdmx-\d+$/.test(id) ? id.slice(5) : id; }
-  largaId(x) { return /^\d+$/.test(x) ? 'cdmx-' + x : x; }
+  // Una parada AGREGADA A MANO (id 'ext-<hora>') no existe en el catálogo del
+  // que recibe, así que de ella viaja el NOMBRE, con una 'x' delante. Antes se
+  // mandaba su id tal cual: el guion partía el bloque en dos y esa parada se
+  // perdía — por eso un plan editado a mano llegaba distinto o no llegaba.
+  cortaId(v) {
+    const id = typeof v === 'string' ? v : v.id;
+    if (/^cdmx-\d+$/.test(id)) return id.slice(5);
+    if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
+    // Cualquier otro id que lleve un separador se escapa para no romper nada.
+    return /[~_.!]/.test(id) ? '%' + encodeURIComponent(id) : id;
+  }
+  largaId(x) {
+    if (/^\d+$/.test(x)) return 'cdmx-' + x;
+    if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
+    if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
+    return x;
+  }
 
   tandaCorta() {
     const s = this.state; const r = s.results;
@@ -1951,8 +1966,9 @@ class Component extends DCLogic {
       this.C_TR[s.transporte] || 'u',
       r.plans.slice(0, 3).map(pl => {
         const t = pl.times || [];
-        return pl.stops.map(v => this.cortaId(v.id)).join('.')
-          + '-' + pl.stops.map((v, i) => Math.round(((t[i] != null ? t[i] : f) - f) * 60)).join('.');
+        // '!' separa ids de minutos: no aparece en ningún id y la URL no lo escapa.
+        return pl.stops.map(v => this.cortaId(v)).join('.')
+          + '!' + pl.stops.map((v, i) => Math.round(((t[i] != null ? t[i] : f) - f) * 60)).join('.');
       }).join('_')
     ];
     return campos.join('~');
@@ -1978,10 +1994,15 @@ class Component extends DCLogic {
       vb: (c[7] || '').split('.').filter(Boolean).map(x => this.inv(this.C_VIBE, x)).filter(Boolean),
       tr: this.inv(this.C_TR, c[8] || 'u') || 'uber', xn: [],
       p: (c[9] || '').split('_').filter(Boolean).map(bloque => {
-        const par = bloque.split('-');
-        const ids = (par[0] || '').split('.').filter(Boolean).map(x => this.largaId(x));
-        const mins = (par[1] || '').split('.').map(Number);
-        return { s: ids, h: ids.map((_, i) => Math.round((f + (mins[i] || 0) / 60) * 100) / 100), l: '' };
+        // Formato nuevo con '!'; los enlaces viejos usaban '-' y nunca llevaban
+        // paradas a mano, así que para ésos basta el último guion.
+        let crudo, mins;
+        const i = bloque.indexOf('!');
+        if (i >= 0) { crudo = bloque.slice(0, i); mins = bloque.slice(i + 1); }
+        else { const j = bloque.lastIndexOf('-'); crudo = j < 0 ? bloque : bloque.slice(0, j); mins = j < 0 ? '' : bloque.slice(j + 1); }
+        const ids = crudo.split('.').filter(Boolean).map(x => this.largaId(x));
+        const mm = mins.split('.').map(Number);
+        return { s: ids, h: ids.map((_, k) => Math.round((f + (mm[k] || 0) / 60) * 100) / 100), l: '' };
       }).filter(x => x.s.length)
     };
   }
@@ -2060,7 +2081,11 @@ class Component extends DCLogic {
       const C = this.cat();
       const faltan = [];
       const planes = t.p.map(pl => {
-        const stops = (pl.s || []).map(id => { const v = C.find(x => x.id === id); if (!v) faltan.push(id); return v; }).filter(Boolean);
+        const stops = (pl.s || []).map((id, k) => {
+          // {ext:'Nombre'} = parada que el emisor escribió a mano: se recrea.
+          if (id && typeof id === 'object' && id.ext) return this.mkExt('ext-c' + k + '-' + Math.random().toString(36).slice(2, 7), id.ext);
+          const v = C.find(x => x.id === id); if (!v) faltan.push(id); return v;
+        }).filter(Boolean);
         if (!stops.length) return null;
         const times = (pl.h && pl.h.length === stops.length) ? pl.h.slice() : this.planTimes(stops.length);
         return { stops, times, spent: stops.reduce((a, v) => a + (v.ppUnknown ? 0 : v.pp), 0),

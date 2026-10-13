@@ -1584,7 +1584,7 @@ test('el enlace lleva los tres planes exactos y sus filtros', () => {
   assert(/\?p=/.test(url), 'el enlace debe llevar ?p=: ' + url);
   // Formato corto: sin JSON ni base64, y sólo con caracteres que la URL no escapa.
   const txt = url.split('?p=')[1];
-  assert(/^[A-Za-z0-9\-._~%]+$/.test(txt), 'el enlace lleva caracteres que la URL tiene que escapar');
+  assert(/^[A-Za-z0-9\-._~%!]+$/.test(txt), 'el enlace lleva caracteres que la URL tiene que escapar: ' + txt);
   assert(txt.length < 320, 'el enlace corto se pasó de 320: ' + txt.length);
   assert(txt.length < app.b64enc(pay).length * 0.75,
     'el formato corto debería pesar bastante menos que el largo: ' + txt.length + ' vs ' + app.b64enc(pay).length);
@@ -1793,6 +1793,51 @@ test('el enlace a la vista no sobrevive a un cambio de planes', () => {
   app.removeStop(app.getPlan().stops.length - 1);
   app.renderVals().planBack();
   assert(!app.state.tandaUrl, 'tras editar tampoco puede seguir el enlace viejo');
+});
+
+
+test('una parada agregada a mano viaja en el enlace y no lo rompe', () => {
+  const app = conTanda(308);
+  const v = app.renderVals();
+  v.plans[0].open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  // Agregar una parada escrita a mano, como hace el buscador del editor.
+  app.addExtStop('Casa de mi tía', 21);
+  const conMano = app.getPlan().stops;
+  assert(conMano.some(x => x.manual), 'no se agregó la parada a mano');
+  app.renderVals().planBack();
+  const txt = app.tandaLink().split('?p=')[1];
+  // El id ext-… lleva un guion, que era el separador viejo: no debe partir nada.
+  const back = app.leeTandaCorta(txt);
+  assert(back.p.length === app.state.results.plans.length, 'se perdió un plan entero: ' + back.p.length);
+  assert(back.p[0].s.length === conMano.length,
+    'el plan editado perdió paradas: ' + back.p[0].s.length + ' de ' + conMano.length);
+  assert(back.p[0].s.some(x => x && x.ext === 'Casa de mi tía'), 'la parada a mano no viajó: ' + JSON.stringify(back.p[0].s));
+  // Y el receptor la ve, recreada como parada a mano suya.
+  const rx = makeApp({ userName: 'Beto', catLoaded: 1 }, { dseed: 309 });
+  rx.abrirTanda(txt, true);
+  const p0 = rx.state.results.plans[0];
+  assert(p0.stops.length === conMano.length, 'al receptor le llegó un plan incompleto');
+  const mano = p0.stops.find(x => x.manual);
+  assert(mano && mano.n === 'Casa de mi tía', 'no llegó la parada a mano: ' + (mano && mano.n));
+  assert(mano.ppUnknown && mano.sinUbicacion, 'debe llegar con su precio y ubicación por confirmar');
+});
+
+test('cambiar una parada por otra también viaja', () => {
+  const app = conTanda(310);
+  const v = app.renderVals();
+  v.plans[1].open();
+  app.setState({ view: 'plan', planView: 'edit' });
+  // "Cambiar": sustituir la primera parada por otra del catálogo.
+  const alt = app.swapSuggest(0)[0];
+  assert(alt, 'no hubo sugerencia para cambiar');
+  app.setState({ swapIdx: 0 });
+  app.addStop(alt);
+  const esperado = app.comboSig(app.getPlan().stops);
+  app.renderVals().planBack();
+  const back = app.leeTandaCorta(app.tandaLink().split('?p=')[1]);
+  assert(back.p[1].s.slice().sort().join('|') === esperado,
+    'el cambio no viajó: ' + back.p[1].s + ' vs ' + esperado);
 });
 
 report();
