@@ -196,6 +196,30 @@ window.SOBRES_AUDITORIA = (function () {
       nota: 'El catálogo lo tenía como $180 POR PERSONA, mezclando unidades: la trajinera se cobra por embarcación y por hora. Como el monto por persona depende de cuántos vayan y de cuántas horas, no se convierte a "por persona" sin una regla explícita y se deja como tarifa por embarcación. Además estaba asignado a la zona Coyoacán, a unos 10 km del embarcadero.'
     },
 
+    /* ---- Casa San Juan: era un antro, no un restaurante en Lomas ---- */
+    // Corrección del fundador (18-oct-2026): "Casa San Juan es un antro en
+    // Polanco, no restaurante en las Lomas". El registro viejo lo daba como
+    // "Casa San Juan · Lomas", restaurante sobre Prado Norte, con precio y
+    // horario puestos a mano. Dos fuentes independientes coinciden en la
+    // dirección y en el tipo de lugar; NINGUNA publica horario ni cover.
+    'cdmx-2229': {
+      n: 'Casa San Juan', cat: 'Antro', zone: 'polanco', col: 'Polanco III Secc',
+      addr: 'Av. Presidente Masaryk 393', web: '',
+      lat: 19.432158, lng: -99.1981266,
+      act: ['baile','copas'],
+      // Ventana TÍPICA de antro sólo para poder acomodarlo en una noche; se
+      // marca como estimada y la app dice "Horario por confirmar". No es un dato.
+      oh: [23, 27], hrs: 'Horario por confirmar (no publicado)', horaEstimada: true,
+      tags: ['nightlife','social'], who: ['amigos','compa','date'], tm: ['noche'],
+      basis: 'Club nocturno de reggaetón, pop comercial y hits urbanos sobre Masaryk',
+      precio: { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: null },
+      estado: 'por_confirmar', falta: 'el cover o consumo mínimo, y el horario',
+      fuente: 'CDMX Reservas (ficha "Casa San Juan CDMX", Masaryk 393) y Mango Mango (pin de Google Maps 19.432158, -99.1981266)',
+      url: 'https://cdmxreservas.com/casa-san-juan-masaryk/', fecha: '2026-10-18',
+      sucursal: 'Av. Presidente Masaryk 393, Polanco III Secc, Miguel Hidalgo, 11560',
+      nota: 'Antes: "Casa San Juan · Lomas", Restaurante, Av. Prado Norte, $750, 13:00–23:00 — nada de eso tenía fuente. Ahora es antro en Polanco. Código de vestimenta según la ficha: casual elegante. Horario, días y cover siguen sin confirmar.'
+    },
+
     /* ---- Six Flags: existía, con precio por debajo del real ---- */
     'cdmx-2091': {
       cat: 'Parque de diversiones', act: ['atraccion'],

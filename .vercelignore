@@ -8,3 +8,6 @@ state.json.tmp
 .claude/
 .env*.local
 .vercel
+
+# Reportes de trabajo (cruce de candidatos): no se publican
+reportes/

@@ -70,6 +70,10 @@ function combinacionesValidas(app) {
   const out = new Set();
   A.forEach(a => B.forEach(b => {
     if (a.id === b.id) return;
+    // Reglas declaradas de la guía: el antro cierra la noche (nunca va primero)
+    // y cada estancia completa tiene que caber en la ventana pedida.
+    if (app.esAntro(a)) return;
+    if (!app.cabeEnVentana(a, t0, rng[1]) || !app.cabeEnVentana(b, t1, rng[1])) return;
     // ¿Existe algún par de actividades con función distinta?
     const fa = actsEn(a, t0).map(k => app.funcionAct(k, t0));
     const fb = actsEn(b, t1).map(k => app.funcionAct(k, t1));
@@ -550,8 +554,13 @@ test('el tiempo de trayecto cambia con el transporte', () => {
 
 test('los textos nombran al proveedor correcto', () => {
   const app = makeApp(BASE, { dseed: 5 });
-  app.state.transporte = 'didi'; assert(app.provNombre() === 'DiDi', app.provNombre());
-  app.state.transporte = 'uber'; assert(app.provNombre() === 'Uber', app.provNombre());
+  // SOBRES ya no nombra marcas de viaje: Uber y DiDi guardados en planes viejos
+  // se leen como "servicio de transporte".
+  app.state.transporte = 'servicio'; assert(app.provNombre() === 'servicio de transporte', app.provNombre());
+  app.state.transporte = 'didi'; assert(app.provNombre() === 'servicio de transporte', app.provNombre());
+  app.state.transporte = 'uber'; assert(app.provNombre() === 'servicio de transporte', app.provNombre());
+  app.state.transporte = 'metro'; assert(app.provNombre() === 'transporte público', app.provNombre());
+  app.state.transporte = 'propio'; assert(app.provNombre() === 'tu coche', app.provNombre());
   app.state.transporte = 'caminando'; assert(app.provNombre() === 'a pie', app.provNombre());
 });
 
@@ -647,19 +656,23 @@ test('el enlace lleva fecha, horas, personas, transporte y costo', () => {
 });
 
 test('abrir el enlace reproduce EXACTAMENTE el mismo plan', () => {
-  const app = conPlan({ groupSize: 6, transporte: 'didi' });
+  const app = conPlan({ groupSize: 6, transporte: 'metro' });
   app.state.planDate = '2026-10-09';
   const original = app.getPlan();
   const pl = app.buildPlanPayload(original);
-  const otro = makeApp({ ...BASE, zone: 'polanco', zonesSel: ['polanco'], groupSize: 2, transporte: 'uber' }, { dseed: 99 });
+  const otro = makeApp({ ...BASE, zone: 'polanco', zonesSel: ['polanco'], groupSize: 2, transporte: 'servicio' }, { dseed: 99 });
   otro.openPlanOpt({ plan: pl });
   const q = otro.getPlan();
   assert(names(q).join() === names(original).join(), 'paradas distintas: ' + names(q));
   assert(JSON.stringify(q.times) === JSON.stringify(original.times), 'horas distintas');
   assert(otro.state.planDate === '2026-10-09', 'fecha: ' + otro.state.planDate);
   assert(otro.state.groupSize === 6, 'personas: ' + otro.state.groupSize);
-  assert(otro.state.transporte === 'didi', 'transporte: ' + otro.state.transporte);
+  assert(otro.state.transporte === 'metro', 'transporte: ' + otro.state.transporte);
   assert(q.spent === original.spent, 'costo distinto');
+  // Un plan viejo que se guardó con 'didi' llega como servicio de transporte.
+  const viejo = makeApp({ ...BASE }, { dseed: 99 });
+  viejo.openPlanOpt({ plan: Object.assign({}, pl, { transport: 'didi' }) });
+  assert(viejo.state.transporte === 'servicio', 'plan viejo con didi: ' + viejo.state.transporte);
 });
 
 test('el QR y WhatsApp apuntan al mismo enlace del sitio', () => {
@@ -709,7 +722,7 @@ test('los botones de icono tienen etiqueta accesible', () => {
 section('8e · Intención, contexto y secuencia de actividades');
 
 test('entiende el transporte pedido y lo aplica', () => {
-  const casos = [['transporte publico', 'metro'], ['vamos en didi', 'didi'], ['pedimos uber', 'uber'],
+  const casos = [['transporte publico', 'metro'], ['vamos en didi', 'servicio'], ['pedimos uber', 'servicio'],
     ['preferimos caminar', 'caminando'], ['llevamos mi coche', 'propio']];
   casos.forEach(([txt, esperado]) => {
     const app = makeApp({ ...BASE, transporte: 'uber' }, { dseed: 1 });
@@ -1137,7 +1150,7 @@ test('los tres planes de una tanda no comparten todas las paradas', () => {
 section('13 · Viabilidad antes de ofrecer, no como aviso al pie');
 
 test('ningún tramo exige más tiempo del que hay entre dos paradas', () => {
-  [['caminando','coyoacan'], ['caminando','roma'], ['metro','all'], ['uber','polanco']].forEach(([tr, z]) => {
+  [['caminando','coyoacan'], ['caminando','roma'], ['metro','all'], ['servicio','polanco']].forEach(([tr, z]) => {
     const app = makeApp({ who:'solo', groupSize:1, zone:z, zonesSel:z === 'all' ? [] : [z], when:'ahora',
       budget:'b1k', budgetCustom:null, vibes:[], transporte:tr, planFrom:11, planTo:19 }, { dseed: 61 });
     app.runSearch();
@@ -1190,7 +1203,7 @@ section('14 · Validación única de presupuesto en todos los caminos');
 test('ninguna propuesta se presenta por encima del tope', () => {
   [300, 600, 1000].forEach(tope => {
     const app = makeApp({ who:'amigos', groupSize:7, zone:'santafe', zonesSel:['santafe'], when:'manana',
-      budget:'b1k', budgetCustom:tope, vibes:[], transporte:'didi', planFrom:13, planTo:17 }, { dseed: 71 });
+      budget:'b1k', budgetCustom:tope, vibes:[], transporte:'servicio', planFrom:13, planTo:17 }, { dseed: 71 });
     app.runSearch();
     for (let i = 0; i <= 10; i++) {
       (app.state.results.plans || []).forEach(p => {
@@ -1204,7 +1217,7 @@ test('ninguna propuesta se presenta por encima del tope', () => {
 
 test('cambiar el número de paradas no rompe el tope', () => {
   const app = makeApp({ who:'amigos', groupSize:7, zone:'santafe', zonesSel:['santafe'], when:'manana',
-    budget:'b1k', budgetCustom:300, vibes:[], transporte:'didi', planFrom:13, planTo:17 }, { dseed: 72 });
+    budget:'b1k', budgetCustom:300, vibes:[], transporte:'servicio', planFrom:13, planTo:17 }, { dseed: 72 });
   app.runSearch();
   [2, 3, 4, 5].forEach(n => {
     app.setState({ planStops: n });
@@ -1279,7 +1292,7 @@ section('15 · Coherencia entre lo que se construye y lo que se avisa');
 
 test('cambiar el número de paradas no contradice el aviso de viabilidad', () => {
   const app = makeApp({ who:'compa', groupSize:7, zone:'santafe', zonesSel:['santafe'], when:'manana',
-    budget:'b1k', budgetCustom:300, vibes:[], transporte:'didi', planFrom:13, planTo:17 }, { dseed: 81 });
+    budget:'b1k', budgetCustom:300, vibes:[], transporte:'servicio', planFrom:13, planTo:17 }, { dseed: 81 });
   app.runSearch();
   [2, 3, 4, 5].forEach(n => {
     app.setState({ planStops: n });
@@ -1311,7 +1324,7 @@ test('una parada manual no genera enlaces a destinos inventados', () => {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
     budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 83 });
   const ext = app.mkExt('ext-qa', 'Parada manual QA sin ubicación');
-  assert(app.uberUrl(ext) === '', 'Uber no debe abrirse con un nombre inventado');
+  assert(typeof app.uberUrl !== 'function', 'ya no hay enlaces para pedir viaje');
   assert(app.mapsUrl(ext) === '', 'Maps no debe buscar el nombre escrito a mano');
   assert(ext.ppUnknown && app.precioTxt(ext) === 'Precio por confirmar');
   assert(app.legKm(ext, { lat: 19.4, lng: -99.16 }) === null, 'sin ubicación no hay distancia');
@@ -1320,7 +1333,7 @@ test('una parada manual no genera enlaces a destinos inventados', () => {
 test('el contexto completo viaja al compartir y se restaura sin defaults', () => {
   const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'fecha',
     customDate:'2026-10-07', budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'],
-    transporte:'uber', planFrom:18, planTo:26 }, { dseed: 84 });
+    transporte:'metro', planFrom:18, planTo:26 }, { dseed: 84 });
   app.runSearch();
   const plan = app.state.results.plans[0];
   const payload = app.buildPlanPayload({ stops: plan.stops, times: plan.times, spent: plan.spent });
@@ -1331,12 +1344,12 @@ test('el contexto completo viaja al compartir y se restaura sin defaults', () =>
   // El receptor abre con SUS defaults (4 personas, otro tope) y debe quedarse con los del emisor.
   [1, 2, 5, 7].forEach(n => {
     const rx = makeApp({ who:'amigos', groupSize:4, zone:'condesa', zonesSel:['condesa'], when:'noche',
-      budget:'b600', budgetCustom:null, vibes:[], transporte:'didi' }, { dseed: 85 });
+      budget:'b600', budgetCustom:null, vibes:[], transporte:'servicio' }, { dseed: 85 });
     const pl = Object.assign({}, payload, { people: n, ids: payload.stops });
     rx.openPlanOpt({ plan: pl });
     assert(rx.state.groupSize === n, n + ' personas llegaron como ' + rx.state.groupSize);
     assert(rx.state.budgetCustom === 1500, 'el tope llegó como ' + rx.state.budgetCustom);
-    assert(rx.state.transporte === 'uber', 'el transporte llegó como ' + rx.state.transporte);
+    assert(rx.state.transporte === 'metro', 'el transporte llegó como ' + rx.state.transporte);
     assert(rx.state.zone === 'roma', 'la zona llegó como ' + rx.state.zone);
     const st = rx.state.planCustom.stops;
     assert(app.comboSig(st) === app.comboSig(plan.stops), 'las paradas no son las mismas');
@@ -1567,7 +1580,7 @@ section('18 · Un enlace con la tanda completa');
 
 test('el enlace lleva los tres planes exactos y sus filtros', () => {
   const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma','romasur'], when:'noche',
-    budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'], transporte:'uber',
+    budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'], transporte:'servicio',
     planFrom:18, planTo:26, userName:'Christian' }, { dseed: 101 });
   app.runSearch();
   const orig = app.state.results.plans;
@@ -1590,7 +1603,7 @@ test('el enlace lleva los tres planes exactos y sus filtros', () => {
     'el formato corto debería pesar bastante menos que el largo: ' + txt.length + ' vs ' + app.b64enc(pay).length);
   // Ida y vuelta: lo que importa es que vuelvan los mismos planes y filtros.
   const back = app.leeTandaCorta(txt);
-  assert(back.g === 5 && back.bc === 1500 && back.tr === 'uber' && back.w === 'amigos',
+  assert(back.g === 5 && back.bc === 1500 && back.tr === 'servicio' && back.w === 'amigos',
     'se perdieron filtros: ' + JSON.stringify([back.g, back.bc, back.tr, back.w]));
   assert(back.zs.join() === 'roma,romasur', 'zonas: ' + back.zs);
   assert(back.vb.join() === 'foodie,nightlife', 'vibras: ' + back.vb);
@@ -1605,7 +1618,7 @@ test('el enlace lleva los tres planes exactos y sus filtros', () => {
 
 test('los enlaces del formato viejo siguen funcionando', () => {
   const app = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'noche',
-    budget:'b1k', budgetCustom:1500, vibes:['foodie'], transporte:'uber',
+    budget:'b1k', budgetCustom:1500, vibes:['foodie'], transporte:'servicio',
     planFrom:18, planTo:26, userName:'Christian', catLoaded: 1 }, { dseed: 105 });
   app.runSearch();
   const firmas = app.state.results.plans.map(p => app.comboSig(p.stops));
@@ -1621,7 +1634,7 @@ test('los enlaces del formato viejo siguen funcionando', () => {
 
 test('quien lo abre ve los mismos planes y sigue siendo él, no el que lo mandó', () => {
   const emisor = makeApp({ who:'amigos', groupSize:5, zone:'roma', zonesSel:['roma'], when:'noche',
-    budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'], transporte:'uber',
+    budget:'b1k', budgetCustom:1500, vibes:['foodie','nightlife'], transporte:'servicio',
     planFrom:18, planTo:26, userName:'Christian' }, { dseed: 102 });
   emisor.runSearch();
   const firmas = emisor.state.results.plans.map(p => emisor.comboSig(p.stops));
@@ -1638,7 +1651,7 @@ test('quien lo abre ve los mismos planes y sigue siendo él, no el que lo mandó
     'el plan ' + (i+1) + ' llegó distinto'));
   // Los filtros del emisor mandan…
   assert(receptor.state.groupSize === 5 && receptor.state.budgetCustom === 1500
-    && receptor.state.transporte === 'uber' && receptor.state.zone === 'roma',
+    && receptor.state.transporte === 'servicio' && receptor.state.zone === 'roma',
     'no se restauraron los filtros: ' + receptor.state.groupSize + '/' + receptor.state.budgetCustom);
   // …pero la identidad NO.
   assert(receptor.state.userName === 'Beto', 'el receptor cambió de nombre a ' + receptor.state.userName);
@@ -1674,7 +1687,7 @@ section('19 · Editar, guardar y mandar las tres');
 
 function conTanda(dseed) {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
-    budget:'b1k', budgetCustom:null, vibes:['foodie'], transporte:'uber',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'], transporte:'servicio',
     planFrom:18, planTo:26, userName:'Christian' }, { dseed: dseed });
   app.runSearch();
   return app;
@@ -1731,7 +1744,7 @@ test('guardar los 3 los manda a Mis planes sin duplicar', () => {
   assert((app.state.savedPlans || []).length === n, 'guardó ' + app.state.savedPlans.length + ' de ' + n);
   app.state.savedPlans.forEach(sp => {
     assert(sp.stopIds && sp.stopIds.length, 'un guardado quedó sin paradas');
-    assert(sp.people === 4 && sp.budget === 'b1k' && sp.transporte === 'uber', 'se perdió el contexto');
+    assert(sp.people === 4 && sp.budget === 'b1k' && sp.transporte === 'servicio', 'se perdió el contexto');
   });
   // Dos veces no duplica.
   app.renderVals().guardarTanda();
@@ -1838,6 +1851,249 @@ test('cambiar una parada por otra también viaja', () => {
   const back = app.leeTandaCorta(app.tandaLink().split('?p=')[1]);
   assert(back.p[1].s.slice().sort().join('|') === esperado,
     'el cambio no viajó: ' + back.p[1].s + ' vs ' + esperado);
+});
+
+// ─────────── 20. Guía de motor: coherencia, variedad e historial ───────────
+section('20 · Guía de motor: coherencia, variedad e historial');
+
+const NOCHE_ROMA = { who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+  budget:'b1k', budgetCustom:null, vibes:['nightlife'], planFrom:20, planTo:26 };
+
+test('R08/R09 · un antro por noche, siempre al final y llegando cerca de 23:30', () => {
+  let conAntro = 0;
+  [11, 12, 13, 14, 15, 16].forEach(seed => {
+    const app = makeApp(NOCHE_ROMA, { dseed: seed });
+    const r = app.runSearch({ nueva: true });
+    r.plans.forEach(pl => {
+      const idx = pl.stops.map((v, i) => app.esAntro(v) ? i : -1).filter(i => i >= 0);
+      assert(idx.length <= 1, 'dos antros en un plan: ' + names(pl).join(' → '));
+      if (!idx.length) return;
+      conAntro++;
+      assert(idx[0] === pl.stops.length - 1, 'el antro no cierra la noche: ' + names(pl).join(' → '));
+      if (pl.stops.length > 1) assert(idx[0] !== 0, 'el antro abrió la noche');
+      const t = pl.times[idx[0]];
+      assert(t >= 22.5 && t <= 24.5, 'llegada al antro fuera de 22:30–00:30: ' + app.time12(t) + ' en ' + names(pl).join(' → '));
+      assert(app.cabeEnVentana(pl.stops[idx[0]], t, 26), 'el antro no cabe completo en la ventana');
+    });
+  });
+  assert(conAntro > 0, 'la prueba no vio ningún plan con antro: no mide nada');
+});
+
+test('P13 · "sólo antro": noche que empieza tarde → una parada válida, sin relleno', () => {
+  const app = makeApp(Object.assign({}, NOCHE_ROMA, { planFrom: 23.5, planTo: 27 }), { dseed: 21 });
+  const r = app.runSearch({ nueva: true });
+  assert(r.plans.length > 0, 'no hubo planes');
+  const solos = r.plans.filter(pl => pl.stops.length === 1);
+  assert(solos.length > 0, 'ninguna opción fue el antro directo: ' + r.plans.map(pl => names(pl).join('+')).join(' / '));
+  solos.forEach(pl => assert(app.esAntro(pl.stops[0]), 'una parada sola que no es antro: ' + names(pl)));
+});
+
+test('P06 · "ya comimos": no se mete ninguna comida ni cena', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:[], planFrom:15, planTo:19, yaComimos: true }, { dseed: 31 });
+  const r = app.runSearch({ nueva: true });
+  assert(r.plans.length > 0, 'sin planes');
+  r.plans.forEach(pl => (pl.acts || []).forEach(a =>
+    assert(['comida','cena','desayuno'].indexOf(a) < 0, 'metió ' + a + ' en ' + names(pl).join(' → '))));
+});
+
+test('P15 · cultural sin alcohol: ni bar ni precopeo', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma','juarez','condesa'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['cultural'], planFrom:17, planTo:23, sinAlcohol: true }, { dseed: 32 });
+  const r = app.runSearch({ nueva: true });
+  assert(r.plans.length > 0, 'sin planes');
+  r.plans.forEach(pl => pl.stops.forEach(v =>
+    assert(!app.implicaAlcohol(v), v.n + ' implica alcohol en un plan sin alcohol')));
+});
+
+test('P18 · Six Flags no es una visita breve: no cabe en dos horas', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'cu', zonesSel:['cu'], when:'finde',
+    budget:'b1k', budgetCustom:2000, vibes:['aventurero'], planFrom:12, planTo:14 }, { dseed: 33 });
+  const sf = app.cat().find(v => v.id === 'cdmx-2091');
+  assert(sf && app.duracionAct(sf) >= 6, 'Six Flags debe durar un bloque largo');
+  const r = app.runSearch({ nueva: true });
+  r.plans.forEach(pl => assert(!pl.stops.some(v => v.id === 'cdmx-2091'), 'ofreció Six Flags en dos horas'));
+});
+
+test('P20 · a pie no se finge cercanía: un tramo largo no es caminable', () => {
+  const app = makeApp({ transporte: 'caminando' }, { dseed: 34 });
+  const a = { lat: 19.419, lng: -99.16, oh: [0, 28], cat: 'Bar' }, b = { lat: 19.44, lng: -99.135, oh: [0, 28], cat: 'Bar' };
+  assert(app.legKm(a, b) > 2, 'la prueba necesita un tramo de más de 2 km');
+  assert(app.alcanzaTramo(a, b, 5) === false, 'dio por caminable un tramo de ' + app.legKm(a, b).toFixed(1) + ' km');
+  app.state.transporte = 'servicio';
+  assert(app.alcanzaTramo(a, b, 5) === true, 'en servicio de transporte sí se puede');
+});
+
+test('P10 · un café no cumple el papel de comida o cena', () => {
+  const app = makeApp({}, { dseed: 35 });
+  // Sólo los cafés SIN comida verificada: un café-brunch con ficha y precio de
+  // comida publicados (Aida Café) sí puede servir de comida.
+  const cafes = app.cat().filter(v => v.cat === 'Café' && !v.actVer);
+  assert(cafes.length > 5, 'pocos cafés para medir');
+  cafes.forEach(v => assert(!app.actsDe(v).some(a => a === 'comida' || a === 'cena'), v.n + ' cuenta como comida'));
+});
+
+test('P27 · tres opciones como conjunto: anclas distintas y a lo más un lugar en común', () => {
+  [41, 42, 43].forEach(seed => {
+    const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+      budget:'b1k', budgetCustom:null, vibes:['foodie'], planFrom:19, planTo:23 }, { dseed: seed });
+    const r = app.runSearch({ nueva: true });
+    assert(r.plans.length === 3, 'no salieron tres');
+    const anclas = r.plans.map(pl => app.anclaDe(pl.stops, pl.acts));
+    assert(new Set(anclas).size === 3, 'anclas repetidas: ' + anclas);
+    for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) {
+      const comun = r.plans[i].stops.filter(v => r.plans[j].stops.some(x => x.id === v.id)).length;
+      assert(comun <= 1, 'las opciones ' + (i + 1) + ' y ' + (j + 1) + ' comparten ' + comun + ' lugares');
+    }
+  });
+});
+
+test('P28 · diez solicitudes con filtros idénticos → treinta planes distintos y válidos', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma','condesa'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'], planFrom:19, planTo:23 }, { dseed: 51 });
+  const huellas = new Set(); let n = 0;
+  for (let i = 0; i < 10; i++) {
+    const r = app.runSearch({ nueva: true });
+    r.plans.forEach(pl => {
+      n++; huellas.add(app.comboSig(pl.stops));
+      assert(app.cabeEnTope(pl.stops, app.budgetMax()).ok, 'plan fuera de presupuesto');
+      const ts = pl.times;
+      assert(app.cabeEnVentana(pl.stops[pl.stops.length - 1], ts[ts.length - 1], app.range()[1]), 'plan fuera de la ventana');
+    });
+  }
+  assert(n === 30, 'se mostraron ' + n + ' planes, no 30');
+  assert(huellas.size === 30, 'sólo ' + huellas.size + ' huellas distintas de 30');
+});
+
+test('P29 · un reintento técnico (mismo request_id) no genera ni cuenta dos veces', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'] }, { dseed: 52 });
+  const r1 = app.runSearch({ reqId: 'sol-123' });
+  const vistos1 = app.histLee().planes.length;
+  const r2 = app.runSearch({ reqId: 'sol-123' });
+  assert(r1 === r2, 'el reintento generó otra tanda');
+  assert(app.histLee().planes.length === vistos1, 'el reintento contó la exposición dos veces');
+  const r3 = app.runSearch({ nueva: true });
+  assert(r3 !== r1 && r3.reqId !== r1.reqId, 'una solicitud nueva debe traer su propio id');
+  assert(r3.reqSeed !== r1.reqSeed, 'una solicitud nueva debe traer su propia semilla');
+});
+
+test('P31 · el historial sobrevive a recargar: no se repiten planes ya vistos', () => {
+  const F = { who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma','condesa'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'], planFrom:19, planTo:23 };
+  const a = makeApp(F, { dseed: 53 });
+  const vistos = new Set();
+  for (let i = 0; i < 3; i++) a.runSearch({ nueva: true }).plans.forEach(pl => vistos.add(a.comboSig(pl.stops)));
+  const guardado = {}; guardado[a.histClave()] = JSON.stringify(a.histLee());
+  const b = makeApp(F, { dseed: 53, storage: guardado });   // misma persona, otra carga
+  const r = b.runSearch({ nueva: true });
+  r.plans.forEach(pl => assert(!vistos.has(b.comboSig(pl.stops)), 'tras recargar repitió ' + names(pl).join(' → ')));
+});
+
+test('P34 · cambiar una parada no devuelve de inmediato la que se quitó', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'], planFrom:19, planTo:23 }, { dseed: 54 });
+  const r = app.runSearch({ nueva: true });
+  const p = r.plans[0];
+  app.setState({ view: 'plan', planView: 'edit', planCustom: { stops: p.stops, times: p.times, spent: p.spent }, planStops: p.stops.length });
+  const quitada = app.getPlan().stops[0];
+  const alt = app.swapSuggest(0)[0];
+  assert(alt, 'no hubo sustituto');
+  app.replaceStop(0, alt);
+  const otra = app.swapSuggest(0);
+  assert(otra.length > 0, 'no quedan sustitutos para medir');
+  assert(!otra.some(v => v.id === quitada.id), 'volvió a sugerir ' + quitada.n + ', que se acaba de quitar');
+});
+
+test('P36 · transporte: cuatro modos, sin UberX, botón de viaje ni cotización', () => {
+  const app = conPlan();
+  const v = app.renderVals();
+  assert(JSON.stringify(v.transportOpts.map(o => o.label)) === JSON.stringify(['Servicio de transporte','Mi coche','Caminando','Transporte público']),
+    'opciones: ' + v.transportOpts.map(o => o.label));
+  ['rideClass','uberUrl','didiGo'].forEach(f => assert(typeof app[f] !== 'function', 'sigue existiendo ' + f));
+  assert(!('rideHint' in v) && !('isUber' in v) && !('isDidi' in v), 'quedaron datos de pedir viaje');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  const plantilla = html.slice(html.indexOf('<x-dc>'), html.indexOf('</x-dc>'));
+  assert(!/uber|didi|pedir carro|cotiza/i.test(plantilla), 'la plantilla todavía menciona pedir viaje');
+  (v.itinerary || []).forEach(st => assert(!st.legLabel || !/uber|didi/i.test(st.legLabel), 'el trayecto nombra una marca'));
+});
+
+// ─────────── 21. Correcciones de catálogo pedidas ───────────
+section('21 · Correcciones de catálogo pedidas');
+
+test('Casa San Juan es un antro en Polanco, no un restaurante en Las Lomas', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'polanco', zonesSel:['polanco'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['nightlife'], planFrom:23, planTo:27 }, { dseed: 61 });
+  const v = app.cat().find(x => x.id === 'cdmx-2229');
+  assert(v.n === 'Casa San Juan' && v.cat === 'Antro' && v.z === 'polanco', 'identidad: ' + [v.n, v.cat, v.z]);
+  assert(/Masaryk 393/.test(v.addr) && /Polanco/.test(v.col), 'dirección: ' + v.addr + ' / ' + v.col);
+  assert(Math.abs(v.lat - 19.432158) < 1e-4 && Math.abs(v.lng + 99.1981266) < 1e-4, 'coordenadas');
+  assert(!app.actsDe(v).some(a => a === 'comida' || a === 'cena'), 'sigue contando como comida o cena');
+  assert(v.ppUnknown && v.horaEstimada, 'precio y horario deben quedar por confirmar');
+  assert(!app.cat().some(x => /Casa San Juan · Lomas/.test(x.n)), 'sobrevive el registro viejo');
+  // Buscador
+  const busq = app.searchIn('casa san juan');
+  assert(busq[0] && busq[0].id === 'cdmx-2229' && busq[0].cat === 'Antro', 'buscador: ' + (busq[0] && busq[0].n));
+  // Generación: entra como antro (baile) en la noche de Polanco y nunca abre la noche.
+  assert(app.timingOk(v) && app.vibeAdmite(v, app.vibeModel()) && app.atHour(v, 23.5), 'no es elegible para una noche en Polanco');
+  for (let i = 0; i < 6; i++) app.runSearch({ nueva: true }).plans.forEach(pl => {
+    const k = pl.stops.findIndex(x => x.id === 'cdmx-2229');
+    if (k >= 0) assert(k === pl.stops.length - 1, 'Casa San Juan no cerró la noche');
+  });
+  // Ficha: sin horas inventadas para apartar, y la fuente es la de la corrección.
+  assert(app.realSlots(v).length === 0, 'ofreció horarios que nadie publicó');
+  assert(/CDMX Reservas/.test(v.src), 'la ficha no cita la fuente de la corrección: ' + v.src);
+});
+
+test('los perfiles de ejemplo de la demo de venues ya no están en el catálogo', () => {
+  const app = makeApp({}, { dseed: 62 });
+  assert(!app.cat().some(v => v.fic), 'quedan perfiles de ejemplo');
+  ['barrovivo','distral','rutataco'].forEach(id => assert(!app.cat().some(v => v.id === id), id + ' sigue en el catálogo'));
+});
+
+// ─────────── 22. Interfaz: una pantalla para armar, tres opciones comparables ───────────
+section('22 · Interfaz: invitado, opciones comparables y lo que se quitó');
+
+test('se entra sin nombre: el inicio es el formulario, no una pantalla de nombre', () => {
+  const app = makeApp({ userName: '' }, { dseed: 71 });
+  const v = app.renderVals();
+  assert(v.isHome === true && v.needOnboard === false, 'pidió nombre al entrar');
+  assert(v.vibeTiles.length === 10 && v.transportOpts.length === 4 && v.whoOpts.length === 5, 'el formulario no está completo en Inicio');
+});
+
+test('las opciones traen los mismos cuatro datos y una frase que es CIERTA', () => {
+  const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
+    budget:'b1k', budgetCustom:null, vibes:['foodie'], planFrom:19, planTo:23, view:'results' }, { dseed: 72 });
+  app.runSearch({ nueva: true });
+  const v = app.renderVals();
+  assert(v.opciones.length === 3, 'opciones: ' + v.opciones.length);
+  v.opciones.forEach(o => ['horario','paradas','costo','traslados','frase'].forEach(k => assert(o[k], 'falta ' + k)));
+  assert(new Set(v.opciones.map(o => o.frase)).size === 3, 'frases repetidas: ' + v.opciones.map(o => o.frase));
+  const rs = app.state.results.plans.map(pl => app.resumenPlan(pl.stops, pl.times));
+  v.opciones.forEach((o, i) => {
+    if (o.frase === 'Más económico') assert(rs.every((x, j) => j === i || x.costoNum == null || rs[i].costoNum < x.costoNum), 'no es la más económica');
+    if (o.frase === 'Menos traslados') assert(rs.every((x, j) => j === i || x.trasMin == null || rs[i].trasMin < x.trasMin), 'no es la de menos traslados');
+  });
+});
+
+test('guardar como invitado funciona y DESPUÉS ofrece cuenta, que se puede omitir', () => {
+  const app = conPlan({ userName: '' });
+  const v = app.renderVals();
+  v.guardarPlanGo();
+  assert((app.state.savedPlans || []).length === 1, 'no guardó sin cuenta');
+  assert(app.state.cuentaOpen === true, 'no ofreció crear cuenta después de guardar');
+  app.renderVals().cuentaOmitir();
+  assert(app.state.cuentaOpen === false && (app.state.savedPlans || []).length === 1, 'omitir perdió el plan');
+});
+
+test('lo que se pidió quitar ya no está: SOBRES AI, DEMO, EN VIVO, venues y el emoji de guardar', () => {
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  const plantilla = html.slice(html.indexOf('<x-dc>'), html.indexOf('</x-dc>'));
+  [/SOBRES AI/i, /\bDEMO\b/, /liveLabel|conectados/, /Para venues/i, /💾/, /isVenues/, /Último minuto/].forEach(rx =>
+    assert(!rx.test(plantilla), 'la plantilla todavía tiene ' + rx));
+  const app = makeApp({}, { dseed: 73 });
+  const v = app.renderVals();
+  assert(v.navItems.map(n => n.label).join() === 'Inicio,Explorar,Mis planes', 'navegación: ' + v.navItems.map(n => n.label));
 });
 
 report();

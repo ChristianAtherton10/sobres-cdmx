@@ -37,6 +37,7 @@ Fecha de la última revisión: **2026-10-06**. Moneda **MXN** salvo donde se ind
 | **Ultramarinos Demar** | $550 | $400–$1500 pp | Ticket promedio reportado por persona con entrada del apartado de crudos, un plato fuerte y una copa de vino. El mínimo corresponde a comer sólo del apartado de crudos sin alcohol. | MICHELIN Guide (ficha del restaurante, banda $$) + reseñas de prensa gastronómica que reportan ticket promedio de $1,000 y "más de $1,500" por persona | `rango` |
 | **** | $180 | $600 por trajinera/hora | Tarifa oficial de la alcaldía: $600 MXN por TRAJINERA por hora, hasta 20 personas — NO es por persona. No incluye comida, bebidas ni música de mariachi, que se pagan aparte a bordo. | Tarifa por embarcación publicada por la alcaldía Xochimilco y difundida en guías de la ciudad | `rango` |
 | **Six Flags México** | $900 | $1100–$1600 pp | Boleto de un día desde $1,100 en tienda digital (el precio cambia según la fecha). El extremo alto corresponde al Boleto de un Día + Atracciones de Terror ($1,600). No incluye estacionamiento, comida ni Flash Pass. Menores de 90 cm entran gratis. | Six Flags México — boletos de un día (sitio oficial) | `rango` |
+| **Casa San Juan** (antes "Casa San Juan · Lomas", Restaurante, Av. Prado Norte) | $750 | Por confirmar | — Ninguna fuente publica cover ni consumo mínimo. Ahora es **antro en Polanco III Secc, Av. Presidente Masaryk 393** (19.432158, −99.1981266); horario y días también por confirmar. | CDMX Reservas (ficha Casa San Juan CDMX) + Mango Mango (pin de Google Maps). Corrección del fundador del 18-oct-2026. | `por_confirmar` |
 
 ## 3. Altas con fuente (61)
 
@@ -130,7 +131,10 @@ Sucursal inexistente, mismo caso que cdmx-2006: sin calle ni número y sin respa
 
 ## 5. Qué queda pendiente
 
-- Corregidos contra fuente: **6** · Altas con fuente: **61** · Bajas: **3**.
+- Corregidos contra fuente: **7** (Casa San Juan cambió de identidad, no de precio) · Altas con fuente: **61** · Bajas: **3**.
+- Se quitaron del catálogo del consumidor los **3 perfiles de ejemplo** de la demo de venues (Barro Vivo, La Distral, Ruta de tacos a pie): eran fichas inventadas.
+- Se quitaron **24 fotos** emparejadas por homonimia en Wikipedia (Beluga → la ballena, Hanky Panky → un disco de Madonna, Dulce Patria → el himno de Chile, Órbita → un diagrama, etc.). Mejor sin foto que con una falsa.
+- Los 679 candidatos del paquete del 18-oct quedan **inactivos**: ver `CANDIDATOS-REPORTE.md`.
 - **Pendientes: 1035 registros** del catálogo original conservan un precio inferido
   del valor por defecto de su categoría. Se muestran como *estimado* y un plan que los use se
   presenta como **"desde $X"**, nunca como un total cerrado.

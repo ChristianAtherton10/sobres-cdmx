@@ -22,7 +22,13 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Permite simular una recarga de página: se arranca con lo que quedó guardado.
   if (opts.storage) Object.assign(store, opts.storage);
 
-  const win = { innerWidth: 1200, localStorage, addEventListener() {}, removeEventListener() {} };
+  // Azar con SEMILLA: la app saca una semilla nueva por cada solicitud (guía
+  // R20), pero una prueba tiene que poder repetirse exacta. opts.rseed la fija.
+  let semilla = ((opts.rseed != null ? opts.rseed : (opts.dseed != null ? opts.dseed : 1)) >>> 0) || 1;
+  const azar = () => { semilla = (Math.imul(semilla, 1664525) + 1013904223) >>> 0; return semilla / 4294967296; };
+  const MathS = Object.create(Math); MathS.random = azar;
+  const cryptoS = { getRandomValues: a => { for (let i = 0; i < a.length; i++) a[i] = Math.floor(azar() * 4294967296); return a; } };
+  const win = { innerWidth: 1200, localStorage, crypto: cryptoS, addEventListener() {}, removeEventListener() {} };
   const doc = { hidden: false, addEventListener() {}, removeEventListener() {}, querySelectorAll: () => [] };
 
   class DCLogic {
@@ -38,7 +44,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
     DCLogic, window: win, localStorage, document: doc,
     location: { search: '' }, setTimeout: (fn) => { try { fn(); } catch(e) {} return 0; }, clearTimeout: () => {},
     setInterval: () => 0, clearInterval: () => {}, fetch: () => Promise.reject(new Error('sin red')),
-    console, Math, Date, JSON, URLSearchParams
+    console, Math: MathS, Date, JSON, URLSearchParams, crypto: cryptoS
   };
 
   // Cargar el catálogo real (define window.SOBRES_LUGARES)
