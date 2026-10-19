@@ -9,3 +9,6 @@ __pycache__/
 .env*
 pyproject.toml
 uv.lock
+
+# Respaldos de producción (nombres de usuarios): nunca al repositorio
+respaldos/
