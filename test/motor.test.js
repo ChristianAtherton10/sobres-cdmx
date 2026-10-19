@@ -1811,12 +1811,16 @@ test('el enlace que se muestra siempre coincide con lo que hay en pantalla', () 
 
 test('el enlace a la vista no sobrevive a un cambio de planes', () => {
   const app = conTanda(307);
+  // "Compartir las 3" abre el panel único; "Copiar" deja el enlace a la vista.
   app.renderVals().copiarTanda();
+  assert(app.state.sendOpen && app.state.compartirTanda, 'debe abrir el panel de compartir');
+  assert(/[?]p=/.test(app.renderVals().compLink), 'el panel debe mostrar el enlace');
+  app.renderVals().compCopiar();
   assert(app.state.tandaUrl, 'debe quedar el enlace a la vista');
   const antes = app.state.tandaUrl;
   app.regenerate();
   assert(!app.state.tandaUrl, 'tras Rehacer no puede seguir el enlace viejo en pantalla');
-  app.renderVals().copiarTanda();
+  app.renderVals().copiarTanda(); app.renderVals().compCopiar();
   assert(app.state.tandaUrl !== antes, 'el enlace nuevo debe ser distinto');
   // Y editar también lo quita.
   const v = app.renderVals();

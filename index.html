@@ -254,6 +254,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .sb-home .sb-kicker{display:none}
 }
 
+/* Ficha de lugar */
+.sb-det{display:grid;gap:22px;margin-top:6px}
+@media (min-width:860px){.sb-det{grid-template-columns:minmax(300px,440px) 1fr;gap:30px}}
+.sb-hechos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;background:var(--color-divider);border-radius:12px;overflow:hidden}
+.sb-hechos>div{background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sb-hechos>div>span{font:700 10.5px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600)}
+.sb-hechos>div>b{font:700 13.5px/1.35 var(--font-body);color:var(--noche);overflow-wrap:anywhere}
+.sb-combos{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.sb-combos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
 /* ─────────────── Pantallas heredadas ───────────────
    Mapa, detalle, votación y perfil conservan su estructura; aquí se suaviza
    la caja de borde grueso para que no choquen con el flujo nuevo. */
@@ -290,48 +300,52 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 
 <sc-if value="{{ sendOpen }}" hint-placeholder-val="{{ false }}">
-<div style="position:fixed;inset:0;background:rgba(32,30,29,.55);z-index:95;display:flex;align-items:center;justify-content:center;padding:20px" onClick="{{ closeSend }}">
-<div style="background:#fff;border:2px solid var(--color-text);max-width:480px;width:100%;padding:22px;max-height:86vh;overflow-y:auto" onClick="{{ noop }}">
-<div style="display:flex;align-items:flex-start;gap:10px">
-<div style="flex:1"><div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">ENVIAR PLAN</div>
-<h3 style="font:800 20px/1.15 var(--font-heading);margin:8px 0 4px">{{ sendPlanName }}</h3></div>
-<button aria-label="Cerrar el panel de enviar" style="width:32px;height:32px;background:none;border:2px solid var(--color-neutral-300);font:700 13px var(--font-body);cursor:pointer;flex:none" style-hover="border-color:var(--color-text)" onClick="{{ closeSend }}">✕</button>
+<div class="sb-veil" onClick="{{ closeSend }}">
+<div class="sb-sheet" role="dialog" aria-modal="true" aria-labelledby="comp-titulo" onClick="{{ noop }}">
+<div class="sb-grab"></div>
+<div class="sb-kicker">{{ compKicker }}</div>
+<h2 id="comp-titulo" class="sb-h2" style="margin:6px 0 14px;overflow-wrap:anywhere">{{ compTitulo }}</h2>
+<a class="sb-btn sb-full" style="background:#25D366;box-shadow:none" href="{{ compWaUrl }}" target="_blank" rel="noopener" onClick="{{ compWaLog }}">Mandar por WhatsApp</a>
+<div class="sb-row" style="margin-top:8px;flex-wrap:nowrap">
+<input class="sb-input" readonly value="{{ compLink }}" aria-label="Enlace exacto a este plan" onClick="{{ tandaSelect }}" style="flex:1;min-width:0;font-size:13px!important;font-weight:500;background:var(--lila)">
+<button class="sb-btn2" style="flex:none;min-height:48px" onClick="{{ compCopiar }}">{{ compCopiarTxt }}</button>
 </div>
-<div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin:14px 0 8px">ENVIAR A:</div>
-<div style="display:flex;flex-wrap:wrap;gap:8px">
-<sc-for list="{{ planFriendChips }}" as="pf" hint-placeholder-count="3"><button style="{{ pf.style }}" style-hover="border-color:var(--color-accent);color:var(--color-accent)" onClick="{{ pf.send }}">{{ pf.label }}</button></sc-for>
+<p class="sb-note" style="margin:8px 0 0">{{ compNota }}</p>
+
+<sc-if value="{{ compGuest }}" hint-placeholder-val="{{ true }}">
+<div style="height:1px;background:var(--color-divider);margin:16px 0"></div>
+<span class="sb-label">Crea tu cuenta <span style="font-weight:500;color:var(--color-neutral-600)">· opcional</span></span>
+<p class="sb-note" style="margin:0 0 8px">Con tu nombre, quien lo reciba sabe que es tuyo y tus amigos te encuentran para votar juntos.</p>
+<div class="sb-row" style="flex-wrap:nowrap">
+<input class="sb-input" style="flex:1;min-width:0" aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre" autocomplete="nickname">
+<button class="sb-btn2" style="flex:none" onClick="{{ compCrearCuenta }}">Crear</button>
 </div>
-<div style="position:relative;margin-top:10px">
-<input aria-label="Buscar amigo por su nombre" value="{{ sendQ }}" onInput="{{ setSendQ }}" placeholder="Buscar amigo por su nombre…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
+</sc-if>
+
+<sc-if value="{{ compAmigosOn }}" hint-placeholder-val="{{ true }}">
+<div style="height:1px;background:var(--color-divider);margin:16px 0"></div>
+<span class="sb-label">Mandárselo a alguien en SOBRES</span>
+<sc-if value="{{ hasPlanFriends }}" hint-placeholder-val="{{ false }}">
+<div class="sb-chips" style="margin-bottom:8px"><sc-for list="{{ planFriendChips }}" as="pf" hint-placeholder-count="3"><button class="sb-chip" aria-pressed="{{ pf.pressed }}" onClick="{{ pf.send }}">{{ pf.label }}</button></sc-for></div>
+</sc-if>
+<div style="position:relative">
+<input class="sb-input" style="width:100%" aria-label="Buscar amigo por su nombre" value="{{ sendQ }}" onInput="{{ setSendQ }}" placeholder="Busca su nombre en SOBRES">
 <sc-if value="{{ sendQOpen }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-text);border-top:none;background:#fff;max-height:180px;overflow-y:auto">
+<div style="border:1px solid var(--color-divider);border-radius:12px;margin-top:6px;max-height:200px;overflow-y:auto;background:#fff">
 <sc-for list="{{ sendQResults }}" as="sq" hint-placeholder-count="2">
-<button onClick="{{ sq.pick }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px 12px;background:none;border:none;border-bottom:1.5px solid var(--color-neutral-200);cursor:pointer" style-hover="background:var(--color-neutral-100,#faf9f8)">
-<span style="font:700 13px var(--font-body);flex:1">{{ sq.name }}</span>
-<span style="font:700 11px var(--font-body);color:var(--color-accent)">☑ Seleccionar</span>
+<button onClick="{{ sq.pick }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 12px;background:none;border:none;border-bottom:1px solid var(--color-divider);cursor:pointer;min-height:48px">
+<span style="font:700 14px var(--font-body);flex:1;color:var(--noche)">{{ sq.name }}</span><span style="font:700 13px var(--font-body);color:var(--electrico)">Agregar</span>
 </button>
 </sc-for>
-<sc-if value="{{ sendQEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 12px;font:500 12px var(--font-body);color:var(--color-neutral-600)">Nadie con ese nombre se ha metido al sitio — dile que abra el link y ponga su nombre.</div></sc-if>
+<sc-if value="{{ sendQEmpty }}" hint-placeholder-val="{{ false }}"><div class="sb-note" style="padding:11px 12px">Nadie con ese nombre en SOBRES todavía. Mándale el enlace por WhatsApp.</div></sc-if>
 </div>
 </sc-if>
 </div>
-<sc-if value="{{ hasPlanFriends }}" hint-placeholder-val="{{ true }}"><p style="font:500 11.5px/1.5 var(--font-body);color:var(--color-neutral-600);margin:8px 0 0">Al mandarlo le llega en vivo a su dispositivo.</p></sc-if>
-<div style="height:2px;background:var(--color-neutral-200);margin:14px 0"></div>
-<div style="display:flex;flex-wrap:wrap;gap:8px">
-<button style="padding:10px 14px;border:2px solid var(--color-text);background:var(--color-text);color:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ copyCurLink }}">🔗 Copiar enlace</button>
-<button style="padding:10px 14px;border:2px solid #25D366;background:#25D366;color:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="background:#1da851;border-color:#1da851" onClick="{{ waShare }}">Enviar por WhatsApp</button>
-<button style="padding:10px 14px;border:2px solid var(--color-neutral-300);background:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ qrPlanGo }}">QR del plan</button>
-</div>
-<sc-if value="{{ qrPlanOn }}" hint-placeholder-val="{{ false }}">
-<div style="margin-top:12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
-<img src="{{ qrPlanSrc }}" alt="QR del plan" style="width:170px;height:170px;border:2px solid var(--color-text)">
-<span style="font:600 12px/1.5 var(--font-body);color:var(--color-neutral-700);max-width:220px">Que lo escaneen con la cámara — les abre este plan directo para votar.</span>
-</div>
+<sc-if value="{{ hasSendSel }}" hint-placeholder-val="{{ false }}"><button class="sb-btn sb-full" style="margin-top:10px" onClick="{{ compEnviar }}">{{ compEnviarTxt }}</button></sc-if>
 </sc-if>
-<div style="display:flex;justify-content:flex-end;margin-top:16px">
-<button style="display:flex;align-items:center;gap:12px;padding:13px 22px;background:{{ sendGoBg }};color:#fff;border:2px solid {{ sendGoBg }};font:700 15px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600);border-color:var(--color-accent-600)" onClick="{{ sendGo }}"><span>Enviar</span><span>→</span></button>
+<button class="sb-btn3 sb-full" style="margin-top:12px" onClick="{{ closeSend }}">Listo</button>
 </div>
-</div></div>
+</div>
 </sc-if>
 
 <sc-if value="{{ modalOn }}" hint-placeholder-val="{{ false }}">
@@ -550,8 +564,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ puedeCompartirTanda }}" hint-placeholder-val="{{ true }}">
 <div style="height:1px;background:var(--color-divider);margin:16px 0 8px"></div>
 <div class="sb-row" style="gap:2px;margin-left:-12px">
-<button class="sb-btn3" onClick="{{ copiarTanda }}" aria-label="Copiar un enlace con estos planes">{{ compartirTxt }}</button>
-<button class="sb-btn3" onClick="{{ waTanda }}" aria-label="Mandar los planes por WhatsApp">WhatsApp</button>
+<button class="sb-btn3" onClick="{{ copiarTanda }}" aria-label="Compartir estos planes">{{ compartirTxt }}</button>
 <button class="sb-btn3" onClick="{{ guardarTanda }}" aria-label="Guardar los planes en Mis planes">{{ guardarTxt }}</button>
 </div>
 </sc-if>
@@ -570,72 +583,42 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 
 <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
-<section data-screen-label="Detalle">
-<div style="padding:26px 0 10px"><button style="padding:9px 13px;background:transparent;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ goBack }}">← Volver</button></div>
-<div style="display:grid;grid-template-columns:{{ detailCols }};gap:26px;margin-bottom:30px">
+<section data-screen-label="Detalle" class="sb-wide" style="padding:12px 0 40px">
+<button class="sb-btn3" style="margin-left:-12px" onClick="{{ goBack }}">← Volver</button>
+<div class="sb-det">
 <div>
-<div style="position:relative;border:2px solid var(--color-text);background:#fff">
+<div class="sb-card" style="overflow:hidden">
 <sc-if value="{{ detail.hasPhoto }}" hint-placeholder-val="{{ true }}">
 <div style="width:100%;aspect-ratio:4/3;overflow:hidden"><img src="{{ detail.photoSrc }}" alt="Foto de {{ detail.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
 </sc-if>
 <sc-if value="{{ detail.noPhoto }}" hint-placeholder-val="{{ false }}">
-<div role="img" aria-label="{{ detail.cat }} — sin foto disponible" style="width:100%;aspect-ratio:4/3;background:{{ detail.tileBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff">
+<div role="img" aria-label="{{ detail.cat }}" style="width:100%;aspect-ratio:16/9;background:{{ detail.tileBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff">
 <span style="font-size:40px;line-height:1">{{ detail.icon }}</span>
 <span style="font:700 11px var(--font-body);letter-spacing:.14em">{{ detail.cat }}</span>
 </div>
 </sc-if>
-<span style="position:absolute;left:10px;top:10px;font:700 9px var(--font-body);letter-spacing:.14em;background:#fff;border:1.5px solid var(--color-text);padding:3px 7px;pointer-events:none">FOTO · {{ detail.photoNote }}</span>
 </div>
-<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px"><sc-for list="{{ detail.tags }}" as="t" hint-placeholder-count="3"><span style="font:600 11px var(--font-body);letter-spacing:.06em;padding:4px 9px;background:var(--color-neutral-200)">{{ t.label }}</span></sc-for></div>
+<sc-if value="{{ detail.hasPhoto }}" hint-placeholder-val="{{ true }}"><p class="sb-note" style="margin:6px 0 0;font-size:12px">{{ detail.photoCredit }}</p></sc-if>
 </div>
 <div>
-<div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">{{ detail.kicker }}</div>
-<h1 style="font:800 clamp(30px,4.2vw,50px)/1 var(--font-heading);letter-spacing:-.025em;margin:10px 0 10px">{{ detail.name }}</h1>
-<p style="font:400 15px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0 0 16px;max-width:560px">{{ detail.desc }}</p>
-<div style="border:2px solid var(--color-text);background:#fff;padding:14px 16px;margin-bottom:16px;max-width:600px">
-<div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent);margin-bottom:6px">POR QUÉ PARA USTEDES</div>
-<div style="font:500 13.5px/1.55 var(--font-body)">{{ detail.why }}</div>
+<div class="sb-kicker">{{ detail.kicker }}</div>
+<h1 class="sb-h2" style="margin:8px 0 8px">{{ detail.name }}</h1>
+<p class="sb-sub" style="font-size:15px;margin:0 0 14px">{{ detail.desc }}</p>
+<div class="sb-soft" style="padding:13px 15px;margin-bottom:12px">
+<span class="sb-label" style="margin-bottom:6px">Qué hacer ahí</span>
+<ul style="margin:0;padding-left:18px;display:grid;gap:4px"><sc-for list="{{ detail.queHacer }}" as="q" hint-placeholder-count="2"><li class="sb-note" style="color:var(--color-neutral-800)">{{ q.t }}</li></sc-for></ul>
 </div>
-<div style="border:2px solid var(--color-text);background:#fff;padding:14px 16px;margin-bottom:16px;max-width:600px">
-<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:8px">
-<span style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">CALIFICACIONES DEL SALÓN</span>
-<sc-if value="{{ detail.hasAvg }}" hint-placeholder-val="{{ false }}"><span style="font:800 20px var(--font-heading)">★ {{ detail.rateAvg }}</span><span style="font:600 12px var(--font-body);color:var(--color-neutral-600)">{{ detail.rateN }} reseñas</span></sc-if>
+<sc-if value="{{ detail.why }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 14px"><b style="color:var(--noche)">Para ustedes:</b> {{ detail.why }}</p></sc-if>
+<div class="sb-hechos">
+<sc-for list="{{ detail.facts }}" as="f" hint-placeholder-count="6"><div><span>{{ f.k }}</span><b>{{ f.v }}</b></div></sc-for>
 </div>
-<sc-if value="{{ detail.canRate }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;align-items:center;gap:2px;margin-bottom:8px"><sc-for list="{{ detail.starBtns }}" as="st" hint-placeholder-count="5"><button aria-label="{{ st.aria }}" style="{{ st.style }}" onClick="{{ st.pick }}">{{ st.label }}</button></sc-for></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<input aria-label="Escribe una reseña corta (opcional)" value="{{ detail.myTxt }}" onInput="{{ detail.setMyTxt }}" placeholder="Escribe una reseña corta (opcional)…" style="flex:1;min-width:200px;padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
-<button style="padding:10px 14px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 13px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ detail.sendRate }}">Publicar</button>
-</div>
-</sc-if>
-<sc-if value="{{ detail.rateNeedName }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-<span style="font:600 12.5px var(--font-body);color:var(--color-neutral-700)">Pon tu nombre para calificar:</span>
-<input aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:9px 11px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
-<button style="padding:9px 13px;background:var(--color-text);color:#fff;border:2px solid var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ joinGo }}">Entrar</button>
-</div>
-</sc-if>
-<sc-if value="{{ detail.rateOffline }}" hint-placeholder-val="{{ false }}"><div style="font:500 12px/1.5 var(--font-body);color:var(--color-neutral-600)">Las reseñas en vivo se activan cuando abres el sitio por el link del salón (con el servidor prendido).</div></sc-if>
-<sc-for list="{{ detail.reviews }}" as="rv" hint-placeholder-count="0">
-<div style="border-top:1.5px solid var(--color-neutral-200);padding:8px 0 2px;margin-top:8px">
-<span style="font:700 13px var(--font-body);color:var(--color-accent)">{{ rv.stars }}</span>
-<span style="font:700 12.5px var(--font-body);margin-left:8px">{{ rv.user }}</span>
-<sc-if value="{{ rv.hasTxt }}" hint-placeholder-val="{{ false }}"><div style="font:500 13px/1.5 var(--font-body);color:var(--color-neutral-700);margin-top:2px">{{ rv.txt }}</div></sc-if>
-</div>
-</sc-for>
-</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:2px solid var(--color-text);background:#fff;max-width:600px;margin-bottom:16px">
-<sc-for list="{{ detail.facts }}" as="f" hint-placeholder-count="6">
-<div style="padding:11px 14px;border:.75px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:4px">{{ f.k }}</div><div style="font:700 13.5px/1.3 var(--font-body)">{{ f.v }}</div></div>
-</sc-for>
-</div>
-<sc-if value="{{ detail.hasSlots }}" hint-placeholder-val="{{ true }}">
-<div style="margin-bottom:16px">
+<sc-if value="{{ detail.hasSlots }}" hint-placeholder-val="{{ false }}">
+<div style="margin:14px 0 0">
 <span class="sb-label">Hora sugerida</span>
 <div class="sb-chips"><sc-for list="{{ detail.slots }}" as="s" hint-placeholder-count="3"><button class="sb-chip" aria-pressed="{{ s.pressed }}" onClick="{{ s.pick }}">{{ s.label }}</button></sc-for></div>
 </div>
 </sc-if>
-<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
 <button class="sb-btn sb-full" onClick="{{ detail.reserve }}">{{ detail.cta }}</button>
 <div class="sb-row" style="gap:8px">
 <button class="sb-btn2" style="flex:1;min-width:140px" onClick="{{ detail.addToPlan }}">Agregar a un plan</button>
@@ -644,23 +627,40 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-row" style="gap:2px;margin-left:-12px">
 <button class="sb-btn3" onClick="{{ detail.share }}">Compartir</button>
 <button class="sb-btn3" onClick="{{ detail.mapGo }}">Ver en mapa</button>
-<button class="sb-btn3" onClick="{{ detail.voteGo }}">Enviar a amigos</button>
 <sc-if value="{{ detail.hasWeb }}" hint-placeholder-val="{{ false }}"><a class="sb-btn3" href="{{ detail.web }}" target="_blank" rel="noopener">Sitio oficial ↗</a></sc-if>
 </div>
 </div>
+
+<sc-if value="{{ detail.verResenas }}" hint-placeholder-val="{{ false }}">
+<div class="sb-card" style="padding:14px 16px;margin-top:18px">
+<div class="sb-row" style="margin-bottom:6px"><span class="sb-label" style="margin:0">Reseñas de la comunidad</span><sc-if value="{{ detail.hasAvg }}" hint-placeholder-val="{{ false }}"><span style="font:800 18px var(--font-heading);color:var(--noche)">★ {{ detail.rateAvg }}</span><span class="sb-note">{{ detail.rateNTxt }}</span></sc-if></div>
+<sc-if value="{{ detail.canRate }}" hint-placeholder-val="{{ false }}">
+<div class="sb-row" style="gap:2px;margin-bottom:8px"><sc-for list="{{ detail.starBtns }}" as="st" hint-placeholder-count="5"><button aria-label="{{ st.aria }}" style="{{ st.style }}" onClick="{{ st.pick }}">{{ st.label }}</button></sc-for></div>
+<div class="sb-row" style="flex-wrap:nowrap"><input class="sb-input" style="flex:1;min-width:0" aria-label="Escribe una reseña corta (opcional)" value="{{ detail.myTxt }}" onInput="{{ detail.setMyTxt }}" placeholder="Reseña corta (opcional)"><button class="sb-btn2" style="flex:none" onClick="{{ detail.sendRate }}">Publicar</button></div>
+</sc-if>
+<sc-for list="{{ detail.reviews }}" as="rv" hint-placeholder-count="0">
+<div style="border-top:1px solid var(--color-divider);padding:8px 0 2px;margin-top:8px">
+<span style="font:700 13px var(--font-body);color:var(--electrico)">{{ rv.stars }}</span> <b style="font:700 13px var(--font-body)">{{ rv.user }}</b>
+<sc-if value="{{ rv.hasTxt }}" hint-placeholder-val="{{ false }}"><div class="sb-note" style="margin-top:2px">{{ rv.txt }}</div></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
 </div>
 </div>
-<div style="border-top:2px solid var(--color-text);padding:14px 0 50px">
-<h2 style="font:800 20px var(--font-heading);margin:0 0 12px">Combina bien con · misma zona</h2>
-<div style="display:flex;gap:14px;overflow-x:auto" class="hidescroll">
+
+<sc-if value="{{ detail.hayCombos }}" hint-placeholder-val="{{ true }}">
+<h2 class="sb-h3" style="margin:26px 0 4px">Para completar la salida</h2>
+<p class="sb-note" style="margin:0 0 12px">Cerca de aquí y abiertos a una hora compatible.</p>
+<div class="sb-combos">
 <sc-for list="{{ detail.combos }}" as="c" hint-placeholder-count="3">
-<button onClick="{{ c.open }}" style="flex:0 0 240px;display:flex;gap:12px;align-items:center;background:#fff;border:2px solid var(--color-text);cursor:pointer;padding:12px;text-align:left" style-hover="box-shadow:var(--shadow-md)">
-<span style="width:42px;height:42px;background:var(--color-neutral-200);display:inline-flex;align-items:center;justify-content:center;font:800 20px var(--font-heading);flex:none">{{ c.letter }}</span>
-<span style="min-width:0"><span style="display:block;font:700 13.5px var(--font-body)">{{ c.name }}</span><span style="display:block;font:500 11px var(--font-body);color:var(--color-neutral-600)">{{ c.meta }}</span></span>
+<button onClick="{{ c.open }}" class="sb-card" style="display:flex;gap:12px;align-items:center;cursor:pointer;padding:12px;text-align:left">
+<span class="sb-pin">{{ c.letter }}</span>
+<span style="min-width:0"><span class="sb-kicker" style="display:block;font-size:10px;margin-bottom:2px">{{ c.para }}</span><span style="display:block;font:700 14px var(--font-body);color:var(--noche)">{{ c.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ c.meta }}</span></span>
 </button>
 </sc-for>
 </div>
-</div>
+</sc-if>
 </section>
 </sc-if>
 
@@ -724,6 +724,13 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </sc-if>
 
+<sc-if value="{{ cineAltOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-info" style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+<span style="flex:1;min-width:200px">{{ cineAltTxt }}</span>
+<button class="sb-btn2" style="min-height:40px" onClick="{{ cineAltGo }}">Ver cartelera</button>
+</div>
+</sc-if>
+
 <sc-if value="{{ planEditando }}" hint-placeholder-val="{{ false }}">
 <div class="sb-card" style="padding:14px 16px;margin-top:12px;position:relative">
 <div class="sb-row" style="margin-bottom:8px"><span class="sb-label" style="margin:0;color:{{ swapLabelColor }}">{{ swapLabel }}</span><sc-if value="{{ swapMode }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" style="margin-left:auto;min-height:34px" onClick="{{ cancelSwap }}">Cancelar</button></sc-if></div>
@@ -768,7 +775,6 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 <div class="sb-row" style="gap:2px;margin-left:-12px">
 <button class="sb-btn3" onClick="{{ mapsRoute }}">Ver ruta en Maps</button>
-<sc-if value="{{ puedeEnviar }}" hint-placeholder-val="{{ true }}"><button class="sb-btn3" onClick="{{ enviarAmigosGo }}">Enviar a amigos</button></sc-if>
 <sc-if value="{{ desdeTanda }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" onClick="{{ volverTanda }}">Comparar con las otras</button></sc-if>
 </div>
 </div>
@@ -3016,6 +3022,71 @@ class Component extends DCLogic {
     if (!p) return 'entrada libre' + suf;
     if (p < 200) return 'barato (~$' + p + ' pp' + suf + ')'; if (p < 500) return 'precio medio (~$' + p + ' pp' + suf + ')';
     if (p < 900) return 'algo caro (~$' + p + ' pp' + suf + ')'; return 'caro (~$' + p + ' pp' + suf + ')'; }
+  // Qué se HACE en un lugar, según lo que es. Concreto, sin relleno.
+  queHacer(v) { const c = v.cat; const out = [];
+    const T = {
+      'Museo': ['Recorre sus salas a tu ritmo; calcula de 1 a 2 horas.', 'Antes de ir, revisa en su sitio la exposición temporal y si ese día abre.'],
+      'Galería': ['Entra a ver la exposición del momento; la visita toma de 20 a 40 minutos.', 'Suelen ser de entrada libre y cerrar domingo o lunes.'],
+      'Centro cultural': ['Revisa su cartelera: exposiciones, talleres o funciones según el día.', 'Muchos tienen patio o café para hacer una pausa.'],
+      'Sitio histórico': ['Recorre el lugar y su historia; calcula de 30 a 60 minutos.'],
+      'Atracción': ['Visítalo y toma fotos; calcula de 30 a 90 minutos.'],
+      'Parque': ['Camina, siéntate en el pasto o lleva algo para un picnic.', 'Mejor de día y con buen clima.'],
+      'Al aire libre': ['Actividad al aire libre: lleva bloqueador y agua.'],
+      'Restaurante': ['Siéntate a comer o cenar; calcula de 1 a 2 horas.', 'Si van en grupo, reserva mesa.'],
+      'Fonda de autor': ['Comida de fonda con firma de cocinero; calcula 1 a 1.5 horas.'],
+      'Taquería': ['Tacos para comer rápido o de remate; no se reserva.'],
+      'Cantina': ['Comida y tragos en plan largo; la botana suele venir con la bebida.'],
+      'Izakaya': ['Platos chicos para compartir con sake o cerveza.'],
+      'Café': ['Una pausa de 30 a 45 minutos: café, pan y platicar.'],
+      'Churrería': ['Churros con chocolate para una pausa dulce.'],
+      'Heladería': ['Un helado para cerrar o hacer pausa; 15 a 30 minutos.'],
+      'Mercado': ['Recorre los puestos y come en las barras; se paga por lo que pides.'],
+      'Bar': ['Tragos y plática; calcula de 1 a 1.5 horas.', 'Pregunta si hay consumo mínimo.'],
+      'Bar de autor': ['Coctelería de autor; siéntate en la barra y pide la carta de la casa.'],
+      'Speakeasy': ['Bar escondido: busca la entrada discreta; reserva si puedes.'],
+      'Mezcalería': ['Prueba mezcales por copa con su botana; pregunta por las destilaciones de la casa.'],
+      'Rooftop': ['Tragos con vista; mejor al atardecer.'],
+      'Antro': ['Para bailar: se llega después de las 11 pm y suele haber cover o consumo mínimo.', 'Lleven identificación oficial.'],
+      'Salón de baile': ['Baile con música en vivo; revisa qué noches hay orquesta.'],
+      'Cine': ['Elige película y función en su cartelera; llega 15 minutos antes.'],
+      'Teatro': ['Elige obra y función en su cartelera; llega 20 minutos antes.'],
+      'Foro': ['Conciertos y eventos: revisa su cartelera del día.'],
+      'Espectáculo': ['Función en vivo con hora fija: compra boleto antes.'],
+      'Librería': ['Hojea, compra un libro; algunas tienen café dentro.'],
+      'Biblioteca': ['Recorre el edificio y sus salas de lectura; la entrada es libre.'],
+      'Taller': ['Haz algo con tus manos en una sesión guiada; reserva lugar.'],
+      'Tour': ['Recorrido guiado con horario de salida fijo; reserva lugar.'],
+      'Escape room': ['Resuelvan el cuarto en equipo contra reloj; reserva horario.'],
+      'Parque de diversiones': ['Plan de día completo: llega temprano y compra boletos en línea.'],
+      'Centro comercial': ['Compras, comer o ir al cine bajo techo.'],
+      'Boliche': ['Unas líneas de boliche en grupo; se renta por hora.'],
+      'Billar': ['Mesas de billar por hora, con bebidas.'] };
+    (T[c] || ['Revisa horario y acceso antes de ir.']).forEach(x => out.push(x));
+    if (v.grupoMax) out.push('Cupo máximo: ' + v.grupoMax + ' personas.');
+    if (v.horaEstimada || /típico|consulta/i.test(v.hrs || '')) out.push('Horario sin confirmar: confírmalo antes de ir.');
+    return out; }
+  // Un cine cerca del plan, para ofrecerlo como opción (no como parada fija).
+  cineCerca(plan) { const vb = this.state.vibes || [];
+    if (vb.length && !vb.some(x => ['cultural','romántico','chill','social','familiar'].includes(x))) return null;
+    let mejor = null;
+    this.cat().forEach(c => { if (c.cat !== 'Cine' || c.lat == null) return;
+      plan.stops.forEach(st => { const km = this.legKm(st, c); if (km == null || km > 2.5) return;
+        const min = this.minutosTramo(km); if (!mejor || min < mejor.min) mejor = { v: c, de: st, min }; }); });
+    return mejor && mejor.min <= 15 ? mejor : null; }
+  // Lugares que complementan a éste y quedan cerca.
+  combinaBien(v) { if (!v || v.lat == null) return [];
+    const acts = this.actsDe(v);
+    const esComida = acts.some(a => ['comida','cena','desayuno'].includes(a));
+    const esCopas = acts.some(a => a === 'copas' || a === 'baile');
+    const quiero = esComida ? ['cafe','copas','visita','paseo'] : esCopas ? ['cena','comida','copas'] : ['comida','cena','cafe','paseo'];
+    const PARA = { comida: 'Para comer', cena: 'Para cenar', cafe: 'Un café', copas: 'Unos tragos', visita: 'Para ver', paseo: 'Para caminar', desayuno: 'Para desayunar' };
+    const out = []; const usados = {};
+    const cands = this.cat().filter(x => x.id !== v.id && this.esRecomendable(x) && !this.funcionSinConfirmar(x) && x.lat != null && !(this.esAntro(x) && !esCopas))
+      .map(x => ({ x, km: this.legKm(v, x) })).filter(o => o.km != null && o.km <= 1.6).sort((a, b) => a.km - b.km);
+    for (const k of quiero) { const o = cands.find(o2 => !usados[o2.x.id] && this.actsDe(o2.x).includes(k));
+      if (o) { usados[o.x.id] = 1; out.push({ v: o.x, para: PARA[k] || 'Cerca', min: this.minutosTramo(o.km) }); }
+      if (out.length >= 3) break; }
+    return out; }
   describe(v) {
     const d = (v.d || '').trim();
     // Textos técnicos del dataset que no son para el consumidor: vienen en
@@ -3042,7 +3113,7 @@ class Component extends DCLogic {
     const w = (v.who || []).map(k => quien[k]).filter(Boolean);
     const cuando = { manana: 'en la mañana', tarde: 'por la tarde', noche: 'de noche', finde: 'el finde' };
     const t = (v.tm || []).map(k => cuando[k]).filter(Boolean);
-    if (w.length) parts.push('Va bien ' + w.slice(0, 2).join(' o ') + (t.length ? ', ' + t.slice(0, 2).join(' o ') : '') + '.');
+    // (Sin "Va bien con amigos o en date": no decía nada de este lugar.)
     // Un texto técnico del dataset NO se le muestra al consumidor, ni al final.
     if (d && generico) {
       const tech = /\b(verified|data-completeness|footfall|institutional|open data|visitor count|starred restaurant|rank #)\b/i.test(d);
@@ -3617,15 +3688,24 @@ class Component extends DCLogic {
     if (s.detailId) { const v = this.cat().find(x => x.id === s.detailId); if (v) { const a = this.cardActions(v); const ph = s.photos[v.id];
       const rt = this.rating(v); const myPrev = rt && rt.mine ? rt.mine.s : 0; const starSel = s.myStars || myPrev;
       const slots = this.realSlots(v).map(t => ({ label: t, style: this.chip(s.modalSlot === t), pressed: s.modalSlot === t ? 'true' : 'false', pick: () => this.setState({ modalSlot: t }) }));
-      const combos = this.cat().filter(x => x.id !== v.id && x.z === v.z && x.cat !== v.cat).sort((p,q) => Math.hypot(v.x-p.x,v.y-p.y) - Math.hypot(v.x-q.x,v.y-q.y)).slice(0,5).map(c => ({ letter: c.n[0], name: c.n, meta: `${c.cat} · ${c.col} · ${this.precioTxt(c)}`, open: () => openV(c.id) }));
-      detail = Object.assign({ slotId: 'photo-' + v.id, hasSlots: slots.length > 0,
+      // "Para completar la salida": sólo experiencias que funcionan como salida,
+      // que complementan a ESTE lugar (después del museo, comer; antes del antro,
+      // un trago) y que quedan cerca. Antes salían bibliotecas especializadas y
+      // fondos históricos sin explicar para qué.
+      const combos = this.combinaBien(v).map(x => ({ letter: x.v.n[0], name: x.v.n, para: x.para,
+        meta: `${x.v.col} · ${x.min ? '~' + x.min + ' min · ' : ''}${this.precioTxt(x.v)}`, open: () => openV(x.v.id) }));
+      detail = Object.assign({ slotId: 'photo-' + v.id, hasSlots: slots.length > 0 && this.accionDe(v).modo === 'reservar',
+        queHacer: this.queHacer(v).map(t => ({ t })), hayCombos: combos.length > 0,
         hasPhoto: !!(ph && ph.src), noPhoto: !(ph && ph.src),
         tileBg: 'linear-gradient(135deg,' + this.catTone(v.cat)[0] + ',' + this.catTone(v.cat)[1] + ')',
         icon: this.catIcon(v.cat),
         photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'SIN FOTO VERIFICADA'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: this.describe(v), why: this.why(v),
         facts: [{k:'DIRECCIÓN',v: v.addr || v.col},{k:'TIPO',v: v.cat},{k:'LLEGADA',v: s.zone === 'all' ? 'En ' + this.zLabel(v.z) : '~' + this.dist(v) + ' min desde ' + this.zLabel(s.zone)},{k:'PRECIO (EST.)',v: this.precioTxt(v)},{k:'HORARIO',v: v.hrs},{k:'FUENTE',v: v.src || (v.fic ? 'Perfil demo' : v.pub ? 'Venue (demo)' : 'Curaduría Sobres')}],
         tags: v.tags.map(t => ({ label: t })), slots, combos, cta: this.accionDe(v).label, hasWeb: !!v.web, web: v.web || '#', voteGo: () => this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }), addToPlan: () => this.setState({ addVenueId: v.id }),
-        hasAvg: !!rt, rateAvg: rt ? rt.avg : '', rateN: rt ? String(rt.n) : '0',
+        hasAvg: !!rt, rateAvg: rt ? rt.avg : '', rateN: rt ? String(rt.n) : '0', rateNTxt: rt ? '(' + rt.n + (rt.n === 1 ? ' reseña)' : ' reseñas)') : '',
+        // Reseñas sólo si existen o si quien mira puede escribir una. Antes salía
+        // "Calificaciones del salón" vacío en cada ficha.
+        verResenas: !!rt || (s.syncOn && !!s.userName),
         canRate: s.syncOn && !!s.userName, rateNeedName: s.syncOn && !s.userName, rateOffline: !s.syncOn,
         starBtns: [1,2,3,4,5].map(k => ({ label: k <= starSel ? '★' : '☆', aria: 'Calificar con ' + k + (k === 1 ? ' estrella' : ' estrellas'), style: `background:none;border:none;cursor:pointer;font:800 30px var(--font-heading);line-height:1;color:${k <= starSel ? 'var(--color-accent)' : 'var(--color-neutral-400)'};padding:0 2px`, pick: () => this.setState({ myStars: k }) })),
         myTxt: s.myTxt, setMyTxt: e => this.setState({ myTxt: e.target.value }),
@@ -4145,7 +4225,7 @@ class Component extends DCLogic {
       swapMode: s.swapIdx != null, swapLabel: s.swapIdx != null && plan && plan.stops[s.swapIdx] ? `CAMBIAR "${plan.stops[s.swapIdx].n.toUpperCase()}" POR OTRA COSA · BUSCA O ELIGE UNA SUGERENCIA` : '+ AGREGAR OTRA PARADA · RESTAURANTE, BAR, EVENTO, LO QUE SEA',
       cancelSwap: () => this.setState({ swapIdx: null, planQ: '' }), swapLabelColor: s.swapIdx != null ? 'var(--color-accent)' : 'var(--color-neutral-600)',
       planFriendChips: myFr.map(f => { const sentAlready = !!(plan0Exists && (((rawPlans.find(x => x.id === this.planOptId(plan0Exists)) || {}).sharedWith || []).includes(f))); const sel = s.sendSel.includes(f);
-        return { label: sentAlready ? '✓ ' + f : sel ? '☑ ' + f : f, style: `padding:9px 14px;border:2px solid ${sel ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sel ? 'var(--color-accent)' : '#fff'};color:${sel ? '#fff' : sentAlready ? 'var(--color-neutral-500)' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:${sentAlready ? 'default' : 'pointer'}`, send: () => { if (sentAlready) { this.toast(`Ya se lo enviaste a ${f}`); return; } this.setState({ sendSel: sel ? s.sendSel.filter(x => x !== f) : s.sendSel.concat([f]) }); } }; }),
+        return { pressed: sel ? 'true' : 'false', label: sentAlready ? '✓ ' + f : f, style: `padding:9px 14px;border:2px solid ${sel ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sel ? 'var(--color-accent)' : '#fff'};color:${sel ? '#fff' : sentAlready ? 'var(--color-neutral-500)' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:${sentAlready ? 'default' : 'pointer'}`, send: () => { if (sentAlready) { this.toast(`Ya se lo enviaste a ${f}`); return; } this.setState({ sendSel: sel ? s.sendSel.filter(x => x !== f) : s.sendSel.concat([f]) }); } }; }),
       hasPlanFriends: myFr.length > 0, copyCurLink: () => this.copyCurPlanLink(),
       hasSendSel: s.sendSel.length > 0, waShare: () => this.waShare(), mapsRoute: () => this.mapsRoute(), sendGoBg: s.sendSel.length ? 'var(--color-accent)' : 'var(--color-neutral-400)',
       sendGo: () => { if (!s.sendSel.length) { this.toast('Primero pica a quién se lo quieres enviar'); return; } if (!(s.syncOn && s.userName)) { this.toast('El envío en vivo funciona con el link del salón'); return; } const p = this.getPlan(); if (!p || !p.stops.length) return; const sel = s.sendSel.slice();
@@ -4370,16 +4450,22 @@ class Component extends DCLogic {
     this._cuentaOfrecida = true;
     this.pedirCuenta(motivo, null, hecho);
   }
-  compartirUnPlan() {
-    const p = this.getPlan(); if (!p || !p.stops.length) return;
-    const txt = this.planText ? this.planText(p) : '';
-    const url = (() => { try { return this.tandaLinkDe ? this.tandaLinkDe([p]) : ''; } catch(e) { return ''; } })();
-    const fin = () => this.ofrecerCuenta('compartir', 'Enlace copiado');
-    if (url) this.copiarTexto(url, 'Enlace copiado — quien lo abra ve este plan tal cual');
-    else if (txt) this.copiarTexto(txt, 'Plan copiado — pégalo donde quieras');
-    fin();
-  }
-
+  // Compartir abre UN panel con todo junto: WhatsApp con el texto armado y el
+  // enlace exacto, copiar enlace, crear cuenta (opcional) y mandárselo a alguien
+  // que ya está en SOBRES. Sin pasos de por medio.
+  compartirUnPlan() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
+    this.setState({ sendOpen: true, compartirTanda: false, compCopiado: false, sendSel: [], sendQ: '' }); }
+  compartirTanda() { const r = this.state.results; if (!r || !(r.plans || []).length) { this.toast('Primero arma tus opciones'); return; }
+    this.setState({ sendOpen: true, compartirTanda: true, compCopiado: false, sendSel: [], sendQ: '' }); }
+  textoCompartir(tanda) { const s = this.state; const fecha = this.fmtDate(s.planDate || this.todayISO());
+    if (tanda) { const pls = (s.results && s.results.plans || []).slice(0, 3);
+      return '¡Mira ' + (pls.length === 1 ? 'este plan' : 'estas ' + pls.length + ' opciones') + ' que armé en SOBRES! ' + fecha + '\n\n'
+        + pls.map((pl, i) => (i + 1) + '. ' + pl.stops.map(v => v.n.split(' ·')[0]).join(' → ')).join('\n')
+        + '\n\n' + (pls.length > 1 ? 'Elige la que más te late: ' : 'Ábrelo aquí: ') + this.tandaLink(); }
+    const p = this.getPlan(); if (!p) return ''; const ts = this.curTimes(p); const rs = this.resumenPlan(p.stops, p.times);
+    return '¡Mira este plan que armé en SOBRES! ' + fecha + '\n\n'
+      + p.stops.map((v, i) => this.time12(ts[i]) + ' · ' + v.n.split(' ·')[0]).join('\n')
+      + '\n\nCosto aproximado: ' + rs.costo + ' por persona\n\nÁbrelo aquí: ' + this.tandaLinkDe([p]); }
   irAFormulario(id) {
     this.nav('home');
     setTimeout(() => { try { const el = document.getElementById(id); if (el) el.scrollIntoView({ block: 'start', behavior: this.reduceMov() ? 'auto' : 'smooth' }); } catch(e) {} }, 60);
@@ -4560,11 +4646,15 @@ class Component extends DCLogic {
         : 'Te armamos otras opciones sin repetir lo que ya viste.',
       resurprise: () => this.generar(() => this.regenerate()),
       // Compartir no espera a la cuenta: primero se comparte y después se ofrece.
-      copiarTanda: () => { this.copiarTanda(); this.ofrecerCuenta('compartir', 'Enlace copiado'); },
-      waTanda: () => { this.waTanda(); this.ofrecerCuenta('compartir', 'Listo para WhatsApp'); },
+      copiarTanda: () => this.compartirTanda(),
+      waTanda: () => this.compartirTanda(),
       explorarZona: () => this.nav('map', s.zone !== 'all' ? { mapZone: s.zone } : {}),
       // Plan abierto
       planEstado: estado, planDatos: pd, itinerary, planEditando: editando,
+      // Cine como ALTERNATIVA pendiente de elegir: no se agenda sin función.
+      ...(() => { const alt = (!editando && plan && plan.stops && plan.stops.length && !s.planReadOnly) ? this.cineCerca(plan) : null;
+        return { cineAltOn: !!alt, cineAltTxt: alt ? '¿Les late una película? ' + alt.v.n + ' está a ~' + alt.min + ' min de ' + alt.de.n.split(' ·')[0] + '. No la agendamos sin función confirmada: elijan película y hora en su cartelera.' : '',
+          cineAltGo: () => { if (alt) this.goReserve(alt.v); } }; })(),
       // Con la barra de "Listo" fija abajo, el final del plan no debe quedar tapado.
       planPadBottom: editando ? '128px' : '36px',
       // Título = el recorrido; el "Tu plan foodie armado" no decía nada nuevo.
@@ -4573,7 +4663,30 @@ class Component extends DCLogic {
       desgloseAbierto: !!s.desgloseAbierto, desgloseBtn: s.desgloseAbierto ? 'Ocultar desglose' : 'Ver desglose',
       toggleDesglose: () => this.setState({ desgloseAbierto: !s.desgloseAbierto }),
       planAcciones: planCanEdit && !editando && !R.planLocked && !R.planRO && !!R.hasPlanNow,
-      guardarPlanGo, compartirPlan: () => this.compartirUnPlan(), enviarAmigosGo,
+      guardarPlanGo, compartirPlan: () => this.compartirUnPlan(), enviarAmigosGo: () => this.compartirUnPlan(),
+      // Panel único de compartir.
+      sendOpen: !!s.sendOpen,
+      compKicker: s.compartirTanda ? 'Compartir tus opciones' : 'Compartir plan',
+      compTitulo: s.compartirTanda ? ((s.results && s.results.plans || []).length === 1 ? 'Tu opción' : 'Tus ' + (s.results && s.results.plans || []).length + ' opciones')
+        : (plan && plan.stops ? plan.stops.map(v => v.n.split(' ·')[0]).join(' → ') : ''),
+      compLink: s.sendOpen ? (s.compartirTanda ? this.tandaLink() : (plan ? this.tandaLinkDe([plan]) : (this.getPlan() ? this.tandaLinkDe([this.getPlan()]) : ''))) : '',
+      compWaUrl: s.sendOpen ? 'https://wa.me/?text=' + encodeURIComponent(this.textoCompartir(!!s.compartirTanda)) : '#',
+      compWaLog: () => this.ev('compartir_whatsapp', { tanda: !!s.compartirTanda }),
+      compCopiar: () => { const u = s.compartirTanda ? this.tandaLink() : this.tandaLinkDe([this.getPlan()]);
+        this.copiarTexto(u, 'Enlace copiado'); this.setState({ compCopiado: true }); if (s.compartirTanda) this.setState({ tandaUrl: u });
+        this.ev('compartir_enlace', { tanda: !!s.compartirTanda }); },
+      compCopiarTxt: s.compCopiado ? 'Copiado ✓' : 'Copiar',
+      compNota: s.compartirTanda ? 'Quien lo abra ve estas opciones tal cual y elige con su propia cuenta.'
+        : 'Quien lo abra ve este plan tal cual —con tus cambios— y entra con su propia cuenta.',
+      compGuest: !s.userName, compAmigosOn: !s.compartirTanda && !!R.puedeEnviar,   // un plan para ti solo no se manda a nadie
+      compCrearCuenta: () => { if (this.joinAs(s.nameInput, true)) this.toast('Listo, ya tienes cuenta: ahora te pueden encontrar'); },
+      compEnviarTxt: 'Enviar a ' + ((s.sendSel || []).length === 1 ? s.sendSel[0] : (s.sendSel || []).length + ' amigos'),
+      compEnviar: () => { const nombre = s.userName || (s.nameInput || '').trim();
+        if (!nombre) { this.toast('Escribe tu nombre arriba para que sepan quién lo manda'); return; }
+        if (!s.userName) this.joinAs(nombre, true);
+        const p = this.getPlan(); if (!p || !p.stops.length) return; const sel = (s.sendSel || []).slice();
+        this.ensureProposed(p, nombre).then(id => this.mutate('sharePlan', { user: nombre, planId: id, to: sel }))
+          .then(() => { this.toast('Plan enviado a ' + sel.join(', ')); this.setState({ sendSel: [], sendOpen: false }); }); },
       cerrarLabel: R.esSolo ? 'Guardar mi plan' : 'Guardar este plan',
       desdeTanda: !!s.planDesdeTanda, volverTanda: () => this.volverATanda(),
       planBackLabel: s.planDesdeTanda ? 'Las opciones' : 'Regresar', planBackTxt: '← ' + (s.planDesdeTanda ? 'Las opciones' : 'Regresar'),
@@ -4770,10 +4883,10 @@ class Component extends DCLogic {
     if (this.state.swapIdx != null) { const i = this.state.swapIdx; const p = this.getPlan(); if (p) { const stops = p.stops.slice(); const times = this.curTimes(p); stops[i] = v; times[i] = t; this.setState({ swapIdx: null }); this.sortPlan(stops, times); this.toast(`Cambiado por "${name}" a las ${this.time12(t)}`); return; } }
     const p = this.getPlan(); const stops = p ? p.stops.slice() : []; const times = p ? this.curTimes(p) : [];
     stops.push(v); times.push(t); this.sortPlan(stops, times); this.toast(`"${name}" agregado a las ${this.time12(t)}`); }
-  ensureProposed(p) { const s = this.state; const plan = this.buildPlanPayload(p); this.followPlan(plan.id);
-    if (s.syncOn && s.userName) { const ex = ((s.sync && s.sync.plans) || []).some(x => x.id === plan.id);
+  ensureProposed(p, quien) { const s = this.state; const yo = quien || s.userName; const plan = this.buildPlanPayload(p); this.followPlan(plan.id);
+    if (s.syncOn && yo) { const ex = ((s.sync && s.sync.plans) || []).some(x => x.id === plan.id);
       if (ex) return Promise.resolve(plan.id);
-      return this.mutate('proposePlan', { user: s.userName, plan }).then(() => plan.id); }
+      return this.mutate('proposePlan', { user: yo, plan }).then(() => plan.id); }
     if (!s.gPlans.some(x => x.id === plan.id)) { const gp = Object.assign({}, plan, { by: s.userName || 'Tú', ts: Date.now(), votes: {}, stopVotes: {} }); gp.votes[gp.by] = 'sobres'; this.setState({ gPlans: s.gPlans.concat([gp]) }, () => this.persist()); }
     return Promise.resolve(plan.id); }
   sendPlanTo(f) { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; } const s = this.state;
