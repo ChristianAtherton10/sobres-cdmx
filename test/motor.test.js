@@ -13,8 +13,12 @@ const FRASE_QA = 'Somos 4 amigos en Santa Fe. Queremos cenar y tomar algo hoy de
 // ───────────────────────── 1. Variedad ─────────────────────────
 section('1 · Variedad (antes: Rehacer alternaba entre 2 planes)');
 
+// Santa Fe de noche ya no sirve para medir variedad: sin cine sin función, con
+// cena obligatoria y tramos cortos, ahí sólo hay ~14 combinaciones válidas.
+const BASE_VARIEDAD = { who:'amigos', groupSize:4, zone:'juarez', zonesSel:['juarez'], when:'noche',
+  budget:'b1000', budgetCustom:null, vibes:['foodie'] };
 test('10 Rehacer seguidos dan 10 combinaciones distintas', () => {
-  const app = makeApp(BASE, { dseed: 1234 });
+  const app = makeApp(BASE_VARIEDAD, { dseed: 1234 });
   app.runSearch();                 // como en la app real: fija el contexto de búsqueda
   app.state.planStops = 2;
   const vistos = new Set();
@@ -61,7 +65,13 @@ function combinacionesValidas(app) {
   const excl = app.exclSet();
   const VM = app.vibeModel();
   const pool = app.cat().filter(v => !excl.has(v.id) && app.budgetOk(v) && app.timingOk(v)
-    && r.zones.includes(v.z) && app.vibeAdmite(v, VM) && !v.cursoCerrado);
+    && r.zones.includes(v.z) && app.vibeAdmite(v, VM) && !v.cursoCerrado
+    && app.esRecomendable(v) && !app.funcionSinConfirmar(v));
+  // Regla declarada: si la ventana cruza al menos una hora de comida (13–16:30)
+  // o cena (19–22:30), el plan incluye comer.
+  const solapa = (a, b) => Math.max(0, Math.min(rng[1], b) - Math.max(rng[0], a));
+  const pideComida = !app.state.yaComimos && max >= 150 && (solapa(13, 16.5) >= 1 || solapa(19, 22.5) >= 1);
+  const comer = k => k === 'comida' || k === 'cena';
   // Actividades posibles en cada momento, según la tabla declarada.
   const actsEn = (v, t) => app.actsUtiles(v, VM)
     .filter(k => (app.SEGACT[app.segFor(t)] || []).indexOf(k) >= 0);
@@ -75,9 +85,10 @@ function combinacionesValidas(app) {
     if (app.esAntro(a)) return;
     if (!app.cabeEnVentana(a, t0, rng[1]) || !app.cabeEnVentana(b, t1, rng[1])) return;
     // ¿Existe algún par de actividades con función distinta?
-    const fa = actsEn(a, t0).map(k => app.funcionAct(k, t0));
-    const fb = actsEn(b, t1).map(k => app.funcionAct(k, t1));
-    if (!fa.some(x => fb.some(y => x !== y))) return;
+    const xa = actsEn(a, t0), xb = actsEn(b, t1);
+    const par = xa.some(i => xb.some(j => app.funcionAct(i, t0) !== app.funcionAct(j, t1) && (!pideComida || comer(i) || comer(j))));
+    if (!par) return;
+    { const m = app.minutosTramo(app.legKm(a, b)); if (m != null && m > app.MAX_TRAMO()) return; }
     if (!app.cabeEnTope([a, b], max).ok) return;
     const km = app.legKm(a, b);
     if (km != null) {
@@ -92,7 +103,7 @@ function combinacionesValidas(app) {
 test('muestra TODAS las combinaciones válidas antes de repetir una', () => {
   // Ventana corta a propósito: así el motor arma planes de DOS paradas y el
   // universo enumerado es comparable uno a uno con lo que ofrece.
-  const app = makeApp(Object.assign({}, BASE, { planFrom: 19, planTo: 23 }), { dseed: 1234 });
+  const app = makeApp(Object.assign({}, BASE_VARIEDAD, { planFrom: 19, planTo: 23 }), { dseed: 1234 });
   app.runSearch(); app.state.planStops = 2;
   const validas = combinacionesValidas(app);
   assert(validas.size > 20, 'el universo medido es sospechosamente chico: ' + validas.size);
@@ -593,9 +604,9 @@ test('a pie desaparece el hueco del transporte y se estima propina', () => {
   assert(c.propina > 0, 'no estimó propina');
   assert(c.total === c.consumo + c.propina, 'el total no cuadra');
   assert(app.renderVals().planMeta.includes('propina'), 'no muestra la propina');
-  // Sin lugares de cover desconocido, el total sí cierra
-  const sinCover = stops.filter(v => !['Antro', 'Salón de baile', 'Espectáculo'].includes(v.cat));
-  if (sinCover.length === stops.length) assert(c.completo === true, 'faltan: ' + c.faltan.join(', '));
+  // Sin lugares de cover desconocido ni precio por confirmar, el total sí cierra
+  const cerrados = stops.filter(v => !['Antro', 'Salón de baile', 'Espectáculo'].includes(v.cat) && !v.ppUnknown);
+  if (cerrados.length === stops.length) assert(c.completo === true, 'faltan: ' + c.faltan.join(', '));
 });
 
 test('una parada sin precio se identifica, no se suma como gratis', () => {
@@ -1404,10 +1415,13 @@ test('el encabezado comunica la vibra, no la lista de filtros', () => {
   assert(/armado/i.test(app.tituloPlan('editor')), 'editor: ' + app.tituloPlan('editor'));
 });
 
-test('el presupuesto abierto se nombra +$1,000 y hay máximo manual', () => {
+test('el presupuesto abierto se nombra $2,000+ y existe el rango $1,000–1,999', () => {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
     budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 89 });
-  assert(/\+\$1,000/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
+  assert(/\$2,000\+/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
+  assert(app.BUD.map(b => b[1]).join('|') === 'Gratis|Hasta $300|$300–600|$600–1,000|$1,000–1,999|$2,000+', 'rangos: ' + app.BUD.map(b => b[1]));
+  app.state.budget = 'b1999'; assert(app.budgetMax() === 1999 && /1,000–1,999/.test(app.budLabel()), 'rango 1,000–1,999');
+  app.state.budget = 'b1k';
 
   // Y el máximo manual existe y manda.
   const v = app.renderVals();
@@ -1470,14 +1484,19 @@ test('cerrar el plan lo bloquea y ofrece apartar cada parada', () => {
   assert(!v.paradasOn, 'ni el selector de número de paradas');
   assert(v.reservaItems.length === app.state.planCustom.stops.length, 'falta alguna parada por apartar');
   v.reservaItems.forEach(r => assert(r.cta && r.hora && r.name, 'cada parada necesita hora, nombre y acción'));
-  assert(/Nada apartado/.test(v.reservaProgreso), 'arranca sin nada apartado: ' + v.reservaProgreso);
-  // Apartar una se nota en el progreso.
-  v.reservaItems[0].go();
-  // Apartar una parada que no se reserva abre su ficha; volvemos al plan.
-  app.setState({ view: 'plan', planView: 'edit' });
-  const v2 = app.renderVals();
-  assert(v2.reservaItems[0].hecho, 'la parada apartada debe quedar marcada');
-  assert(!/Nada apartado/.test(v2.reservaProgreso), 'el progreso debe moverse: ' + v2.reservaProgreso);
+  assert(!v.reservaItems.some(r => r.hecho), 'arranca sin nada apartado');
+  // Sólo cuenta como apartado lo que de verdad se reserva (restaurante, bar, antro).
+  const k = app.state.planCustom.stops.findIndex(x => app.bookable(x));
+  if (k >= 0) {
+    v.reservaItems[k].go();
+    app.setState({ view: 'plan', planView: 'edit', modal: null });
+    const v2 = app.renderVals();
+    assert(v2.reservaItems[k].hecho, 'la parada apartada debe quedar marcada');
+    assert(/apartaste|reservaciones hechas/i.test(v2.reservaProgreso), 'el progreso debe moverse: ' + v2.reservaProgreso);
+  }
+  // Un museo no se "aparta": su acción es Cómo visitar.
+  const museo = app.cat().find(x => x.cat === 'Museo');
+  assert(app.accionDe(museo).label === 'Cómo visitar' && !app.bookable(museo), 'un museo no se reserva');
 });
 
 test('Editar vuelve a abrir los controles, y tocar el plan lo saca de guardado', () => {

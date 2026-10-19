@@ -335,40 +335,44 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 
 <sc-if value="{{ modalOn }}" hint-placeholder-val="{{ false }}">
-<div style="position:fixed;inset:0;background:rgba(32,30,29,.55);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px" onClick="{{ modalClose }}">
-<div style="background:#fff;border:2px solid var(--color-text);max-width:440px;width:100%;padding:24px" onClick="{{ noop }}">
-<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">RESERVAR</div>
-<h3 style="font:800 24px/1.1 var(--font-heading);margin:10px 0 6px">{{ modalTitle }}</h3>
-<p style="font:400 14px/1.5 var(--font-body);color:var(--color-neutral-700);margin:0 0 14px">{{ modalBody }}</p>
+<div class="sb-veil" onClick="{{ modalClose }}">
+<div class="sb-sheet" role="dialog" aria-modal="true" aria-labelledby="accion-titulo" onClick="{{ noop }}">
+<div class="sb-grab"></div>
+<div class="sb-kicker">{{ modalKicker }}</div>
+<h2 id="accion-titulo" class="sb-h2" style="margin:6px 0 4px">{{ modalTitle }}</h2>
+<p class="sb-note" style="margin:0 0 14px">{{ modalBody }}</p>
 
-<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
-<div><div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">FECHA</div>
-<input aria-label="Fecha del plan" type="date" value="{{ resDate }}" onChange="{{ setResDate }}" style="padding:9px 10px;border:2px solid var(--color-text);background:#fff;font:700 13px var(--font-body);cursor:pointer"></div>
-<div><div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:6px">PERSONAS</div>
-<span style="display:inline-flex;align-items:center;border:2px solid var(--color-text)">
-<button aria-label="Quitar uno" style="width:32px;height:38px;border:none;background:#fff;font:700 16px var(--font-body);cursor:pointer" onClick="{{ resLess }}">−</button>
-<span style="font:700 14px var(--font-body);padding:0 12px">{{ resPeople }}</span>
-<button aria-label="Agregar uno" style="width:32px;height:38px;border:none;background:#fff;font:700 16px var(--font-body);cursor:pointer" onClick="{{ resMore }}">+</button></span></div>
+<sc-if value="{{ modalReservar }}" hint-placeholder-val="{{ true }}">
+<div class="sb-row" style="gap:16px;align-items:flex-end;margin-bottom:12px">
+<label><span class="sb-label" style="margin-bottom:6px">Fecha</span><input class="sb-input" aria-label="Fecha de la reservación" type="date" value="{{ resDate }}" onChange="{{ setResDate }}"></label>
+<div><span class="sb-label" style="margin-bottom:6px">Personas</span><div class="sb-row" style="gap:6px"><button class="sb-x" aria-label="Quitar una persona" onClick="{{ resLess }}">−</button><span style="font:800 16px var(--font-body);min-width:24px;text-align:center">{{ resPeople }}</span><button class="sb-x" aria-label="Agregar una persona" onClick="{{ resMore }}">+</button></div></div>
 </div>
-
-<div style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:7px">HORA</div>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-<sc-for list="{{ modalSlots }}" as="s" hint-placeholder-count="3"><button style="{{ s.style }}" onClick="{{ s.pick }}">{{ s.label }}</button></sc-for>
-</div>
-
-<sc-if value="{{ resOnOT }}" hint-placeholder-val="{{ true }}">
-<a href="{{ resOtUrl }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 15px var(--font-body);text-decoration:none;margin-bottom:8px"><span>Buscar mesa en OpenTable</span><span>↗</span></a>
+<sc-if value="{{ hayModalSlots }}" hint-placeholder-val="{{ true }}">
+<span class="sb-label">Hora</span>
+<div class="sb-chips" style="margin-bottom:14px"><sc-for list="{{ modalSlots }}" as="s" hint-placeholder-count="3"><button class="sb-chip" aria-pressed="{{ s.pressed }}" onClick="{{ s.pick }}">{{ s.label }}</button></sc-for></div>
 </sc-if>
-<sc-if value="{{ resNoBook }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-neutral-300);background:var(--color-neutral-100,#f8f3ea);padding:13px 15px;margin-bottom:10px;font:600 13px/1.5 var(--font-body)">{{ resNoBookMsg }}</div>
+<sc-if value="{{ resOnOT }}" hint-placeholder-val="{{ true }}"><a class="sb-btn sb-full" href="{{ resOtUrl }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="margin-bottom:10px">Buscar mesa en OpenTable ↗</a></sc-if>
+<sc-if value="{{ resSinOT }}" hint-placeholder-val="{{ false }}"><p class="sb-info" style="margin:0 0 10px">{{ resSinOTMsg }}</p></sc-if>
 </sc-if>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-<sc-if value="{{ resHasWeb }}" hint-placeholder-val="{{ false }}"><a href="{{ resWeb }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="flex:1;min-width:130px;text-align:center;padding:11px 12px;background:#fff;border:2px solid var(--color-text);font:700 13px var(--font-body);text-decoration:none;color:var(--color-text)">Sitio del lugar ↗</a></sc-if>
-<a href="{{ resMapsUrl }}" target="_blank" rel="noopener" style="flex:1;min-width:130px;text-align:center;padding:11px 12px;background:#fff;border:2px solid var(--color-text);font:700 13px var(--font-body);text-decoration:none;color:var(--color-text)">Ver en Maps ↗</a>
-<button style="flex:1;min-width:130px;padding:11px 12px;background:transparent;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ modalClose }}">Cerrar</button>
+
+<sc-if value="{{ modalVisitar }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:8px;margin-bottom:14px">
+<div class="sb-soft" style="padding:11px 14px"><span class="sb-label" style="margin-bottom:2px">Horario</span><span class="sb-note">{{ visitaHorario }}</span></div>
+<div class="sb-soft" style="padding:11px 14px"><span class="sb-label" style="margin-bottom:2px">{{ visitaEntradaTit }}</span><span class="sb-note">{{ visitaEntrada }}</span></div>
+<div class="sb-soft" style="padding:11px 14px"><span class="sb-label" style="margin-bottom:2px">Dirección</span><span class="sb-note">{{ visitaDireccion }}</span></div>
+<sc-if value="{{ visitaNota }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:2px 0 0">{{ visitaNota }}</p></sc-if>
 </div>
-<p style="font:400 11px/1.45 var(--font-body);color:var(--color-neutral-600);margin:0">{{ resFoot }}</p>
-</div></div>
+<sc-if value="{{ hayCartelera }}" hint-placeholder-val="{{ false }}"><a class="sb-btn sb-full" href="{{ carteleraUrl }}" target="_blank" rel="noopener" onClick="{{ resLog }}" style="margin-bottom:10px">Ver cartelera ↗</a></sc-if>
+</sc-if>
+
+<div class="sb-row" style="gap:8px">
+<sc-if value="{{ resHasWeb }}" hint-placeholder-val="{{ false }}"><a class="sb-btn2" style="flex:1;min-width:140px" href="{{ resWeb }}" target="_blank" rel="noopener" onClick="{{ resLog }}">Sitio oficial ↗</a></sc-if>
+<a class="sb-btn2" style="flex:1;min-width:140px" href="{{ resMapsUrl }}" target="_blank" rel="noopener">Ver en Maps ↗</a>
+</div>
+<button class="sb-btn3 sb-full" style="margin-top:8px" onClick="{{ modalClose }}">Cerrar</button>
+<p class="sb-note" style="margin:8px 0 0;font-size:12px">{{ resFoot }}</p>
+</div>
+</div>
 </sc-if>
 
 <header class="sb-top">
@@ -406,7 +410,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-home-cta solo-compu">
 <div class="sb-row" style="justify-content:flex-end;flex-wrap:nowrap">
 <button class="sb-btn2" onClick="{{ surpriseGo }}">Sorpréndeme</button>
-<button class="sb-btn {{ buscarFx }}" onClick="{{ armarGo }}"><span>Ver mis opciones</span><span aria-hidden="true">→</span></button>
+<button class="sb-btn {{ buscarFx }}" onClick="{{ armarGo }}"><span>¡Sobres, va!</span><span aria-hidden="true">→</span></button>
 </div>
 <p class="sb-note" style="margin:8px 0 0;text-align:right">{{ armarResumen }}</p>
 <sc-if value="{{ hayRetomar }}" hint-placeholder-val="{{ false }}"><p style="margin:2px 0 0;text-align:right"><button class="sb-btn3" style="min-height:34px;margin-right:-12px" onClick="{{ retomar }}">{{ retomarLink }}</button></p></sc-if>
@@ -423,11 +427,6 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <p class="sb-note" style="margin:0 0 14px">Elige hasta tres.</p>
 <div class="sb-grid2" role="group" aria-label="Ambiente">
 <sc-for list="{{ vibeTiles }}" as="o" hint-placeholder-count="10"><button class="sb-tile" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="t1">{{ o.label }}</span><span class="t2">{{ o.hint }}</span></button></sc-for>
-</div>
-<span class="sb-label sb-mt">¿Algo que NO quieren?</span>
-<div class="sb-chips">
-<button class="sb-chip" aria-pressed="{{ sinAlcoholPressed }}" onClick="{{ toggleSinAlcohol }}">Sin alcohol</button>
-<button class="sb-chip" aria-pressed="{{ yaComimosPressed }}" onClick="{{ toggleYaComimos }}">Ya comimos</button>
 </div>
 </div>
 
@@ -459,11 +458,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <span class="sb-label sb-mt">Presupuesto por persona</span>
 <div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<div class="sb-row sb-maximo">
-<label class="sb-note" style="display:flex;align-items:center;gap:8px;font-weight:600">O tu máximo: $<input class="sb-input" value="{{ budgetCustomVal }}" onInput="{{ setBudgetCustom }}" inputmode="numeric" placeholder="450" aria-label="Máximo por persona en pesos" style="width:110px"></label>
-<sc-if value="{{ hasBudgetCustom }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" onClick="{{ clearBudgetCustom }}" aria-label="Quitar el máximo manual">Quitar</button></sc-if>
-</div>
-<p class="sb-note sb-nota-larga" style="margin:8px 0 0">{{ budgetHint }} Te decimos qué costo está confirmado y cuál es estimado.</p>
+<p class="sb-note sb-nota-larga" style="margin:8px 0 0">Incluye comida, bebidas y una propina estimada. Te decimos qué costo está confirmado y cuál es estimado.</p>
 <span class="sb-label sb-mt">Cómo se mueven</span>
 <div class="sb-chips" role="group" aria-label="Cómo nos movemos"><sc-for list="{{ transportOpts }}" as="tp" hint-placeholder-count="4"><button class="sb-chip" aria-pressed="{{ tp.pressed }}" aria-label="{{ tp.aria }}" onClick="{{ tp.pick }}">{{ tp.label }}</button></sc-for></div>
 <p class="sb-note sb-nota-larga" style="margin:8px 0 0">Sirve para calcular los trayectos entre lugares. SOBRES no pide ni cobra viajes.</p>
@@ -471,7 +466,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 
 <div class="solo-celular" style="flex-direction:column;gap:10px;margin:22px 0 0">
-<button class="sb-btn sb-full {{ buscarFx }}" onClick="{{ armarGo }}"><span>Ver mis opciones</span><span aria-hidden="true">→</span></button>
+<button class="sb-btn sb-full {{ buscarFx }}" onClick="{{ armarGo }}"><span>¡Sobres, va!</span><span aria-hidden="true">→</span></button>
 <button class="sb-btn2 sb-full" onClick="{{ surpriseGo }}">Sorpréndeme</button>
 <p class="sb-note" style="margin:2px 0 0;text-align:center">{{ armarResumen }}</p>
 </div>
@@ -1240,7 +1235,9 @@ class Component extends DCLogic {
     this.EXT = [];
     this.WHO = [['solo','Solo'],['date','Date'],['amigos','Amigos'],['familia','Familia'],['compa','Compañeros']];
     this.WHEN = [['ahora','Ahora mismo'],['noche','Hoy en la noche'],['manana','Mañana'],['finde','Este finde'],['fecha','Elegir fecha…']];
-    this.BUD = [['free','Gratis',0],['b300','Hasta $300',300],['b600','$300–600',600],['b1000','$600–1,000',1000],['b1k','$1,000+',99999]];
+    this.BUD = [['free','Gratis',0],['b300','Hasta $300',300],['b600','$300–600',600],['b1000','$600–1,000',1000],['b1999','$1,000–1,999',1999],['b1k','$2,000+',99999]];
+    // Piso de cada rango: con $1,000–1,999 o $2,000+ no tiene sentido proponer sólo tacos de $150.
+    this.BUD_MIN = { free: 0, b300: 0, b600: 300, b1000: 600, b1999: 1000, b1k: 2000 };
     this.VIBES = ['romántico','chill','aventurero','foodie','nightlife','cultural','creativo','social','joyita','familiar'];
     this.DIET = ['Vegetariano','Vegano','Sin alcohol','Pet friendly','Terraza sí o sí','Accesible'];
     this.FOOD = ['Restaurante','Taquería','Fonda de autor','Café','Churrería','Izakaya','Mercado','Cantina'];
@@ -2042,6 +2039,22 @@ class Component extends DCLogic {
   // ¿El horario de este lugar es una FUNCIÓN confirmada o sólo el horario del
   // establecimiento? Un cine abierto no garantiza función a esa hora.
   esHorarioDeLugar(v) { return ['Cine','Teatro','Foro','Espectáculo','Salón de baile'].includes(v.cat); }
+  // Una función (cine, teatro, foro, espectáculo) sin película/obra y hora
+  // verificadas NO se agenda: no existe "Cinépolis a la 1:20" sin cartelera.
+  funcionSinConfirmar(v) { return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
+  // Importar una ficha no la vuelve recomendable. Fondos, archivos, centros de
+  // documentación, auditorios internos, tiendas de museo y bibliotecas
+  // especializadas existen y se pueden buscar, pero no son una salida.
+  esRecomendable(v) {
+    if (!v) return false;
+    if (v.recomendable === true) return true;
+    if (v.recomendable === false) return false;
+    const n = this.strip(v.n);
+    if (/(^|\b)(tienda|libreria|cafeteria) del museo|centro de documentacion|archivo |archivo$|hemeroteca|fototeca|mapoteca|fonoteca|videoteca|^auditorio |sala de lectura|fondo (reservado|antiguo|historico)|casa de (la )?cultura|centro comunitario|cultural comunitario|^pilares|^faro |escuela |instituto |facultad |coordinacion |direccion general/.test(n)) return false;
+    if (v.cat === 'Biblioteca') return /vasconcelos|biblioteca de mexico|la ciudadela|biblioteca central/.test(n);
+    if (v.cat === 'Librería') return /rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria/.test(n);
+    return true;
+  }
 
   // Desglose honesto del costo. Nunca presenta la suma como total completo si
   // faltan componentes (propina es estimada; cover y transporte no están en los datos).
@@ -2052,6 +2065,9 @@ class Component extends DCLogic {
   // 20 min de margen. Antes el motor y este aviso usaban criterios distintos y
   // se contradecían en pantalla.
   MARGEN() { return 20; }   // minutos de holgura aceptados
+  // Tope de un tramo en un plan armado por SOBRES y del trayecto total.
+  MAX_TRAMO() { return this.modoTr() === 'metro' ? 35 : 25; }
+  MAX_TRASLADO() { return 45; }
   // Llegada preferida al antro (guía R09). Es preferencia, no regla dura.
   get ANTRO_IDEAL() { return 23.5; }
   // El ANCLA de un plan es la parada alrededor de la cual se arma: la
@@ -2215,7 +2231,7 @@ class Component extends DCLogic {
     if (v.ppUnknown) return true;   // sin precio: entra, pero el total nunca se declara completo
     return v.pp <= max;
   }
-  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc; }
+  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc; }
   groupOrder(seg, pi, seed) { const s = this.state; const base = (this.SEGG[seg] || ['comida']).slice();
     const want = {}; (s.vibes || []).forEach(vb => (this.VIBEG[vb] || []).forEach(g => { want[g] = (want[g] || 0) + 1; }));
     const noFoodie = (s.vibes || []).length > 0 && !s.vibes.includes('foodie') && !s.vibes.includes('romántico');
@@ -2261,7 +2277,8 @@ class Component extends DCLogic {
     // igual en un plan chill + cultural cuando no quedaban museos abiertos.
     const VM = this.vibeModel();
     const all = this.cat().filter(v => !excl.has(v.id) && this.budgetOk(v) && this.timingOk(v) && this.vibeAdmite(v, VM)
-      && !v.cursoCerrado);   // un curso de 6 semanas no es el plan de una tarde
+      && !v.cursoCerrado      // un curso de 6 semanas no es el plan de una tarde
+      && this.esRecomendable(v) && !this.funcionSinConfirmar(v));
     const cityWide = s.zone === 'all';
     const sel = this.zoneList();
     let zones = cityWide ? this.ZONES.map(z => z[0]) : sel.slice();
@@ -2306,6 +2323,13 @@ class Component extends DCLogic {
 
     const foodie = s.vibes.includes('foodie') || s.vibes.includes('romántico') || !s.vibes.length;
     const maxFood = foodie ? 2 : 1;
+    // Comida 13:00–16:30 y cena 19:00–22:30 (guía). Si la salida cubre al menos
+    // una hora de alguna, se incluye — salvo que el usuario ya comió o que el
+    // presupuesto no alcanza para comer.
+    const solapa = (a, b) => Math.max(0, Math.min(to, b) - Math.max(from, a));
+    const pideComida = !s.yaComimos && max >= 150 && (solapa(13, 16.5) >= 1 || solapa(19, 22.5) >= 1);
+    const comidaEn = t => (t >= 12 && t <= 16.25) ? 'comida' : (t >= 18.5 && t <= 22) ? 'cena' : null;
+    const esComidaAct = a => a === 'comida' || a === 'cena';
 
     // Construye un itinerario candidato. `variant` mueve la elección dentro de los
     // mejores candidatos, para que dos pasadas no den siempre lo mismo.
@@ -2319,7 +2343,8 @@ class Component extends DCLogic {
       let lastFoodT = null, foodN = 0;
       for (let ti = 0; ti < times.length; ti++) {
         const t = times[ti];
-        const seg = this.segFor(t); const groups = this.actOrder(seg, variant, dseed, VM, stops.length);
+        const seg = this.segFor(t); let groups = this.actOrder(seg, variant, dseed, VM, stops.length);
+        if (pideComida && foodN === 0 && comidaEn(t)) { const mk = comidaEn(t); groups = [mk].concat(groups.filter(g => g !== mk)); }
         for (let gi = 0; gi < groups.length; gi++) {
           const gk = groups[gi];
           // Comida/cena/desayuno comparten cupo: dos restaurantes seguidos no.
@@ -2353,7 +2378,8 @@ class Component extends DCLogic {
               lo = prevT + this.duracionAct(base) + mm / 60 - this.MARGEN() / 60; }
             const ideal = Math.max(this.ANTRO_IDEAL, from);
             return Math.max(lo, Math.min(ideal, hi)); };
-          const llega = v => this.alcanzaTramo(base, v, prevT == null ? null : (horaDe(v) - prevT));
+          const tramoMin = v => { if (!base) return 0; const m = this.minutosTramo(this.legKm(base, v)); return m == null ? 0 : m; };
+          const llega = v => tramoMin(v) <= this.MAX_TRAMO() && this.alcanzaTramo(base, v, prevT == null ? null : (horaDe(v) - prevT));
           // Antro: uno por noche y como cierre. No abre un plan dejando horas
           // vacías al principio, ni deja un hueco largo después de la cena.
           const antroOk = v => { if (!this.esAntro(v)) return true;
@@ -2392,10 +2418,13 @@ class Component extends DCLogic {
               // Orden estable (frescos primero, luego por id): el barrido sigue
               // recorriendo la rejilla COMPLETA — no pierde exhaustividad — pero
               // empieza por los lugares que todavía no se han mostrado.
-              urna = fit.slice().sort((a, b) => {
-                const fa = avoidV.has(a.id) ? 1 : 0, fb = avoidV.has(b.id) ? 1 : 0;
-                if (fa !== fb) return fa - fb;
-                return a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
+              // Sólo lugares NUEVOS mientras existan: antes la urna mezclaba
+              // nuevos y ya vistos, y el cuentakilómetros caía en los vistos aunque
+              // hubiera alternativas (Pizza Félix y El Califa regresaban en la
+              // siguiente tanda). Cuando ya no quedan nuevos, se recorren los vistos.
+              const porId = (a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+              const nuevosB = fit.filter(v => !avoidV.has(v.id)).sort(porId);
+              urna = nuevosB.length ? nuevosB : fit.slice().sort(porId);
               pick = urna[odo % urna.length];
               odo = Math.floor(odo / urna.length);
             } else {
@@ -2406,8 +2435,11 @@ class Component extends DCLogic {
               // vistos sólo se usan cuando ya no queda ningún lugar nuevo.
               // Un precio CONFIRMADO gana a uno por confirmar: que no sepamos
               // cuánto cuesta un lugar no lo vuelve la mejor opción del plan.
+              // Cerca de la parada anterior gana: cada 6 min de trayecto resta un
+              // punto. Antes el rank ignoraba la distancia y salían recorridos
+              // de 67 min entre Centro y Coyoacán.
               const porRank = (a, b) => (a.ppUnknown ? 1 : 0) - (b.ppUnknown ? 1 : 0)
-                || this.rank(b, dseed) - this.rank(a, dseed);
+                || (this.rank(b, dseed) - tramoMin(b) / 6) - (this.rank(a, dseed) - tramoMin(a) / 6);
               const frescos = fit.filter(v => !avoidV.has(v.id)).sort(porRank);
               const vistos = fit.filter(v => avoidV.has(v.id)).sort(porRank);
               const fuente = frescos.length ? frescos : vistos;
@@ -2469,13 +2501,17 @@ class Component extends DCLogic {
     // con tres.
     const ventana = to - from;
     const basta = st => st.length >= 2 || (st.length === 1 && (ventana <= 3 || this.esAntro(st[0]) || this.actsDe(st[0]).indexOf('atraccion') >= 0));
-    // Las tres opciones se eligen como CONJUNTO: anclas distintas y, entre dos
-    // opciones, a lo más un lugar en común. Si con estos filtros no alcanza,
-    // se completa con las que sí cumplen todo lo demás (reserva) y se avisa.
-    const reserva = []; let yaVistosAntes = 0;
-    const chocaCon = c => hechos.some(h => h.ancla === c.ancla || h.stops.filter(v => c.stops.some(x => x.id === v.id)).length > 1);
-    for (let pasada = 0; pasada < (hayProt ? 2 : 1) && hechos.length < 3; pasada++) {
-    const soloProt = hayProt && pasada === 0;
+    let yaVistosAntes = 0;
+    // Las tres opciones se eligen como CONJUNTO: anclas distintas y ningún lugar
+    // en común entre ellas mientras haya alternativas.
+    const comparte = (a, b) => a.stops.some(v => b.stops.some(x => x.id === v.id));
+    const choca = (c, lista) => lista.some(h => h.ancla === c.ancla || comparte(h, c));
+    const traslado = st => { let m = 0; for (let i = 0; i < st.length - 1; i++) { const x = this.minutosTramo(this.legKm(st[i], st[i + 1])); if (x != null) m += x; } return m; };
+    // Cada candidato se califica y la selección va por PRIORIDADES: primero la
+    // actividad protagonista (aventura, taller) y la comida cuando toca, luego
+    // la cercanía total y no repetir lugares entre opciones.
+    const candidatos = [];
+    const perfecto = c => (!hayProt || c.prot) && (!pideComida || c.comida) && c.cerca;
     for (let k = 0; k < VUELTAS && hechos.length < 3; k++) {
       const variant = desde + k;
       let c = buildOne(variant);
@@ -2487,17 +2523,33 @@ class Component extends DCLogic {
       if (fs.some(f => vistos.has(f))) continue;
       fs.forEach(f => vistos.add(f));
       if (fs.some(f => avoidC.has(f) || bloq.has(f))) { repetidos++; if (fs.some(f => bloq.has(f))) yaVistosAntes++; continue; }   // ya se la mostramos
-      if (soloProt && !c.stops.some(v => this.esProtagonista(v, VM))) { fs.forEach(f => vistos.delete(f)); continue; }
       c.sig = sg; c.sigs = fs; c.ancla = this.anclaDe(c.stops, c.acts);
-      if (chocaCon(c)) { reserva.push(c); continue; }
+      c.prot = c.stops.some(v => this.esProtagonista(v, VM));
+      c.comida = (c.acts || []).some(esComidaAct);
+      c.cerca = traslado(c.stops) <= this.MAX_TRASLADO();
+      candidatos.push(c);
+      if (perfecto(c) && !choca(c, hechos)) { hechos.push(c); marcarLote(c.stops); }
+    }
+    // Relleno de más a menos exigente. Nunca se relajan presupuesto, horario ni
+    // tramo máximo: sólo el trayecto total, el solapamiento y, al final, la
+    // comida o la protagonista — y lo que se relaja se avisa.
+    let rellenoDiverso = false, rellenoSinComida = false;
+    const req = c => (!hayProt || c.prot) && (!pideComida || c.comida);
+    const rondas = [
+      c => req(c) && !choca(c, hechos),
+      c => req(c) && !hechos.some(h => h.ancla === c.ancla),
+      c => (!pideComida || c.comida) && c.cerca && !choca(c, hechos),
+      c => (!pideComida || c.comida) && !choca(c, hechos),
+      c => (!hayProt || c.prot) && !choca(c, hechos),
+      c => !choca(c, hechos),
+      c => !hechos.some(h => h.ancla === c.ancla),
+      c => true   // con un solo antro en la zona, las tres pueden cerrar ahí — y se avisa
+    ];
+    rondas.forEach((cond, ri) => { for (const c of candidatos) { if (hechos.length >= 3) break;
+      if (hechos.some(h => h.sig === c.sig) || !cond(c)) continue;
       hechos.push(c); marcarLote(c.stops);
-    }
-    }
-    let rellenoDiverso = false;
-    for (let i = 0; i < reserva.length && hechos.length < 3; i++) {
-      const c = reserva[i]; if (hechos.some(h => h.sig === c.sig)) continue;
-      hechos.push(c); marcarLote(c.stops); rellenoDiverso = true;
-    }
+      if (ri === 1 || ri >= 6) rellenoDiverso = true;
+      if (pideComida && !c.comida) rellenoSinComida = true; } });
 
     // Si el barrido codicioso no encontró nada nuevo, enumeramos EXHAUSTIVAMENTE
     // los pares válidos (zona + horario + grupos + presupuesto). Con catálogos
@@ -2524,6 +2576,14 @@ class Component extends DCLogic {
           if (this.funcionAct(i, times[0]) !== this.funcionAct(j, t1)) { ka = i; kb = j; break; } }
           if (ka) break; }
         if (!ka) continue;
+        if (pideComida && !esComidaAct(ka) && !esComidaAct(kb)) {
+          // Si ninguna de las dos actividades elegidas es comer, se busca otra
+          // combinación del par donde alguna sí lo sea.
+          let ok2 = false;
+          for (const i of x.a) { for (const j of y.a) { if ((esComidaAct(i) || esComidaAct(j)) && this.funcionAct(i, times[0]) !== this.funcionAct(j, t1)) { ka = i; kb = j; ok2 = true; break; } } if (ok2) break; }
+          if (!ok2) continue;
+        }
+        { const m = this.minutosTramo(this.legKm(a, b)); if (m != null && m > this.MAX_TRAMO()) continue; }
         if (!this.cabeEnTope([a, b], max).ok) continue;   // consumo + propina, no sólo consumo
         if (!this.alcanzaTramo(a, b, t1 - times[0])) continue;
         if (!this.cabeEnVentana(a, times[0], to) || !this.cabeEnVentana(b, t1, to)) continue;
@@ -2661,6 +2721,12 @@ class Component extends DCLogic {
     const idsTanda = []; plans.forEach(pl => pl.stops.forEach(v => { if (idsTanda.indexOf(v.id) < 0) idsTanda.push(v.id); }));
     const lugaresNuevos = idsTanda.filter(id => !yaVistos.has(id));
     const soloRecombina = yaVistos.size > 0 && plans.length > 0 && lugaresNuevos.length === 0;
+    // Algunas paradas repetidas (no todas): se dice por qué, no se disimula.
+    const penal = new Set(opts.penalizar || []);
+    const repetidosSesion = idsTanda.filter(id => yaVistos.has(id) || penal.has(id));
+    if (!soloRecombina && repetidosSesion.length && plans.length) {
+      expandNote = (expandNote ? expandNote + ' ' : '') + 'Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.';
+    }
     if (soloRecombina) {
       const sinVer = pool.filter(v => !yaVistos.has(v.id) && this.vibeAdmite(v, VM)).length;
       expandNote = (expandNote ? expandNote + ' ' : '')
@@ -2691,8 +2757,12 @@ class Component extends DCLogic {
       const nota = 'Las demás combinaciones que cumplen estos filtros ya te las mostramos en búsquedas recientes. Cambia la zona, el horario o el presupuesto para ver otras.';
       expandNote = expandNote ? nota + ' ' + expandNote : nota;
     }
+    if (rellenoSinComida) {
+      const nota = 'Su horario cruza la hora de comer, pero con esta zona y presupuesto no encontramos dónde comer que encaje en todas las opciones; donde falta, lo marcamos.';
+      expandNote = expandNote ? expandNote + ' ' + nota : nota;
+    }
     if (rellenoDiverso && plans.length > 1 && !avisoCompartida) {
-      const nota = 'Con estos filtros no hay tres anclas distintas: dos opciones giran alrededor del mismo lugar o comparten paradas.';
+      const nota = 'Con estos filtros no alcanzó para tres opciones sin lugares en común: algunas comparten parada.';
       expandNote = expandNote ? expandNote + ' ' + nota : nota;
     }
     return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
@@ -2715,7 +2785,8 @@ class Component extends DCLogic {
     if (s.budgetCustom === 0) return 'gratis ($0 pp)';
     if (s.budgetCustom != null) return `≤ $${s.budgetCustom} pp`;
     const b = this.BUD.find(x => x[0] === s.budget);
-    return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '+$1,000 pp' : `≤ $${b[2]} pp`) : ''; }
+    return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '$2,000+ pp' : b[0] === 'b1999' ? '$1,000–1,999 pp' : `≤ $${b[2]} pp`) : ''; }
+  budgetMin() { const s = this.state; if (s.budgetCustom != null) return 0; return (this.BUD_MIN || {})[s.budget] || 0; }
   whenLabel() { const s = this.state; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
   // ============================================================
   // ENCABEZADO
@@ -2793,13 +2864,22 @@ class Component extends DCLogic {
     this._ultReqVisto = r.reqId || null;
     const h = this.histLee(); const ts = Date.now();
     r.plans.forEach(pl => { const f = this.huellas(pl.stops); h.planes.push({ o: f.o, c: f.c, ids: (pl.stops || []).map(v => v.id), t: ts }); });
+    this.sesionAgrega([].concat.apply([], r.plans.map(pl => (pl.stops || []).map(v => v.id))));
     h.planes = h.planes.slice(-this.HIST_PLANES);
     try { localStorage.setItem(this.histClave(), JSON.stringify(h)); } catch(e) {}
   }
   histOpts() { const h = this.histLee();
     const ult = h.planes.slice(-this.HIST_LUGARES);
-    const pen = []; ult.forEach(x => (x.ids || []).forEach(id => { if (pen.indexOf(id) < 0) pen.push(id); }));
+    const pen = this.sesionLee();
+    ult.forEach(x => (x.ids || []).forEach(id => { if (pen.indexOf(id) < 0) pen.push(id); }));
     return { bloquear: h.planes.map(x => x.c), penalizar: pen }; }
+  // Lugares mostrados en ESTA sesión (pestaña abierta): no vuelven mientras
+  // haya alternativas. Antes sólo se recordaban los de las últimas 6 opciones
+  // y "Ver otras opciones" regresaba Pizza Félix y El Califa a la siguiente tanda.
+  sesionLee() { try { const a = JSON.parse(sessionStorage.getItem('sobres_sesion_vistos') || '[]'); if (Array.isArray(a)) return a; } catch(e) {}
+    return (this._sesionVistos || []).slice(); }
+  sesionAgrega(ids) { const a = this.sesionLee(); ids.forEach(id => { if (a.indexOf(id) < 0) a.push(id); });
+    this._sesionVistos = a.slice(-400); try { sessionStorage.setItem('sobres_sesion_vistos', JSON.stringify(this._sesionVistos)); } catch(e) {} }
   nuevaSolicitud() { const n = (this._solN = (this._solN || 0) + 1);
     let rnd = 0; try { const a = new Uint32Array(1); (window.crypto || crypto).getRandomValues(a); rnd = a[0]; } catch(e) { rnd = Math.floor(Math.random() * 4294967295); }
     return { reqId: 'g' + Date.now().toString(36) + '-' + n, reqSeed: rnd % 1000003 }; }
@@ -3429,7 +3509,18 @@ class Component extends DCLogic {
              posibles: en.filter(v => this.sirveCopas(v) === 'quiza') };
   }
 
-  bookable(v) { return this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat); }
+  bookable(v) { return this.accionDe(v).modo === 'reservar'; }
+  // Cada categoría tiene SU acción. "Reservar" sólo donde se reserva mesa; un
+  // museo se visita, un cine se elige en su cartelera, a un parque se llega.
+  accionDe(v) { const c = v && v.cat;
+    if (['Restaurante','Fonda de autor','Izakaya','Cantina','Bar','Bar de autor','Speakeasy','Mezcalería','Rooftop'].includes(c))
+      return { modo: 'reservar', label: 'Reservar', kicker: 'Reservar mesa' };
+    if (['Antro','Salón de baile'].includes(c)) return { modo: 'reservar', label: 'Reservar mesa', kicker: 'Reservar mesa' };
+    if (['Cine','Teatro','Foro','Espectáculo'].includes(c)) return { modo: 'visitar', cartelera: true, label: 'Ver cartelera', kicker: 'Cartelera' };
+    if (['Taquería','Café','Churrería','Mercado','Heladería'].includes(c)) return { modo: 'visitar', label: 'Cómo llegar', kicker: 'Se llega directo' };
+    if (['Parque','Al aire libre','Centro comercial'].includes(c)) return { modo: 'visitar', label: 'Cómo llegar', kicker: 'Cómo llegar' };
+    if (['Taller','Tour','Escape room'].includes(c)) return { modo: 'visitar', label: 'Cómo reservar', kicker: 'Sesiones' };
+    return { modo: 'visitar', label: 'Cómo visitar', kicker: 'Cómo visitar' }; }
   onOpenTable(v) { return ['Restaurante','Fonda de autor','Izakaya','Cantina','Bar de autor'].includes(v.cat) && (v.pp || 0) >= 300; }
   openDays(v) { const h = (v.hrs || '').toLowerCase();
     if (h.includes('lun') || h.includes('mar') || h.includes('mié') || h.includes('sáb') || h.includes('dom')) return v.hrs;
@@ -3475,7 +3566,7 @@ class Component extends DCLogic {
     // "$1,000+" no es un tope: es "sin tope". Se aclara para que un plan de
     // $378 no se describa como "total $1,000+".
     const budgetOpts = this.BUD.map(([id,label]) => { const on = s.budget === id && s.budgetCustom == null;
-      const lbl = id === 'b1k' ? '+$1,000' : id === 'free' ? 'Gratis ($0)' : label;
+      const lbl = id === 'free' ? 'Gratis ($0)' : label;
       return { label: lbl, style: this.chip(on), on, pressed: on ? 'true' : 'false',
         aria: lbl + ' — presupuesto' + (on ? ' (seleccionado)' : ''),
         pick: () => this.setState({ budget: id, budgetCustom: id === 'free' ? 0 : null }) }; });
@@ -3533,7 +3624,7 @@ class Component extends DCLogic {
         icon: this.catIcon(v.cat),
         photoSrc: ph ? ph.src : '', photoCredit: ph ? 'Foto: Wikimedia Commons' : '', photoHref: ph ? ph.page : '', photoNote: ph ? 'WIKIMEDIA COMMONS · B/N' : (v.fic ? 'PERFIL DE EJEMPLO' : 'SIN FOTO VERIFICADA'), kicker: `${v.cat.toUpperCase()} · ${this.zLabel(v.z).toUpperCase()}${v.fic ? ' · FICTICIO' : ''}${v.pub ? ' · PUBLICADO POR EL VENUE' : ''}`, name: v.n, desc: this.describe(v), why: this.why(v),
         facts: [{k:'DIRECCIÓN',v: v.addr || v.col},{k:'TIPO',v: v.cat},{k:'LLEGADA',v: s.zone === 'all' ? 'En ' + this.zLabel(v.z) : '~' + this.dist(v) + ' min desde ' + this.zLabel(s.zone)},{k:'PRECIO (EST.)',v: this.precioTxt(v)},{k:'HORARIO',v: v.hrs},{k:'FUENTE',v: v.src || (v.fic ? 'Perfil demo' : v.pub ? 'Venue (demo)' : 'Curaduría Sobres')}],
-        tags: v.tags.map(t => ({ label: t })), slots, combos, cta: v.pp === 0 && !v.ppUnknown ? 'Apartar visita' : 'Reservar', hasWeb: !!v.web, web: v.web || '#', voteGo: () => this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }), addToPlan: () => this.setState({ addVenueId: v.id }),
+        tags: v.tags.map(t => ({ label: t })), slots, combos, cta: this.accionDe(v).label, hasWeb: !!v.web, web: v.web || '#', voteGo: () => this.proposePlan({ stops: [v], spent: v.pp, times: [this.range()[0]] }), addToPlan: () => this.setState({ addVenueId: v.id }),
         hasAvg: !!rt, rateAvg: rt ? rt.avg : '', rateN: rt ? String(rt.n) : '0',
         canRate: s.syncOn && !!s.userName, rateNeedName: s.syncOn && !s.userName, rateOffline: !s.syncOn,
         starBtns: [1,2,3,4,5].map(k => ({ label: k <= starSel ? '★' : '☆', aria: 'Calificar con ' + k + (k === 1 ? ' estrella' : ' estrellas'), style: `background:none;border:none;cursor:pointer;font:800 30px var(--font-heading);line-height:1;color:${k <= starSel ? 'var(--color-accent)' : 'var(--color-neutral-400)'};padding:0 2px`, pick: () => this.setState({ myStars: k }) })),
@@ -3541,15 +3632,15 @@ class Component extends DCLogic {
         sendRate: () => { const st = s.myStars || myPrev; if (!st) { this.toast('Elige de 1 a 5 estrellas'); return; } this.mutate('rate', { user: s.userName, venueId: v.id, stars: st, txt: s.myTxt, venueName: v.n }).then(x => { if (x) this.toast('Reseña publicada — ya la ven todos'); }); this.setState({ myTxt: '' }); },
         reviews: rt ? rt.entries.slice(0, 8).map(e2 => ({ user: e2.user, stars: '★'.repeat(e2.s), txt: e2.txt || '', hasTxt: !!e2.txt })) : [] }, a, { reserve: () => this.goReserve(v) }); } }
     let modalOn = false, modalTitle = '', modalBody = '', modalSlots = [];
-    let resOtUrl = '#', resMapsUrl = '#', resWeb = '#', resHasWeb = false, resOnOT = false, resBookable = false;
+    let resOtUrl = '#', resMapsUrl = '#', resWeb = '#', resHasWeb = false, resOnOT = false, resBookable = false, modalAccion = null, modalV = null;
     const resPeople = s.resPeople || s.groupSize || 2;
     const resDate = s.resDate || s.planDate || this.todayISO();
     if (s.modal) { const v = this.cat().find(x => x.id === s.modal); if (v) { modalOn = true; modalTitle = v.n;
       modalBody = `${v.cat} · ${v.col}${v.addr ? ' · ' + v.addr : ''}`;
       const opts = this.realSlots(v);
       const cur = s.modalSlot || opts[1];
-      modalSlots = opts.map(t => ({ label: t, style: this.chip(cur === t), pick: () => this.setState({ modalSlot: t }) }));
-      resOnOT = this.onOpenTable(v); resBookable = this.bookable(v);
+      modalSlots = opts.map(t => ({ label: t, style: this.chip(cur === t), pressed: cur === t ? 'true' : 'false', pick: () => this.setState({ modalSlot: t }) }));
+      resOnOT = this.onOpenTable(v); resBookable = this.bookable(v); modalAccion = this.accionDe(v); modalV = v;
       resOtUrl = this.otUrl(v, this.slot24(cur), resPeople, resDate);
       resMapsUrl = this.mapsUrl(v);
       resHasWeb = !!(v.web && /^https?:/.test(v.web)); resWeb = resHasWeb ? v.web : '#'; } }
@@ -3825,10 +3916,20 @@ class Component extends DCLogic {
       toast: s.toast, toastStyle: `position:fixed;left:50%;transform:translateX(-50%);bottom:${s.isMobile?'72px':'24px'};z-index:100;background:var(--color-text);color:#fff;padding:12px 18px;font:600 13px var(--font-body);box-shadow:var(--shadow-lg);transition:opacity .25s;opacity:${s.toast?'1':'0'};pointer-events:none;max-width:90vw`,
       resOtUrl, resMapsUrl, resWeb, resHasWeb, resPeople: String(resPeople), resDate,
       resOnOT, resNoBook: !resBookable,
-      resNoBookMsg: resBookable ? '' : 'Este lugar no toma reservas: se entra directo. Usa el mapa para llegar y checa el horario arriba.',
+      resNoBookMsg: '',
+      modalKicker: modalAccion ? modalAccion.kicker : '', modalReservar: !!(modalAccion && modalAccion.modo === 'reservar'),
+      modalVisitar: !!(modalAccion && modalAccion.modo !== 'reservar'), hayModalSlots: modalSlots.length > 0,
+      resSinOT: !!(modalAccion && modalAccion.modo === 'reservar' && !resOnOT),
+      resSinOTMsg: modalV ? (resHasWeb ? 'Resérvalo directo con el lugar: en su sitio o por teléfono.' : 'No tenemos su canal de reservación. Búscalo en Maps para ver su teléfono o redes.') : '',
+      visitaHorario: modalV ? ((modalV.hrs || 'Horario por confirmar') + (modalV.horaEstimada || /típico|consulta/i.test(modalV.hrs || '') ? ' · confírmalo antes de ir' : '')) : '',
+      visitaEntradaTit: modalV && ['Parque','Al aire libre','Centro comercial','Taquería','Café','Churrería','Mercado'].includes(modalV.cat) ? 'Costo aproximado' : 'Entrada',
+      visitaEntrada: modalV ? this.precioTxt(modalV) : '', visitaDireccion: modalV ? ((modalV.addr ? modalV.addr + ', ' : '') + (modalV.col || '')) : '',
+      visitaNota: modalAccion && modalAccion.cartelera ? 'No agendamos funciones sin confirmar: elige película u obra y hora en su cartelera.' : modalAccion && modalAccion.kicker === 'Se llega directo' ? 'No toma reservaciones: se llega directo.' : '',
+      hayCartelera: !!(modalAccion && modalAccion.cartelera),
+      carteleraUrl: modalV ? (modalV.web && /^https?:/.test(modalV.web) ? modalV.web : 'https://www.google.com/search?q=' + encodeURIComponent('cartelera ' + modalV.n + ' ' + (modalV.col || 'CDMX'))) : '#',
       resFoot: resOnOT
         ? 'Abrimos OpenTable con tu fecha, hora y número de personas ya cargados: ahí ves disponibilidad real y confirmas. Si no aparece, es que el lugar no trabaja con OpenTable — usa su sitio.'
-        : (resBookable ? 'Este lugar normalmente no usa OpenTable. Lo más seguro es escribirles por su sitio o redes; muchos bares en CDMX reservan por WhatsApp.' : 'Los horarios salen del horario real del lugar registrado en el catálogo.'),
+        : (resBookable ? 'Muchos bares y antros de la CDMX reservan por WhatsApp o redes; confirma ahí cover y consumo mínimo.' : 'Horario y entrada salen del catálogo de SOBRES; confírmalos con el lugar antes de ir.'),
       setResDate: e => this.setState({ resDate: e.target.value }),
       resMore: () => this.setState({ resPeople: Math.min(20, resPeople + 1) }),
       resLess: () => this.setState({ resPeople: Math.max(1, resPeople - 1) }),
@@ -3850,7 +3951,7 @@ class Component extends DCLogic {
       clearBudgetCustom: () => this.setState({ budgetCustom: null, budget: s.budget === 'free' ? 'b600' : s.budget }),
       budgetHint: s.budgetCustom != null
         ? (s.budgetCustom === 0 ? 'Sólo planes de $0 confirmados.' : 'Consumo + entradas + propina conocida ≤ $' + s.budgetCustom + ' pp.')
-        : (s.budget === 'b1k' ? '"+$1,000" no pone tope: el total será el del plan.' : 'Incluye consumo, entradas y la propina que calculamos.'), showSize: ['amigos','familia','compa'].includes(s.who), groupSizeLabel: `${s.groupSize}\u00a0personas`, sizeUp: () => this.setState({ groupSize: Math.min(12, s.groupSize+1) }), sizeDown: () => this.setState({ groupSize: Math.max(2, s.groupSize-1) }),
+        : (s.budget === 'b1k' ? '"$2,000+" no pone tope: el total será el del plan.' : 'Incluye consumo, entradas y la propina que calculamos.'), showSize: ['amigos','familia','compa'].includes(s.who), groupSizeLabel: `${s.groupSize}\u00a0personas`, sizeUp: () => this.setState({ groupSize: Math.min(12, s.groupSize+1) }), sizeDown: () => this.setState({ groupSize: Math.max(2, s.groupSize-1) }),
       showDateInput: s.when === 'fecha', customDate: s.customDate, setDate: e => { this.setState({ customDate: e.target.value }); },
       aiTxt: s.aiTxt, setAiTxt: e => this.setState({ aiTxt: e.target.value }),
       aiGo: () => { const t = (s.aiTxt || '').trim(); if (t.length < 8) { this.toast('Escríbeme con más detalle qué quieres hacer'); return; }
@@ -3993,23 +4094,25 @@ class Component extends DCLogic {
           sub: v.cat + ' · ' + v.col,
           sePuede: this.bookable(v) && !v.manual,
           hecho, estilo: hecho ? 'border-color:var(--color-accent);background:var(--color-accent-100,#fde8e2)' : '',
-          cta: hecho ? '✓ Apartado' : (this.bookable(v) && !v.manual ? 'Apartar lugar →' : 'Ver cómo llegar →'),
+          cta: hecho ? '✓ Apartado' : v.manual ? 'Ver cómo llegar →' : this.bookable(v) ? 'Apartar lugar →' : this.accionDe(v).label + ' →',
           aria: (hecho ? 'Ya apartaste ' : 'Apartar lugar en ') + v.n + ' a las ' + this.time12(ts[i]),
           go: () => {
-            const c = (this.state.confirmados || []).slice();
-            if (c.indexOf(v.id) < 0) c.push(v.id);
-            this.setState({ confirmados: c });
-            if (this.bookable(v) && !v.manual) this.goReserve(v);
+            // Sólo cuenta como "apartado" lo que de verdad se reserva.
+            if (this.bookable(v) && !v.manual) { const c = (this.state.confirmados || []).slice();
+              if (c.indexOf(v.id) < 0) c.push(v.id); this.setState({ confirmados: c }); }
+            if (!v.manual) this.goReserve(v);
             else this.nav('detail', { detailId: v.id, backView: 'plan' });
           }
         };
       }),
       reservaProgreso: (() => {
         if (!plan || !plan.stops.length) return '';
-        const n = plan.stops.filter(v => (s.confirmados || []).indexOf(v.id) >= 0).length;
-        if (!n) return 'Nada apartado todavía — ve apartando lugar donde haga falta.';
-        if (n === plan.stops.length) return '¡Listo! Apartaste las ' + n + (n === 1 ? ' parada.' : ' paradas.');
-        return n + ' de ' + plan.stops.length + ' apartadas.';
+        const res = plan.stops.filter(v => this.bookable(v) && !v.manual);
+        if (!res.length) return 'Ninguna parada pide reservación: se llega directo. Revisa horarios antes de salir.';
+        const n = res.filter(v => (s.confirmados || []).indexOf(v.id) >= 0).length;
+        if (!n) return res.length === 1 ? 'Una parada conviene reservarla.' : res.length + ' paradas conviene reservarlas.';
+        if (n === res.length) return '¡Listo! Ya apartaste ' + (n === 1 ? 'la que hacía falta.' : 'las ' + n + ' que hacían falta.');
+        return n + ' de ' + res.length + ' reservaciones hechas.';
       })(),
       reservaCompleto: !!(plan && plan.stops.length && plan.stops.every(v => (s.confirmados || []).indexOf(v.id) >= 0)),
       // Un plan para una sola persona no se envía a nadie: se concreta.
