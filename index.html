@@ -3108,7 +3108,7 @@ class Component extends DCLogic {
     if (v.vestimenta) out.push('Código de vestimenta: ' + v.vestimenta.toLowerCase() + '.');
     if (v.grupoMax) out.push('Cupo máximo: ' + v.grupoMax + ' personas.');
     if (v.recomendable === false) out.push('Su única fuente es vieja: confirma que siga abierto antes de ir.');
-    else if (v.coordAprox && v.aud) out.push('Ubicación aproximada: la fuente sólo da la colonia.');
+    else if (v.coordAprox && v.aud) out.push(/\d/.test(v.addr || '') ? 'El pin del mapa es aproximado: guíate por la dirección.' : 'Ubicación aproximada: la fuente sólo da la colonia.');
     if (v.horaEstimada || /típico|consulta/i.test(v.hrs || '')) out.push('Horario sin confirmar: confírmalo antes de ir.');
     return out; }
   // Un cine cerca del plan, para ofrecerlo como opción (no como parada fija).
