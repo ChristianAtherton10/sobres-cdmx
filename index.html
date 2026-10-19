@@ -30,6 +30,7 @@
 <script src="image-slot.js"></script>
 <script src="data/lugares.js"></script>
 <script src="data/auditoria.js"></script>
+<script src="data/excel.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
 /* ═════════════════════ Tema SOBRES ═════════════════════
@@ -1206,9 +1207,15 @@ class Component extends DCLogic {
       ['delvalle','Del Valle · Nápoles',53.1,52.8],['cu','CU · Sur',46.2,72.6],['santafe','Santa Fe · Poniente',17.4,59.0],
       // Xochimilco es su propia zona: está a ~10 km de Coyoacán. Antes las
       // trajineras aparecían como un plan "en Coyoacán" y el usuario lo reportó.
-      ['xochimilco','Xochimilco',58.0,88.0]
+      ['xochimilco','Xochimilco',58.0,88.0],
+      // Lomas y Satélite entraron con los lugares del Excel (OpenTable): antes
+      // un restaurante de Prado Norte o de Tecamachalco se agrupaba en Polanco
+      // y uno de Ciudad Satélite no tenía zona.
+      ['lomas','Lomas · Tecamachalco',30.3,41.2],['satelite','Satélite · Naucalpan',26.6,15.0]
     ];
-    this.ADJ = { roma:['condesa','juarez','romasur','centro','chapultepec'], romasur:['roma','delvalle','condesa','juarez'], condesa:['roma','chapultepec','romasur','juarez'], polanco:['chapultepec','juarez','condesa','santafe'], juarez:['roma','centro','condesa','chapultepec'], centro:['juarez','roma','romasur'], chapultepec:['condesa','polanco','sanangel','juarez'], coyoacan:['cu','delvalle','sanangel','romasur'], sanangel:['coyoacan','cu','chapultepec','delvalle'], delvalle:['romasur','coyoacan','condesa','sanangel'], cu:['coyoacan','sanangel','delvalle','xochimilco'], santafe:['polanco','chapultepec','sanangel'], xochimilco:['coyoacan','cu'] };
+    // Centro (lat, lng) de las zonas que data/lugares.js no trae.
+    this.ZGEO_EXTRA = { xochimilco: [19.2735, -99.1035], lomas: [19.4235, -99.2265], satelite: [19.508, -99.236] };
+    this.ADJ = { roma:['condesa','juarez','romasur','centro','chapultepec'], romasur:['roma','delvalle','condesa','juarez'], condesa:['roma','chapultepec','romasur','juarez'], polanco:['chapultepec','juarez','condesa','lomas','santafe'], juarez:['roma','centro','condesa','chapultepec'], centro:['juarez','roma','romasur'], chapultepec:['condesa','polanco','sanangel','juarez'], coyoacan:['cu','delvalle','sanangel','romasur'], sanangel:['coyoacan','cu','chapultepec','delvalle'], delvalle:['romasur','coyoacan','condesa','sanangel'], cu:['coyoacan','sanangel','delvalle','xochimilco'], santafe:['lomas','polanco','chapultepec','sanangel'], xochimilco:['coyoacan','cu'], lomas:['polanco','santafe','chapultepec'], satelite:['polanco','lomas'] };
     const V = (id,n,col,z,cat,pp,rt,tags,who,tm,hrs,oh,av,d,x,y,score,fic) => ({id,n,col,z,cat,pp,rt,tags,who,tm,hrs,oh,av,d,x,y,score,fic,addr:'',web:''});
     this.V = [
       V('prunes','Casa Prunes','Roma Norte','roma','Bar de autor',450,4.7,['romántico','cocteles','arquitectura'],['date','solo','amigos'],['noche'],'17:00–01:00',[17,25],'Mesa hoy 8:30 pm','Casona art nouveau de 1906 convertida en bar de autor: coctelería fina entre vitrales y maderas originales.',55.5,43.1,90),
@@ -1295,8 +1302,8 @@ class Component extends DCLogic {
     let tries = 0; const load = () => { const D = window.SOBRES_LUGARES; if (!D) { if (tries++ < 25) setTimeout(load, 250); return; }
       const F = D.fields; this.EXT = D.rows.map(r => { const o = {}; F.forEach((f,i) => o[f] = r[i]); return { id:o.id, n:o.n, cat:o.cat, z:o.zone, col:o.col, addr:o.addr, web:o.web, pp:o.pp, oh:[o.oh0,o.oh1], hrs:o.hrs, tags:o.tags, who:o.who, tm:o.tm, x:o.x, y:o.y, lat:o.lat, lng:o.lng, score:o.score, tier:o.tier, d:o.basis, src:o.src, rt:null, av: o.tier === 'A' ? 'Alta demanda · reserva directa' : 'Verificar disponibilidad', ext:true }; });
       const M = D.matches || {}; this.V.forEach(v => { const m = M[v.id]; if (m) { v.addr = m.addr || v.addr; v.web = m.web || v.web; if (m.x) { v.x = m.x; v.y = m.y; } if (m.lat) { v.lat = m.lat; v.lng = m.lng; } } });
-      this.ZGEO = {}; (D.zones || []).forEach(z => { this.ZGEO[z[0]] = [z[2], z[3]]; });
-      const fit = (getA, getB) => { let sa=0, sb=0, sab=0, saa=0, n=0; this.ZONES.forEach(z => { const g = this.ZGEO[z[0]]; if (!g) return; const a = getA(z), b = getB(g); sa+=a; sb+=b; sab+=a*b; saa+=a*a; n++; }); const m = (n*sab - sa*sb) / (n*saa - sa*sa); return [m, (sb - m*sa) / n]; };
+      this.ZGEO = {}; (D.zones || []).forEach(z => { this.ZGEO[z[0]] = [z[2], z[3]]; }); Object.keys(this.ZGEO_EXTRA || {}).forEach(k => { if (!this.ZGEO[k]) this.ZGEO[k] = this.ZGEO_EXTRA[k]; });
+      const fit = (getA, getB) => { let sa=0, sb=0, sab=0, saa=0, n=0; this.ZONES.forEach(z => { const g = this.ZGEO[z[0]]; if (!g || (this.ZGEO_EXTRA || {})[z[0]]) return; const a = getA(z), b = getB(g); sa+=a; sb+=b; sab+=a*b; saa+=a*a; n++; }); const m = (n*sab - sa*sb) / (n*saa - sa*sa); return [m, (sb - m*sa) / n]; };
       const [mx, bx] = fit(z => z[2], g => g[1]); const [my, by] = fit(z => z[3], g => g[0]);
       this.V.forEach(v => { if (!v.lat) { v.lng = Math.round((mx*v.x + bx)*1e5)/1e5; v.lat = Math.round((my*v.y + by)*1e5)/1e5; } });
       this.EXT = this.aplicarAuditoria(this.EXT);
@@ -1330,11 +1337,14 @@ class Component extends DCLogic {
 
   aplicarAuditoria(lista) {
     const A = this.AUD(); if (!A) return lista;
+    const XLU = (window.SOBRES_EXCEL && window.SOBRES_EXCEL.actualiza) || {};
     const out = [];
     for (const v0 of lista) {
       if (A.BAJA[v0.id]) continue;                       // identidad fabricada
       const v = Object.assign({}, v0);
-      const a = A.LUGARES[v.id];
+      // Corrección a mano (auditoría) gana sobre el dato importado del Excel.
+      const xu = XLU[v.id], al = A.LUGARES[v.id];
+      const a = (xu || al) ? Object.assign({}, xu || {}, al || {}) : null;
       if (a) {
         if (a.n) v.n = a.n;
         if (a.cat) v.cat = a.cat;
@@ -1357,6 +1367,8 @@ class Component extends DCLogic {
         if (a.dias) v.dias = a.dias.slice();
         if (a.basis) v.d = a.basis;
         if (a.horaEstimada) v.horaEstimada = true;
+        ['cocina','distincion','otRt','otRc','vestimenta','tel','grupoMax'].forEach(k => { if (a[k] != null && a[k] !== '') v[k] = a[k]; });
+        if (a.cerradoTemporal) v.cerradoTemporal = true;
         // La ficha cita la fuente de la CORRECCIÓN, no la del registro viejo.
         if (a.fuente && (a.zone || a.cat || a.n)) v.src = a.fuente;
         if (a.zone || a.lat != null) {
@@ -1364,7 +1376,8 @@ class Component extends DCLogic {
           if (z) { v.x = z[2]; v.y = z[3];
             if (g && v.lat != null) { v.x = z[2] + (v.lng - g[1]) * 2.6; v.y = z[3] + (v.lat - g[0]) * 2.6; } }
         }
-        this.ponPrecio(v, a);
+        // Una corrección sólo de nombre o de datos (sin precio) no borra el precio.
+        if (a.precio || a.estado) this.ponPrecio(v, a); else this.ponPrecioInferido(v);
       } else {
         this.ponPrecioInferido(v);
       }
@@ -1383,8 +1396,14 @@ class Component extends DCLogic {
     // Oferta nueva verificada (retos, recorridos, talleres, el antro real)
     if (lista === this.EXT || (lista[0] && lista[0].ext)) {
       const Z = {}; this.ZONES.forEach(z => { Z[z[0]] = z; });
-      for (const r of A.NUEVOS) {
-        if (out.some(x => x.id === r.id)) continue;
+      // NUEVOS (auditoría a mano) + los lugares del Excel de candidatos
+      // (data/excel.js), que vienen en el mismo formato.
+      const XL = (window.SOBRES_EXCEL && window.SOBRES_EXCEL.lugares) || [];
+      const yaEsta = new Set(out.map(x => x.id));
+      for (const r0 of A.NUEVOS.concat(XL)) {
+        if (A.BAJA[r0.id]) continue;
+        const r = XLU[r0.id] ? Object.assign({}, r0, XLU[r0.id]) : r0;
+        if (yaEsta.has(r.id)) continue; yaEsta.add(r.id);
         const z = Z[r.zone] || this.ZONES[0];
         const v = { id: r.id, n: r.n, cat: r.cat, z: r.zone, col: r.col, addr: r.addr, web: r.web || '',
           oh: r.oh.slice(), hrs: r.hrs, tags: (r.tags || []).slice(), who: (r.who || ['amigos']).slice(),
@@ -1395,6 +1414,9 @@ class Component extends DCLogic {
           cursoCerrado: !!r.cursoCerrado, sedeVariable: !!r.sedeVariable,
           dias: r.dias || null, cerrado: r.cerrado || null, coordAprox: !!r.coordAprox,
           grupoMin: r.grupoMin || null, grupoMax: r.grupoMax || null,
+          horaEstimada: !!r.horaEstimada, cocina: r.cocina || '', distincion: r.distincion || '',
+          recomendable: r.recomendable === false ? false : undefined, lejos: !!r.lejos, pNotaLugar: r.nota || '',
+          otRt: r.otRt || null, otRc: r.otRc || null, vestimenta: r.vestimenta || '', tel: r.tel || '',
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -1851,12 +1873,16 @@ class Component extends DCLogic {
   cortaId(v) {
     const id = typeof v === 'string' ? v : v.id;
     if (/^cdmx-\d+$/.test(id)) return id.slice(5);
+    // Lugares del Excel ('xl-R0410'): 'L' + resto. No pueden empezar con 'x',
+    // que es la marca de una parada agregada a mano.
+    if (/^xl-[A-Z]\d+$/.test(id)) return 'L' + id.slice(3);
     if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
     // Cualquier otro id que lleve un separador se escapa para no romper nada.
     return /[~_.!]/.test(id) ? '%' + encodeURIComponent(id) : id;
   }
   largaId(x) {
     if (/^\d+$/.test(x)) return 'cdmx-' + x;
+    if (/^L[A-Z]\d+$/.test(x)) return 'xl-' + x.slice(1);
     if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
     if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
     return x;
@@ -2051,11 +2077,18 @@ class Component extends DCLogic {
   // Importar una ficha no la vuelve recomendable. Fondos, archivos, centros de
   // documentación, auditorios internos, tiendas de museo y bibliotecas
   // especializadas existen y se pueden buscar, pero no son una salida.
+  // Marca de un lugar: el nombre sin la sucursal ("Fishers · Polanco" → fishers).
+  marcaDe(v) { if (!v) return ''; if (v._marca) return v._marca;
+    const m = this.strip(String(v.n || '').split(/ · | - | — /)[0]).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+    try { Object.defineProperty(v, '_marca', { value: m, enumerable: false, configurable: true }); } catch (e) {}
+    return m; }
   esRecomendable(v) {
     if (!v) return false;
     if (v.recomendable === true) return true;
     if (v.recomendable === false) return false;
     const n = this.strip(v.n);
+    // Un lugar cerrado (remodelación, cierre temporal) no se propone.
+    if (v.cerradoTemporal || /\bcerrad[oa]\b|cierre temporal/.test(n)) return false;
     if (/(^|\b)(tienda|libreria|cafeteria) del museo|centro de documentacion|archivo |archivo$|hemeroteca|fototeca|mapoteca|fonoteca|videoteca|^auditorio |sala de lectura|fondo (reservado|antiguo|historico)|casa de (la )?cultura|centro comunitario|cultural comunitario|^pilares|^faro |escuela |instituto |facultad |coordinacion |direccion general/.test(n)) return false;
     if (v.cat === 'Biblioteca') return /vasconcelos|biblioteca de mexico|la ciudadela|biblioteca central/.test(n);
     if (v.cat === 'Librería') return /rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria/.test(n);
@@ -2149,10 +2182,10 @@ class Component extends DCLogic {
     // PROCEDENCIA DEL PRECIO. La auditoría mostró que la mayoría de los `pp`
     // son el valor por defecto de la categoría, no una cifra de carta o boleto.
     // El total deja de presentarse como un hecho cuando se apoya en inferencias.
-    const inferidos = stops.filter(v => v.pEstado === 'inferido' && !v.ppUnknown);
+    const inferidos = stops.filter(v => (v.pEstado === 'inferido' || v.pEstado === 'estimado') && !v.ppUnknown);
     const rangos = stops.filter(v => v.pEstado === 'rango' && !v.ppUnknown);
     const verificados = stops.filter(v => v.pEstado === 'verificado' && !v.ppUnknown);
-    if (inferidos.length) estimados.push(inferidos.length + (inferidos.length === 1 ? ' precio estimado' : ' precios estimados') + ' (valor típico de su categoría, sin carta ni boleto)');
+    if (inferidos.length) estimados.push(inferidos.length + (inferidos.length === 1 ? ' precio estimado' : ' precios estimados') + ' (calculado con la banda de precio publicada o el tipo de lugar, sin carta ni boleto)');
     if (rangos.length) estimados.push(rangos.length + (rangos.length === 1 ? ' precio de rango' : ' precios de rango') + ' verificado con fuente');
     // Techo del rango: lo máximo que podría costar con la evidencia que hay.
     const techo = stops.reduce((a, v) => a + (v.ppUnknown ? 0 : (v.pMax != null ? v.pMax : (v.pp || 0))), 0);
@@ -2275,7 +2308,12 @@ class Component extends DCLogic {
     // tres planes compartían la primera parada porque todos veían el mismo
     // historial congelado.
     const avoidV = new Set((opts.avoidVenues || []).concat(opts.penalizar || []));
-    const marcarLote = st => (st || []).forEach(v => avoidV.add(v.id));
+    // También por MARCA: si ya viste un Fishers o el Museo Soumaya de Plaza
+    // Carso, la otra sucursal no cuenta como lugar nuevo.
+    const avoidM = new Set();
+    if (avoidV.size) this.cat().forEach(v => { if (avoidV.has(v.id)) avoidM.add(this.marcaDe(v)); });
+    const marcarLote = st => (st || []).forEach(v => { avoidV.add(v.id); avoidM.add(this.marcaDe(v)); });
+    const visto = v => avoidV.has(v.id) || avoidM.has(this.marcaDe(v));
     const excl = this.exclSet();
 
     // Filtro DURO por compatibilidad de vibra. Antes la vibra sólo sumaba
@@ -2288,12 +2326,14 @@ class Component extends DCLogic {
     const cityWide = s.zone === 'all';
     const sel = this.zoneList();
     let zones = cityWide ? this.ZONES.map(z => z[0]) : sel.slice();
-    let pool = cityWide ? all.slice() : all.filter(v => sel.includes(v.z));
+    // Un lugar lejos del centro de toda zona (Ajusco, Iztapalapa) sólo entra
+    // cuando se busca en toda la ciudad: no es "Coyoacán" aunque sea lo más cercano.
+    let pool = cityWide ? all.slice() : all.filter(v => sel.includes(v.z) && !v.lejos);
     let expandNote = '';
     if (!cityWide && pool.length < 8) {
       const adj = sel.reduce((a, z) => a.concat(this.ADJ[z] || []), []).filter(z => !sel.includes(z));
       const added = [];
-      for (const az of adj) { if (pool.length >= 8) break; zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az)); }
+      for (const az of adj) { if (pool.length >= 8) break; zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az && !v.lejos)); }
       if (added.length) expandNote = 'Pocas opciones con esos filtros en ' + this.zLabel(s.zone) + ' — ampliamos solo a zonas vecinas: ' + added.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).';
     }
     const inZones = v => cityWide || zones.includes(v.z);
@@ -2429,7 +2469,7 @@ class Component extends DCLogic {
               // hubiera alternativas (Pizza Félix y El Califa regresaban en la
               // siguiente tanda). Cuando ya no quedan nuevos, se recorren los vistos.
               const porId = (a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-              const nuevosB = fit.filter(v => !avoidV.has(v.id)).sort(porId);
+              const nuevosB = fit.filter(v => !visto(v)).sort(porId);
               urna = nuevosB.length ? nuevosB : fit.slice().sort(porId);
               pick = urna[odo % urna.length];
               odo = Math.floor(odo / urna.length);
@@ -2446,8 +2486,8 @@ class Component extends DCLogic {
               // de 67 min entre Centro y Coyoacán.
               const porRank = (a, b) => (a.ppUnknown ? 1 : 0) - (b.ppUnknown ? 1 : 0)
                 || (this.rank(b, dseed) - tramoMin(b) / 6) - (this.rank(a, dseed) - tramoMin(a) / 6);
-              const frescos = fit.filter(v => !avoidV.has(v.id)).sort(porRank);
-              const vistos = fit.filter(v => avoidV.has(v.id)).sort(porRank);
+              const frescos = fit.filter(v => !visto(v)).sort(porRank);
+              const vistos = fit.filter(v => visto(v)).sort(porRank);
               const fuente = frescos.length ? frescos : vistos;
               // La ventana crece con la variante para que las 3 propuestas de
               // una misma tanda no se peleen por el mismo primer lugar.
@@ -2471,7 +2511,7 @@ class Component extends DCLogic {
               // desconocido: que no se sepa cuánto cuesta no lo vuelve barato.
               const ciertos = resp.filter(v => !v.ppUnknown);
               const base = ciertos.length ? ciertos : resp;
-              const frescosR = base.filter(v => !avoidV.has(v.id));
+              const frescosR = base.filter(v => !visto(v));
               const urnaR = frescosR.length ? frescosR : base;
               pick = urnaR[(variant * 13 + dseed) % urnaR.length];
             }
@@ -2510,7 +2550,7 @@ class Component extends DCLogic {
     let yaVistosAntes = 0;
     // Las tres opciones se eligen como CONJUNTO: anclas distintas y ningún lugar
     // en común entre ellas mientras haya alternativas.
-    const comparte = (a, b) => a.stops.some(v => b.stops.some(x => x.id === v.id));
+    const comparte = (a, b) => a.stops.some(v => b.stops.some(x => x.id === v.id || this.marcaDe(x) === this.marcaDe(v)));
     const choca = (c, lista) => lista.some(h => h.ancla === c.ancla || comparte(h, c));
     const traslado = st => { let m = 0; for (let i = 0; i < st.length - 1; i++) { const x = this.minutosTramo(this.legKm(st[i], st[i + 1])); if (x != null) m += x; } return m; };
     // Cada candidato se califica y la selección va por PRIORIDADES: primero la
@@ -2896,7 +2936,7 @@ class Component extends DCLogic {
     (r.sigs || []).forEach(g => { if (g && c.indexOf(g) < 0) c.push(g); });
     (r.plans || []).forEach(p => (p.stops || []).forEach(x => { if (v.indexOf(x.id) < 0) v.push(x.id); }));
     (r.venues || []).slice(0, 12).forEach(x => { if (v.indexOf(x.id) < 0) v.push(x.id); });
-    return { c: c.slice(-150), v: v.slice(-250) };
+    return { c: c.slice(-900), v: v.slice(-900) };
   }
 
   // "Rehacer" / "dame algo diferente": re-ejecuta evitando lo ya visto.
@@ -3018,7 +3058,7 @@ class Component extends DCLogic {
     if (v.cat === 'Cantina') return 'cantina mexicana'; if (v.cat === 'Mercado') return 'antojitos de mercado';
     return ''; }
   priceBand(v) { if (v.ppUnknown) return 'precio por confirmar';
-    const p = v.pp || 0; const suf = v.pEstado === 'inferido' ? ' estimado' : '';
+    const p = v.pp || 0; const suf = (v.pEstado === 'inferido' || v.pEstado === 'estimado') ? ' estimado' : '';
     if (!p) return 'entrada libre' + suf;
     if (p < 200) return 'barato (~$' + p + ' pp' + suf + ')'; if (p < 500) return 'precio medio (~$' + p + ' pp' + suf + ')';
     if (p < 900) return 'algo caro (~$' + p + ' pp' + suf + ')'; return 'caro (~$' + p + ' pp' + suf + ')'; }
@@ -3062,7 +3102,13 @@ class Component extends DCLogic {
       'Boliche': ['Unas líneas de boliche en grupo; se renta por hora.'],
       'Billar': ['Mesas de billar por hora, con bebidas.'] };
     (T[c] || ['Revisa horario y acceso antes de ir.']).forEach(x => out.push(x));
+    if (v.cocina) out.unshift('Cocina: ' + v.cocina.charAt(0).toLowerCase() + v.cocina.slice(1) + '.');
+    if (v.distincion) out.push(v.distincion + '.');
+    if (v.otRt) out.push('Calificación en OpenTable: ' + v.otRt + ' de 5' + (v.otRc ? ' (' + Number(v.otRc).toLocaleString('es-MX') + ' reseñas)' : '') + '.');
+    if (v.vestimenta) out.push('Código de vestimenta: ' + v.vestimenta.toLowerCase() + '.');
     if (v.grupoMax) out.push('Cupo máximo: ' + v.grupoMax + ' personas.');
+    if (v.recomendable === false) out.push('Su única fuente es vieja: confirma que siga abierto antes de ir.');
+    else if (v.coordAprox && v.aud) out.push('Ubicación aproximada: la fuente sólo da la colonia.');
     if (v.horaEstimada || /típico|consulta/i.test(v.hrs || '')) out.push('Horario sin confirmar: confírmalo antes de ir.');
     return out; }
   // Un cine cerca del plan, para ofrecerlo como opción (no como parada fija).
@@ -3096,7 +3142,7 @@ class Component extends DCLogic {
       || /\bSIC\b.*\b(venue|open data)\b/i.test(d);
     if (d.length > 60 && !generico) return d;
     const parts = [];
-    const cui = this.cuisine(v);
+    const cui = v.cocina && !/^(restaurante|bar|caf)/i.test(v.cocina) ? v.cocina.split(',')[0].trim().toLowerCase() : this.cuisine(v);
     const CATTXT = { 'Restaurante': cui ? `Restaurante de comida ${cui}` : 'Restaurante',
       'Taquería': 'Taquería', 'Cantina': 'Cantina', 'Café': cui ? `Café y ${cui}` : 'Café',
       'Bar': 'Bar de copas', 'Bar de autor': 'Bar de coctelería de autor', 'Speakeasy': 'Bar escondido (speakeasy)',
@@ -3561,6 +3607,7 @@ class Component extends DCLogic {
   //   'no'    → nada en los datos lo sugiere
   sirveCopas(v) {
     if (this.DRINK.includes(v.cat)) return 'si';
+    if (v.actVer && (v.act || []).indexOf('copas') >= 0) return 'si';   // actividad verificada
     // La etiqueta 'nightlife' es ruidosa: un auditorio o un museo la traen sin
     // servir nada. Sólo cuenta en categorías donde sí se consume.
     const NO_BEBIDA = ['Museo','Biblioteca','Librería','Foro','Centro cultural','Teatro',

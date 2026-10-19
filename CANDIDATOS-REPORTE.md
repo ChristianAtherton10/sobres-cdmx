@@ -1,3 +1,116 @@
+# Lugares del Excel de candidatos: resultado de la importación
+
+Fecha: **19 de octubre de 2026**. Archivo: `SOBRES_Catalogo_y_Reglas.xlsx` (679 candidatos).
+Datos generados en `data/excel.js` por `reportes/excel/build_excel.py`.
+
+## Resumen
+
+| | Lugares |
+|---|---|
+| Ya estaban en el catálogo (no se duplican) | 168 |
+| **Agregados nuevos** | **505** |
+| No agregados (sin ubicación o cerrados) | 6 |
+| Catálogo total en la app | ~1,600 |
+
+- **Sin repetidos:** cada candidato se cruzó contra todo el catálogo (nombre + distancia) y contra los demás candidatos. Las **sucursales** sí van por separado (Enigma Rooms, Fishers, Gin Gin, Sonora Grill, Cancino…), cada una con su dirección.
+- **Zonas nuevas:** *Lomas · Tecamachalco* y *Satélite · Naucalpan*, para que un lugar de Prado Norte o de Plaza Satélite no aparezca como si estuviera en Polanco.
+- **De dónde sale cada dato:** dirección, coordenadas, banda de precio, calificación y horario de **OpenTable** (páginas de colonia y ficha de cada restaurante); dirección y horario de **Time Out México** y **OpenStreetMap**; distinción y nivel de precio de la **Guía MICHELIN**. Cada registro dice su fuente y su fecha.
+- **Precios:** 479 son **estimados** con base declarada (banda de OpenTable, nivel de Time Out o de la Guía MICHELIN, o tipo de lugar) y la app los presenta como estimados; 5 tienen cifra publicada; 21 quedan *por confirmar*.
+- **Horario:** 379 con horario de fuente; 126 con horario *por confirmar* (la app no ofrece horas de reserva para ésos).
+- **Ubicación aproximada:** 134 lugares cuya fuente sólo da la colonia: el pin va al centro de la colonia y la ficha lo dice.
+- **No se proponen todavía (97):** su única fuente es un artículo viejo (2015–2019) y no aparecen en fuentes recientes. Están en el catálogo, pero el motor no los usa hasta confirmar que siguen abiertos.
+- **Lejos de toda zona (4):** sólo aparecen al buscar en *Toda la ciudad*.
+
+### Por tipo
+- Restaurante: 391
+- Café: 23
+- Taquería: 21
+- Bar: 18
+- Heladería: 14
+- Parque: 11
+- Rooftop: 4
+- Cine: 3
+- Escape room: 3
+- Taller: 3
+- Antro: 3
+- Al aire libre: 2
+- Biblioteca: 2
+- Speakeasy: 2
+- Mercado: 1
+- Churrería: 1
+- Mezcalería: 1
+- Museo: 1
+- Sitio histórico: 1
+
+### Por zona
+- roma: 104
+- juarez: 76
+- polanco: 67
+- condesa: 56
+- santafe: 34
+- sanangel: 30
+- delvalle: 28
+- lomas: 23
+- centro: 21
+- coyoacan: 14
+- satelite: 14
+- cu: 13
+- chapultepec: 13
+- romasur: 9
+- xochimilco: 3
+
+### No agregados
+- **Ödün** (R0340): La fuente lo marca como cerrado.
+- **El 98** (X0006): No encontramos dirección ni ficha de "El 98" en ninguna fuente; sin ubicación no se puede proponer.
+- **Mantequilla Social Club** (X0048): Mantequilla Social Club se cargó a mano en la auditoría (cdmx-4076), con categoría y cupo correctos.
+- **White Willow Café** (X0056): La fuente lo marca como cerrado.
+- **Sens** (X0064): Time Out sólo dice "zona metropolitana": no encontramos dirección de Sens.
+- **The Grand Hotel Club** (X0065): Time Out sólo dice "zona metropolitana": no encontramos dirección de The Grand Hotel Club.
+
+### Ya estaban (revisados a mano)
+- Aida → Aida Café · Santa Fe (`cdmx-4071`)
+- Bistro Estoril · Santa Fe → Bistro Estoril (`cdmx-4031`)
+- El Balcon del Zocalo → Balcón del Zócalo (`cdmx-2062`)
+- La Mallorquina Arcos → La Mallorquina · Arcos Bosques (`cdmx-4032`)
+- Maximo → Máximo Bistrot (`cdmx-0015`)
+- Quattro · JW Marriott Sta Fe → Quattro (`cdmx-2113`)
+- Ryoshi · Masaryk → Ryoshi · Masaryk (`cdmx-2001`)
+- Tacos Orinoco → Taquería Orinoco (`orinoco`)
+- Tacos Paris · CDMX → Tacos París (`cdmx-4018`)
+- Museo Nacional de Historia → Castillo de Chapultepec · Museo Nacional de Historia (`cdmx-2145`)
+- Museo Tamayo Arte Contemporáneo → Museo Tamayo (`tamayo`)
+- Centro de Cultura Ambiental Chapultepec → Centro de Cultura Ambiental (`cdmx-0890`)
+- Munal. Museo Nacional de Arte → Museo Nacional de Arte (MUNAL) (Cierre temporal) (`cdmx-0159`)
+- Laboratorio Arte Alameda → Laboratorio Arte Alameda (LAA) (`cdmx-0491`)
+- Museo de la Medicina Mexicana → Museo de la Medicina Mexicana, Palacio de la Escuela de Medicina (`cdmx-0381`)
+- Museo Ex Teresa Arte Actual → Ex Teresa Arte Actual (EXTAA) (`cdmx-0596`)
+- Museo de Arte Moderno → Museo de Arte Moderno (MAM) (`cdmx-0146`)
+- Museo de Arte Popular (MAP) → Museo de Arte Popular (`cdmx-0145`)
+- Casa Estudio de Diego Rivera y Frida Kahlo → Museo Casa Estudio Diego Rivera y Frida Kahlo (`cdmx-0224`)
+- MUAC, Museo Universitario de Arte Contemporáneo → MUAC · CU (`muac`)
+- Museo Soumaya Casa Guillermo Tovar de Teresa → Casa Guillermo Tovar de Teresa (`cdmx-0150`)
+- Centro Cultural Universitario Tlatelolco → Centro Cultural Universitario Tlatelolco (CCUT) (`cdmx-0184`)
+- Museo Antiguo Colegio de San Ildefonso → Antiguo Colegio de San Ildefonso (`cdmx-0671`)
+- Centro Cultural de España (México) → Centro Cultural de España en México (`cdmx-0611`)
+- Centro de la Imagen → Museo Centro de la Imagen (`cdmx-0417`)
+- Museo de Arte Carrillo Gil → Museo de Arte Alvar y Carmen T. de Carrillo Gil (`cdmx-0823`)
+- Museo Diego Rivera Anahuacalli → Museo Anahuacalli (`anahuacalli`)
+- Parque Luis G. Urbina (Parque Hundido) → Parque Hundido (`cdmx-0098`)
+- Jardín Botánico del Bosque de Chapultepec → Jardín Botánico de Chapultepec (`cdmx-0113`)
+- Cineteca Nacional Xoco → Cineteca Nacional (`cineteca`)
+- Arena México → Lucha libre · Arena México (`arena`)
+- Casa del Lago UNAM → Casa del Lago Juan José Arreola (`cdmx-0186`)
+- Lago de Chapultepec, paseo en lancha → Lago de Chapultepec (`cdmx-0110`)
+- Enigma Rooms Roma → Enigma Rooms Roma I (`cdmx-3010`)
+
+### Lejos de toda zona
+- Yancuic Museo Interactivo Infantil y Juvenil: a 10.5 km del centro de la zona más cercana
+- Parque Cuitláhuac: a 11.9 km del centro de la zona más cercana
+- Parque de los Dinamos: a 7.3 km del centro de la zona más cercana
+- Parque Ejidal San Nicolás Totolapan: a 9.9 km del centro de la zona más cercana
+
+---
+
 # Cruce de candidatos contra el catálogo de SOBRES
 
 Generado el 18 de octubre de 2026 a partir de `SOBRES_candidatos.json` (679 registros, todos con `active: false`) contra las **1125 fichas** que hoy usa la app (catálogo base, correcciones y altas de la capa de auditoría, sin bajas ni perfiles de ejemplo).

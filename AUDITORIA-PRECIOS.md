@@ -1,5 +1,74 @@
 # Auditoría de precios y procedencia del catálogo de SOBRES
 
+## Revisión del 19 de octubre de 2026
+
+**Regla:** el precio por persona es **consumo** (comida + bebida, o entrada); la app suma **10% de propina** aparte en restaurantes y bares. Cuando no hay carta ni boleto, la cifra es **estimada** y se dice de dónde sale.
+
+### Referencias del fundador (totales con propina → consumo cargado)
+
+| Lugar | Referencia | Consumo cargado | Estado |
+|---|---|---|---|
+| PANEM Club | ~$2,000 pp | $1,800 + propina | estimado |
+| Casa San Juan | ~$2,000 pp | $1,800 + propina | estimado |
+| Sala de Despecho (Masaryk y Bosques) | ~$1,500 pp | $1,350 + propina | estimado |
+| Ryoshi · Masaryk | ~$1,200 pp | $1,100 + propina | estimado |
+
+### Restaurantes con estrella MICHELIN (con fuente)
+
+| Lugar | Antes | Ahora | Qué compra | Fuente |
+|---|---|---|---|---|
+| **Quintonil** | $1,500 | **$5,610–$13,310** (rep. ~$6,600) | Menú degustación $5,610 **sin bebidas**; maridajes de $1,980 (sin alcohol) a $7,700 | UnoTV, 4-dic-2025 |
+| **Pujol** | $1,500 | $3,500–$3,995 sin bebidas (rep. ~$4,300) | Menú degustación u omakase de tacos | TV Azteca, 3-jun-2025; Tus Buenas Noticias, 17-jun-2025 |
+| **Máximo** | $1,500 | desde $1,400 a la carta; $3,800 degustación; $5,650 con maridaje | | UnoTV, 4-dic-2025 |
+| **Rosetta** | $900 | ~$1,500 ticket promedio | | UnoTV, 4-dic-2025 |
+| **Em** | $950 | $3,100 menú + ~$500 de cuota de reservación | | TV Azteca 2025; El CEO 2024 |
+| **Sud 777** | $1,400 | ~$1,400 + cuota (dato de 2024) | | El CEO, 15-may-2024 |
+| **Expendio de Maíz Sin Nombre** | $350 | ~$500 promedio | | Tus Buenas Noticias, 17-jun-2025 |
+
+> Quintonil: la referencia de ~$2,000 se queda corta; sólo el menú cuesta $5,610.
+
+Los demás restaurantes de la Guía se estiman con su **nivel de precio** ($ a $$$$) y su distinción (las estrellas suben la estimación 40%). Los 26 restaurantes que traían **$1,500 de relleno** (El Vilsito, El Turix, Fonda Margarita, La Polar, los de Time Out BEST…) ahora tienen una estimación con base declarada (de $180 a $1,600).
+
+### OpenTable: banda de precio → consumo estimado
+
+| Banda publicada | Consumo estimado con una bebida | Rango |
+|---|---|---|
+| Hasta $300 | ~$350 | $200–$450 |
+| De $310 a $500 | ~$650 | $450–$900 |
+| Más de $500 | ~$1,100 | $700–$2,000 |
+
+Se aplicó a los 505 lugares nuevos del Excel y a 47 lugares que ya estaban en el catálogo y aparecen en OpenTable.
+
+### Museos: taquillas 2026
+
+| Museo | Antes | Ahora | Fuente |
+|---|---|---|---|
+| Museo Tamayo · MAM · Palacio de Bellas Artes · MUNAL | $85–$90 | **$95** (domingo gratis) | CDMX Secreta 13-ene-2026; Time Out (INBAL; el aumento de 2026 no se aprobó) |
+| MNA · Castillo de Chapultepec · Templo Mayor | $85–$100 | **$105** nacionales / $210 extranjeros | Tarifas INAH 2026 (Chilango, 7-ene-2026) |
+| Museo de El Carmen | $100 | $85 / $155 | INAH 2026 |
+| Museo Nacional de las Culturas del Mundo | $100 | $80 / $145 | INAH 2026 |
+| Museo Nacional de las Intervenciones | $100 | $100 | CDMX Secreta |
+| Memoria y Tolerancia | $85 | **$160** | CDMX Secreta |
+| Franz Mayer | $85 | $120 ($65 reducida) | CDMX Secreta |
+| Arte Popular | $85 | $60 (domingo gratis) | CDMX Secreta |
+| Anahuacalli | $100 | $100 / $130 | CDMX Secreta |
+| MUAC | $40 | **$60** ($30 domingo) | CDMX Secreta |
+| Universum | $85 | $90 | CDMX Secreta |
+| Museo Nacional de la Revolución | $85 | $40 | CDMX Secreta |
+| Casa Estudio Diego Rivera y Frida Kahlo · Lab. Arte Alameda · Mural Diego Rivera · Sala de Arte Público Siqueiros | $85 | $45–$60 | Time Out (INBAL) |
+| Culturas Populares | $85 | $21 | CDMX Secreta |
+| Museo Trotsky | $85 | $50 | CDMX Secreta |
+| Jumex · Soumaya (Carso y Loreto) · Acuarela · Biodiversidad · Museo de Sitio de Chapultepec | — | **gratis** | CDMX Secreta; Museo Soumaya |
+
+**MUNAL:** cerrado "hasta nuevo aviso" desde el 2 de junio de 2026; no se propone.
+
+### Antros
+
+Fünk Club ~$650 (cover de unos $350 + tragos, Time Out 2025), M.N. Roy ~$800 y Patrick Miller ~$450 (nivel de Time Out). Antes: $380, $450 y $150.
+
+---
+
+
 Fecha de la última revisión: **2026-10-06**. Moneda **MXN** salvo donde se indique.
 
 > **Esta auditoría está incompleta y así se declara.** El dataset base aporta **1044**

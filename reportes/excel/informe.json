@@ -1,0 +1,3406 @@
+{
+ "nuevo": [
+  [
+   "R0001",
+   "1985 Antifine",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0002",
+   "Agrotaberna Monstruo de Agua",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "R0003",
+   "Ahorita Cantina",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0005",
+   "AITANA",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0006",
+   "AjoBlanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0007",
+   "Al Andalus · San Angel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0008",
+   "Alaia",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0009",
+   "Alboroto",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0010",
+   "Alegra",
+   "Café",
+   "condesa"
+  ],
+  [
+   "R0011",
+   "Aleli Rooftop",
+   "Rooftop",
+   "roma"
+  ],
+  [
+   "R0012",
+   "Alesia",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0013",
+   "Alfredo Di Roma · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0014",
+   "Altanera",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0016",
+   "Amici-Sheraton Maria Isabel",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0017",
+   "Amore Mio Trattoria",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0018",
+   "Animal · Masaryk",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0019",
+   "ANIMAL · ST REGIS",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0020",
+   "ANONIMO COLECTIVO",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0021",
+   "Antolina",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0022",
+   "Arango Restaurante",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0023",
+   "Aroma Curry",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0024",
+   "Asador 51 cocina de brasas",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0026",
+   "Asian Bay",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0027",
+   "Au Pied de Cochon · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0029",
+   "Azul maguey",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0030",
+   "Bajel",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0031",
+   "Bakea",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0032",
+   "Baldio",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0033",
+   "Balkan Grill",
+   "Restaurante",
+   "romasur"
+  ],
+  [
+   "R0034",
+   "Balta",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0035",
+   "Barrio Norte",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0036",
+   "Barrio Satélite",
+   "Mercado",
+   "satelite"
+  ],
+  [
+   "R0037",
+   "Barrita de Sushi",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0038",
+   "Bartola",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0040",
+   "Bella Aurora",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0041",
+   "Bellaria · Mexico",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0042",
+   "Belmondo",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0043",
+   "Bistro 83 · San Angel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0044",
+   "Bistró Arlequín",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0046",
+   "Biwon",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0048",
+   "Blossom · Del Valle",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0049",
+   "Blossom · Palmas",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0050",
+   "Blossom- Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0051",
+   "Bodega de los Malazzo",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0052",
+   "Botanero del Bosque",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0053",
+   "BOTANICO",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0054",
+   "Botica",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0055",
+   "Boul Cocina Latina",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0056",
+   "BRAVA",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0057",
+   "Bribón",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0058",
+   "Bulla · CDMX (Condesa)",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0059",
+   "Burger Gang",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0061",
+   "Butcher and Sons Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0063",
+   "Camaron Buchon · Coyoacan",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0064",
+   "Cambalache · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0065",
+   "Cambalache · Oasis",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0066",
+   "Cambalache · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0067",
+   "Camino a Comala Santa María la Ribera",
+   "Café",
+   "juarez"
+  ],
+  [
+   "R0068",
+   "Campobaja",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0070",
+   "CANA",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0071",
+   "Cancino · Coyoacán",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0072",
+   "Cancino · Havre",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0073",
+   "Cancino · Nápoles",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0074",
+   "Cancino · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0075",
+   "Cantina La No. 20 · Satélite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0076",
+   "Cantinetta del Becco",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0077",
+   "Caracol de Mar",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0078",
+   "Carajillo Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0080",
+   "Carolo · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0081",
+   "Casa Manzano Ciudad de Mexico",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0082",
+   "Casa Nagi",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0083",
+   "Casa O · Lomas",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0084",
+   "Casa O · San Angel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0085",
+   "Casa Portuguesa",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0086",
+   "Casa Prime Hilton Centro Histórico",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0087",
+   "Casa Prime Masaryk",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0088",
+   "Casa Prime Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0090",
+   "Casa Virginia Mónica Patiño",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0091",
+   "Cascabel",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0092",
+   "Cascabel Tostado",
+   "Café",
+   "juarez"
+  ],
+  [
+   "R0093",
+   "Castizo",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0095",
+   "Central Central",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0096",
+   "Cerrajería",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0097",
+   "Chalino Chino",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0098",
+   "Chambao Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0099",
+   "Chetito",
+   "Taquería",
+   "roma"
+  ],
+  [
+   "R0100",
+   "Chilakillers Loungeria",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0101",
+   "Chilakillers Santa María la Ribera",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0102",
+   "CIENA",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0104",
+   "Cobarde",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0105",
+   "Cochinita Power",
+   "Taquería",
+   "juarez"
+  ],
+  [
+   "R0106",
+   "Comal de Piedra",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0107",
+   "Comal Oculto",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0109",
+   "Comixcal",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0110",
+   "Conchita Clamont",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0112",
+   "Coppola Pizza Vynil Bar",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0114",
+   "Cortile",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0115",
+   "Crissis",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0116",
+   "Cuerno · Masaryk",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0118",
+   "Daikoku · Michoacan",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0119",
+   "Dans le Noir ? · Cena a oscuras",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0120",
+   "Decrab · Prado Norte",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0121",
+   "Deigo Cocina Tradicional Japonesa",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0122",
+   "Deigo Ramen",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0123",
+   "Deigo Sushi · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0124",
+   "Domingo Santo",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0125",
+   "Dr. Pizza · Condesa",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0126",
+   "Dragon House Zhu",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0130",
+   "El Faraón",
+   "Taquería",
+   "roma"
+  ],
+  [
+   "R0131",
+   "El Jamil",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0132",
+   "El Japonez · Manacar",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0133",
+   "El Japonez · Oasis Coyoacán",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0134",
+   "El Japonez · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0136",
+   "El Moro Santa María la Ribera",
+   "Churrería",
+   "juarez"
+  ],
+  [
+   "R0137",
+   "El Mundo",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0138",
+   "El Naranjito",
+   "Taquería",
+   "romasur"
+  ],
+  [
+   "R0139",
+   "El Oyster Club",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0142",
+   "El Rey del Suadero",
+   "Taquería",
+   "polanco"
+  ],
+  [
+   "R0143",
+   "El Tigre Silencioso",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0146",
+   "Elly's",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0147",
+   "Eloise",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0149",
+   "Emília",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0150",
+   "Emilio",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0151",
+   "Encanto Fuego y Mar",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0152",
+   "Enrico Caruso",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0154",
+   "ENZU RESTAURANTE Y BAR",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0156",
+   "ESCA",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0157",
+   "Escondida Parrilla",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0158",
+   "Esquina Común",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0159",
+   "Estoril",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0160",
+   "Etranger",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0162",
+   "Fabia",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0163",
+   "Farina San Ángel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0164",
+   "Fiamma",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0165",
+   "Fiesole · San Angel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0166",
+   "Filigrana",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0167",
+   "Fisher´s House · Pabellon Bosques",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0168",
+   "Fogo de Chão · Mexico City · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0169",
+   "Fogo de Chão · Mexico City · Mitikah",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0170",
+   "Fogo de Chão · Mexico City · Perisur",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0171",
+   "Fogo de Chão · Mexico City · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0174",
+   "Forever Vegano",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0175",
+   "FORM + MATTER (FOMA)",
+   "Bar",
+   "roma"
+  ],
+  [
+   "R0176",
+   "Fritanguita",
+   "Taquería",
+   "roma"
+  ],
+  [
+   "R0177",
+   "Fugaz",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0178",
+   "Futari",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0179",
+   "Gaba",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0181",
+   "Galea",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0182",
+   "Garum",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0183",
+   "Gatorta",
+   "Taquería",
+   "roma"
+  ],
+  [
+   "R0184",
+   "Gauchinho",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0185",
+   "Gaudí · Hotel Imperial Reforma",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0186",
+   "Gino's · Galerías Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0187",
+   "Giorella",
+   "Restaurante",
+   "romasur"
+  ],
+  [
+   "R0188",
+   "Goguinara",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0189",
+   "Grasso",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0190",
+   "Guadiana · San Angel",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0191",
+   "Guadiana · Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0193",
+   "Guzina Oaxaca",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0194",
+   "Happy Lamb Hot Pot",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0196",
+   "Helus",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0197",
+   "Hong King",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0198",
+   "Hostería de Santo Domingo",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0199",
+   "Hotaru · Arcos",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0200",
+   "Hotaru · Lomas",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0201",
+   "Hotaru · Mitikah",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0202",
+   "Hunan · Artz",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0203",
+   "Hunan · Reforma",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0205",
+   "IDE Gourmet Oriental",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0206",
+   "IL PUNTO",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0207",
+   "In Mano Roma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0208",
+   "ISMO",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0209",
+   "Itacate del Mar",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0210",
+   "Ivoire",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0211",
+   "Jametaro",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0212",
+   "Jin San Shabu Shabu · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0213",
+   "Jowong",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0214",
+   "Ka Won Seng",
+   "Restaurante",
+   "romasur"
+  ],
+  [
+   "R0216",
+   "Kale+",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0217",
+   "Kill Bill",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0218",
+   "King Fish · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0219",
+   "Ko Ma",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0220",
+   "Koku",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0221",
+   "Kolobok",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0222",
+   "Kumoto Robatayaki",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0223",
+   "L' Entrecote Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0224",
+   "L' Osteria del Becco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0225",
+   "L'Enfant",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0226",
+   "La Barra de Fran",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0227",
+   "La Belle Epoque",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0228",
+   "La Bellezza",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0229",
+   "La Buena Barra · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0230",
+   "La Buenavida Fonda",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0231",
+   "La Cabaña de Fuentes",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0232",
+   "La Casa de las Sirenas",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0234",
+   "La Casserole",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0235",
+   "La Chalupería",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0236",
+   "La Distral · CDMX",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0238",
+   "La Gloriosa",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0239",
+   "La Guerrerense",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0241",
+   "La Lanterna",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0243",
+   "La Mansion · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0244",
+   "La Mansion · Palmas",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0245",
+   "La Mansion · Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0246",
+   "La Once Mil",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0247",
+   "La Pagoda",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0248",
+   "La Poblanita de Tacubaya Patriotismo",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0249",
+   "La Popular · Arcos Bosques",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0250",
+   "La Posta",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0251",
+   "La Provoleta · Rhin",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0252",
+   "La Rural Argentina",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0253",
+   "La Sede",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0254",
+   "La Taberna de Miguel",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0255",
+   "La Taberna del León",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0257",
+   "Lampuga Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0259",
+   "Las Nazarenas",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0260",
+   "Lavo",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0261",
+   "Lazy Susan",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0262",
+   "Le Lah Tho",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0263",
+   "Le Petit Resto",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0264",
+   "Les Moustaches",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0266",
+   "Lindy",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0267",
+   "Ling Ling Mexico",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0268",
+   "Loma Linda · Carso",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0269",
+   "Loma Linda · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0270",
+   "Loose Blues Dining",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0271",
+   "Lorea",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0272",
+   "Lorenzo",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0273",
+   "Loretta Chic Bistrot",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0274",
+   "Los Arbolitos",
+   "Taquería",
+   "sanangel"
+  ],
+  [
+   "R0275",
+   "Los Arcos · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0276",
+   "Los Arcos · San Jeronimo",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0277",
+   "Los Canarios · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0278",
+   "Los Canarios · Marquis Reforma",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0279",
+   "Los Canarios · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0280",
+   "Los Culiado's Mariscos · Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0282",
+   "Los Loosers",
+   "Taquería",
+   "condesa"
+  ],
+  [
+   "R0283",
+   "Los Pericos",
+   "Taquería",
+   "delvalle"
+  ],
+  [
+   "R0284",
+   "Lotti",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0285",
+   "Ludlow Perisur",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0286",
+   "Madeo",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0287",
+   "Magda",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0288",
+   "Maizajo",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0289",
+   "Malix",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0290",
+   "Mallorca · Lomas",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0291",
+   "MalPortaco",
+   "Taquería",
+   "romasur"
+  ],
+  [
+   "R0293",
+   "Mandolina · Roma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0294",
+   "Manpuku Ramen",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0295",
+   "María Ciento38",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0296",
+   "María Trinidad",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0297",
+   "Marisquería Bar La Mony",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0298",
+   "Marisquería Julichi",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0299",
+   "Marmota",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0300",
+   "Marta",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0302",
+   "Mattea · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0307",
+   "Meson Puerto Chico",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0308",
+   "Mesón Taurino San Angel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0309",
+   "Mexa Cocina del Alma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0310",
+   "Midam",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0311",
+   "Migrante",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0312",
+   "Mikasa",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0313",
+   "Miru",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0314",
+   "MO+F",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0315",
+   "Mochomos · Arcos Bosques",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0316",
+   "Mochomos · Mitikah",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0317",
+   "Mojama",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0318",
+   "Momiji",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0319",
+   "MONGO",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0320",
+   "Morton's The Steakhouse · Mexico City",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0321",
+   "Mou's Original Bar B Que",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0322",
+   "Mukyu Ramen",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0323",
+   "Murakami",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0324",
+   "Mux Restaurante",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0325",
+   "Mythos Cibeles",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0326",
+   "Mythos Estiatorio",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0327",
+   "Nadefo",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0328",
+   "Nativo Taller Gastronómico Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0329",
+   "Naufragante Restaurante",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0332",
+   "Negroni · Mitikah",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0333",
+   "Nibelungengarten",
+   "Restaurante",
+   "romasur"
+  ],
+  [
+   "R0335",
+   "Nobu · Arcos Bosques",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0337",
+   "Nostos · Lomas de Chapultepec",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0338",
+   "Nusr-Et Steakhouse Mexico City",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0339",
+   "O'Mandu",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0342",
+   "Onomura · Parque Hundido",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0343",
+   "Onomura · Prado Norte",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0344",
+   "Onomura · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0345",
+   "Órale Arepa",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0346",
+   "Oscuro Ramen",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0347",
+   "Ostería 8",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0348",
+   "OTTO",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0349",
+   "OXA Cocina Unica",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0350",
+   "Pakaá",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0351",
+   "Palominos · Insurgentes",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0352",
+   "Palominos · Palmas",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0354",
+   "Pargot",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0355",
+   "Parla",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0356",
+   "Pasillo de Humo",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0357",
+   "Pasta Comedia · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0358",
+   "Patio 81 Bistro",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0359",
+   "Paxia",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0360",
+   "Pelota Mestiza",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0361",
+   "PETIT HUNAN",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0363",
+   "Pigeon",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0364",
+   "Pinky Room",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0365",
+   "Pistilo",
+   "Mezcalería",
+   "roma"
+  ],
+  [
+   "R0367",
+   "Plantasia",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0368",
+   "PLONK",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0369",
+   "Por Siempre Vegana Taquería",
+   "Taquería",
+   "roma"
+  ],
+  [
+   "R0370",
+   "Porfirio's Coyoacán",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0371",
+   "Prendes Moliere",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0372",
+   "Prime Steak Club – Ángel De La Independencia",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0373",
+   "Pronti",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0375",
+   "Prosecco · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0376",
+   "Prosecco · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0377",
+   "Prosecco · Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0378",
+   "Puerto Madero · Mitikah",
+   "Restaurante",
+   "coyoacan"
+  ],
+  [
+   "R0379",
+   "Puerto Madero · San Angel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0380",
+   "Puerto Madero · Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0381",
+   "Puerto Prendes · Durango",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0382",
+   "Puerto Viejo Mariscos · Río Lerma",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0384",
+   "Qü-Qoo Kitchen Bar",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0388",
+   "Ramona",
+   "Restaurante",
+   "romasur"
+  ],
+  [
+   "R0389",
+   "Restaurante L' Ostia",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0390",
+   "Restaurante Mistral",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0391",
+   "Restaurante Tehuacan",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0392",
+   "Rincon Argentino · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0393",
+   "Rita la pizza fritta",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0394",
+   "Roca · Lomas",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0395",
+   "ROJO ROMA",
+   "Bar",
+   "roma"
+  ],
+  [
+   "R0396",
+   "Rokai",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0400",
+   "Sakai",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0401",
+   "Saks · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0402",
+   "Saks -Barranca",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0403",
+   "SAL E BRASA · REFORMA",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0404",
+   "Sal E Brasa Del Valle",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0405",
+   "Sal e Brasa Satelite",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0406",
+   "SAMOS · The Ritz Carlton México City",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0408",
+   "Santino condesa",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0409",
+   "Santino Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0410",
+   "Santo Hand Roll Bar",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0411",
+   "Santo Spirito",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0413",
+   "Savvia",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0414",
+   "Sente",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0415",
+   "Señora Tanaka · Masaryk",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0416",
+   "Sept Cinq 75 Francia",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0417",
+   "Séptimo Osteria",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0418",
+   "Sesame",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0419",
+   "Shu · Santa Fe",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0420",
+   "Siembra terraza",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0421",
+   "Simonetta Bistró",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0422",
+   "Sinaloa Seafood · Grill & Cantina",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0423",
+   "Sonia",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0424",
+   "Sonora Grill · Mundo E",
+   "Restaurante",
+   "satelite"
+  ],
+  [
+   "R0425",
+   "Sonora Grill · Narvarte",
+   "Restaurante",
+   "delvalle"
+  ],
+  [
+   "R0426",
+   "Sonora Grill · Reforma",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0427",
+   "Sonora Grill · Roma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0428",
+   "Sōōp",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0429",
+   "Soul la Roma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0431",
+   "SUKAI",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0432",
+   "Suntory · Pedregal",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0433",
+   "Suntory Lomas",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0434",
+   "SUVAI",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0435",
+   "Sylvestre · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0436",
+   "Taco Tasting Room",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0437",
+   "Tacos El Caminero",
+   "Taquería",
+   "juarez"
+  ],
+  [
+   "R0438",
+   "Tacos La Salsa",
+   "Taquería",
+   "juarez"
+  ],
+  [
+   "R0441",
+   "Tagers CDMX- San Ángel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0442",
+   "Talavera Bistro",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0444",
+   "Tandoor · Condesa",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0445",
+   "Taquería Gabriel",
+   "Taquería",
+   "juarez"
+  ],
+  [
+   "R0446",
+   "Taquería La Onda",
+   "Taquería",
+   "lomas"
+  ],
+  [
+   "R0447",
+   "Taquería La Roma",
+   "Taquería",
+   "romasur"
+  ],
+  [
+   "R0448",
+   "Taquería Los Amigos",
+   "Taquería",
+   "centro"
+  ],
+  [
+   "R0449",
+   "Taquería Los Chilangos",
+   "Taquería",
+   "centro"
+  ],
+  [
+   "R0450",
+   "Taquería Revolución",
+   "Taquería",
+   "delvalle"
+  ],
+  [
+   "R0451",
+   "Taro",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "R0452",
+   "Taverna",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0453",
+   "Teppan Grill- Hyatt Regency Mexico City",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0455",
+   "Terraza Rocco Zocalo",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0456",
+   "TESTAL · Centro Histórico",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0457",
+   "TESTAL · Roma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0458",
+   "Tezontle",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0459",
+   "THE HUB",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0460",
+   "The Palm Restaurant · Polanco",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0461",
+   "The Ramen House",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0462",
+   "TIGRE -MASARYK",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0463",
+   "TK Terraza Grill",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0464",
+   "TONCHIN CDMX",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0465",
+   "Tori Tori · Izakaya",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0466",
+   "Torino · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0467",
+   "Tortas al Fuego",
+   "Taquería",
+   "condesa"
+  ],
+  [
+   "R0468",
+   "Tostados",
+   "Café",
+   "juarez"
+  ],
+  [
+   "R0469",
+   "TRAMPA",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0470",
+   "Trastevere",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0471",
+   "Trattoria Grata",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0472",
+   "Trillo",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0473",
+   "Ultramarinos de Fran (Perisur)",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0475",
+   "Umbral",
+   "Restaurante",
+   "chapultepec"
+  ],
+  [
+   "R0476",
+   "Vacaciones",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0477",
+   "Varde",
+   "Bar",
+   "roma"
+  ],
+  [
+   "R0478",
+   "Vecchio Forno · Centro Histórico",
+   "Restaurante",
+   "centro"
+  ],
+  [
+   "R0479",
+   "Vegamo",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0480",
+   "VERA",
+   "Restaurante",
+   "cu"
+  ],
+  [
+   "R0481",
+   "Versalles 19",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0482",
+   "Viamonte",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0483",
+   "Vicinato",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0484",
+   "Vigneron",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0485",
+   "Viñetta",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0486",
+   "Wa Teppan & Sushi Bar · Santa Fe",
+   "Restaurante",
+   "santafe"
+  ],
+  [
+   "R0487",
+   "Wabi Sushi",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0488",
+   "Wagyu Jyube",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0489",
+   "WANWAN Sakaba",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0490",
+   "Warung Makan",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0491",
+   "Welik",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0492",
+   "Wok This Way",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0493",
+   "Xuna",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0494",
+   "Xuva’",
+   "Restaurante",
+   "juarez"
+  ],
+  [
+   "R0495",
+   "Yakumanka by Gaston Acurio · Roma",
+   "Restaurante",
+   "roma"
+  ],
+  [
+   "R0496",
+   "Yamasan Ramen House",
+   "Restaurante",
+   "condesa"
+  ],
+  [
+   "R0497",
+   "Yoshimi- Hyatt Regency Mexico City",
+   "Restaurante",
+   "polanco"
+  ],
+  [
+   "R0498",
+   "Zagala",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0499",
+   "Zeru · Lomas",
+   "Restaurante",
+   "lomas"
+  ],
+  [
+   "R0500",
+   "Zeru · San Ángel",
+   "Restaurante",
+   "sanangel"
+  ],
+  [
+   "C0009",
+   "Yancuic Museo Interactivo Infantil y Juvenil",
+   "Museo",
+   "xochimilco"
+  ],
+  [
+   "C0025",
+   "Zona Arqueológica de Tlatelolco",
+   "Sitio histórico",
+   "centro"
+  ],
+  [
+   "C0052",
+   "Parque Cuitláhuac",
+   "Parque",
+   "xochimilco"
+  ],
+  [
+   "C0055",
+   "Parque Tezozómoc",
+   "Parque",
+   "satelite"
+  ],
+  [
+   "C0056",
+   "Parque Rufino Tamayo",
+   "Parque",
+   "chapultepec"
+  ],
+  [
+   "C0062",
+   "Parque Frida Kahlo",
+   "Parque",
+   "coyoacan"
+  ],
+  [
+   "C0063",
+   "Parque de los Dinamos",
+   "Al aire libre",
+   "santafe"
+  ],
+  [
+   "C0064",
+   "Parque Alameda Nápoles",
+   "Parque",
+   "delvalle"
+  ],
+  [
+   "C0065",
+   "Parque La Tapatía",
+   "Parque",
+   "chapultepec"
+  ],
+  [
+   "C0066",
+   "Parque Naucalli",
+   "Parque",
+   "satelite"
+  ],
+  [
+   "C0067",
+   "Parque Circular Morelia",
+   "Parque",
+   "roma"
+  ],
+  [
+   "C0068",
+   "Parque de Pilares",
+   "Parque",
+   "delvalle"
+  ],
+  [
+   "C0069",
+   "Parque Ejidal San Nicolás Totolapan",
+   "Al aire libre",
+   "cu"
+  ],
+  [
+   "C0070",
+   "Parque canino del Jardín Alexander Pushkin",
+   "Parque",
+   "roma"
+  ],
+  [
+   "C0075",
+   "Parque Ecológico de Xochimilco",
+   "Parque",
+   "xochimilco"
+  ],
+  [
+   "C0077",
+   "Cineteca Nacional de las Artes",
+   "Cine",
+   "coyoacan"
+  ],
+  [
+   "C0078",
+   "Cineteca Nacional Chapultepec",
+   "Cine",
+   "lomas"
+  ],
+  [
+   "C0080",
+   "Le Cinéma IFAL",
+   "Cine",
+   "juarez"
+  ],
+  [
+   "C0087",
+   "Biblioteca Vasconcelos",
+   "Biblioteca",
+   "centro"
+  ],
+  [
+   "C0088",
+   "Biblioteca de México · La Ciudadela",
+   "Biblioteca",
+   "centro"
+  ],
+  [
+   "C0094",
+   "Enigma Rooms · Bosques de las Lomas",
+   "Escape room",
+   "santafe"
+  ],
+  [
+   "C0095",
+   "Escape Rooms México",
+   "Escape room",
+   "condesa"
+  ],
+  [
+   "C0096",
+   "Escape 60'",
+   "Escape room",
+   "roma"
+  ],
+  [
+   "C0098",
+   "Clayzie",
+   "Taller",
+   "roma"
+  ],
+  [
+   "C0099",
+   "Luaa Estudio de Cerámica",
+   "Taller",
+   "roma"
+  ],
+  [
+   "C0100",
+   "Casa Taller",
+   "Taller",
+   "romasur"
+  ],
+  [
+   "X0002",
+   "10&9 Rooftop and Cocktail Bar",
+   "Rooftop",
+   "polanco"
+  ],
+  [
+   "X0003",
+   "Bar Amici",
+   "Bar",
+   "roma"
+  ],
+  [
+   "X0004",
+   "Bar Latosa",
+   "Bar",
+   "roma"
+  ],
+  [
+   "X0005",
+   "Cabuya Rooftop",
+   "Rooftop",
+   "condesa"
+  ],
+  [
+   "X0008",
+   "Gin Gin · Álvaro Obregón",
+   "Bar",
+   "roma"
+  ],
+  [
+   "X0009",
+   "Gin Gin · Cibeles",
+   "Bar",
+   "roma"
+  ],
+  [
+   "X0010",
+   "Gin Gin · Condesa",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "X0011",
+   "Gin Gin · Plaza Satélite",
+   "Bar",
+   "satelite"
+  ],
+  [
+   "X0014",
+   "Hoppy House",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "X0015",
+   "Hugo",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "X0016",
+   "KATZ Cocktail Bar",
+   "Bar",
+   "roma"
+  ],
+  [
+   "X0020",
+   "Miah Bar",
+   "Bar",
+   "santafe"
+  ],
+  [
+   "X0021",
+   "Monolito",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "X0022",
+   "Nota Tavern",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "X0023",
+   "Pandora Rooftop",
+   "Rooftop",
+   "juarez"
+  ],
+  [
+   "X0024",
+   "pujol.itto",
+   "Bar",
+   "condesa"
+  ],
+  [
+   "X0025",
+   "Rosso Speakeasy",
+   "Speakeasy",
+   "condesa"
+  ],
+  [
+   "X0027",
+   "220 Panadería",
+   "Café",
+   "juarez"
+  ],
+  [
+   "X0028",
+   "Abarrotes Delirio",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0030",
+   "Amati Deli",
+   "Café",
+   "polanco"
+  ],
+  [
+   "X0032",
+   "Café Budapest Cukraszda",
+   "Café",
+   "condesa"
+  ],
+  [
+   "X0033",
+   "Café Margarita",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0035",
+   "Chico’s Cafe",
+   "Café",
+   "condesa"
+  ],
+  [
+   "X0037",
+   "Común Cafe & Vino",
+   "Café",
+   "coyoacan"
+  ],
+  [
+   "X0038",
+   "Crispy Cereal Bar",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0039",
+   "El Ocho Café Reactivo",
+   "Café",
+   "condesa"
+  ],
+  [
+   "X0042",
+   "Hard Rock Cafe México City WTC",
+   "Café",
+   "delvalle"
+  ],
+  [
+   "X0043",
+   "Hello Kitty Café Cibeles",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0044",
+   "La Especial de París",
+   "Heladería",
+   "juarez"
+  ],
+  [
+   "X0045",
+   "Le Pain Quotidien",
+   "Café",
+   "polanco"
+  ],
+  [
+   "X0046",
+   "Ludlow Bistró & Café · Mitikah",
+   "Café",
+   "coyoacan"
+  ],
+  [
+   "X0047",
+   "Madre Café",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0049",
+   "Marne Café",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0052",
+   "Pan Comido Anzures",
+   "Café",
+   "chapultepec"
+  ],
+  [
+   "X0053",
+   "Passmar",
+   "Café",
+   "delvalle"
+  ],
+  [
+   "X0054",
+   "Ritmo Café",
+   "Café",
+   "roma"
+  ],
+  [
+   "X0055",
+   "Territorio R Café Taller",
+   "Café",
+   "juarez"
+  ],
+  [
+   "X0058",
+   "Janis Palmas",
+   "Antro",
+   "lomas"
+  ],
+  [
+   "X0059",
+   "Kennedy Social Club",
+   "Antro",
+   "polanco"
+  ],
+  [
+   "X0060",
+   "La Santa",
+   "Antro",
+   "polanco"
+  ],
+  [
+   "X0062",
+   "M.R. Bar Club",
+   "Speakeasy",
+   "roma"
+  ],
+  [
+   "X0066",
+   "U.T.A. Bar",
+   "Bar",
+   "juarez"
+  ],
+  [
+   "X0067",
+   "Casa Morgana Heladería",
+   "Heladería",
+   "juarez"
+  ],
+  [
+   "X0068",
+   "Cold Beat",
+   "Heladería",
+   "roma"
+  ],
+  [
+   "X0069",
+   "Don Nino",
+   "Heladería",
+   "polanco"
+  ],
+  [
+   "X0070",
+   "Glaciar: Libros Helados",
+   "Heladería",
+   "juarez"
+  ],
+  [
+   "X0071",
+   "Helado Bonito",
+   "Heladería",
+   "roma"
+  ],
+  [
+   "X0072",
+   "Helados Amor Casero",
+   "Heladería",
+   "roma"
+  ],
+  [
+   "X0073",
+   "Joe Gelato",
+   "Heladería",
+   "juarez"
+  ],
+  [
+   "X0074",
+   "Monk'Ice",
+   "Heladería",
+   "juarez"
+  ],
+  [
+   "X0075",
+   "Nevería El Kiosco de Coyoacán",
+   "Heladería",
+   "coyoacan"
+  ],
+  [
+   "X0076",
+   "Nieve de Olla",
+   "Heladería",
+   "roma"
+  ],
+  [
+   "X0077",
+   "Nómada Heladería",
+   "Heladería",
+   "condesa"
+  ],
+  [
+   "X0078",
+   "Roxy",
+   "Heladería",
+   "condesa"
+  ],
+  [
+   "X0079",
+   "Sweet Monster",
+   "Heladería",
+   "roma"
+  ]
+ ],
+ "ya_estaba": [
+  [
+   "R0004",
+   "Aida",
+   "cdmx-4071",
+   "Aida Café · Santa Fe"
+  ],
+  [
+   "R0045",
+   "Bistro Estoril · Santa Fe",
+   "cdmx-4031",
+   "Bistro Estoril"
+  ],
+  [
+   "R0128",
+   "El Balcon del Zocalo",
+   "cdmx-2062",
+   "Balcón del Zócalo"
+  ],
+  [
+   "R0242",
+   "La Mallorquina Arcos",
+   "cdmx-4032",
+   "La Mallorquina · Arcos Bosques"
+  ],
+  [
+   "R0303",
+   "Maximo",
+   "cdmx-0015",
+   "Máximo Bistrot"
+  ],
+  [
+   "R0385",
+   "Quattro · JW Marriott Sta Fe",
+   "cdmx-2113",
+   "Quattro"
+  ],
+  [
+   "R0399",
+   "Ryoshi · Masaryk",
+   "cdmx-2001",
+   "Ryoshi · Masaryk"
+  ],
+  [
+   "R0439",
+   "Tacos Orinoco",
+   "orinoco",
+   "Taquería Orinoco"
+  ],
+  [
+   "R0440",
+   "Tacos Paris · CDMX",
+   "cdmx-4018",
+   "Tacos París"
+  ],
+  [
+   "C0002",
+   "Museo Nacional de Historia",
+   "cdmx-2145",
+   "Castillo de Chapultepec · Museo Nacional de Historia"
+  ],
+  [
+   "C0003",
+   "Museo Tamayo Arte Contemporáneo",
+   "tamayo",
+   "Museo Tamayo"
+  ],
+  [
+   "C0007",
+   "Centro de Cultura Ambiental Chapultepec",
+   "cdmx-0890",
+   "Centro de Cultura Ambiental"
+  ],
+  [
+   "C0008",
+   "Munal. Museo Nacional de Arte",
+   "cdmx-0159",
+   "Museo Nacional de Arte (MUNAL) (Cierre temporal)"
+  ],
+  [
+   "C0010",
+   "Laboratorio Arte Alameda",
+   "cdmx-0491",
+   "Laboratorio Arte Alameda (LAA)"
+  ],
+  [
+   "C0011",
+   "Museo de la Medicina Mexicana",
+   "cdmx-0381",
+   "Museo de la Medicina Mexicana, Palacio de la Escuela de Medicina"
+  ],
+  [
+   "C0014",
+   "Museo Ex Teresa Arte Actual",
+   "cdmx-0596",
+   "Ex Teresa Arte Actual (EXTAA)"
+  ],
+  [
+   "C0015",
+   "Museo de Arte Moderno",
+   "cdmx-0146",
+   "Museo de Arte Moderno (MAM)"
+  ],
+  [
+   "C0017",
+   "Museo de Arte Popular (MAP)",
+   "cdmx-0145",
+   "Museo de Arte Popular"
+  ],
+  [
+   "C0019",
+   "Casa Estudio de Diego Rivera y Frida Kahlo",
+   "cdmx-0224",
+   "Museo Casa Estudio Diego Rivera y Frida Kahlo"
+  ],
+  [
+   "C0020",
+   "MUAC, Museo Universitario de Arte Contemporáneo",
+   "muac",
+   "MUAC · CU"
+  ],
+  [
+   "C0023",
+   "Museo Soumaya Casa Guillermo Tovar de Teresa",
+   "cdmx-0150",
+   "Casa Guillermo Tovar de Teresa"
+  ],
+  [
+   "C0024",
+   "Centro Cultural Universitario Tlatelolco",
+   "cdmx-0184",
+   "Centro Cultural Universitario Tlatelolco (CCUT)"
+  ],
+  [
+   "C0026",
+   "Museo Antiguo Colegio de San Ildefonso",
+   "cdmx-0671",
+   "Antiguo Colegio de San Ildefonso"
+  ],
+  [
+   "C0027",
+   "Centro Cultural de España (México)",
+   "cdmx-0611",
+   "Centro Cultural de España en México"
+  ],
+  [
+   "C0028",
+   "Centro de la Imagen",
+   "cdmx-0417",
+   "Museo Centro de la Imagen"
+  ],
+  [
+   "C0030",
+   "Museo de Arte Carrillo Gil",
+   "cdmx-0823",
+   "Museo de Arte Alvar y Carmen T. de Carrillo Gil"
+  ],
+  [
+   "C0031",
+   "Museo Diego Rivera Anahuacalli",
+   "anahuacalli",
+   "Museo Anahuacalli"
+  ],
+  [
+   "C0054",
+   "Parque Luis G. Urbina (Parque Hundido)",
+   "cdmx-0098",
+   "Parque Hundido"
+  ],
+  [
+   "C0072",
+   "Jardín Botánico del Bosque de Chapultepec",
+   "cdmx-0113",
+   "Jardín Botánico de Chapultepec"
+  ],
+  [
+   "C0076",
+   "Cineteca Nacional Xoco",
+   "cineteca",
+   "Cineteca Nacional"
+  ],
+  [
+   "C0081",
+   "Arena México",
+   "arena",
+   "Lucha libre · Arena México"
+  ],
+  [
+   "C0085",
+   "Casa del Lago UNAM",
+   "cdmx-0186",
+   "Casa del Lago Juan José Arreola"
+  ],
+  [
+   "C0091",
+   "Lago de Chapultepec, paseo en lancha",
+   "cdmx-0110",
+   "Lago de Chapultepec"
+  ],
+  [
+   "C0092",
+   "Enigma Rooms Roma",
+   "cdmx-3010",
+   "Enigma Rooms Roma I"
+  ]
+ ],
+ "excluido": [
+  [
+   "R0340",
+   "Ödün",
+   "La fuente lo marca como cerrado."
+  ],
+  [
+   "X0006",
+   "El 98",
+   "No encontramos dirección ni ficha de \"El 98\" en ninguna fuente; sin ubicación no se puede proponer."
+  ],
+  [
+   "X0048",
+   "Mantequilla Social Club",
+   "Mantequilla Social Club se cargó a mano en la auditoría (cdmx-4076), con categoría y cupo correctos."
+  ],
+  [
+   "X0056",
+   "White Willow Café",
+   "La fuente lo marca como cerrado."
+  ],
+  [
+   "X0064",
+   "Sens",
+   "Time Out sólo dice \"zona metropolitana\": no encontramos dirección de Sens."
+  ],
+  [
+   "X0065",
+   "The Grand Hotel Club",
+   "Time Out sólo dice \"zona metropolitana\": no encontramos dirección de The Grand Hotel Club."
+  ]
+ ],
+ "lejos": [
+  [
+   "C0009",
+   "Yancuic Museo Interactivo Infantil y Juvenil",
+   "xochimilco",
+   10.5
+  ],
+  [
+   "C0052",
+   "Parque Cuitláhuac",
+   "xochimilco",
+   11.9
+  ],
+  [
+   "C0063",
+   "Parque de los Dinamos",
+   "santafe",
+   7.3
+  ],
+  [
+   "C0069",
+   "Parque Ejidal San Nicolás Totolapan",
+   "cu",
+   9.9
+  ]
+ ],
+ "sin_coord": [
+  [
+   "C0002",
+   "Museo Nacional de Historia",
+   ""
+  ],
+  [
+   "C0003",
+   "Museo Tamayo Arte Contemporáneo",
+   ""
+  ],
+  [
+   "C0007",
+   "Centro de Cultura Ambiental Chapultepec",
+   ""
+  ],
+  [
+   "C0008",
+   "Munal. Museo Nacional de Arte",
+   ""
+  ],
+  [
+   "C0010",
+   "Laboratorio Arte Alameda",
+   ""
+  ],
+  [
+   "C0019",
+   "Casa Estudio de Diego Rivera y Frida Kahlo",
+   ""
+  ],
+  [
+   "C0023",
+   "Museo Soumaya Casa Guillermo Tovar de Teresa",
+   ""
+  ],
+  [
+   "C0054",
+   "Parque Luis G. Urbina (Parque Hundido)",
+   ""
+  ],
+  [
+   "C0072",
+   "Jardín Botánico del Bosque de Chapultepec",
+   ""
+  ],
+  [
+   "C0091",
+   "Lago de Chapultepec, paseo en lancha",
+   ""
+  ],
+  [
+   "C0092",
+   "Enigma Rooms Roma",
+   ""
+  ]
+ ],
+ "precio_ot": [
+  [
+   "cdmx-0034",
+   "Bijou Drinkery Room",
+   "Bijou Drinkery Room",
+   550,
+   1100
+  ],
+  [
+   "cdmx-2041",
+   "Porfirio's · Masaryk",
+   "Porfirio's - Polanco",
+   750,
+   650
+  ],
+  [
+   "cdmx-2070",
+   "Los Danzantes · Coyoacán",
+   "Los Danzantes - Mexico City",
+   620,
+   1100
+  ],
+  [
+   "cdmx-2160",
+   "Sonora Grill · Mitikah",
+   "Sonora Grill - Coyoacán",
+   700,
+   1100
+  ],
+  [
+   "cdmx-2195",
+   "Sylvestre",
+   "Sylvestre - Polanco",
+   850,
+   1100
+  ],
+  [
+   "cdmx-4002",
+   "Campomar · Masaryk",
+   "Campomar - Masaryk",
+   750,
+   650
+  ],
+  [
+   "cdmx-4013",
+   "Kotsu by Onomura",
+   "Kotsu By Onomura",
+   750,
+   1100
+  ]
+ ]
+}

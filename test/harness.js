@@ -53,6 +53,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Capa de auditoría (define window.SOBRES_AUDITORIA)
   const aud = fs.readFileSync(path.join(ROOT, 'data', 'auditoria.js'), 'utf8');
   new Function('window', aud)(win);
+  // Lugares del Excel de candidatos (define window.SOBRES_EXCEL)
+  const xl = path.join(ROOT, 'data', 'excel.js');
+  if (fs.existsSync(xl)) new Function('window', fs.readFileSync(xl, 'utf8'))(win);
 
   const Component = new Function(...Object.keys(sandbox),
     m[1] + '\n;return Component;')(...Object.values(sandbox));
@@ -70,6 +73,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
       av: o.tier === 'A' ? 'Alta demanda · reserva directa' : 'Verificar disponibilidad', ext:true };
   });
   app.ZGEO = {}; (D.zones || []).forEach(z => { app.ZGEO[z[0]] = [z[2], z[3]]; });
+  Object.keys(app.ZGEO_EXTRA || {}).forEach(k => { if (!app.ZGEO[k]) app.ZGEO[k] = app.ZGEO_EXTRA[k]; });
 
   // Misma aplicación de la auditoría que hace componentDidMount en el navegador.
   app.EXT = app.aplicarAuditoria(app.EXT);

@@ -94,7 +94,7 @@ window.SOBRES_AUDITORIA = (function () {
    * ---------------------------------------------------------------- */
   const ACT_POR_CAT = {
     'Restaurante': ['comida','cena'], 'Taquería': ['comida','cena'], 'Fonda de autor': ['comida','cena'],
-    'Izakaya': ['cena','copas'], 'Churrería': ['cafe'], 'Café': ['cafe','desayuno'],
+    'Izakaya': ['cena','copas'], 'Churrería': ['cafe'], 'Café': ['cafe','desayuno'], 'Heladería': ['cafe'],
     'Mercado': ['comida','compras'], 'Cantina': ['copas','comida'],
     'Bar': ['copas'], 'Bar de autor': ['copas'], 'Speakeasy': ['copas'], 'Mezcalería': ['copas'],
     'Rooftop': ['copas','vista'], 'Antro': ['baile','copas'], 'Salón de baile': ['baile'],
@@ -142,6 +142,28 @@ window.SOBRES_AUDITORIA = (function () {
    * `estado`: verificado (cifra oficial) | rango (evidencia indirecta  *
    *    consistente) | por_confirmar (sin evidencia suficiente)         *
    * ---------------------------------------------------------------- */
+  /* Fuentes y ayudantes de la pasada del 19-oct-2026 */
+  const H19 = '2026-10-19';
+  const F_SECRETA = { fuente: 'CDMX Secreta — "Museos en CDMX": precios y días gratis (13-ene-2026)', url: 'https://cdmxsecreta.com/museos-en-cdmx/' };
+  const F_INAH26 = { fuente: 'Chilango — tarifas 2026 del INAH por categoría (7-ene-2026)', url: 'https://www.chilango.com/que-hacer/arte-y-cultura/precios-de-entrada-museos-cdmx-zonas-arqueologicas-del-pais-2026/' };
+  const F_INBAL = { fuente: 'Time Out México — tarifas de los museos del INBAL; el aumento propuesto para 2026 no se aprobó (11-sep-2025) y guías de 2026 que siguen publicando $95', url: 'https://www.timeoutmexico.mx/ciudad-de-mexico/museos-y-centros-culturales/aumentarian-precios-de-museos-en-2026-esto-costarian-las-entradas' };
+  const F_SOUMAYA = { fuente: 'Museo Soumaya (entrada libre en sus sedes) y UnoTV sobre la exposición de 2026 en Plaza Loreto', url: 'https://www.unotv.com/cultura/colores-de-identidad-la-exposicion-del-museo-soumaya-que-hace-un-repaso-a-la-historia-de-los-mundiales-en-mexico/' };
+  const museo = (rep, min, max, canasta, F, extra) => Object.assign({
+    precio: { min, rep, max, unidad: 'persona', moneda: 'MXN', canasta },
+    estado: 'verificado', fuente: F.fuente, url: F.url, fecha: H19 }, extra || {});
+  const restaurante = (min, rep, max, canasta, fuente, url, extra) => Object.assign({
+    precio: { min, rep, max, unidad: 'persona', moneda: 'MXN', canasta },
+    estado: 'rango', fuente, url, fecha: H19 }, extra || {});
+  // Estimación declarada: sin carta ni boleto, pero con una base dicha
+  // (nivel de la Guía MICHELIN, banda de OpenTable o tipo de lugar).
+  const estimado = (rep, canasta, fuente, extra) => Object.assign({
+    precio: { min: null, rep, max: null, unidad: 'persona', moneda: 'MXN', canasta: canasta + ' Es una estimación, no un precio de carta.' },
+    estado: 'estimado', fuente, fecha: H19 }, extra || {});
+  const TO_BEST = 'Time Out México BEST 2025 (no publica precios)';
+  const fundador = (rep, canasta, extra) => Object.assign({
+    precio: { min: null, rep, max: null, unidad: 'persona', moneda: 'MXN', canasta: canasta + ' El motor suma la propina aparte.' },
+    estado: 'estimado', fuente: 'Referencia de precio del fundador de SOBRES (19-oct-2026)', fecha: H19 }, extra || {});
+
   const LUGARES = {
     /* ---- Museos: el defecto de $85 contra las taquillas reales ---- */
     'cdmx-0200': {
@@ -161,6 +183,7 @@ window.SOBRES_AUDITORIA = (function () {
       nota: 'Tarifa actualizada en 2026; el catálogo traía el defecto de categoría.'
     },
     'cdmx-0151': {
+      n: 'Museo Soumaya · Plaza Carso',
       precio: { min: 0, rep: 0, max: 0, unidad: 'persona', moneda: 'MXN',
         canasta: 'Entrada libre a las salas; no incluye consumo en cafetería ni estacionamiento de Plaza Carso.' },
       estado: 'verificado', ppAnterior: 85,
@@ -212,9 +235,12 @@ window.SOBRES_AUDITORIA = (function () {
       oh: [23, 27], hrs: 'Horario por confirmar (no publicado)', horaEstimada: true,
       tags: ['nightlife','social'], who: ['amigos','compa','date'], tm: ['noche'],
       basis: 'Club nocturno de reggaetón, pop comercial y hits urbanos sobre Masaryk',
-      precio: { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: null },
-      estado: 'por_confirmar', falta: 'el cover o consumo mínimo, y el horario',
-      fuente: 'CDMX Reservas (ficha "Casa San Juan CDMX", Masaryk 393) y Mango Mango (pin de Google Maps 19.432158, -99.1981266)',
+      // Precio: referencia del fundador (19-oct-2026), ~$2,000 por persona en
+      // total; el motor suma la propina aparte, por eso el consumo es $1,800.
+      precio: { min: null, rep: 1800, max: null, unidad: 'persona', moneda: 'MXN',
+        canasta: 'Referencia del fundador: ~$2,000 por persona en total (cover o consumo, bebidas y propina). El motor suma la propina aparte.' },
+      estado: 'estimado', falta: 'el horario',
+      fuente: 'CDMX Reservas (ficha "Casa San Juan CDMX", Masaryk 393) y Mango Mango (pin de Google Maps 19.432158, -99.1981266); precio: referencia del fundador',
       url: 'https://cdmxreservas.com/casa-san-juan-masaryk/', fecha: '2026-10-18',
       sucursal: 'Av. Presidente Masaryk 393, Polanco III Secc, Miguel Hidalgo, 11560',
       nota: 'Antes: "Casa San Juan · Lomas", Restaurante, Av. Prado Norte, $750, 13:00–23:00 — nada de eso tenía fuente. Ahora es antro en Polanco. Código de vestimenta según la ficha: casual elegante. Horario, días y cover siguen sin confirmar.'
@@ -230,7 +256,130 @@ window.SOBRES_AUDITORIA = (function () {
       fuente: 'Six Flags México — boletos de un día (sitio oficial)', url: 'https://www.sixflags.com/mexico/daily-tickets', fecha: HOY,
       sucursal: 'Carr. Picacho al Ajusco 1500, Tlalpan',
       nota: 'El precio de taquilla es distinto al de la tienda digital, y el de un día varía por fecha: por eso es rango y no una cifra fija. El catálogo lo tenía en $900, por debajo del mínimo real.'
-    }
+    },
+
+    /* ================================================================ *
+     * Pasada del 19-oct-2026: precios revisados y nombres aclarados     *
+     * ================================================================ */
+
+    /* ---- Museos: taquillas 2026 ---- */
+    'tamayo': museo(95, 0, 95, 'General $95; domingo entrada libre; gratis menores de 13, estudiantes, docentes e INAPAM.', F_SECRETA,
+      { hrs: 'Mar–Dom 10:00–18:00', nota: 'Es museo del INBAL: el aumento propuesto para 2026 no se aprobó y la tarifa sigue en $95.' }),
+    'muac': museo(60, 0, 60, 'General $60; domingo $30; gratis para comunidad UNAM, menores de 12 y personas con discapacidad.', F_SECRETA,
+      { ppAnterior: 40 }),
+    'anahuacalli': museo(100, 20, 130, 'Nacional $100, extranjero $130; estudiantes y profesores $35; INAPAM y primarias públicas $20.', F_SECRETA),
+    'jumex': museo(0, 0, 0, 'Entrada libre todos los días.', F_SECRETA),
+    'cdmx-0005': museo(105, 0, 210, 'Categoría I del INAH en 2026: $105 nacionales y residentes, $210 extranjeros; domingo gratis para nacionales y residentes. Un mismo boleto incluye el museo y la zona arqueológica.', F_INAH26,
+      { n: 'Templo Mayor (museo y zona arqueológica)', ppAnterior: 100 }),
+    'cdmx-0006': museo(100, 0, 100, 'General $100; domingo entrada libre; gratis INAPAM, menores de 13, estudiantes y profesores.', F_SECRETA),
+    'cdmx-0007': museo(80, 0, 145, 'Categoría III del INAH en 2026: $80 nacionales, $145 extranjeros; domingo gratis para nacionales.', F_INAH26, { ppAnterior: 100 }),
+    'cdmx-2145': museo(105, 0, 210, 'Categoría I del INAH en 2026: $105 nacionales y residentes, $210 extranjeros; domingo gratis para nacionales; gratis menores de 13, INAPAM, estudiantes y maestros.', F_INAH26,
+      { n: 'Castillo de Chapultepec · Museo Nacional de Historia', ppAnterior: 95 }),
+    'cdmx-0021': museo(85, 0, 155, 'Categoría II del INAH en 2026: $85 nacionales y residentes, $155 extranjeros sin residencia.', F_INAH26, { ppAnterior: 100 }),
+    'cdmx-0142': museo(95, 0, 95, 'General $95; domingo entrada libre; $30 estudiantes, maestros, INAPAM y menores de 13.', F_SECRETA,
+      { n: 'Palacio de Bellas Artes (museo)' }),
+    'cdmx-0146': museo(95, 0, 95, 'General $95; domingo entrada libre; gratis estudiantes, docentes e INAPAM.', F_INBAL),
+    'cdmx-0159': museo(95, 0, 95, 'General $95 (tarifa INBAL).', F_INBAL,
+      { cerradoTemporal: true, nota: 'Cerrado "hasta nuevo aviso" desde el 2 de junio de 2026 (plantón en la calle Tacuba). No se propone hasta que reabra.' }),
+    'cdmx-0164': museo(120, 65, 120, 'General $120; estudiantes, maestros e INAPAM $65.', F_SECRETA),
+    'cdmx-0145': museo(60, 0, 60, 'General $60; domingo entrada libre; gratis menores de 18, estudiantes, maestros, INAPAM y artesanos.', F_SECRETA),
+    'cdmx-0162': museo(160, 160, 160, 'Entrada general $160; algunas exposiciones temporales se cobran aparte.', F_SECRETA),
+    'cdmx-0153': museo(40, 20, 40, 'General $40; $20 estudiantes, maestros e INAPAM; domingo entrada libre.', F_SECRETA),
+    'cdmx-0372': museo(30, 25, 30, 'General $30; $25 estudiantes, maestros e INAPAM.', F_SECRETA),
+    'cdmx-0224': museo(45, 0, 60, 'Entre $45 y $60 según la tarifa vigente del INBAL; gratis menores de 13, INAPAM, maestros y estudiantes.', F_INBAL),
+    'cdmx-0491': museo(45, 0, 60, 'Entre $45 y $60 según la tarifa vigente del INBAL.', F_INBAL),
+    'cdmx-0403': museo(45, 0, 60, 'Entre $45 y $60 según la tarifa vigente del INBAL.', F_INBAL),
+    'cdmx-0138': museo(45, 0, 60, 'Entre $45 y $60 según la tarifa vigente del INBAL.', F_INBAL),
+    'cdmx-0193': museo(90, 80, 90, 'General $90; $80 niños de 2 a 12, estudiantes, profesores, INAPAM y comunidad UNAM.', F_SECRETA),
+    'cdmx-0198': museo(0, 0, 0, 'Entrada libre.', F_SECRETA),
+    'cdmx-0199': museo(21, 0, 21, 'General $21; domingo entrada libre; gratis INAPAM, estudiantes, maestros y menores de 12.', F_SECRETA),
+    'cdmx-0195': museo(0, 0, 0, 'Entrada libre.', F_SECRETA),
+    'cdmx-0385': museo(0, 0, 0, 'Entrada libre.', F_SECRETA),
+    'cdmx-0708': museo(50, 50, 50, 'Entrada general $50.', F_SECRETA),
+    'cdmx-0221': museo(0, 0, 0, 'Entrada libre.', F_SOUMAYA,
+      { n: 'Museo Soumaya · Plaza Loreto', nota: 'Es la sede ORIGINAL del Museo Soumaya (1994), en San Ángel, con exposiciones propias; la de Plaza Carso es la del edificio plateado. Son dos sedes reales y distintas; el motor no propone las dos en la misma tanda.' }),
+    'cdmx-0150': { n: 'Casa Guillermo Tovar de Teresa' },
+
+    /* ---- Restaurantes con estrella MICHELIN: lo que cuesta de verdad ---- */
+    'cdmx-0001': restaurante(5610, 6600, 13310,
+      'Menú degustación $5,610 por persona SIN bebidas; maridajes de $1,980 (sin alcohol) a $7,700. El representativo suma el menú y una o dos copas (estimado); el máximo, menú con el maridaje más caro.',
+      'UnoTV — "Ocho restaurantes mexicanos entre los 50 mejores del mundo: cuánto cuesta comer ahí" (4-dic-2025)', 'https://www.unotv.com/estilo-de-vida/gastronomia/ocho-restaurantes-mexicanos-lograron-un-lugar-entre-los-50-mejores-del-mundo-cuanto-cuesta-comer-ahi/',
+      { distincion: 'Dos estrellas MICHELIN', nota: 'El catálogo traía $1,500 (valor por defecto). Ni siquiera la referencia de ~$2,000 alcanza: el menú solo cuesta $5,610.' }),
+    'cdmx-0002': restaurante(3500, 4300, null,
+      'Menú degustación u omakase de tacos de ~$3,500 a ~$3,995 por persona SIN bebidas. El representativo suma una o dos bebidas (estimado).',
+      'TV Azteca (3-jun-2025) y Tus Buenas Noticias (17-jun-2025) sobre precios de restaurantes MICHELIN en CDMX', 'https://www.tvazteca.com/aztecauno/especiales-azteca/cuanto-cuesta-comer-en-restaurantes-cdmx-que-tienen-estrella-michelin',
+      { distincion: 'Dos estrellas MICHELIN' }),
+    'cdmx-0015': restaurante(1400, 2000, 5650,
+      'A la carta desde $1,400 por persona sin bebidas ni propina; menú degustación $3,800 o $5,650 con maridaje. El representativo es a la carta con una bebida (estimado).',
+      'UnoTV (4-dic-2025)', 'https://www.unotv.com/estilo-de-vida/gastronomia/ocho-restaurantes-mexicanos-lograron-un-lugar-entre-los-50-mejores-del-mundo-cuanto-cuesta-comer-ahi/',
+      { distincion: 'Una estrella MICHELIN' }),
+    'cdmx-2012': restaurante(null, 1500, null,
+      'Ticket promedio de alrededor de $1,500 por persona según comensales; depende de lo que se pida.',
+      'UnoTV (4-dic-2025)', 'https://www.unotv.com/estilo-de-vida/gastronomia/ocho-restaurantes-mexicanos-lograron-un-lugar-entre-los-50-mejores-del-mundo-cuanto-cuesta-comer-ahi/',
+      { distincion: 'Una estrella MICHELIN', ppAnterior: 900 }),
+    'cdmx-2013': restaurante(3100, 3800, null,
+      'Menú degustación de 8–9 tiempos $3,100 por persona sin bebidas, más una cuota de reservación de ~$500 por persona (dato de 2024). El representativo suma una o dos bebidas (estimado).',
+      'TV Azteca (3-jun-2025); El CEO (15-may-2024)', 'https://www.tvazteca.com/aztecauno/especiales-azteca/cuanto-cuesta-comer-en-restaurantes-cdmx-que-tienen-estrella-michelin',
+      { distincion: 'Una estrella MICHELIN', ppAnterior: 950 }),
+    'cdmx-2177': restaurante(1400, 1800, null,
+      'Alrededor de $1,400 por persona más cuota de reservación (dato de 2024, el más reciente con cifra); el representativo suma una bebida (estimado).',
+      'El CEO (15-may-2024)', 'https://elceo.com/negocios/cuanto-cuesta-comer-en-los-restaurantes-de-la-cdmx-en-la-guia-de-estrellas-michelin/',
+      { distincion: 'Una estrella MICHELIN', ppAnterior: 1400 }),
+    'expendio': restaurante(null, 500, null,
+      'Promedio aproximado de $500 por persona.', 'Tus Buenas Noticias (17-jun-2025)', 'https://www.tusbuenasnoticias.com/amp/noticias/actualidad/2025/06/17/46670-esto-cuesta-comer-en-los-restaurantes-de-la-guia-michelin-en-mexico',
+      { n: 'Expendio de Maíz Sin Nombre', distincion: 'Una estrella MICHELIN', ppAnterior: 350 }),
+    'cdmx-2183': { distincion: 'Una estrella MICHELIN' },
+
+    /* ---- Ubicación equivocada ---- */
+    'cdmx-2212': { zone: 'coyoacan', col: 'Country Club Churubusco', addr: 'Corredores s/n, Country Club Churubusco',
+      lat: 19.3437, lng: -99.1424, hrs: 'Todos los días 8:00–21:00', oh: [8, 21],
+      fuente: 'Time Out México — Top parques de la CDMX (23-ene-2025)',
+      nota: 'Estaba ubicado en Ciudad Universitaria; el parque japonés ("la pagoda") está en Country Club Churubusco, Coyoacán.' },
+
+    /* ---- Los $1,500 "de relleno": estimación con base declarada ---- */
+    'cdmx-0023': estimado(600, 'Bib Gourmand (buena relación calidad-precio): estimamos ~$600 por persona con una bebida.', 'Guía MICHELIN México 2025', { ppAnterior: 1500, nota: 'No aparece en la lista 2026 de la Guía para la Ciudad de México: confirma que siga abierto.' }),
+    'cdmx-0030': estimado(350, 'Bib Gourmand, nivel $ de la Guía MICHELIN: estimamos ~$350 por persona con una bebida.', 'Guía MICHELIN Ciudad de México (consultada 19-oct-2026)', { ppAnterior: 1500, distincion: 'Bib Gourmand' }),
+    'cdmx-0071': estimado(1600, 'Nivel $$$ de la Guía MICHELIN: estimamos ~$1,600 por persona con una bebida.', 'Guía MICHELIN Ciudad de México (consultada 19-oct-2026)', { ppAnterior: 1500, distincion: 'Recomendado por la Guía MICHELIN' }),
+    'cdmx-0076': estimado(250, 'Taquería de nivel $ en la Guía MICHELIN: estimamos ~$250 por persona con refresco.', 'Guía MICHELIN Ciudad de México (consultada 19-oct-2026)', { ppAnterior: 1500, cat: 'Taquería', distincion: 'Recomendado por la Guía MICHELIN' }),
+    'cdmx-0077': estimado(180, 'Tacos y panuchos de cochinita: estimamos ~$180 por persona con refresco.', 'Condé Nast Traveler 2025 (no publica precios); Time Out lo ubica en el nivel 1 de 4', { ppAnterior: 1500, cat: 'Taquería' }),
+    'cdmx-0075': estimado(220, 'Fonda de desayunos y guisados: estimamos ~$220 por persona.', 'Condé Nast Traveler 2025 (no publica precios)', { ppAnterior: 1500 }),
+    'cdmx-0072': estimado(400, 'Cantina de birria: estimamos ~$400 por persona con una cerveza.', 'Condé Nast Traveler 2025 (no publica precios)', { ppAnterior: 1500 }),
+    'cdmx-0079': estimado(450, 'Barbacoa de fin de semana: estimamos ~$450 por persona con bebida.', 'Condé Nast Traveler 2025 (no publica precios)', { ppAnterior: 1500 }),
+    'cdmx-0064': estimado(900, 'Mezcalería con cocina en Polanco: estimamos ~$900 por persona (dos mezcales o cocteles y algo de comer).', 'Condé Nast Traveler 2025 (no publica precios)', { ppAnterior: 1500 }),
+    'cdmx-0048': estimado(650, 'OpenTable publica la banda "De $310 a $500" por persona: estimamos ~$650 con una bebida.', 'OpenTable (banda de precio de GIA, Aguascalientes 237)', { ppAnterior: 1500 }),
+    'cdmx-0037': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una bebida, típico de un restaurante de autor en la Roma.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0038': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una bebida, típico de un restaurante de autor en la Juárez.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0042': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una bebida.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0043': estimado(500, 'Sin precio publicado: estimamos ~$500 por persona con una copa (deli y vinos italianos).', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0044': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una bebida.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0046': estimado(900, 'Sin precio publicado: estimamos ~$900 por persona con una bebida, típico de Polanco.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0047': estimado(500, 'Sin precio publicado: estimamos ~$500 por persona con una bebida.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0049': estimado(900, 'Sin precio publicado: estimamos ~$900 por persona con una bebida (cocina japonesa).', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0050': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una bebida.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0051': estimado(600, 'Sin precio publicado: estimamos ~$600 por persona con una bebida.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0052': estimado(800, 'Sin precio publicado: estimamos ~$800 por persona con una bebida, típico de Polanco.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0053': estimado(600, 'Sin precio publicado: estimamos ~$600 por persona con una bebida (cocina vegetariana).', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0054': estimado(600, 'Sin precio publicado: estimamos ~$600 por persona con una bebida (cocina sarda).', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0055': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una bebida.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0056': estimado(700, 'Sin precio publicado: estimamos ~$700 por persona con una copa de vino.', TO_BEST, { ppAnterior: 1500 }),
+    'cdmx-0057': estimado(800, 'Sin precio publicado: estimamos ~$800 por persona con una bebida (mariscos).', TO_BEST, { ppAnterior: 1500 }),
+
+    /* ---- Antros: cover + tragos, no sólo la entrada ---- */
+    'cdmx-2175': estimado(650, 'Cover de unos $350 según Time Out, más dos tragos: estimamos ~$650 por persona.', 'Time Out México — Top 10 antros de la CDMX (9-abr-2025)', { ppAnterior: 380 }),
+    'cdmx-2024': estimado(800, 'Time Out lo ubica en el nivel 2 de 4: estimamos ~$800 por persona entre cover y tragos.', 'Time Out México — Top 10 antros de la CDMX (9-abr-2025)', { ppAnterior: 450 }),
+    'cdmx-2022': estimado(450, 'Time Out lo ubica en el nivel 1 de 4: estimamos ~$450 por persona entre cover y cervezas.', 'Time Out México — Top 10 antros de la CDMX (9-abr-2025)', { ppAnterior: 150 }),
+
+    /* ---- Referencias de precio del fundador (19-oct-2026) ---- */
+    // Cifras TOTALES por persona (consumo + propina). El motor suma 10% de
+    // propina aparte, así que el consumo se carga como cifra/1.1.
+    'cdmx-2007': fundador(1350, 'Referencia del fundador: ~$1,500 por persona en total (bebidas, algo de comer y propina).',
+      { n: 'Sala de Despecho · Masaryk', addr: 'Av. Presidente Masaryk 393 (plaza comercial)', col: 'Polanco III Secc',
+        lat: 19.432158, lng: -99.1981266, oh: [17, 26], hrs: 'Lun–Sáb 17:00–02:00', dias: [1, 2, 3, 4, 5, 6],
+        fuenteDatos: 'CDMX Reservas — fichas de Sala de Despecho (Masaryk y Bosques)' }),
+    'cdmx-2001': fundador(1100, 'Referencia del fundador: ~$1,200 por persona en total. OpenTable lo ubica en la banda "más de $500".',
+      { n: 'Ryoshi · Masaryk', addr: 'Av. Presidente Masaryk 111', col: 'Polanco III Secc', lat: 19.4314825, lng: -99.1866323,
+        oh: [12.5, 24], hrs: 'Dom y Lun 12:30–00:00 · Mar–Jue 12:30–01:00 · Vie y Sáb 12:30–02:00', web: 'https://costeno.com/ryoshi/',
+        cocina: 'Japonesa', vestimenta: 'Informal y elegante' })
   };
 
   /* ---------------------------------------------------------------- *
@@ -252,7 +401,40 @@ window.SOBRES_AUDITORIA = (function () {
       era: 'Panem Del Valle — Café — "Del Valle" — $220',
       motivo: 'Sucursal inexistente, mismo caso que cdmx-2006: sin calle ni número y sin respaldo en el sitio oficial.',
       fuente: 'panem.mx', fecha: HOY
-    }
+    },
+    'cdmx-0147': { era: 'Museo de Arte Contemporáneo Internacional Rufino Tamayo', motivo: 'Repetido: es el mismo Museo Tamayo que ya está en el catálogo curado.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'tamayo' },
+    'cdmx-0008': { era: 'Museo Nacional de Historia Castillo de Chapultepec (zona Polanco)', motivo: 'Repetido del Castillo de Chapultepec, y además estaba en la zona equivocada.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2145' },
+    'cdmx-0089': { era: 'Templo Mayor y Zona Arqueológica (Atracción)', motivo: 'Repetido: el museo y la zona arqueológica se visitan con un mismo boleto.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0005' },
+    'cdmx-0066': { era: 'Restaurante El Cardenal (sin dirección, $1,500)', motivo: 'Repetido de El Cardenal (Palma 23), con precio por defecto y sin dirección.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2060' },
+    'cdmx-0100': { era: 'Palacio de Bellas Artes (Atracción, $200)', motivo: 'Repetido: la visita al Palacio es la del museo.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0142' },
+    'cdmx-0139': { era: 'Papalote Museo del Niño Chapultepec', motivo: 'Repetido de Papalote Museo del Niño (misma dirección).', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2147' },
+    'cdmx-0191': { era: 'Auditorio Nacional, Centro de Arte y Cultura', motivo: 'Repetido del Auditorio Nacional.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2144' },
+    'cdmx-0185': { era: 'Centro Cultural Museo Universitario del Chopo', motivo: 'Repetido del Museo Universitario del Chopo (mismo edificio).', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0148' },
+    'cdmx-0268': { era: 'Museo Polyforum Siqueiros (Cerrado por remodelación)', motivo: 'Repetido del Polyforum Siqueiros y, además, cerrado.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0217' },
+    'cdmx-0499': { era: 'Instituto Cultural México Israel', motivo: 'Repetido del museo del mismo instituto.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0374' },
+    'cdmx-0386': { era: 'Museo de Sitio del Centro Cultural Casa Talavera', motivo: 'Repetido del Centro Cultural Casa Talavera.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0631' },
+    'cdmx-0624': { era: 'Centro Cultural Foro Valparaíso', motivo: 'Repetido del Museo Foro Valparaíso (mismo edificio).', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0414' },
+    'cdmx-0495': { era: 'La Casa Luis Barragán', motivo: 'Repetido del Museo Casa Luis Barragán.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2209' },
+    'cdmx-0612': { era: 'Centro Cultural de Artes Escénicas María Rojo', motivo: 'Repetido del Teatro María Rojo.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0605' },
+    'cdmx-0724': { era: 'Cirkóptero (centro cultural)', motivo: 'Repetido de Cirkóptero.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0723' },
+    'cdmx-0871': { era: 'Museo del Juguete Antiguo México (MUJAM)', motivo: 'Repetido del MUJAM.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2210' },
+    'cdmx-0833': { era: 'Centro Comercial y Cultural Plaza Loreto', motivo: 'Repetido de Plaza Loreto.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2084' },
+    'cdmx-0751': { era: 'Sala del Centro Cultural Roberto Cantoral', motivo: 'Repetido del Centro Cultural Roberto Cantoral.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0775' },
+    'cdmx-0192': { era: 'Ágora del Centro Universitario Cultural', motivo: 'Repetido del Centro Universitario Cultural.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0212' },
+    'cdmx-0954': { era: 'Auditorio 6 del Centro Médico Siglo XXI', motivo: 'Seis auditorios del mismo hospital contaban como lugares distintos.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0670' },
+    'cdmx-0955': { era: 'Auditorio 5 del Centro Médico Siglo XXI', motivo: 'Seis auditorios del mismo hospital contaban como lugares distintos.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0670' },
+    'cdmx-0956': { era: 'Auditorio 4 del Centro Médico Siglo XXI', motivo: 'Seis auditorios del mismo hospital contaban como lugares distintos.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0670' },
+    'cdmx-0957': { era: 'Auditorio 3 del Centro Médico Siglo XXI', motivo: 'Seis auditorios del mismo hospital contaban como lugares distintos.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0670' },
+    'cdmx-0958': { era: 'Auditorio 2 del Centro Médico Siglo XXI', motivo: 'Seis auditorios del mismo hospital contaban como lugares distintos.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-0670' },
+    'cdmx-0036': { era: 'Sin Nombre (Roma, $1,500)', motivo: 'Repetido: "Sin Nombre" es Expendio de Maíz Sin Nombre, que ya está en el catálogo.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'expendio' },
+    'cdmx-0039': { era: 'Pizza Felix Condesa ($1,500)', motivo: 'Repetido de Pizza Félix (Álvaro Obregón 64, Roma), con precio por defecto.', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2191' },
+    'cdmx-2228': { era: 'Fishers · Del Valle (Insurgentes Sur, sin número)', motivo: 'Repetido de Fisher’s · Nápoles (Insurgentes Sur 601).', fuente: 'Revisión de repetidos del catálogo (19-oct-2026)', fecha: '2026-10-19', reemplazo: 'cdmx-2205' },
+    'cdmx-2008': { era: 'Sala de Despecho · Condesa — Av. Tamaulipas 134 — $420',
+      motivo: 'Sucursal sin respaldo: la ficha oficial de reservas sólo lista dos sedes en CDMX (Masaryk 393 y Bosques, Loma de la Palma 1813). No hay ninguna fuente de una sede en la Condesa.',
+      fuente: 'CDMX Reservas — Sala de Despecho Ciudad de México', url: 'https://cdmxreservas.com/sala-de-despecho/', fecha: '2026-10-19', reemplazo: 'cdmx-4075' },
+    'cdmx-2009': { era: 'Sala de Despecho · Nápoles — Av. Insurgentes Sur 895 — $400',
+      motivo: 'Sucursal sin respaldo, mismo caso que la de la Condesa.',
+      fuente: 'CDMX Reservas — Sala de Despecho Ciudad de México', url: 'https://cdmxreservas.com/sala-de-despecho/', fecha: '2026-10-19', reemplazo: 'cdmx-4075' }
   };
 
   /* ---------------------------------------------------------------- *
@@ -270,11 +452,14 @@ window.SOBRES_AUDITORIA = (function () {
       act: ['baile','copas'], oh: [23, 28], hrs: 'Jue–Sáb 23:00–04:00',
       dias: [4, 5, 6], tags: ['nightlife','social'], who: ['amigos','date','compa'], tm: ['noche'],
       score: 80, tier: 'B',
-      precio: { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: null },
-      estado: 'por_confirmar', falta: 'cover y consumo mínimo',
-      fuente: 'Fichas públicas de PANEM Club en Campos Elíseos 290/A (Yelp y agregadores de vida nocturna); acceso selectivo con reserva',
+      // Precio: referencia del fundador (19-oct-2026): ~$2,000 por persona en
+      // total. El motor suma 10% de propina aparte → consumo $1,800.
+      precio: { min: null, rep: 1800, max: null, unidad: 'persona', moneda: 'MXN',
+        canasta: 'Referencia del fundador: ~$2,000 por persona en total (cover o consumo, bebidas y propina). El motor suma la propina aparte.' },
+      estado: 'estimado', falta: '',
+      fuente: 'Fichas públicas de PANEM Club en Campos Elíseos 290/A (Yelp y agregadores de vida nocturna); acceso selectivo con reserva; precio: referencia del fundador',
       fecha: HOY,
-      nota: 'Es el negocio que de verdad ocupa esa dirección. No publica cover ni consumo mínimo, así que el precio queda por confirmar en lugar de inventarse. Abre sólo jueves a sábado a partir de las 23:00: NO puede entrar como pausa de café de las 5:30 pm.',
+      nota: 'Es el negocio que de verdad ocupa esa dirección. No publica cover ni consumo mínimo; el precio es la referencia que dio el fundador (~$2,000 por persona en total), marcada como estimada. Abre sólo jueves a sábado a partir de las 23:00: NO puede entrar como pausa de café de las 5:30 pm.',
       basis: 'Antro de acceso selectivo en Polanco; reserva requerida' },
 
     /* ===== AVENTURA: retos con sesión ===== */
@@ -983,7 +1168,48 @@ window.SOBRES_AUDITORIA = (function () {
       estado: 'por_confirmar', falta: 'el consumo por persona (se menciona $400–$600 como referencia sin confirmar)',
       fuente: 'Reseña de janenovikova.com e Instagram @_jardinmx (datos aportados por el usuario)',
       url: 'https://www.janenovikova.com/es/resenas/mexico-city/jardin-paraiso/', fecha: HOY,
-      nota: 'La referencia de $400–$600 por persona viene marcada como PENDIENTE DE CONFIRMAR por la fuente, así que no se carga como precio: la ficha dice "Precio por confirmar". Horario sin confirmar.' }
+      nota: 'La referencia de $400–$600 por persona viene marcada como PENDIENTE DE CONFIRMAR por la fuente, así que no se carga como precio: la ficha dice "Precio por confirmar". Horario sin confirmar.' },
+
+    /* ===== Pasada del 19-oct-2026 ===== */
+    { id: 'cdmx-4075', n: 'Sala de Despecho · Bosques', cat: 'Antro', zone: 'santafe', col: 'Lomas de Vista Hermosa (Pabellón Bosques)',
+      addr: 'Av. Loma de la Palma 1813, Cuajimalpa', web: 'https://www.saladedespecho.mx/reservas-bosques/',
+      lat: 19.38268, lng: -99.26822, coordAprox: true,
+      act: ['copas','baile'], oh: [17, 26], hrs: 'Mié–Dom 17:00–02:00', dias: [0, 3, 4, 5, 6],
+      tags: ['nightlife','social'], who: ['amigos','date','compa'], tm: ['noche'],
+      score: 84, tier: 'B', basis: 'Bar de despecho: música de banda, rancheras y pop de ardido para cantar en grupo',
+      precio: { min: null, rep: 1350, max: null, unidad: 'persona', moneda: 'MXN',
+        canasta: 'Referencia del fundador: ~$1,500 por persona en total (bebidas, algo de comer y propina). El motor suma la propina aparte.' },
+      estado: 'estimado',
+      fuente: 'CDMX Reservas — ficha de Sala de Despecho Bosques (dirección y horario) y reservaciones en saladedespecho.mx; precio: referencia del fundador',
+      url: 'https://cdmxreservas.com/sala-despecho-bosques-cdmx/', fecha: '2026-10-19',
+      nota: 'No tiene estacionamiento propio según la ficha. Está en Pabellón Bosques, el mismo centro donde está Fisher\u2019s House. El pin usa las coordenadas de ese centro.' },
+
+    { id: 'cdmx-4077', n: 'Enigma Rooms Roma III', cat: 'Escape room', zone: 'roma', col: 'Roma Norte',
+      addr: 'Cozumel 60', web: 'https://cdmx.enigmarooms.mx/',
+      lat: 19.4185, lng: -99.1712, coordAprox: true,
+      act: ['reto'], oh: [10.25, 22.25], hrs: 'Lun–Dom 10:15–22:15',
+      sesion: true, duracionMin: 60, grupoMin: 2, grupoMax: 6,
+      tags: ['aventurero','social'], who: ['amigos','compa','date'], tm: ['manana','tarde','noche','finde'],
+      score: 82, tier: 'B',
+      precio: { min: 250, rep: 320, max: 450, unidad: 'persona', moneda: 'MXN',
+        canasta: '60 minutos de juego por persona; el precio por persona baja conforme crece el equipo. El sitio aclara que los precios no incluyen IVA.' },
+      estado: 'rango',
+      fuente: 'Enigma Rooms — página oficial de Ciudad de México (sedes y horarios)', url: 'https://cdmx.enigmarooms.mx/', fecha: '2026-10-19',
+      basis: 'Tercera sede de Enigma Rooms en Roma Norte' },
+
+    { id: 'cdmx-4076', n: 'Mantequilla Social Club', cat: 'Restaurante', zone: 'lomas', col: 'Lomas de Chapultepec',
+      addr: 'Monte Everest 780', web: '',
+      lat: 19.4195, lng: -99.2132, coordAprox: true,
+      act: ['comida','cena','copas'], oh: [13, 23], hrs: 'Mar–Dom 13:00–23:00', dias: [0, 2, 3, 4, 5, 6],
+      grupoMax: 16,
+      tags: ['foodie','social','joyita'], who: ['amigos','date','compa'], tm: ['tarde','noche'],
+      score: 84, tier: 'B', basis: 'Restaurante chico de comfort food y bar en Lomas de Chapultepec',
+      cocina: 'Comfort food y bar',
+      precio: { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: null },
+      estado: 'por_confirmar', falta: 'el precio por persona',
+      fuente: 'Time Out México — "Las mejores aperturas de restaurantes 2026" (24-abr-2026); cupo: dato del fundador',
+      url: 'https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/best-2026-mejores-aperturas-restaurantes-cdmx', fecha: '2026-10-19',
+      nota: 'Es RESTAURANTE (el Excel lo traía como café o concepto mixto) con cupo para 16 personas, dato del fundador. Time Out no publica precios, así que el precio queda por confirmar.' }
 
   ];
 

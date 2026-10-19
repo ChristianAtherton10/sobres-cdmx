@@ -1074,7 +1074,8 @@ test('el Panem real de Campos Elíseos es un antro, con su horario', () => {
   assert(v, 'falta el registro del negocio que sí ocupa esa dirección');
   assert(v.cat === 'Antro', 'debe ser antro, es ' + v.cat);
   assert(v.oh[0] === 23, 'abre a las 23:00, no antes: ' + v.oh);
-  assert(v.ppUnknown, 'no publica cover: el precio debe quedar por confirmar');
+  // No publica cover; el precio es la referencia del fundador (~$2,000 en total), marcada como estimada.
+  assert(!v.ppUnknown && v.pEstado === 'estimado' && v.pp === 1800, 'el precio debe ser la referencia del fundador, marcada como estimada');
   // Lo que reportó el usuario: NO puede ser una pausa de café de las 5:30 pm.
   assert(!app.atHour(v, 17.5), 'un antro cerrado no puede entrar a las 5:30 pm');
   assert(app.actsDe(v).indexOf('cafe') < 0, 'un antro no ofrece café');
@@ -1550,9 +1551,11 @@ test('los cinco lugares entraron una sola vez y con su categoría', () => {
 test('dos negocios en la misma dirección no se fusionan', () => {
   const app = makeApp(BASE, { dseed: 1 });
   const enQro225 = app.cat().filter(v => (v.addr || '').indexOf('Querétaro 225') >= 0);
-  assert(enQro225.length === 2, 'en Querétaro 225 debe haber dos establecimientos, hay ' + enQro225.length);
+  // Mercado Roma, Kinshasa (rooftop) y M.R. Bar Club (tercer piso) comparten edificio.
+  assert(enQro225.length >= 2, 'en Querétaro 225 debe haber al menos dos establecimientos, hay ' + enQro225.length);
+  assert(new Set(enQro225.map(v => v.n)).size === enQro225.length, 'dos registros con el mismo nombre en la misma dirección');
   const cats = enQro225.map(v => v.cat).sort();
-  assert(cats.join('|') === 'Mercado|Rooftop', 'se mezclaron: ' + cats);
+  assert(cats.join('|') === 'Mercado|Rooftop|Speakeasy', 'se mezclaron: ' + cats);
 });
 
 test('un antro que sólo abre viernes y sábado no entra un martes', () => {
@@ -2052,7 +2055,10 @@ test('Casa San Juan es un antro en Polanco, no un restaurante en Las Lomas', () 
   assert(/Masaryk 393/.test(v.addr) && /Polanco/.test(v.col), 'dirección: ' + v.addr + ' / ' + v.col);
   assert(Math.abs(v.lat - 19.432158) < 1e-4 && Math.abs(v.lng + 99.1981266) < 1e-4, 'coordenadas');
   assert(!app.actsDe(v).some(a => a === 'comida' || a === 'cena'), 'sigue contando como comida o cena');
-  assert(v.ppUnknown && v.horaEstimada, 'precio y horario deben quedar por confirmar');
+  // El precio ya no está "por confirmar": el fundador dio la referencia (~$2,000
+  // en total). Se carga como ESTIMADO y el horario sigue sin confirmar.
+  assert(!v.ppUnknown && v.pp === 1800 && v.pEstado === 'estimado', 'el precio debe ser la referencia del fundador, marcada como estimada');
+  assert(v.horaEstimada, 'el horario debe quedar por confirmar');
   assert(!app.cat().some(x => /Casa San Juan · Lomas/.test(x.n)), 'sobrevive el registro viejo');
   // Buscador
   const busq = app.searchIn('casa san juan');
@@ -2117,6 +2123,92 @@ test('lo que se pidió quitar ya no está: SOBRES AI, DEMO, EN VIVO, venues y el
   const app = makeApp({}, { dseed: 73 });
   const v = app.renderVals();
   assert(v.navItems.map(n => n.label).join() === 'Inicio,Explorar,Mis planes', 'navegación: ' + v.navItems.map(n => n.label));
+});
+
+section('23 · Catálogo del Excel, repetidos y precios revisados');
+
+test('todos los lugares del Excel están, sin repetir, salvo los que no tienen ubicación', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  const cat = app.cat();
+  const xl = cat.filter(v => /^xl-/.test(v.id));
+  assert(xl.length >= 480, 'faltan lugares del Excel: hay ' + xl.length);
+  const ids = new Set(); cat.forEach(v => { assert(!ids.has(v.id), 'id repetido: ' + v.id); ids.add(v.id); });
+  // Mismo nombre y misma dirección = el mismo lugar dos veces.
+  const vistos = {};
+  cat.forEach(v => { if (!v.addr) return; const k = app.strip(v.n) + '|' + app.strip(v.addr);
+    assert(!vistos[k], 'repetido: ' + v.n + ' (' + v.addr + ')'); vistos[k] = 1; });
+  // Cada uno trae fuente, actividad y precio con estado declarado.
+  xl.forEach(v => { assert(v.src, v.n + ' sin fuente'); assert((v.act || []).length, v.n + ' sin actividad');
+    assert(['estimado','rango','verificado','por_confirmar'].includes(v.pEstado), v.n + ' estado de precio raro: ' + v.pEstado); });
+});
+
+test('los repetidos que había en el catálogo ya no están (pero las sucursales sí)', () => {
+  const cat = makeApp(BASE, { dseed: 7 }).cat();
+  ['cdmx-0147','cdmx-0008','cdmx-0089','cdmx-0066','cdmx-0100','cdmx-0139','cdmx-0191','cdmx-0036','cdmx-0039','cdmx-2228','cdmx-2008','cdmx-2009']
+    .forEach(id => assert(!cat.some(v => v.id === id), 'sigue el repetido ' + id));
+  assert(cat.filter(v => /^Museo Tamayo/.test(v.n)).length === 1, 'Museo Tamayo debe estar una vez');
+  assert(cat.filter(v => /Castillo de Chapultepec/.test(v.n) && v.cat === 'Museo').length === 1, 'el Castillo debe estar una vez');
+  // Sucursales reales: varias Enigma Rooms, varios Fishers, dos sedes del Soumaya con nombre claro.
+  assert(cat.filter(v => /^Enigma Rooms/.test(v.n)).length >= 4, 'faltan sedes de Enigma Rooms');
+  const sou = cat.filter(v => /^Museo Soumaya/.test(v.n)).map(v => v.n).sort();
+  assert(sou.join('|') === 'Museo Soumaya · Plaza Carso|Museo Soumaya · Plaza Loreto', 'sedes del Soumaya: ' + sou);
+});
+
+test('Sala de Despecho: Masaryk y Bosques, ~$1,500 por persona con propina', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  const sd = app.cat().filter(v => /^Sala de Despecho/.test(v.n));
+  assert(sd.map(v => v.n).sort().join('|') === 'Sala de Despecho · Bosques|Sala de Despecho · Masaryk', 'sedes: ' + sd.map(v => v.n));
+  sd.forEach(v => { const c = app.costoPlan([v]); assert(Math.abs(c.consumo + c.propina - 1485) < 20, v.n + ' cuesta ' + (c.consumo + c.propina)); });
+  const bosques = sd.find(v => /Bosques/.test(v.n));
+  assert(/Loma de la Palma 1813/.test(bosques.addr), 'dirección de Bosques: ' + bosques.addr);
+  assert(bosques.dias && bosques.dias.join() === '0,3,4,5,6', 'Bosques abre miércoles a domingo');
+});
+
+test('precios: Quintonil, PANEM, Casa San Juan, Ryoshi y museos con su cifra real', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  const v = id => app.cat().find(x => x.id === id);
+  assert(v('cdmx-0001').pMin === 5610, 'Quintonil: el menú solo cuesta $5,610');
+  assert(v('cdmx-3001').pp === 1800 && v('cdmx-2229').pp === 1800, 'PANEM y Casa San Juan ~$2,000 con propina');
+  assert(v('cdmx-2001').pp === 1100, 'Ryoshi ~$1,200 con propina');
+  assert(v('tamayo').pp === 95 && v('cdmx-0005').pp === 105 && v('cdmx-0162').pp === 160, 'taquillas 2026');
+  // Ningún restaurante se queda con el $1,500 de relleno.
+  const relleno = app.cat().filter(x => x.pEstado === 'inferido' && x.pp === 1500);
+  assert(!relleno.length, 'siguen con $1,500 de relleno: ' + relleno.map(x => x.n).slice(0, 5));
+});
+
+test('Mantequilla Social Club es restaurante con cupo de 16', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  const m = app.cat().filter(v => /Mantequilla/.test(v.n));
+  assert(m.length === 1 && m[0].cat === 'Restaurante' && m[0].grupoMax === 16, JSON.stringify(m.map(x => [x.n, x.cat, x.grupoMax])));
+  assert(app.queHacer(m[0]).some(t => /Cupo máximo: 16/.test(t)), 'la ficha no dice el cupo');
+});
+
+test('un lugar cerrado no se propone y la misma marca no sale en dos opciones', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  assert(!app.esRecomendable(app.cat().find(v => v.id === 'cdmx-0159')), 'el MUNAL está cerrado y se propone');
+  for (let i = 0; i < 4; i++) {
+    const r = i ? app.regenerate() && app.state.results : (app.runSearch(), app.state.results);
+    const marcas = (app.state.results.plans || []).map(p => new Set(p.stops.map(v => app.marcaDe(v))));
+    for (let a = 0; a < marcas.length; a++) for (let b = a + 1; b < marcas.length; b++)
+      [...marcas[a]].forEach(m => assert(!marcas[b].has(m) || app.state.results.exhausted || /comparten/.test(app.state.results.expandNote || ''), 'la marca ' + m + ' sale en dos opciones'));
+  }
+});
+
+test('lo que no se confirma no se propone y lo lejano sólo sale en toda la ciudad', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  const viejo = app.cat().find(v => v.id === 'xl-R0205');   // IDE Gourmet Oriental: única fuente de 2017
+  assert(viejo && !app.esRecomendable(viejo), 'un lugar de una lista de 2017 sin confirmar se propone');
+  const lejos = app.cat().find(v => v.id === 'xl-C0069');   // Parque Ejidal San Nicolás Totolapan
+  assert(lejos && lejos.lejos, 'el Ajusco debería marcarse lejos');
+  const cu = makeApp({ ...BASE, zone: 'cu', zonesSel: ['cu'], vibes: ['chill'], when: 'manana', planFrom: 9, planTo: 15 }, { dseed: 7 });
+  cu.runSearch();
+  assert(!(cu.state.results.plans || []).some(p => p.stops.some(v => v.lejos)), 'en CU · Sur propuso un lugar lejano');
+});
+
+test('los lugares del Excel viajan en el enlace compartido', () => {
+  const app = makeApp(BASE, { dseed: 7 });
+  assert(app.cortaId('xl-R0410') === 'LR0410' && app.largaId('LR0410') === 'xl-R0410', 'el id del Excel no se codifica bien');
+  assert(app.largaId('x' + encodeURIComponent('Mi parada')).ext === 'Mi parada', 'se rompió la parada a mano');
 });
 
 report();
