@@ -535,7 +535,13 @@ test('cena + copas en Santa Fe: lo cumple o lo explica, nunca lo sustituye calla
     const stops = app.state.planCustom.stops;
     const resumen = app.state.aiSummary || '';
     const hayCopas = stops.some(v => app.sirveCopas(v) === 'si');
-    if (hayCopas) {
+    const esBar = stops.some(v => app.DRINK.includes(v.cat) || v.cat === 'Cantina');
+    if (hayCopas && esBar) {
+      // Santa Fe ya tiene bares en el catálogo: se cumple sin advertencias.
+      assert(!/⚠️/.test(resumen), 'advirtió sin motivo: ' + resumen);
+      assert(stops.some(v => app.CATS_MESA().includes(v.cat)) || /No alcanzó el presupuesto para comida/.test(resumen),
+        'pidió cenar, no hay restaurante y no lo explicó: ' + stops.map(v => v.n) + ' · ' + resumen);
+    } else if (hayCopas) {
       assert(/sirve|bar/i.test(resumen), 'cumplió pero no lo explicó: ' + resumen);
     } else {
       assert(/⚠️|No pude incluir/.test(resumen), 'no cumplió y no lo dijo (tope ' + tope + '): ' + resumen);
@@ -2209,6 +2215,53 @@ test('los lugares del Excel viajan en el enlace compartido', () => {
   const app = makeApp(BASE, { dseed: 7 });
   assert(app.cortaId('xl-R0410') === 'LR0410' && app.largaId('LR0410') === 'xl-R0410', 'el id del Excel no se codifica bien');
   assert(app.largaId('x' + encodeURIComponent('Mi parada')).ext === 'Mi parada', 'se rompió la parada a mano');
+});
+
+section('24 · Votar lo compartido, pasos en celular y lo que se pidió');
+
+test('romántico nunca propone una taquería ni una cadena casual', () => {
+  const app = makeApp({ who:'date', groupSize:2, zone:'roma', zonesSel:['roma'], vibes:['romántico'], budget:'b1000', when:'noche', planFrom:19, planTo:24 }, { dseed: 11 });
+  for (let i = 0; i < 4; i++) { if (i) app.regenerate(); else app.runSearch();
+    (app.state.results.plans || []).forEach(p => p.stops.forEach(v => {
+      assert(!['Taquería','Mercado','Cantina'].includes(v.cat), 'romántico propuso ' + v.n + ' (' + v.cat + ')'); })); }
+  const califa = app.cat().find(v => /El Califa/.test(v.n));
+  assert(califa && !app.vibeAdmite(califa), 'El Califa pasa como romántico');
+});
+
+test('noche y fiesta = bares y antros; comer rico = restaurante o terraza', () => {
+  const n = makeApp({ zone:'roma', zonesSel:['roma'], vibes:['nightlife'], budget:'b1000', when:'noche', planFrom:20, planTo:26 }, { dseed: 12 });
+  n.runSearch();
+  const pn = n.state.results.plans || [];
+  assert(pn.length, 'noche y fiesta en la Roma no dio planes');
+  pn.forEach(p => p.stops.forEach(v => assert(n.CATS_NOCHE().includes(v.cat), 'noche y fiesta metió ' + v.n + ' (' + v.cat + ')')));
+  const f = makeApp({ zone:'roma', zonesSel:['roma'], vibes:['foodie'], budget:'b1000', when:'noche', planFrom:19, planTo:24 }, { dseed: 13 });
+  f.runSearch();
+  (f.state.results.plans || []).forEach(p => assert(p.stops.some(v => f.cumpleCat(v, { k: 'mesa', cats: f.CATS_MESA() })),
+    'comer rico sin restaurante: ' + p.stops.map(v => v.n + ' (' + v.cat + ')')));
+});
+
+test('si en la zona no cabe nada, amplía a las vecinas en vez de dejar la pantalla vacía', () => {
+  const app = makeApp({ zone:'condesa', zonesSel:['condesa'], vibes:['nightlife'], budget:'b1000', when:'noche', planFrom:20, planTo:26 }, { dseed: 77, rseed: 500 });
+  app.runSearch({ nueva: true });
+  assert((app.state.results.plans || []).length > 0, 'no dio ningún plan');
+});
+
+test('un plan compartido se puede votar: botones en cada opción y propuesta a nombre de quien lo mandó', () => {
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert(/o\.votarSi/.test(html) && /o\.votarNo/.test(html), 'faltan los botones de voto en las opciones');
+  assert(/registrarParaVotar\(planes, t\.by\)/.test(html), 'abrir un enlace no registra las opciones para votar');
+  assert(/this\.setState\(\{ view: 'group' \}\)/.test(html), '?plan= no abre la votación sin nombre');
+});
+
+test('en celular el formulario va por pasos y en compu en una tabla', () => {
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert(/class="sb-tabla" data-paso="\{\{ paso \}\}"/.test(html), 'la tabla no sabe en qué paso va');
+  assert(/@media \(max-width:1023px\)\{\s*\.sb-tabla\[data-paso="1"\]/.test(html), 'falta ocultar los otros pasos en celular');
+  assert(/onClick="\{\{ pasoSiguiente \}\}"/.test(html), 'falta el botón Siguiente');
+});
+
+test('Hunan Polanco no existe', () => {
+  assert(!makeApp(BASE, { dseed: 7 }).cat().some(v => /Hunan · Polanco/.test(v.n)), 'sigue Hunan Polanco');
 });
 
 report();

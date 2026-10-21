@@ -153,8 +153,10 @@ def precio_de(cat, pb=None, to=None, ms=None, estrella=False, nota_extra='', fij
         pb = None   # la Guía MICHELIN lo pone más arriba que la banda de OpenTable
     if pb in BANDA:
         lbl, mn, rep, mx = BANDA[pb]
+        if cat in ('Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería'):   # dos tragos y algo de botana
+            mn, rep, mx = {2: (150, 300, 400), 3: (350, 550, 750), 4: (550, 800, 1300)}[pb]
         if estrella: rep, mx = r50(rep * 1.4), r50(mx * 1.4)
-        can = ('OpenTable publica la banda "%s" por persona. Estimamos ~$%s con una bebida (rango $%s–$%s). ' % (lbl, f'{rep:,}', f'{mn:,}', f'{mx:,}')
+        can = ('OpenTable publica la banda "%s" por persona. Estimamos ~$%s %s (rango $%s–$%s). ' % (lbl, f'{rep:,}', 'con dos tragos' if cat in ('Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería') else 'con una bebida', f'{mn:,}', f'{mx:,}')
                + ('Tiene estrella MICHELIN, así que se toma la parte alta. ' if estrella else '') + 'Es una estimación, no un precio de carta.')
         return ({'min': mn, 'rep': rep, 'max': mx, 'unidad': 'persona', 'moneda': 'MXN', 'canasta': can}, 'estimado')
     if ms in MICH_REP:

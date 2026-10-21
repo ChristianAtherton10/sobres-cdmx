@@ -230,6 +230,22 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .sb-tabla .sb-nota-larga{display:none}
   .sb-pie-home{margin:12px 0 0}
 }
+.sb-voto{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.sb-voto .sb-chip{flex:1;justify-content:center;min-height:42px;font-weight:700}
+/* Celular y tableta: un paso a la vez (la compu sigue en una sola tabla). */
+.sb-pasos-movil{flex-direction:column;gap:8px;margin:18px 0 0}
+.sb-barra{height:6px;border-radius:6px;background:var(--lila-2);overflow:hidden;width:100%}
+.sb-barra>span{display:block;height:100%;background:var(--electrico);border-radius:6px;transition:width .35s ease}
+@media (max-width:1023px){
+  .sb-tabla[data-paso="1"]>.sb-col:not(#armar-ambiente),
+  .sb-tabla[data-paso="2"]>.sb-col:not(#armar-donde),
+  .sb-tabla[data-paso="3"]>.sb-col:not(#armar-quien){display:none}
+  .sb-tabla>.sb-col,.sb-tabla>.sb-col:first-child{margin-top:12px;animation:sbPaso .32s ease both}
+  .sb-home[data-paso="2"] .sb-sub,.sb-home[data-paso="3"] .sb-sub{display:none}
+  .sb-home[data-paso="2"] .sb-h1,.sb-home[data-paso="3"] .sb-h1{font-size:26px}
+}
+@keyframes sbPaso{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sb-tabla>.sb-col{animation:none!important}}
 /* Ventanas angostas de compu (1024–1199): columnas más estrechas, chips más compactos. */
 @media (min-width:1024px) and (max-width:1199px){
   .sb-tabla>.sb-col,.sb-tabla>.sb-col:first-child{padding-left:14px!important;padding-right:14px!important}
@@ -415,7 +431,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 
 <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-<section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" style="padding:26px 0 32px">
+<section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" data-paso="{{ paso }}" style="padding:26px 0 32px">
 <div class="sb-home-top">
 <div class="sb-home-txt">
 <div class="sb-kicker">{{ homeKicker }}</div>
@@ -436,7 +452,11 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <span style="flex:1;min-width:0"><span class="sb-kicker" style="display:block;margin-bottom:4px">Retomar</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ retomarTxt }}</span></span><span style="font:700 18px var(--font-body);color:var(--electrico)">→</span></button>
 </sc-if>
 
-<div class="sb-tabla">
+<div class="sb-pasos-movil solo-celular" aria-live="polite">
+<div class="sb-row" style="justify-content:space-between;width:100%"><span class="sb-kicker" style="margin:0">{{ pasoTxt }}</span><span class="sb-note" style="margin:0">{{ pasoResumen }}</span></div>
+<div class="sb-barra" aria-hidden="true"><span style="width:{{ pasoAncho }}"></span></div>
+</div>
+<div class="sb-tabla" data-paso="{{ paso }}">
 <div id="armar-ambiente" class="sb-card sb-col">
 <h2 class="sb-h3" style="margin-bottom:4px">¿Qué se les antoja?</h2>
 <p class="sb-note" style="margin:0 0 14px">Elige hasta tres.</p>
@@ -480,10 +500,18 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </div>
 
-<div class="solo-celular" style="flex-direction:column;gap:10px;margin:22px 0 0">
+<div class="solo-celular sb-pasos-nav" style="flex-direction:column;gap:10px;margin:22px 0 0">
+<sc-if value="{{ pasoNoFinal }}" hint-placeholder-val="{{ true }}">
+<button class="sb-btn sb-full" onClick="{{ pasoSiguiente }}"><span>Siguiente</span><span aria-hidden="true">→</span></button>
+</sc-if>
+<sc-if value="{{ paso3 }}" hint-placeholder-val="{{ false }}">
 <button class="sb-btn sb-full {{ buscarFx }}" onClick="{{ armarGo }}"><span>¡Sobres, va!</span><span aria-hidden="true">→</span></button>
 <button class="sb-btn2 sb-full" onClick="{{ surpriseGo }}">Sorpréndeme</button>
 <p class="sb-note" style="margin:2px 0 0;text-align:center">{{ armarResumen }}</p>
+</sc-if>
+<sc-if value="{{ pasoHayAtras }}" hint-placeholder-val="{{ false }}">
+<button class="sb-btn3" style="align-self:center" onClick="{{ pasoAtras }}" aria-label="{{ pasoAtrasAria }}">← Atrás</button>
+</sc-if>
 </div>
 <p class="sb-note sb-pie-home"><span class="solo-compu">Costos por persona: te decimos cuáles están confirmados y cuáles son estimados. SOBRES no pide ni cobra viajes. · </span><button class="sb-btn3" style="padding:0;min-height:36px" onClick="{{ acercaAbrir }}">Acerca de SOBRES</button></p>
 </section>
@@ -543,6 +571,13 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <ol class="sb-ruta">
 <sc-for list="{{ o.stops }}" as="st" hint-placeholder-count="3"><li><span class="h">{{ st.time }}</span><span style="min-width:0"><span class="n" style="display:block">{{ st.name }}</span><span class="c" style="display:block">{{ st.sub }}</span></span></li></sc-for>
 </ol>
+<sc-if value="{{ o.votoOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-voto" role="group" aria-label="Tu voto">
+<button class="sb-chip" aria-pressed="{{ o.siOn }}" onClick="{{ o.votarSi }}">✓ ¡Sobres, me late! · {{ o.si }}</button>
+<button class="sb-chip" aria-pressed="{{ o.noOn }}" onClick="{{ o.votarNo }}">✕ No jalo · {{ o.no }}</button>
+</div>
+<p class="sb-note" style="margin:6px 0 0;font-size:12.5px">{{ o.votantes }}</p>
+</sc-if>
 <div style="margin-top:auto;padding-top:14px"><button class="sb-btn sb-full" onClick="{{ o.elegir }}">Elegir este plan</button></div>
 </div>
 </article>
@@ -1287,7 +1322,11 @@ class Component extends DCLogic {
     this._poll(); this._pollI = setInterval(this._poll, 6000);
     this._onVis = () => { if (!document.hidden) this._poll(); };
     document.addEventListener('visibilitychange', this._onVis);
-    try { const pp = new URLSearchParams(location.search).get('plan'); if (pp) { this._followParam = pp; this.followPlan(pp); if (this.state.userName) this.setState({ view: 'group' }); } } catch(e) {}
+    // ?plan=<id> (o varios separados por coma): abre directo la votación, con o
+    // sin nombre. Antes sólo la abría si ya tenías nombre y quien recibía el
+    // enlace no veía cómo votar.
+    try { const pp = new URLSearchParams(location.search).get('plan'); if (pp) { const ids = pp.split(',').filter(Boolean);
+      ids.forEach(id => this.followPlan(id)); this._followParam = ids.length === 1 ? ids[0] : null; this.setState({ view: 'group' }); } } catch(e) {}
     // Tanda compartida: 3 planes dentro del propio enlace. Se espera a que el
     // catálogo cargue para poder resolver las paradas por id.
     try { const q = new URLSearchParams(location.search);
@@ -1545,9 +1584,29 @@ class Component extends DCLogic {
     return false;
   }
 
+  // Categorías que cumplen una petición. Una taquería no es "salir a cenar"
+  // (salvo con presupuesto de hasta $300) y un restaurante no es "noche y fiesta".
+  CATS_MESA() { return ['Restaurante','Fonda de autor','Izakaya','Rooftop']; }
+  CATS_NOCHE() { return ['Bar','Bar de autor','Speakeasy','Mezcalería','Rooftop','Antro','Salón de baile','Cantina']; }
+  pideMesa() { const s = this.state; return (s.vibes || []).includes('foodie') || (s.aiPide || []).some(k => k === 'comida' || k === 'cena'); }
+  pideNoche() { const s = this.state; return (s.vibes || []).includes('nightlife') || (s.aiPide || []).some(k => k === 'copas' || k === 'baile'); }
+  // Sólo "noche y fiesta" (más modificadores): todo el plan es de bares y antros.
+  soloNoche() { const vb = (this.state.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico');
+    return vb.length > 0 && vb.every(x => x === 'nightlife') && !(this.state.aiPide || []).some(k => k === 'comida' || k === 'cena'); }
+  reqCats() { const out = [];
+    if (this.pideMesa()) out.push({ k: 'mesa', cats: this.budgetMax() <= 300 ? this.CATS_MESA().concat(['Taquería','Mercado','Cantina']) : this.CATS_MESA() });
+    if (this.pideNoche()) out.push({ k: 'noche', cats: this.CATS_NOCHE() });
+    return out; }
+  cumpleCat(v, rc) { if (!rc.cats.includes(v.cat)) return false;
+    if (rc.k === 'mesa' && v.cat === 'Rooftop') return this.actsDe(v).some(a => a === 'cena' || a === 'comida');
+    return true; }
   vibeAdmite(v, M) {
     const m = M || this.vibeModel();
     if (this.state.sinAlcohol && this.implicaAlcohol(v)) return false;
+    // Romántico: una taquería, un mercado o una cantina no son una cita.
+    if ((this.state.vibes || []).includes('romántico') && (['Taquería','Mercado','Churrería','Centro comercial','Cantina','Antro'].includes(v.cat)
+        || /chili'?s|olive garden|italianni|p\.? ?f\.? chang|shake shack|hard rock|vips|sanborns|toks|hello kitty|burger|wings/i.test(v.n || ''))) return false;
+    if (this.soloNoche() && !this.CATS_NOCHE().includes(v.cat)) return false;
     if (!this.actsUtiles(v, m).length) return false;
     // Un bar o un rooftop NO entra por una actividad secundaria. Toledo Rooftop
     // se colaba en un plan chill + cultural porque además de copas tiene vistas:
@@ -1602,8 +1661,12 @@ class Component extends DCLogic {
     // plan sin salida, otras variantes la prueban después — pero en las paradas
     // siguientes conserva toda su prioridad.
     const vuelta = (ti === 0 || ti == null) ? ((pi || 0) % 3) : 0;
+    // En las paradas siguientes, una de cada dos variantes deja que entre un
+    // complemento (unos tragos en vez de otro mirador): si no, la segunda parada
+    // de una cita era SIEMPRE el mismo rooftop.
+    const cede = ti > 0 && ((pi || 0) % 2 === 1) ? 10 : 0;
     return lista.map((k, i) => { let sc = 0;
-      if (m.prot.indexOf(k) >= 0) sc += 12 - vuelta * 5;
+      if (m.prot.indexOf(k) >= 0) sc += 12 - vuelta * 5 - cede;
       else if (m.ok && m.ok.has(k)) sc += 3;
       sc -= i * 0.6; sc += ((pi + seed + i) % 3) * 0.8;
       return { k, sc }; }).sort((a, b) => b.sc - a.sc).map(x => x.k);
@@ -2045,7 +2108,25 @@ class Component extends DCLogic {
         planStops: Math.max(2, Math.min(5, planes[0].stops.length)) });
       this.nav('results');
       this.ev('tanda_abierta', { planes: planes.length });
+      this.registrarParaVotar(planes, t.by);
     });
+  }
+
+  // Quien abre un enlace compartido puede votar cada opción. Las propuestas se
+  // registran a nombre de quien las mandó (si aún no existen), así el que las
+  // compartió ve los votos en Mis planes.
+  registrarParaVotar(planes, by, intento) {
+    if (!this.state.syncOn) { if ((intento || 0) < 25) setTimeout(() => this.registrarParaVotar(planes, by, (intento || 0) + 1), 300); return; }
+    planes.forEach(p => this.ensureProposed(p, (by || '').trim() || 'Un amigo'));
+  }
+  votarOpcion(p, kind) {
+    const go = () => { const yo = this.state.userName; if (!yo) return;
+      const pid = this.planOptId(p); const ya = ((this.state.sync && this.state.sync.plans) || []).find(x => x.id === pid);
+      const actual = ya && ya.votes ? ya.votes[yo] : null; const k2 = actual === kind ? null : kind;
+      this.ensureProposed(p, this.state.tandaDe || yo).then(id => this.mutate('votePlan', { user: yo, planId: id, kind: k2 }))
+        .then(() => { if (k2) this.toast(k2 === 'sobres' ? '¡Sobres! ' + (this.state.tandaDe ? this.state.tandaDe + ' ya ve tu voto' : 'Tu voto quedó') : 'Listo: votaste que no jala'); }); };
+    if (!this.state.userName) { this.pedirCuenta('votar', go); return; }
+    go();
   }
 
   // Enlace real al lugar dentro de este sitio (antes copiaba 'sobres.mx/l/…',
@@ -2210,7 +2291,13 @@ class Component extends DCLogic {
     const t = tope != null ? tope : this.budgetMax();
     const c = this.costoPlan(stops || []);
     const conocido = c.consumo + c.propina;   // consumo + entradas + propina conocida
-    return { ok: conocido <= t, total: conocido, tope: t, exceso: Math.max(0, conocido - t),
+    // Un bar o restaurante SIN precio publicado no cuesta $0: para decidir si cabe
+    // en el presupuesto se toma un gasto típico de su tipo (no se muestra como
+    // precio). Sin esto, los lugares sin precio "cabían" en todo y se repetían.
+    const supuesto = (stops || []).reduce((a, v) => a + (v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))
+      ? ({ Antro: 900, 'Salón de baile': 400, Rooftop: 650, Speakeasy: 600, 'Bar de autor': 550, Bar: 450, Mezcalería: 400, Cantina: 400,
+           Restaurante: 600, Izakaya: 600, 'Fonda de autor': 450, Taquería: 200, Café: 200, Churrería: 120, Mercado: 300 }[v.cat] || 400) * 1.1 : 0), 0);
+    return { ok: conocido + supuesto <= t, total: conocido, tope: t, exceso: Math.max(0, conocido - t),
       faltan: c.faltan, techo: c.techo, seguro: c.seguro, c };
   }
 
@@ -2312,8 +2399,15 @@ class Component extends DCLogic {
     // Carso, la otra sucursal no cuenta como lugar nuevo.
     const avoidM = new Set();
     if (avoidV.size) this.cat().forEach(v => { if (avoidV.has(v.id)) avoidM.add(this.marcaDe(v)); });
-    const marcarLote = st => (st || []).forEach(v => { avoidV.add(v.id); avoidM.add(this.marcaDe(v)); });
-    const visto = v => avoidV.has(v.id) || avoidM.has(this.marcaDe(v));
+    // Dos memorias distintas: lo que ya usó OTRA opción de esta misma tanda
+    // (pesa más: las tres opciones no deben compartir lugar ni marca) y lo que
+    // ya viste en la sesión o en tus últimos planes (se evita si hay otra cosa).
+    const tandaV = new Set(), tandaM = new Set();
+    const marcarLote = st => (st || []).forEach(v => { tandaV.add(v.id); tandaM.add(this.marcaDe(v)); });
+    const enTanda = v => tandaV.has(v.id) || tandaM.has(this.marcaDe(v));
+    const visto = v => avoidV.has(v.id) || avoidM.has(this.marcaDe(v)) || enTanda(v);
+    const nivel = v => (enTanda(v) ? 2 : 0) + (avoidV.has(v.id) || avoidM.has(this.marcaDe(v)) ? 1 : 0);
+    const mejores = lista => { if (!lista.length) return lista; const m = Math.min.apply(null, lista.map(nivel)); return lista.filter(v => nivel(v) === m); };
     const excl = this.exclSet();
 
     // Filtro DURO por compatibilidad de vibra. Antes la vibra sólo sumaba
@@ -2330,10 +2424,10 @@ class Component extends DCLogic {
     // cuando se busca en toda la ciudad: no es "Coyoacán" aunque sea lo más cercano.
     let pool = cityWide ? all.slice() : all.filter(v => sel.includes(v.z) && !v.lejos);
     let expandNote = '';
-    if (!cityWide && pool.length < 8) {
+    if (!cityWide && (pool.length < 8 || opts.ampliar)) {
       const adj = sel.reduce((a, z) => a.concat(this.ADJ[z] || []), []).filter(z => !sel.includes(z));
       const added = [];
-      for (const az of adj) { if (pool.length >= 8) break; zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az && !v.lejos)); }
+      for (const az of adj) { if (pool.length >= 8 && !opts.ampliar) break; zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az && !v.lejos)); }
       if (added.length) expandNote = 'Pocas opciones con esos filtros en ' + this.zLabel(s.zone) + ' — ampliamos solo a zonas vecinas: ' + added.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).';
     }
     const inZones = v => cityWide || zones.includes(v.z);
@@ -2373,7 +2467,8 @@ class Component extends DCLogic {
     // una hora de alguna, se incluye — salvo que el usuario ya comió o que el
     // presupuesto no alcanza para comer.
     const solapa = (a, b) => Math.max(0, Math.min(to, b) - Math.max(from, a));
-    const pideComida = !s.yaComimos && max >= 150 && (solapa(13, 16.5) >= 1 || solapa(19, 22.5) >= 1);
+    // Si pidieron sólo "noche y fiesta", no se les mete una cena: son bares y antros.
+    const pideComida = !s.yaComimos && !this.soloNoche() && max >= 150 && (solapa(13, 16.5) >= 1 || solapa(19, 22.5) >= 1);
     const comidaEn = t => (t >= 12 && t <= 16.25) ? 'comida' : (t >= 18.5 && t <= 22) ? 'cena' : null;
     const esComidaAct = a => a === 'comida' || a === 'cena';
 
@@ -2398,7 +2493,10 @@ class Component extends DCLogic {
           if (esComer) { if (foodN >= maxFood) continue; if (lastFoodT != null && Math.abs(t - lastFoodT) < 2.5) continue; }
           // No repetir la MISMA FUNCIÓN en el plan (dos visitas, dos cafés…).
           const fn = this.funcionAct(gk, t);
-          const isBlocked = g2 => usedGk.indexOf(this.funcionAct(g2, t)) >= 0;
+          // Excepción: en "noche y fiesta" ir de un bar a otro ES el plan (hasta dos).
+          const isBlocked = g2 => { const f2 = this.funcionAct(g2, t);
+            if (f2 === 'copas' && this.pideNoche()) return usedGk.filter(x => x === 'copas').length >= 2;
+            return usedGk.indexOf(f2) >= 0; };
           // Si la función ya está en el plan, se salta SIEMPRE. Antes había una
           // escapatoria: cuando todas las opciones del momento estaban ocupadas
           // se permitía repetir, y salían planes con dos cenas (7 pm y 11:40 pm).
@@ -2469,8 +2567,7 @@ class Component extends DCLogic {
               // hubiera alternativas (Pizza Félix y El Califa regresaban en la
               // siguiente tanda). Cuando ya no quedan nuevos, se recorren los vistos.
               const porId = (a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-              const nuevosB = fit.filter(v => !visto(v)).sort(porId);
-              urna = nuevosB.length ? nuevosB : fit.slice().sort(porId);
+              urna = mejores(fit).sort(porId);
               pick = urna[odo % urna.length];
               odo = Math.floor(odo / urna.length);
             } else {
@@ -2486,9 +2583,7 @@ class Component extends DCLogic {
               // de 67 min entre Centro y Coyoacán.
               const porRank = (a, b) => (a.ppUnknown ? 1 : 0) - (b.ppUnknown ? 1 : 0)
                 || (this.rank(b, dseed) - tramoMin(b) / 6) - (this.rank(a, dseed) - tramoMin(a) / 6);
-              const frescos = fit.filter(v => !visto(v)).sort(porRank);
-              const vistos = fit.filter(v => visto(v)).sort(porRank);
-              const fuente = frescos.length ? frescos : vistos;
+              const fuente = mejores(fit).sort(porRank);
               // La ventana crece con la variante para que las 3 propuestas de
               // una misma tanda no se peleen por el mismo primer lugar.
               const bestN = Math.min(fuente.length, 10 + variant * 3);
@@ -2511,8 +2606,7 @@ class Component extends DCLogic {
               // desconocido: que no se sepa cuánto cuesta no lo vuelve barato.
               const ciertos = resp.filter(v => !v.ppUnknown);
               const base = ciertos.length ? ciertos : resp;
-              const frescosR = base.filter(v => !visto(v));
-              const urnaR = frescosR.length ? frescosR : base;
+              const urnaR = mejores(base);
               pick = urnaR[(variant * 13 + dseed) % urnaR.length];
             }
           }
@@ -2541,12 +2635,20 @@ class Component extends DCLogic {
     // la primera pasada sólo acepta planes que la traigan. Antes bastaba con que
     // el plan cumpliera zona y horario, y se colaba un plan "aventurero" de
     // mercado + parque teniendo escape rooms disponibles.
-    const hayProt = Object.keys(VM.exige || {}).length > 0 && pool.some(v => this.esProtagonista(v, VM));
+    const exigeProt = Object.keys(VM.exige || {}).length > 0 && pool.some(v => this.esProtagonista(v, VM));
+    // Lo que se pidió manda: "comer rico" o una cena = restaurante o terraza;
+    // "noche y fiesta" o unos tragos = bares o antros. Sólo se exige si en la
+    // zona sí hay de eso.
+    const reqC = this.reqCats().filter(rc => pool.some(v => this.cumpleCat(v, rc)));
+    const hayProt = exigeProt || reqC.length > 0;
     // Una sola parada basta cuando la salida es corta o cuando esa parada ES la
     // salida (un antro hasta el cierre, un día de parque). No se rellena siempre
     // con tres.
     const ventana = to - from;
-    const basta = st => st.length >= 2 || (st.length === 1 && (ventana <= 3 || this.esAntro(st[0]) || this.actsDe(st[0]).indexOf('atraccion') >= 0));
+    // ...o cuando esa única parada ES lo que se pidió (una cena en restaurante
+    // con presupuesto justo) y no cabe nada más que valga la pena.
+    const basta = st => st.length >= 2 || (st.length === 1 && (ventana <= 3 || this.esAntro(st[0]) || this.actsDe(st[0]).indexOf('atraccion') >= 0
+      || (reqC.length === 1 && reqC[0].k === 'mesa' && this.cumpleCat(st[0], reqC[0]))));
     let yaVistosAntes = 0;
     // Las tres opciones se eligen como CONJUNTO: anclas distintas y ningún lugar
     // en común entre ellas mientras haya alternativas.
@@ -2570,7 +2672,7 @@ class Component extends DCLogic {
       fs.forEach(f => vistos.add(f));
       if (fs.some(f => avoidC.has(f) || bloq.has(f))) { repetidos++; if (fs.some(f => bloq.has(f))) yaVistosAntes++; continue; }   // ya se la mostramos
       c.sig = sg; c.sigs = fs; c.ancla = this.anclaDe(c.stops, c.acts);
-      c.prot = c.stops.some(v => this.esProtagonista(v, VM));
+      c.prot = (!exigeProt || c.stops.some(v => this.esProtagonista(v, VM))) && reqC.every(rc => c.stops.some(v => this.cumpleCat(v, rc)));
       c.comida = (c.acts || []).some(esComidaAct);
       c.cerca = traslado(c.stops) <= this.MAX_TRASLADO();
       candidatos.push(c);
@@ -2810,6 +2912,13 @@ class Component extends DCLogic {
     if (rellenoDiverso && plans.length > 1 && !avisoCompartida) {
       const nota = 'Con estos filtros no alcanzó para tres opciones sin lugares en común: algunas comparten parada.';
       expandNote = expandNote ? expandNote + ' ' + nota : nota;
+    }
+    // Si con la zona elegida no salió NINGÚN plan (p. ej. dos bares de la Condesa
+    // no caben en $1,000 un lunes), se intenta con las zonas vecinas y se avisa,
+    // en vez de dejar la pantalla vacía.
+    if (!plans.length && !cityWide && !opts.ampliar) {
+      const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
+      if (r2.plans && r2.plans.length) return r2;
     }
     return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
       reqSeed: opts.reqSeed || 0, reqId: opts.reqId || '', dseed,
@@ -3478,6 +3587,8 @@ class Component extends DCLogic {
           }
         }
         if (cc.cui) { const f = cands.filter(v => this.cuisine(v) === cc.cui); if (f.length) cands = f; }
+        // "Cenar" o "comer" = restaurante o terraza, no una taquería (salvo tope de $300).
+        if (cc.g === 'comida' && tope > 300) { const f = cands.filter(v => this.cumpleCat(v, { k: 'mesa', cats: this.CATS_MESA() })); if (f.length) cands = f; }
         cands.sort((a, b) => this.rank(b, this.DSEED) - this.rank(a, this.DSEED));
         // Respetar el tope del itinerario completo, no sólo el precio de cada lugar.
         const idx = seq.indexOf(item);
@@ -3607,7 +3718,6 @@ class Component extends DCLogic {
   //   'no'    → nada en los datos lo sugiere
   sirveCopas(v) {
     if (this.DRINK.includes(v.cat)) return 'si';
-    if (v.actVer && (v.act || []).indexOf('copas') >= 0) return 'si';   // actividad verificada
     // La etiqueta 'nightlife' es ruidosa: un auditorio o un museo la traen sin
     // servir nada. Sólo cuenta en categorías donde sí se consume.
     const NO_BEBIDA = ['Museo','Biblioteca','Librería','Foro','Centro cultural','Teatro',
@@ -3890,11 +4000,13 @@ class Component extends DCLogic {
       const votes = p.votes || {}; const cnt = k => Object.values(votes).filter(x => x === k).length;
       const sob = cnt('sobres'), noj = cnt('nojalo'); const mine = votes[me];
       const vb = (kind, on) => `white-space:nowrap;padding:10px 15px;border:2px solid ${on ? (kind === 'sobres' ? 'var(--color-accent)' : 'var(--color-text)') : 'var(--color-neutral-300)'};background:${on ? (kind === 'sobres' ? 'var(--color-accent)' : 'var(--color-text)') : '#fff'};color:${on ? '#fff' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:pointer`;
-      const votePl = kind => () => { const k2 = mine === kind ? null : kind; if (sOn) { this.mutate('votePlan', { user: me, planId: p.id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const v2 = Object.assign({}, x.votes); if (k2) v2[me] = k2; else delete v2[me]; return Object.assign({}, x, { votes: v2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
+      const votePl = kind => () => { if (!this.state.userName) { this.pedirCuenta('votar', () => this.mutate('votePlan', { user: this.state.userName, planId: p.id, kind })); return; }
+        const k2 = mine === kind ? null : kind; if (sOn) { this.mutate('votePlan', { user: me, planId: p.id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const v2 = Object.assign({}, x.votes); if (k2) v2[me] = k2; else delete v2[me]; return Object.assign({}, x, { votes: v2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
       const sv = p.stopVotes || {};
       const stopRows = (p.stops || []).map(id => { const v = C.find(x => x.id === id); const d = sv[id] || {}; const upN = Object.values(d).filter(x => x === 'up').length, dnN = Object.values(d).filter(x => x === 'down').length; const myS = d[me];
         const sb = on => `padding:6px 11px;border:1.5px solid ${on ? 'var(--color-text)' : 'var(--color-neutral-300)'};background:${on ? 'var(--color-text)' : '#fff'};color:${on ? '#fff' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:pointer;white-space:nowrap`;
-        const voteS = kind => () => { const k2 = myS === kind ? null : kind; if (sOn) { this.mutate('voteStop', { user: me, planId: p.id, venueId: id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const sv2 = JSON.parse(JSON.stringify(x.stopVotes || {})); const dd = sv2[id] = sv2[id] || {}; if (k2) dd[me] = k2; else delete dd[me]; return Object.assign({}, x, { stopVotes: sv2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
+        const voteS = kind => () => { if (!this.state.userName) { this.pedirCuenta('votar', () => this.mutate('voteStop', { user: this.state.userName, planId: p.id, venueId: id, kind })); return; }
+          const k2 = myS === kind ? null : kind; if (sOn) { this.mutate('voteStop', { user: me, planId: p.id, venueId: id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const sv2 = JSON.parse(JSON.stringify(x.stopVotes || {})); const dd = sv2[id] = sv2[id] || {}; if (k2) dd[me] = k2; else delete dd[me]; return Object.assign({}, x, { stopVotes: sv2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
         return { name: v ? v.n : ((p.ext && p.ext[id]) || 'Opción externa'), meta: v ? `${v.cat} · ${v.col} · ${this.precioTxt(v)}` : 'Agregado a mano · fuera del catálogo', up: String(upN), down: String(dnN), upStyle: sb(myS === 'up'), downStyle: sb(myS === 'down'), voteUp: voteS('up'), voteDown: voteS('down'), open: () => { if (v) openV(v.id); } }; });
       const shareChips = myFr.map(f => { const sent = (p.sharedWith || []).includes(f); return { label: sent ? '✓ ' + f : '→ ' + f, style: `padding:6px 11px;border:1.5px solid ${sent ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sent ? 'var(--color-accent)' : '#fff'};color:${sent ? '#fff' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:${sent ? 'default' : 'pointer'}`, send: () => { if (sent) return; if (!sOn) { this.toast('El envío en vivo funciona con el link del salón'); return; } this.mutate('sharePlan', { user: me, planId: p.id, to: [f] }).then(() => this.toast(`Enviado a ${f} — le llega a su dispositivo`)); } }; });
       const voterNames = Object.keys(votes);
@@ -4120,7 +4232,7 @@ class Component extends DCLogic {
       tandaSelect: e => { try { e.target.select(); } catch(err) {} },
       cerrarTandaUrl: () => this.setState({ tandaUrl: '' }),
       waTanda: () => this.waTanda(),
-      tandaDe: s.tandaDe ? ('' + s.tandaDe) : '',
+      tandaDe: (s.tandaDe || (s.results && s.results.compartida)) ? ('' + (s.tandaDe || 'compartida')) : '',
       summaryLine: this.summary(),
       tituloKicker: ((s.results || {}).plans || []).length ? 'TUS PLANES' : 'TU BÚSQUEDA',
       tituloPlan: this.tituloPlan(), subtituloPlan: this.subtituloPlan(),
@@ -4514,6 +4626,8 @@ class Component extends DCLogic {
       + p.stops.map((v, i) => this.time12(ts[i]) + ' · ' + v.n.split(' ·')[0]).join('\n')
       + '\n\nCosto aproximado: ' + rs.costo + ' por persona\n\nÁbrelo aquí: ' + this.tandaLinkDe([p]); }
   irAFormulario(id) {
+    const pasoDe = { 'armar-ambiente': 1, 'armar-donde': 2, 'armar-quien': 3 };
+    this.setState({ paso: pasoDe[id] || 1, pasoDir: 'back' });
     this.nav('home');
     setTimeout(() => { try { const el = document.getElementById(id); if (el) el.scrollIntoView({ block: 'start', behavior: this.reduceMov() ? 'auto' : 'smooth' }); } catch(e) {} }, 60);
   }
@@ -4582,6 +4696,14 @@ class Component extends DCLogic {
         photoFail: () => this.setState(st2 => { const q = Object.assign({}, st2.photos); delete q[a.id]; return { photos: q }; }),
         aria: 'Opción ' + (i + 1) + ', ' + frases[i] + ': ' + st.map(v => v.n).join(', '),
         stops: st.map((v, j) => ({ time: this.time12(ts[j]), name: v.n, sub: v.cat + ' · ' + v.col + (v.horaEstimada ? ' · horario por confirmar' : '') })),
+        ...(() => { if (!(r && r.compartida)) return { votoOn: false };
+          const pid = this.planOptId(p); const sp = ((s.sync && s.sync.plans) || []).find(x => x.id === pid);
+          const vv = (sp && sp.votes) || {}; const yo = s.userName; const mio = yo ? vv[yo] : null;
+          const si = Object.values(vv).filter(x => x === 'sobres').length, no = Object.values(vv).filter(x => x === 'nojalo').length;
+          const quienes = Object.keys(vv).map(k => k + (vv[k] === 'sobres' ? ' ✓' : ' ✕'));
+          return { votoOn: true, si: String(si), no: String(no), siOn: mio === 'sobres' ? 'true' : 'false', noOn: mio === 'nojalo' ? 'true' : 'false',
+            votarSi: () => this.votarOpcion(p, 'sobres'), votarNo: () => this.votarOpcion(p, 'nojalo'),
+            votantes: quienes.length ? 'Votaron: ' + quienes.join(', ') : 'Nadie ha votado todavía' }; })(),
         elegir: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i] });
           this.setState({ planIdx: i, planDesdeTanda: true, planStops: st.length, swapSeed: 0,
             planCustom: { stops: st, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null,
@@ -4673,6 +4795,7 @@ class Component extends DCLogic {
       pasoAtras: () => paso > 1 ? irPaso(paso - 1, 'back') : this.nav('home'),
       pasoAtrasAria: paso > 1 ? 'Paso anterior' : 'Volver al inicio',
       pasoSiguiente, pasoBoton: paso < 3 ? 'Siguiente' : 'Ver mis opciones', pasoResumen: resumenPaso,
+      pasoNoFinal: paso < 3, pasoHayAtras: paso > 1,
       vibeTiles, sinAlcoholPressed: s.sinAlcohol ? 'true' : 'false', yaComimosPressed: s.yaComimos ? 'true' : 'false',
       toggleSinAlcohol: () => this.setState({ sinAlcohol: !s.sinAlcohol }),
       toggleYaComimos: () => this.setState({ yaComimos: !s.yaComimos }),
@@ -4688,7 +4811,7 @@ class Component extends DCLogic {
       opciones, hayOpciones: nOpc > 0, sinOpciones: view === 'results' && nOpc === 0,
       sinOpcionesTxt: aviso || 'Ningún lugar cumple a la vez la zona, el horario y el presupuesto. Amplía uno de los tres.',
       compartirTxt: nOpc === 1 ? 'Compartir el plan' : 'Compartir las ' + nOpc, guardarTxt: nOpc === 1 ? 'Guardar el plan' : 'Guardar las ' + nOpc,
-      explorarTxt: 'Ver lugares sueltos en ' + this.zonesLabel() + ' →', tandaDeTxt: s.tandaDe ? s.tandaDe + ' te compartió estos planes' : '',
+      explorarTxt: 'Ver lugares sueltos en ' + this.zonesLabel() + ' →', tandaDeTxt: s.tandaDe ? s.tandaDe + ' te compartió estos planes: vota el que te late' : 'Te compartieron estos planes: vota el que te late',
       otrasNota: nOpc < 3 && nOpc > 0 ? 'Con estos filtros no hay más planes que cumplan todo. Te mostramos los que sí; amplía zona, horario o presupuesto para ver más.'
         : 'Te armamos otras opciones sin repetir lo que ya viste.',
       resurprise: () => this.generar(() => this.regenerate()),
@@ -5029,7 +5152,7 @@ class Component extends DCLogic {
   // $301 con tope de $300 y el pie seguía diciendo "≤ $300".
   extendPlan(stops, targetN) { const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
     const max = this.budgetMax(); const VM = this.vibeModel();
-    const all = this.cat().filter(v => this.vibeAdmite(v, VM) && !v.cursoCerrado);
+    const all = this.cat().filter(v => this.vibeAdmite(v, VM) && !v.cursoCerrado && this.esRecomendable(v) && !this.funcionSinConfirmar(v));
     const used = {}; out.forEach(v => used[v.id] = 1);
     const times = this.planTimes(targetN);
     while (out.length < targetN) { const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
