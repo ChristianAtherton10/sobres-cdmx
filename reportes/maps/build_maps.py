@@ -117,7 +117,8 @@ for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
             m = re.match(r'\$([\d,]+)\s*[–-]\s*([\d,]+)', (extra[0] if extra else '') or '')
             if m:
                 lo, hi = int(m.group(1).replace(',', '')), int(m.group(2).replace(',', ''))
-                rec['precio'] = {'min': lo, 'rep': int(round((lo + hi) / 2 / 10) * 10), 'max': hi, 'unidad': 'persona', 'moneda': 'MXN',
+                # Regla del fundador (4 nov 2026): con un rango, el precio por persona es el ALTO.
+                rec['precio'] = {'min': lo, 'rep': hi, 'max': hi, 'unidad': 'persona', 'moneda': 'MXN',
                                  'canasta': 'Rango por persona que reporta la gente en Google Maps (%s).' % extra[0]}
                 rec['estado'] = 'estimado'; rec['falta'] = 'confirmar el precio en el lugar'
             if veg: rec['dieta'] = ['vegano', 'vegetariano'] if vegano else ['vegetariano']
