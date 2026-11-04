@@ -349,6 +349,11 @@ section('6 · Guardar y recuperar planes');
 const planGuardable = (dseed = 1234) => {
   const app = makeApp({ ...BASE, zone: 'roma', zonesSel: ['roma'] }, { dseed });
   app.runSearch(); app.state.planStops = 2;
+  // Desde el 4 nov 2026 el orden de las opciones lleva algo de azar (para que
+  // el karaoke o el billar no queden siempre tapados): se elige la primera
+  // opción de DOS paradas, que es lo que esta sección necesita guardar.
+  const i = app.state.results.plans.findIndex(p => p.stops.length >= 2);
+  if (i > 0) app.state.planIdx = i;
   return app;
 };
 

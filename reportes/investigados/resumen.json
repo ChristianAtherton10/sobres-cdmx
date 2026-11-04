@@ -1,0 +1,308 @@
+[
+ {
+  "id": "iv-e6408b5f80",
+  "n": "Trajineras · Embarcadero Nuevo Nativitas",
+  "zone": "xochimilco",
+  "km": 2.6,
+  "lat": 19.25241,
+  "lng": -99.09353,
+  "aprox": false
+ },
+ {
+  "id": "iv-fb23b69938",
+  "n": "Trajineras · Embarcadero Cuemanco",
+  "zone": "xochimilco",
+  "km": 1.5,
+  "lat": 19.2869,
+  "lng": -99.1022,
+  "aprox": false
+ },
+ {
+  "id": "iv-772e767f6f",
+  "n": "Terraza Karaoke Roma",
+  "zone": "roma",
+  "km": 0.9,
+  "lat": 19.42217,
+  "lng": -99.16767,
+  "aprox": false
+ },
+ {
+  "id": "iv-95992618de",
+  "n": "Beer Garden Roma · karaoke coreano",
+  "zone": "condesa",
+  "km": 1.0,
+  "lat": 19.42007,
+  "lng": -99.17434,
+  "aprox": false
+ },
+ {
+  "id": "iv-a0a66f9361",
+  "n": "El Palomazo Karaoke",
+  "zone": "delvalle",
+  "km": 1.1,
+  "lat": 19.38038,
+  "lng": -99.15833,
+  "aprox": false
+ },
+ {
+  "id": "iv-98e7c9a326",
+  "n": "Caverna Karaoke Insurgentes",
+  "zone": "sanangel",
+  "km": 1.3,
+  "lat": 19.35769,
+  "lng": -99.18425,
+  "aprox": false
+ },
+ {
+  "id": "iv-6d69f8cc45",
+  "n": "Bocca Piano Cantabar",
+  "zone": "polanco",
+  "km": 0.7,
+  "lat": 19.42679,
+  "lng": -99.19638,
+  "aprox": false
+ },
+ {
+  "id": "iv-28ec5d9809",
+  "n": "El Recreo Coyoacán · billar",
+  "zone": "coyoacan",
+  "km": 0.0,
+  "lat": 19.34986,
+  "lng": -99.16198,
+  "aprox": true
+ },
+ {
+  "id": "iv-cf70cfed63",
+  "n": "Glyfos Pool",
+  "zone": "delvalle",
+  "km": 1.8,
+  "lat": 19.39475,
+  "lng": -99.18157,
+  "aprox": false
+ },
+ {
+  "id": "iv-69ba5c0cf1",
+  "n": "Lucille · billar",
+  "zone": "roma",
+  "km": 0.8,
+  "lat": 19.41195,
+  "lng": -99.15821,
+  "aprox": false
+ },
+ {
+  "id": "iv-04d494bca0",
+  "n": "Billares París",
+  "zone": "centro",
+  "km": 3.7,
+  "lat": 19.41743,
+  "lng": -99.10684,
+  "aprox": false
+ },
+ {
+  "id": "iv-a96288c956",
+  "n": "Bolerama Coyoacán",
+  "zone": "delvalle",
+  "km": 2.1,
+  "lat": 19.36739,
+  "lng": -99.17107,
+  "aprox": false
+ },
+ {
+  "id": "iv-4c8b8e5c66",
+  "n": "Sport & Chips",
+  "zone": "coyoacan",
+  "km": 1.8,
+  "lat": 19.34321,
+  "lng": -99.14666,
+  "aprox": false
+ },
+ {
+  "id": "iv-cfe0ce9827",
+  "n": "Bowlero · Chapultepec Morales",
+  "zone": "polanco",
+  "km": 1.5,
+  "lat": 19.43807,
+  "lng": -99.20827,
+  "aprox": false
+ },
+ {
+  "id": "iv-d39af1f9af",
+  "n": "Royal Bol · Torre Manacar",
+  "zone": "delvalle",
+  "km": 2.4,
+  "lat": 19.36897,
+  "lng": -99.18121,
+  "aprox": false
+ },
+ {
+  "id": "iv-a8648228e6",
+  "n": "Royal Bol · Santa Fe",
+  "zone": "santafe",
+  "km": 0.4,
+  "lat": 19.36561,
+  "lng": -99.26409,
+  "aprox": false
+ },
+ {
+  "id": "iv-6573a119da",
+  "n": "Go Kart Mania · Plaza Carso",
+  "zone": "polanco",
+  "km": 1.2,
+  "lat": 19.44062,
+  "lng": -99.20297,
+  "aprox": false
+ },
+ {
+  "id": "iv-94ede7e315",
+  "n": "K1 Speed · Torre Manacar (go karts)",
+  "zone": "delvalle",
+  "km": 2.4,
+  "lat": 19.36897,
+  "lng": -99.18121,
+  "aprox": false
+ },
+ {
+  "id": "iv-5c976c02d1",
+  "n": "K1 Speed · Garden Santa Fe (go karts)",
+  "zone": "santafe",
+  "km": 0.4,
+  "lat": 19.36561,
+  "lng": -99.26409,
+  "aprox": false
+ },
+ {
+  "id": "iv-94f0b003ad",
+  "n": "Gran Salón de la Ciudad de México",
+  "zone": "centro",
+  "km": 2.5,
+  "lat": 19.45632,
+  "lng": -99.1401,
+  "aprox": false
+ },
+ {
+  "id": "iv-a0467b2f20",
+  "n": "El Bandazo",
+  "zone": "roma",
+  "km": 0.8,
+  "lat": 19.42467,
+  "lng": -99.16526,
+  "aprox": false
+ },
+ {
+  "id": "iv-345a3e799c",
+  "n": "Salón Caribe",
+  "zone": "juarez",
+  "km": 1.9,
+  "lat": 19.44284,
+  "lng": -99.16449,
+  "aprox": false
+ },
+ {
+  "id": "iv-39b4a0aa5d",
+  "n": "Salón Candela",
+  "zone": "juarez",
+  "km": 1.4,
+  "lat": 19.43778,
+  "lng": -99.14995,
+  "aprox": false
+ },
+ {
+  "id": "iv-6ca4b87787",
+  "n": "La Flor del Son",
+  "zone": "juarez",
+  "km": 0.4,
+  "lat": 19.42347,
+  "lng": -99.15679,
+  "aprox": false
+ },
+ {
+  "id": "iv-bacfd47f2e",
+  "n": "Mambo Café Insurgentes",
+  "zone": "delvalle",
+  "km": 0.3,
+  "lat": 19.38389,
+  "lng": -99.16886,
+  "aprox": true
+ },
+ {
+  "id": "iv-5dfdb9d007",
+  "n": "Mercado Molière",
+  "zone": "polanco",
+  "km": 1.1,
+  "lat": 19.44102,
+  "lng": -99.20066,
+  "aprox": false
+ },
+ {
+  "id": "iv-f3a9fcef6c",
+  "n": "Tianguis Cultural del Chopo",
+  "zone": "centro",
+  "km": 2.1,
+  "lat": 19.44876,
+  "lng": -99.14993,
+  "aprox": false
+ },
+ {
+  "id": "iv-da0b9c118a",
+  "n": "Cineclub Condesa",
+  "zone": "condesa",
+  "km": 0.7,
+  "lat": 19.41767,
+  "lng": -99.17455,
+  "aprox": false
+ },
+ {
+  "id": "iv-5beb479880",
+  "n": "Salas de la Filmoteca UNAM · Centro Cultural Universitario",
+  "zone": "cu",
+  "km": 0.8,
+  "lat": 19.31514,
+  "lng": -99.18754,
+  "aprox": false
+ },
+ {
+  "id": "iv-cadd013209",
+  "n": "Cinematógrafo del Chopo",
+  "zone": "juarez",
+  "km": 1.7,
+  "lat": 19.44195,
+  "lng": -99.15675,
+  "aprox": false
+ },
+ {
+  "id": "iv-239c632f60",
+  "n": "Estadio Ciudad de los Deportes",
+  "zone": "delvalle",
+  "km": 1.2,
+  "lat": 19.38343,
+  "lng": -99.17826,
+  "aprox": false
+ },
+ {
+  "id": "iv-6fc481ccca",
+  "n": "Estadio Alfredo Harp Helú",
+  "zone": "centro",
+  "km": 4.3,
+  "lat": 19.40688,
+  "lng": -99.10827,
+  "aprox": false
+ },
+ {
+  "id": "iv-592a9abe8b",
+  "n": "Ecobici · Bosque de Chapultepec (estaciones Los Pinos)",
+  "zone": "chapultepec",
+  "km": 0.4,
+  "lat": 19.41735,
+  "lng": -99.19001,
+  "aprox": false
+ },
+ {
+  "id": "iv-a85ec40745",
+  "n": "La Vinería",
+  "zone": "condesa",
+  "km": 0.2,
+  "lat": 19.41296,
+  "lng": -99.17513,
+  "aprox": false
+ }
+]

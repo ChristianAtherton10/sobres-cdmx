@@ -166,6 +166,16 @@ window.SOBRES_AUDITORIA = (function () {
     estado: 'estimado', fuente: 'Referencia de precio del fundador de SOBRES (19-oct-2026)', fecha: H19 }, extra || {});
 
   const LUGARES = {
+    /* ---- Mirador del Monumento a la Revolución (4-nov-2026) ---- */
+    'cdmx-0103': {
+      oh: [12, 20], hrs: 'Mirador: dom a jue 12:00–20:00 · vie y sáb 12:00–22:00',
+      act: ['vista', 'visita'],
+      precio: { min: 136, rep: 150, max: 150, unidad: 'persona', moneda: 'MXN',
+        canasta: 'Acceso al mirador: desde $136 en Fever (nov 2026) y $150 en taquilla según Chilango. No incluye el Museo Nacional de la Revolución.' },
+      estado: 'estimado',
+      fuente: 'Fever — Monumento a la Revolución (horario del mirador y boletos, consultado 4-nov-2026)',
+      url: 'https://feverup.com/es/ciudad-de-mexico/venue/monumento-a-la-revolucion', fecha: '2026-11-04'
+    },
     /* ---- Museos: el defecto de $85 contra las taquillas reales ---- */
     'cdmx-0200': {
       precio: { min: 60, rep: 160, max: 320, unidad: 'persona', moneda: 'MXN',

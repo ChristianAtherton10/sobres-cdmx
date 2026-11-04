@@ -353,4 +353,36 @@ test('17b · romántico en la Roma de noche: cena rica, bar de autor o experienc
   plans.forEach(p => p.stops.forEach(v => assert(v.cat !== 'Taquería' && !app.esCadenaCasual(v), 'romántico con ' + v.n)));
 });
 
+// Regresión (4 nov 2026): la pieza "cata" tomaba el Teatro Santa Catarina y una
+// biblioteca del CICATA; "en bici" tomaba una ruta de tacos A PIE (por ser Tour).
+test('17c · las piezas no se confunden por una palabra dentro de otra', () => {
+  const app = makeApp({}); const R = app.RECETAS(); const todos = app.cat();
+  const de = k => todos.filter(v => app.esPieza(v, R.piezas[k])).map(v => v.n);
+  de('cata').forEach(n => assert(!/catarina|cicata/i.test(n), 'cata = ' + n));
+  de('bici_tour').forEach(n => assert(/bike|bici|ciclot/i.test(n), 'en bici = ' + n));
+  assert(de('karaoke').some(n => /cantabar/i.test(n)), 'el karaoke no reconoce un "cantabar"');
+  assert(de('cine_arte').some(n => /cine tonal/i.test(n)), 'el Cine Tonalá no cuenta como cine de arte');
+  assert(de('mirador').some(n => /monumento a la revoluci/i.test(n)), 'falta el mirador del Monumento a la Revolución');
+});
+
+// Las piezas que tenían 1 o 2 lugares ya tienen de dónde escoger (con fuente).
+test('17d · piezas con oferta real: karaoke, billar, boliche, go karts, baile, cine de arte, trajineras', () => {
+  const app = makeApp({}); const R = app.RECETAS();
+  const rec = app.cat().filter(v => app.esRecomendable(v));
+  const min = { karaoke: 5, billar: 4, boliche: 5, karting: 3, salon_baile: 6, cine_arte: 6, trajineras: 2, estadio: 4 };
+  Object.keys(min).forEach(k => {
+    const n = rec.filter(v => app.esPieza(v, R.piezas[k])).length;
+    assert(n >= min[k], k + ' tiene ' + n + ' lugares recomendables (mínimo ' + min[k] + ')');
+  });
+});
+
+test('17e · "con amigos" de noche en la Roma puede proponer karaoke, billar o salón de baile', () => {
+  const R = makeApp({}).RECETAS(); const vistos = new Set();
+  [1, 2, 3, 4, 5, 6, 7, 8].forEach(sd => {
+    const { app, plans } = corre({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], vibes: ['social'], when: 'noche', budget: 'b1000' }, sd);
+    plans.forEach(p => p.stops.forEach(v => ['karaoke', 'billar', 'salon_baile', 'boliche'].forEach(k => { if (app.esPieza(v, R.piezas[k])) vistos.add(k); })));
+  });
+  assert(vistos.size >= 2, 'en 8 tandas sólo salió: ' + [...vistos].join(', '));
+});
+
 if (require.main === module) report();

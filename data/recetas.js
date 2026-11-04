@@ -30,7 +30,7 @@ window.SOBRES_RECETAS = {
     cena_rica:       { lbl: 'Cena', cats: ['Restaurante', 'Fonda de autor', 'Izakaya', 'Rooftop'], acts: ['cena', 'comida'], momento: 'cena', comida: true, sinCadenas: true },
     comida_familiar: { lbl: 'Comida en familia', cats: ['Restaurante', 'Fonda de autor', 'Mercado', 'Taquería'], momento: 'comida', comida: true, familia: true },
     cena_familiar:   { lbl: 'Cena en familia', cats: ['Restaurante', 'Fonda de autor', 'Taquería'], momento: 'cena', comida: true, familia: true },
-    mercado_gourmet: { lbl: 'Mercado', cats: ['Mercado'], sinNombre: 'artesan|bazar', momento: 'comida', comida: true },
+    mercado_gourmet: { lbl: 'Mercado', cats: ['Mercado'], nombreTambien: 'mil[aá]n 44', sinNombre: 'artesan|bazar', momento: 'comida', comida: true },
     cena_rapida:     { lbl: 'Cenita rápida', cats: ['Taquería', 'Restaurante'], maxPP: 380, momento: 'cena', comida: true },
     tacos:           { lbl: 'Tacos', cats: ['Taquería'], momento: 'libre', comida: true },
     postre:          { lbl: 'Postre', cats: ['Heladería', 'Churrería', 'Café'], nombreSiCat: { 'Café': 'panader|pasteler|postre|crepa|churr|waffle|chocolat|dulce|gelato|helad|nieve|bake|pan ' }, momento: 'libre' },
@@ -41,8 +41,8 @@ window.SOBRES_RECETAS = {
     rooftop:         { lbl: 'Rooftop', cats: ['Rooftop'], momento: 'noche' },
     cantina:         { lbl: 'Cantina', cats: ['Cantina'], nombreTambien: 'cantina|pulquer', momento: 'libre' },
     antro:           { lbl: 'Antro', cats: ['Antro'], momento: 'antro' },
-    salon_baile:     { lbl: 'A bailar', cats: ['Salón de baile'], momento: 'noche' },
-    karaoke:         { lbl: 'Karaoke', nombre: 'karaoke|canta coraz', momento: 'noche' },
+    salon_baile:     { lbl: 'A bailar', cats: ['Salón de baile'], nombreTambien: 'mama rumba', momento: 'noche' },
+    karaoke:         { lbl: 'Karaoke', nombre: 'karaoke|cantabar|canta coraz', momento: 'noche' },
     // ── cultura ──
     museo:           { lbl: 'Museo', cats: ['Museo'], sinNombre: 'del niño|kidzania', momento: 'dia' },
     galeria:         { lbl: 'Galería', cats: ['Galería'], momento: 'dia' },
@@ -51,12 +51,12 @@ window.SOBRES_RECETAS = {
     libreria:        { lbl: 'Librería', cats: ['Librería', 'Biblioteca'], momento: 'dia' },
     teatro:          { lbl: 'Teatro', cats: ['Teatro', 'Foro'], momento: 'noche', porConfirmar: true },
     cine:            { lbl: 'Cine', cats: ['Cine'], momento: 'libre', porConfirmar: true },
-    cine_arte:       { lbl: 'Cine de arte', cats: ['Cine'], nombre: 'cineteca|ifal|cineman', momento: 'libre', porConfirmar: true },
+    cine_arte:       { lbl: 'Cine de arte', nombre: 'cineteca|ifal|cineman[ií]a|cine tonal[aá]|casa del cine|cineclub|filmoteca|cinemat[oó]grafo del chopo', momento: 'libre', porConfirmar: true },
     // ── experiencias ──
     taller:          { lbl: 'Taller', cats: ['Taller'], momento: 'libre', porConfirmar: true },
-    cata:            { lbl: 'Cata', nombre: 'cata|degustaci|vin[ií]cola|pintando con vino|drink & paint', momento: 'libre', porConfirmar: true },
+    cata:            { lbl: 'Cata', nombre: '\\bcatas?\\b|degustaci|vin[ií]cola|pintando con vino|drink & paint', momento: 'libre', porConfirmar: true },
     paseo_romantico: { lbl: 'Paseo', nombre: 'lago de chapultepec|jard[ií]n bot[aá]nico|parque m[eé]xico|jard[ií]n centenario|viveros|kiosco morisco|trajinera|parque lincoln|caminar masaryk|bazar s[aá]bado|parque espa[nñ]a|bike tour|bici', momento: 'dia' },
-    mirador:         { lbl: 'Mirador', nombre: 'torre latinoamericana|mirador', momento: 'libre' },
+    mirador:         { lbl: 'Mirador', nombre: 'torre latinoamericana|mirador|monumento a la revoluci', momento: 'libre' },
     parque:          { lbl: 'Parque', cats: ['Parque', 'Al aire libre'], momento: 'dia' },
     jardin:          { lbl: 'Jardín', nombre: 'jard[ií]n bot[aá]nico|viveros|parque m[eé]xico|parque lincoln|jard[ií]n centenario|parque espa[nñ]a', momento: 'dia' },
     parque_familiar: { lbl: 'Parque', nombre: 'aztl[aá]n|bosque de chapultepec|zool[oó]gico|bosque de tlalpan|viveros|ecol[oó]gico de xochimilco|bicentenario|tezoz[oó]moc|bosque de san juan de arag[oó]n|nativitas|la mexicana|alameda central|parque m[eé]xico|hundido', momento: 'dia' },
@@ -67,9 +67,9 @@ window.SOBRES_RECETAS = {
     billar:          { lbl: 'Billar', cats: ['Billar'], momento: 'libre' },
     karting:         { lbl: 'Go karts', nombre: 'karting|go ?kart', momento: 'libre' },
     lucha_libre:     { lbl: 'Lucha libre', nombre: 'lucha libre|arena m[eé]xico|arena coliseo', momento: 'noche', porConfirmar: true },
-    bici_tour:       { lbl: 'En bici', cats: ['Tour'], nombreTambien: 'bike|bici|ciclot', momento: 'dia', porConfirmar: true },
+    bici_tour:       { lbl: 'En bici', nombre: 'bike|bici|ciclot', momento: 'dia', porConfirmar: true },
     trajineras:      { lbl: 'Trajineras', nombre: 'trajinera', momento: 'dia' },
-    parque_diversiones: { lbl: 'Parque de diversiones', cats: ['Parque de diversiones'], momento: 'dia' },
+    parque_diversiones: { lbl: 'Parque de diversiones', cats: ['Parque de diversiones'], nombreTambien: 'aztl[aá]n parque', momento: 'dia' },
     bazar:           { lbl: 'Bazar', nombre: 'bazar|artesan|tianguis', momento: 'dia' },
     estadio:         { lbl: 'Partido', nombre: 'estadio', momento: 'libre', porConfirmar: true }
   },
@@ -105,8 +105,8 @@ window.SOBRES_RECETAS = {
     },
     'social': {
       tarde:  [['reto', 'comida_rica'], ['boliche', 'bar'], ['karting', 'tacos'], ['lucha_libre', 'tacos'], ['mercado_gourmet', 'bar'], ['cine', 'tacos'], ['reto', 'tacos']],
-      noche:  [['reto', 'cena_rapida', 'bar'], ['boliche', 'bar'], ['cena_rapida', 'bar'], ['lucha_libre', 'tacos'], ['karaoke'], ['billar', 'bar'], ['cantina', 'bar']],
-      sueltos: ['reto', 'boliche', 'karaoke', 'bar', 'cantina', 'lucha_libre']
+      noche:  [['reto', 'cena_rapida', 'bar'], ['boliche', 'bar'], ['cena_rapida', 'bar'], ['lucha_libre', 'tacos'], ['cena_rapida', 'karaoke'], ['bar', 'karaoke'], ['billar', 'bar'], ['cantina', 'bar'], ['cena_rapida', 'salon_baile']],
+      sueltos: ['reto', 'boliche', 'karaoke', 'billar', 'bar', 'cantina', 'lucha_libre']
     },
     'aventurero': {
       manana: [['bici_tour', 'desayuno_rico'], ['trajineras', 'comida_familiar'], ['parque_diversiones']],

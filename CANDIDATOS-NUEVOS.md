@@ -931,3 +931,88 @@ Generado por `reportes/paquete/build_paquete.py`. Se tomaron las **842 fichas de
 | `pq-b3cbce3dc2` | Tacos del Valle | Taquería | roma | ~$210 | Diario 1 pm–3 am | [Guía MICHELIN](https://guide.michelin.com/us/en/ciudad-de-mexico/cuauhtemoc_1995126/restaurant/tacos-del-valle) |
 | `pq-1ecf8e2f9b` | Taqueria El Cuadrilátero | Taquería | roma | ~$450 | Horario por confirmar | [The Happening, aperturas reportadas](https://thehappening.com/nuevos-hotspots-para-conocer-en-noviembre-2026/) |
 | `pq-2fb32f0602` | Taquería El Jarocho | Taquería | roma | ~$210 | Diario 9 am–10 pm | [Guía MICHELIN](https://guide.michelin.com/us/en/ciudad-de-mexico/cuauhtemoc_1995126/restaurant/taqueria-el-jarocho) |
+
+---
+
+# Lugares investigados a mano (4 nov 2026)
+
+Para las piezas de receta que tenían 1 o 2 lugares. Generado por `reportes/investigados/build_investigados.py` → `data/investigados.js` (ids `iv-…`).
+
+**Reglas que se siguieron**
+- Cada lugar lleva fuente (URL), fecha de la fuente y fecha de consulta (4 nov 2026).
+- Precio u horario que la fuente no publica → "estimado" o "por confirmar". No se inventó ninguno.
+- Fuente anterior a 2024 → **no se propone en planes** (sólo aparece en Explorar) hasta reverificar, igual que con el paquete.
+- Ubicación: la de la ficha oficial cuando la da; si no, OpenStreetMap con la dirección de la fuente; si tampoco, el centro de la colonia (marcado "aprox.").
+- Se revisó contra el catálogo: *La Casa del Cine MX* ya venía en el paquete y no se repitió.
+
+**Resultado:** 34 lugares; 25 se proponen en planes y 9 quedan por reverificar.
+
+| Pieza | Antes (recomendables) | Ahora |
+|---|---:|---:|
+| Karaoke | 2 | 7 |
+| Billar | 1 | 5 |
+| Boliche | 4 | 6 |
+| Go karts | 1 | 3 |
+| Salón de baile | 5 | 8 |
+| Cine de arte | 4 | 8 |
+| Trajineras | 1 | 3 |
+| Mirador | 1 | 2 |
+| Estadio | 3 | 5 |
+| Parque de diversiones | 1 | 2 |
+| Mercado gastronómico | 5 | 6 |
+| Tianguis / bazar | 2 | 3 |
+| En bici | 2 | 3 |
+
+**Correcciones de reglas (no son lugares nuevos)**
+- La pieza "Cata" tomaba por error el *Teatro Santa Catarina* y una biblioteca del *CICATA*. Ahora busca la palabra completa.
+- "En bici" tomaba una *ruta de tacos a pie* (por ser Tour). Ahora exige bici en el nombre.
+- Cuentan como cine de arte: Cine Tonalá, Cineclub Condesa, Filmoteca UNAM y Cinematógrafo del Chopo.
+- Cuentan como mirador: el del Monumento a la Revolución (horario y precio actualizados con fuente).
+- Cuentan como parque de diversiones: Aztlán Parque Urbano.
+- Cuentan como mercado gastronómico: Milán 44.
+- Cuenta como salón de baile: Mama Rumba.
+
+**Lo que NO encontré con fuente confiable (sigue corto)**
+- **Catas de vino o mezcal con sede fija:** casi todas son experiencias con punto de encuentro variable o a domicilio. Siguen Drink & Paint y Pintando con Vino. Agregué *La Vinería* (wine bar, Condesa) como bar, no como cata.
+- **Lucha libre:** en la CDMX sólo están la Arena México y la Arena Coliseo (ya en el catálogo); las demás arenas están en el Estado de México.
+- **Librerías:** hay 183 en el catálogo, pero casi todas vienen del SIC con fuente vieja. Hace falta reverificarlas, no agregar más.
+- **Duplicado previo:** *Estadio Azteca* aparece dos veces (cdmx-0117 y otro registro). No lo toqué; lo dejo para tu revisión.
+
+## Tabla para revisar
+
+| Tipo | Lugar | Zona | Dirección | Horario | Precio | Fuente (fecha) | En planes |
+|---|---|---|---|---|---|---|---|
+| Trajineras | Trajineras · Embarcadero Nuevo Nativitas | xochimilco | Carretera Nativitas–Tulyehualco s/n, Santa María Nativitas | Diario 6:00–22:00 | $750 por trajinera/hora (rango) | [Secretaría de Turismo CDMX — ficha oficial del lugar](https://mexicocity.cdmx.gob.mx/venues/embarcadero-nuevo-nativitas/?lang=es) (sin fecha (consultada 2026-11-04)) | Sí |
+| Trajineras | Trajineras · Embarcadero Cuemanco | xochimilco | Periférico Sur (Blvd. Adolfo Ruiz Cortines) s/n, Barrio 18 | 8:00–22:00 (horario general de las trajineras según N+, abr 2026; la ficha oficial no lo publica) | $750 por trajinera/hora (rango) | [Secretaría de Turismo CDMX — ficha oficial del lugar](https://mexicocity.cdmx.gob.mx/venues/lago-de-xochimilco-embarcadero-de-cuemanco/) (sin fecha (consultada 2026-11-04)) | Sí |
+| Karaoke | Terraza Karaoke Roma | roma | Av. Chapultepec 400, Roma Norte | Mié a sáb 17:00–2:00 | por confirmar | [Sopitas — karaokes en la CDMX](https://www.sopitas.com/?p=1786049) (2025-02-16) | Sí |
+| Karaoke | Beer Garden Roma · karaoke coreano | condesa | Puebla 213, Roma Norte | Mar a dom 15:00–23:00 | por confirmar | [Sopitas — karaokes en la CDMX](https://www.sopitas.com/?p=1786049) (2025-02-16) | Sí |
+| Karaoke | El Palomazo Karaoke | delvalle | Av. Universidad 348, Narvarte Poniente | Mié 20:00–1:00 · jue 20:00–2:00 · vie y sáb 19:00–3:00 | por confirmar | [Sopitas — karaokes en la CDMX](https://www.sopitas.com/?p=1786049) (2025-02-16) | Sí |
+| Karaoke | Caverna Karaoke Insurgentes | sanangel | Av. Insurgentes Sur 1869, Guadalupe Inn | Jue y vie 18:00–2:30 · sáb 20:00–2:30 | por confirmar | [Sopitas — karaokes en la CDMX](https://www.sopitas.com/?p=1786049) (2025-02-16) | Sí |
+| Karaoke | Bocca Piano Cantabar | polanco | Campos Elíseos 290, Polanco IV Secc. | Mié a sáb 21:00–3:00 (ficha oficial; Sopitas, feb 2025, dice mar a sáb 22:00–4:00) | por confirmar | [Secretaría de Turismo CDMX — ficha oficial del lugar](https://mexicocity.cdmx.gob.mx/venues/bocca-piano-cantabar/?lang=en) (sin fecha (consultada 2026-11-04)) | Sí |
+| Billar | El Recreo Coyoacán · billar | coyoacan | Caballocalco 29, Coyoacán | Lun 13:00–22:00 · mar a jue y dom 13:00–23:00 · vie y sáb 13:00–1:00 | por confirmar | [Time Out México — billares y boliches en la CDMX](https://www.timeoutmexico.mx/ciudad-de-mexico/bares-y-cantinas/billares-y-boliches-en-la-cdmx) (2025-02-07) | Sí · ubicación aprox. |
+| Billar | Glyfos Pool | delvalle | Av. Patriotismo 242, San Pedro de los Pinos | Mar y mié 14:00–23:00 · jue 14:00–24:00 · vie 14:00–1:00 · sáb 16:00–1:00 · dom 16:00–23:00 | por confirmar | [Chilango — 6 billares que debes visitar en CDMX](https://www.chilango.com/comida-y-tragos/bares/billares-en-cdmx/) (2024-07-03) | Sí |
+| Billar | Lucille · billar | roma | Orizaba 99, Roma Norte | Mié y dom 13:30–22:00 · jue 13:30–23:30 · vie y sáb 13:30–1:00 | por confirmar | [Chilango — 6 billares que debes visitar en CDMX](https://www.chilango.com/comida-y-tragos/bares/billares-en-cdmx/) (2024-07-03) | Sí |
+| Billar | Billares París | centro | Retorno 9 de Fray Servando Teresa de Mier 3, Jardín Balbuena | Lun a sáb 9:00–1:00 · dom 9:00–24:00 | por confirmar | [Chilango — 6 billares que debes visitar en CDMX](https://www.chilango.com/comida-y-tragos/bares/billares-en-cdmx/) (2024-07-03) | Sí |
+| Boliche | Bolerama Coyoacán | delvalle | Eje 8 Sur José María Rico 626, Del Valle | Mar a vie 13:00–22:00 · sáb y dom 12:00–22:00 (Sopitas, dic 2023; Time Out, feb 2025, lo confirma sin horario) | por confirmar | [Time Out México — billares y boliches en la CDMX](https://www.timeoutmexico.mx/ciudad-de-mexico/bares-y-cantinas/billares-y-boliches-en-la-cdmx) (2025-02-07) | Sí |
+| Boliche | Sport & Chips | coyoacan | Av. Miguel Ángel de Quevedo 1144 | Lun y mar 13:00–24:00 · mié y jue 13:00–1:00 · vie y sáb 13:00–2:00 · dom 11:00–22:00 (boliche y billar) | por confirmar | [Time Out México — billares y boliches en la CDMX](https://www.timeoutmexico.mx/ciudad-de-mexico/bares-y-cantinas/billares-y-boliches-en-la-cdmx) (2025-02-07) | Sí |
+| Boliche | Bowlero · Chapultepec Morales | polanco | Vázquez de Mella 315, Chapultepec Morales | Mié a sáb 11:00–22:00 · mar y dom 12:00–22:00 | por confirmar | [Sopitas — los 5 mejores lugares para jugar boliche en la CDMX](https://www.sopitas.com/mientras-tanto/ya-de-vacaciones-los-5-mejores-lugares-para-jugar-bolos-en-la-cdmx-boliche/amp/) (2023-12-24) | No: reverificar |
+| Boliche | Royal Bol · Torre Manacar | delvalle | Av. Insurgentes Sur 1457, Sótano 1, Insurgentes Mixcoac | Horario por confirmar | por confirmar | [Sopitas — los 5 mejores lugares para jugar boliche en la CDMX](https://www.sopitas.com/mientras-tanto/ya-de-vacaciones-los-5-mejores-lugares-para-jugar-bolos-en-la-cdmx-boliche/amp/) (2023-12-24) | No: reverificar |
+| Boliche | Royal Bol · Santa Fe | santafe | Guillermo González Camarena 1205, Nivel B, Santa Fe | Horario por confirmar | por confirmar | [Sopitas — los 5 mejores lugares para jugar boliche en la CDMX](https://www.sopitas.com/mientras-tanto/ya-de-vacaciones-los-5-mejores-lugares-para-jugar-bolos-en-la-cdmx-boliche/amp/) (2023-12-24) | No: reverificar |
+| Go karts | Go Kart Mania · Plaza Carso | polanco | Lago Zurich 219-245, Granada | Lun a vie 12:00–20:30 · sáb y dom 11:30–20:30 | $399 (estimado) | [Time Out México — lugares de go karts en CDMX](https://www.timeoutmexico.mx/ciudad-de-mexico/ninos/lugares-de-go-karts-en-cdmx) (2024-11-26) | Sí |
+| Go karts | K1 Speed · Torre Manacar (go karts) | delvalle | Av. Insurgentes Sur 1457, Sótano 7, Insurgentes Mixcoac | Horario por confirmar | $490 (estimado) | [Time Out México — lugares de go karts en CDMX](https://www.timeoutmexico.mx/ciudad-de-mexico/ninos/lugares-de-go-karts-en-cdmx) (2024-11-26) | Sí |
+| Go karts | K1 Speed · Garden Santa Fe (go karts) | santafe | Guillermo González Camarena 1205, local E2, Santa Fe | Horario por confirmar | por confirmar | [Chilango — dónde hay go karts en CDMX](https://www.chilango.com/noticias/donde-hay-go-karts-en-cdmx-y-cerca-estas-son-las-pistas-mas-chidas-precio-horarios-y-ubicacion/) (2023-09-22) | No: reverificar |
+| Salón de baile | Gran Salón de la Ciudad de México | centro | Lerdo 311, Ex Hipódromo de Peralvillo | Jue 16:00–22:00 · vie 17:00–24:00 · sáb 16:00–22:00 · dom 15:00–22:00 (salsa, cumbia, sonideros; jueves danzón) | por confirmar | [Chilango — 7 lugares para sacar los prohibidos y bailar en CDMX](https://www.chilango.com/que-hacer/donde-bailar-en-cdmx-lugares-para-sacar-los-prohibidos/) (2026-07-24) | Sí |
+| Salón de baile | El Bandazo | roma | Londres 148, Juárez | Vie 16:00–3:00 · sáb 17:00–3:00 (banda en vivo) | $70 (rango) | [Chilango — 7 lugares para sacar los prohibidos y bailar en CDMX](https://www.chilango.com/que-hacer/donde-bailar-en-cdmx-lugares-para-sacar-los-prohibidos/) (2026-07-24) | Sí |
+| Salón de baile | Salón Caribe | juarez | Av. Ribera de San Cosme 142, San Rafael | Mar a dom 16:00–23:00 | por confirmar | [Chilango — lugares para bailar salsa en la CDMX](https://www.chilango.com/que-hacer/musica/lugares-para-bailar-salsa/) (2023-02-16) | No: reverificar |
+| Salón de baile | Salón Candela | juarez | Av. México-Tenochtitlán 10, Tabacalera | Lun a sáb 16:00–23:00 aprox. · dom 15:30–22:00 · clase de salsa 18:00 | por confirmar | [Chilango — lugares para bailar salsa en la CDMX](https://www.chilango.com/que-hacer/musica/lugares-para-bailar-salsa/) (2023-02-16) | No: reverificar |
+| Salón de baile | La Flor del Son | juarez | Puebla 52, Roma Norte | Lun a mié 13:00–18:00 · jue a sáb 13:00–2:30 | por confirmar | [Chilango — lugares para bailar salsa en la CDMX](https://www.chilango.com/que-hacer/musica/lugares-para-bailar-salsa/) (2023-02-16) | No: reverificar |
+| Salón de baile | Mambo Café Insurgentes | delvalle | Av. de los Insurgentes Sur 644, Del Valle | Vie y sáb 22:00–3:00 | por confirmar | [Chilango — lugares para bailar salsa en la CDMX](https://www.chilango.com/que-hacer/musica/lugares-para-bailar-salsa/) (2023-02-16) | No: reverificar |
+| Mercado gastronómico | Mercado Molière | polanco | Prolongación Molière 500, Ampliación Granada | Lun a dom 11:00–20:00 | $150 (estimado) | [Time Out México — Mercado Molière](https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mercado-moliere) (2016-03-02) | No: reverificar |
+| Tianguis | Tianguis Cultural del Chopo | centro | Aldama y Luna s/n, Buenavista | Sábados (horario por confirmar, aprox. 11:00–17:00) | $0 (rango) | [Chilango — Tianguis del Chopo celebra 45 aniversario](https://www.chilango.com/noticias/tianguis-del-chopo-aniversario-2025-fecha-cartelera/) (2025-10-03) | Sí |
+| Cine de arte | Cineclub Condesa | condesa | Av. Veracruz 102, Condesa | Según cartelera | por confirmar | [adn40 — los mejores cines independientes escondidos en la CDMX](https://www.adn40.mx/tiempo-libre/2025-07-16/vacaciones-verano-2025-los-mejores-cines-independientes-escondidos-en-la-cdmx) (2025-07-16 (act. 2026-07-07)) | Sí |
+| Cine de arte | Salas de la Filmoteca UNAM · Centro Cultural Universitario | cu | Av. Insurgentes Sur 3000, Centro Cultural Universitario, Ciudad Universitaria | Según cartelera (salas Julio Bracho, José Revueltas y Carlos Monsiváis) | por confirmar | [Filmoteca UNAM — salas y programación](https://www.filmoteca.unam.mx/) (programación de oct 2026 (consultada 2026-11-04)) | Sí |
+| Cine de arte | Cinematógrafo del Chopo | juarez | Dr. Enrique González Martínez 10, Santa María la Ribera | Según cartelera | por confirmar | [Filmoteca UNAM — salas y programación](https://www.filmoteca.unam.mx/) (programación de oct 2026 (consultada 2026-11-04)) | Sí |
+| Estadio | Estadio Ciudad de los Deportes | delvalle | Indiana 255, Ciudad de los Deportes | Según calendario de partidos | por confirmar | [Publimetro — el América seguirá jugando en el Estadio Ciudad de los Deportes](https://www.publimetro.com.mx/noticias/2025/09/02/america-seguira-jugando-en-el-estadio-ciudad-de-los-deportes-bj-toma-decision/) (2025-09-02) | Sí |
+| Estadio | Estadio Alfredo Harp Helú | centro | Viaducto Río de la Piedad s/n, Granjas México, Iztacalco | Según calendario de los Diablos Rojos | por confirmar | [Expansión — quién es dueño del Estadio Alfredo Harp Helú, casa de los Diablos Rojos](https://expansion.mx/tendencias/2026/08/04/quien-es-dueno-estadio-alfredo-harp-helu-casa-diablos-rojos) (2026-08-04) | Sí |
+| Bici | Ecobici · Bosque de Chapultepec (estaciones Los Pinos) | chapultepec | Estaciones Ecobici de Los Pinos, entre la 1.ª y la 2.ª sección del Bosque de Chapultepec | Bicis en la 1.ª sección 5:00–21:00; 2.ª y 3.ª secciones 24 h | $123 (estimado) | [Sopitas — guía para andar en bici dentro del Bosque de Chapultepec (Ecobici Los Pinos)](https://www.sopitas.com/mientras-tanto/guia-andar-bicicleta-dentro-bosque-chapultepec-ecobici-cdmx/amp/) (2024-07-22) | Sí |
+| Vino | La Vinería | condesa | Fernando Montes de Oca 52, Condesa | Horario por confirmar | $400 (rango) | [OpenTable — La Vinería, Ciudad de México](https://opentable.ae/r/la-vineria-ciudad-de-mexico) (sin fecha (consultada 2026-11-04)) | Sí |
