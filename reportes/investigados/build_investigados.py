@@ -61,6 +61,13 @@ F = {
  'to_palacio': ('Time Out México — conciertos en el oriente de la CDMX en 2026 (Palacio de los Deportes)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/musica/conciertos-en-oriente', '2026'),
  'nmas_torres': ('N+ — Torres de Satélite recuperan su luz', 'https://www.nmas.com.mx/estado-de-mexico/estilo-de-vida/lugares/torres-de-satelite-recuperan-su-luz-asi-se-ven-iluminadas-de-noche/', '2025-05'),
  'to_capitana': ('Time Out México — La Capitana (mezcalería en Satélite)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/antros-bares/la-capitana', 'sin fecha'),
+ 'res_blog_sat': ('Reservándonos — los 7 mejores bares de Satélite', 'https://reservandonos.com/blog/mejores-bares-para-dar-el-grito-satelite/', '2025-08-06'),
+ 'res_bagheera': ('Reservándonos — Bagheera Rooftop Satélite (ficha vigente)', 'https://reservandonos.com/lugar/bagheera-rooftop-satelite/', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_coralillo': ('Reservándonos — Coralillo Bar Satélite (ficha vigente)', 'https://reservandonos.com/lugar/coralillo-bar-satelite/', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_doce': ('Reservándonos — Terraza Doce Satélite (ficha vigente)', 'https://reservandonos.com/lugar/terraza-doce-satelite/', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_bilboa': ('Reservándonos — Bilboa Terraza Club Satélite (ficha vigente)', 'https://reservandonos.com/lugar/bilboa-terraza-club-satelite/', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_cantaritos': ('Reservándonos — Cantaritos El Compa de Jalisco Satélite (ficha vigente)', 'https://reservandonos.com/lugar/cantaritos-el-compa-de-jalisco-satelite/', 'sin fecha (consultada ' + HOY + ')'),
+ 'intravel_fiera': ('Intravel — Fiera Rooftop, Lomas Virreyes (ficha vigente)', 'https://intravel.net/mexico-city/nightlife/fiera-rooftop', 'sin fecha (consultada ' + HOY + ')'),
  'ot_vineria': ('OpenTable — La Vinería, Ciudad de México', 'https://opentable.ae/r/la-vineria-ciudad-de-mexico', 'sin fecha (consultada ' + HOY + ')'),
 }
 
@@ -69,7 +76,7 @@ def fuente(k, url=None):
     return n, url or u, f
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
-VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp'}
+VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -267,6 +274,30 @@ L = [
       who=['amigos', 'date', 'familia'], tags=['cultural'], apto='sí', soloExplorar='Están en un camellón del Periférico: se ven desde el auto, no son una parada a pie.'),
  dict(n='La Capitana · mezcalería', cat='Mezcalería', col='Ciudad Satélite', addr='Federico T. de la Chica 12, Ciudad Satélite', f='to_capitana',
       h=(15, 24), hrs='Mar a dom 15:00–24:00', dias=[0, 2, 3, 4, 5, 6], act=['copas'], who=['amigos', 'date', 'compa'], tags=['nightlife', 'social']),
+ # Bares en Satélite y Lomas (4 nov 2026) -------------------------------------
+ dict(n='Bagheera Rooftop Satélite', cat='Antro', col='Ciudad Satélite', addr='Pafnuncio Padilla 12, Cd. Satélite', f='res_bagheera',
+      h=(22, 29), hrs='Vie y sáb 22:00–5:00 · rooftop con reguetón y electrónica', dias=[5, 6], act=['baile', 'copas'],
+      who=['amigos', 'compa'], tags=['nightlife', 'social'],
+      precio=dict(min=300, rep=400, max=500, unidad='persona', canasta='$300–500 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Coralillo Bar Satélite', geoAprox=True, geo='Circuito Economistas, Ciudad Satélite, Naucalpan de Juárez', cat='Bar', col='Ciudad Satélite', addr='Cto. Economistas 93, Planta Baja, Cd. Satélite', f='res_coralillo',
+      h=(18, 25), hrs='Jue a sáb 18:00–1:00 · coctelería con DJ', dias=[4, 5, 6], act=['copas'],
+      who=['amigos', 'date', 'compa'], tags=['nightlife', 'social'],
+      precio=dict(min=300, rep=500, max=800, unidad='persona', canasta='$300–800 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Terraza Doce Satélite', cat='Bar', col='Ciudad Satélite', addr='Pafnuncio Padilla 7, Cd. Satélite', f='res_doce',
+      h=(14, 26), hrs='Diario 14:00–2:00 · terraza y lounge', act=['copas'],
+      who=['amigos', 'date', 'compa'], tags=['nightlife', 'social', 'chill'],
+      precio=dict(min=200, rep=250, max=300, unidad='persona', canasta='$200–300 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Bilboa Terraza Club Satélite', geoAprox=True, geo='Avenida Fuentes de Satélite, Naucalpan de Juárez', cat='Bar', col='Lomas de Bellavista, Naucalpan', addr='Av. Fuentes de Satélite 34, Lomas de Bellavista', f='res_bilboa',
+      h=(19, 26), hrs='Jue 19:00–2:00 · vie y sáb 13:00–2:00 · terraza con DJ y música en vivo', dias=[4, 5, 6], act=['copas', 'baile'],
+      who=['amigos', 'compa'], tags=['nightlife', 'social'], apto='no',
+      precio=dict(min=300, rep=400, max=500, unidad='persona', canasta='$300–500 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Cantaritos El Compa de Jalisco Satélite', geoAprox=True, geo='Santa María Nativitas, Naucalpan de Juárez', cat='Cantina', col='Santa María Nativitas, Naucalpan', addr='Periférico Blvd. Manuel Ávila Camacho 885, Sta. María Nativitas', f='res_cantaritos',
+      h=(13.5, 26.5), hrs='Jue a dom 13:30–2:30 · cantina con música en vivo', dias=[0, 4, 5, 6], act=['copas', 'comida'],
+      who=['amigos', 'compa'], tags=['social', 'nightlife'],
+      precio=dict(min=600, rep=700, max=800, unidad='persona', canasta='$600–800 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Fiera Rooftop', zona='lomas', geo='Paseo de las Palmas 530, Ciudad de México', cat='Rooftop', col='Lomas de Chapultepec', addr='Paseo de las Palmas 530, Lomas Virreyes', f='intravel_fiera',
+      h=(14, 25), hrs='Horario por confirmar · terraza con bar y restaurante', horaEstimada=True, act=['copas', 'cena', 'vista'],
+      who=['amigos', 'date', 'compa'], tags=['nightlife', 'romántico']),
 ]
 
 # ------------------------------------------------------------------ geocodificación
@@ -296,6 +327,8 @@ for x in L:
             g = geocodifica(x['col'] + ', Ciudad de México'); aprox = True
         if g: lat, lng = round(g[0], 5), round(g[1], 5)
     z, dz = zona_de(lat, lng)
+    if x.get('geoAprox'): aprox = True            # la dirección no traía número: pin en la calle/colonia
+    if x.get('zona') in ZONAS: z = x['zona']; dz = math.hypot((ZONAS[z][0] - lat) * 111, (ZONAS[z][1] - lng) * 105)
     vid = 'iv-' + hashlib.sha1((x['n'] + '|' + x['addr']).encode()).hexdigest()[:10]
     oh = list(x['h'])
     tm = []

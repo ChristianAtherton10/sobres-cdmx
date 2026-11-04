@@ -1,0 +1,156 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-11-04T20:58:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 4318959376,
+  "lat": 19.4285774,
+  "lon": -99.1973859,
+  "timestamp": "2017-07-18T02:44:18Z",
+  "version": 2,
+  "changeset": 50367184,
+  "user": "Nordpfeil",
+  "uid": 1337142,
+  "tags": {
+    "addr:city": "Ciudad de México",
+    "addr:country": "MX",
+    "addr:housenumber": "42",
+    "addr:postcode": "11560",
+    "addr:street": "Julio Verne",
+    "amenity": "nightclub",
+    "name": "Cigar and Wine Club"
+  }
+},
+{
+  "type": "node",
+  "id": 4430078893,
+  "lat": 19.4178991,
+  "lon": -99.2678053,
+  "timestamp": "2016-10-04T02:08:50Z",
+  "version": 1,
+  "changeset": 42618779,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "bar",
+    "name": "Shupp",
+    "name:es": "Shupp"
+  }
+},
+{
+  "type": "node",
+  "id": 5718556537,
+  "lat": 19.4273206,
+  "lon": -99.1954723,
+  "timestamp": "2018-08-22T23:11:11Z",
+  "version": 2,
+  "changeset": 61904469,
+  "user": "chachafish",
+  "uid": 2237750,
+  "tags": {
+    "amenity": "bar",
+    "name": "Living Room Bar",
+    "name:en": "Living Room Bar",
+    "opening_hours": "Mo-Su 16:00-01:00",
+    "phone": "+52 55 9138 1800",
+    "website": "http://www.wmexicocity.com"
+  }
+},
+{
+  "type": "node",
+  "id": 9569651399,
+  "lat": 19.4399407,
+  "lon": -99.2674514,
+  "timestamp": "2022-03-10T21:32:58Z",
+  "version": 1,
+  "changeset": 118340597,
+  "user": "Borja311099",
+  "uid": 15269474,
+  "tags": {
+    "addr:city": "Naucalpan de Juarez",
+    "addr:postcode": "53710",
+    "addr:street": "Calle 8 de Agosto",
+    "amenity": "bar",
+    "min_age": "18",
+    "name": "Chupale perro"
+  }
+},
+{
+  "type": "node",
+  "id": 12535481401,
+  "lat": 19.4304393,
+  "lon": -99.1970461,
+  "timestamp": "2025-01-27T03:47:36Z",
+  "version": 1,
+  "changeset": 161802809,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "Limantour Polanco"
+  }
+},
+{
+  "type": "node",
+  "id": 12761572601,
+  "lat": 19.4302194,
+  "lon": -99.1958607,
+  "timestamp": "2025-04-17T04:07:39Z",
+  "version": 1,
+  "changeset": 165052743,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "Ley Zanahoria"
+  }
+},
+{
+  "type": "node",
+  "id": 13236085501,
+  "lat": 19.3871495,
+  "lon": -99.2521410,
+  "timestamp": "2025-10-16T07:35:04Z",
+  "version": 1,
+  "changeset": 173351338,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "MIAH Speakeasy Bar"
+  }
+},
+{
+  "type": "way",
+  "id": 528454535,
+  "timestamp": "2017-09-28T14:09:34Z",
+  "version": 1,
+  "changeset": 52446211,
+  "user": "danielapeerezch",
+  "uid": 6678686,
+  "center": {
+    "lat": 19.3903381,
+    "lon": -99.2599267
+  },
+  "nodes": [
+    5135448995,
+    5135448996,
+    5135448997,
+    5135448998,
+    5135448995
+  ],
+  "tags": {
+    "amenity": "bar",
+    "building": "yes",
+    "name": "Frankfurt"
+  }
+}
+
+  ]
+}

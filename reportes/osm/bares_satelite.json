@@ -1,0 +1,281 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-11-04T21:03:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1359936894,
+  "lat": 19.5076748,
+  "lon": -99.2342255,
+  "timestamp": "2024-10-24T22:41:43Z",
+  "version": 8,
+  "changeset": 158316071,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "addr:street": "Calle Fernando Leal Novelo",
+    "amenity": "bar",
+    "name": "La Tradicional",
+    "wheelchair": "no",
+    "wifi": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 1359941892,
+  "lat": 19.5078492,
+  "lon": -99.2339815,
+  "timestamp": "2024-10-24T22:41:31Z",
+  "version": 3,
+  "changeset": 158316067,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "addr:street": "Privada Carlos Arellano",
+    "amenity": "bar",
+    "name": "Bar Plaza",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 4337116289,
+  "lat": 19.4814596,
+  "lon": -99.2504740,
+  "timestamp": "2016-08-05T14:20:14Z",
+  "version": 1,
+  "changeset": 41260838,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "bar",
+    "cuisine": "steak_house;burger;sandwich;mexican",
+    "name": "Perros & Burros"
+  }
+},
+{
+  "type": "node",
+  "id": 4341826509,
+  "lat": 19.4892428,
+  "lon": -99.2442167,
+  "timestamp": "2017-09-15T12:02:04Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "amenity": "bar",
+    "cuisine": "burger;american;steak_house;friture",
+    "name": "Stars and Legends",
+    "toilets:wheelchair": "no",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 4341828610,
+  "lat": 19.4862847,
+  "lon": -99.2436469,
+  "timestamp": "2016-08-08T22:44:11Z",
+  "version": 1,
+  "changeset": 41334729,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "bar",
+    "cuisine": "seafood",
+    "name": "Moby Dick"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990091,
+  "lat": 19.4976257,
+  "lon": -99.2496910,
+  "timestamp": "2020-09-03T15:58:00Z",
+  "version": 2,
+  "changeset": 90371267,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "barbecue",
+    "name": "Barbacoa El Mexiquense"
+  }
+},
+{
+  "type": "node",
+  "id": 4374839291,
+  "lat": 19.5253715,
+  "lon": -99.2272662,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "bar",
+    "name": "Beer Factory",
+    "name:es": "Beer Factory"
+  }
+},
+{
+  "type": "node",
+  "id": 4411931191,
+  "lat": 19.5265534,
+  "lon": -99.2263801,
+  "timestamp": "2016-09-21T17:40:24Z",
+  "version": 1,
+  "changeset": 42329895,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "pub",
+    "name": "Plaza Paseo Santa Mónica",
+    "name:es": "Plaza Paseo Santa Mónica"
+  }
+},
+{
+  "type": "node",
+  "id": 4466580889,
+  "lat": 19.4973724,
+  "lon": -99.2376846,
+  "timestamp": "2020-09-01T23:01:17Z",
+  "version": 3,
+  "changeset": 90267270,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "addr:city": "Satélite , Naucalpan de Juárez",
+    "addr:postcode": "3228",
+    "addr:street": "Boulevard Manuel Ávila Camacho",
+    "amenity": "bar",
+    "name": "Beer Factory Satélite",
+    "toilets:wheelchair": "no",
+    "website": "http://beerfactory.com",
+    "wheelchair": "yes",
+    "wheelchair:description": "Restaurante-Bar con estacionamiento y rampas para entrar y baños no ,muy accesibles para sillas de ruedas."
+  }
+},
+{
+  "type": "node",
+  "id": 4536236201,
+  "lat": 19.5071562,
+  "lon": -99.2370277,
+  "timestamp": "2016-12-03T19:22:58Z",
+  "version": 1,
+  "changeset": 44144292,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "bar",
+    "name": "Hooters",
+    "name:es": "Hooters"
+  }
+},
+{
+  "type": "node",
+  "id": 5620940721,
+  "lat": 19.5269987,
+  "lon": -99.2086106,
+  "timestamp": "2018-05-16T01:18:02Z",
+  "version": 1,
+  "changeset": 59001313,
+  "user": "Heberchicago",
+  "uid": 7434550,
+  "tags": {
+    "addr:housenumber": "229",
+    "addr:postcode": "53580",
+    "addr:street": "Via Gustavo Baz",
+    "amenity": "bar",
+    "name": "Rock 2000"
+  }
+},
+{
+  "type": "node",
+  "id": 5621000622,
+  "lat": 19.5311303,
+  "lon": -99.2244429,
+  "timestamp": "2018-05-16T02:48:07Z",
+  "version": 1,
+  "changeset": 59002095,
+  "user": "Heberchicago",
+  "uid": 7434550,
+  "tags": {
+    "addr:housenumber": "37",
+    "addr:postcode": "54050",
+    "addr:street": "Convento de Santa Monica",
+    "amenity": "bar",
+    "name": "Pool Garage"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381446,
+  "lat": 19.5127927,
+  "lon": -99.2320185,
+  "timestamp": "2018-10-25T00:52:04Z",
+  "version": 1,
+  "changeset": 63850625,
+  "user": "davv",
+  "uid": 8999431,
+  "tags": {
+    "amenity": "bar",
+    "name": "Hookah"
+  }
+},
+{
+  "type": "node",
+  "id": 6177366688,
+  "lat": 19.5134428,
+  "lon": -99.2318856,
+  "timestamp": "2019-01-01T23:17:50Z",
+  "version": 1,
+  "changeset": 65945088,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "pub",
+    "name": "McCarthy's Irish Pub"
+  }
+},
+{
+  "type": "node",
+  "id": 12517202401,
+  "lat": 19.4938007,
+  "lon": -99.2533754,
+  "timestamp": "2025-01-20T00:31:53Z",
+  "version": 1,
+  "changeset": 161544453,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "Viking Goes"
+  }
+},
+{
+  "type": "node",
+  "id": 13195381002,
+  "lat": 19.5068446,
+  "lon": -99.2372205,
+  "timestamp": "2025-10-05T10:08:12Z",
+  "version": 1,
+  "changeset": 172859879,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "Copperstill Cocktail Bar"
+  }
+}
+
+  ]
+}

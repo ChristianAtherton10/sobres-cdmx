@@ -475,5 +475,59 @@
   "lat": 19.51366,
   "lng": -99.23739,
   "aprox": true
+ },
+ {
+  "id": "iv-abbf35de92",
+  "n": "Bagheera Rooftop Satélite",
+  "zone": "satelite",
+  "km": 0.6,
+  "lat": 19.51366,
+  "lng": -99.23739,
+  "aprox": true
+ },
+ {
+  "id": "iv-582104cb7c",
+  "n": "Coralillo Bar Satélite",
+  "zone": "satelite",
+  "km": 0.9,
+  "lat": 19.50386,
+  "lng": -99.24351,
+  "aprox": true
+ },
+ {
+  "id": "iv-90def661a5",
+  "n": "Terraza Doce Satélite",
+  "zone": "satelite",
+  "km": 0.6,
+  "lat": 19.51366,
+  "lng": -99.23739,
+  "aprox": true
+ },
+ {
+  "id": "iv-26ab4ef36f",
+  "n": "Bilboa Terraza Club Satélite",
+  "zone": "satelite",
+  "km": 2.3,
+  "lat": 19.51955,
+  "lng": -99.25465,
+  "aprox": true
+ },
+ {
+  "id": "iv-4eca4c2a5f",
+  "n": "Cantaritos El Compa de Jalisco Satélite",
+  "zone": "satelite",
+  "km": 2.7,
+  "lat": 19.48358,
+  "lng": -99.23214,
+  "aprox": true
+ },
+ {
+  "id": "iv-68139414bb",
+  "n": "Fiera Rooftop",
+  "zone": "lomas",
+  "km": 1.8,
+  "lat": 19.42993,
+  "lng": -99.21079,
+  "aprox": false
  }
 ]
