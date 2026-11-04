@@ -242,9 +242,9 @@ L = [
  # Biblioteca Vasconcelos ya estaba en el catálogo: no se repite.
 
  # Veganos y vegetarianos (casi no había fuera de la Roma) --------------------
- dict(n='Paxil', cat='Restaurante', col='Roma Norte', addr='Orizaba 83, Roma Norte', f='hap_veg', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True,
+ dict(n='Paxil', cat='Restaurante', col='Roma Norte', addr='Orizaba 77, Roma Norte', lat=19.42019, lng=-99.16047, f='hap_veg', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True,
       act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie'], dieta=['vegano', 'vegetariano']),
- dict(n='U.TO.PIA. · cocina vegana', cat='Restaurante', col='Condesa', addr='Juan Escutia 66, Condesa', f='trend_veg', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True,
+ dict(n='U.TO.PIA. · cocina vegana', cat='Restaurante', col='Condesa', addr='Juan Escutia 63, Condesa', lat=19.41494, lng=-99.17472, f='trend_veg', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True,
       act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie', 'chill'], dieta=['vegano', 'vegetariano']),
  dict(n='Vegan Inc. · Miyana', cat='Restaurante', col='Polanco', addr='Plaza Miyana, planta alta, Polanco', geo='Miyana, Polanco, Ciudad de México', f='trend_veg',
       h=(13, 22), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], dieta=['vegano', 'vegetariano']),
@@ -315,8 +315,7 @@ L = [
       geo='Interlomas, Huixquilucan', geoAprox=True, f='res_bocanariz', h=(13, 23), hrs='Mar y mié 13:00–22:00 · jue a sáb 13:00–24:00 · dom 13:00–20:00 · cocina española y bar',
       dias=[0, 2, 3, 4, 5, 6], act=['comida', 'cena', 'copas'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'nightlife'],
       precio=dict(min=500, rep=650, max=800, unidad='persona', canasta='$500–800 por persona según su ficha de Reservándonos.'), estado='rango'),
- dict(n='Kamachos Hookah Interlomas', cat='Bar', col='Interlomas, Huixquilucan', addr='Central Interlomas, Blvd. Palmas Hills 1',
-      geo='Interlomas, Huixquilucan', geoAprox=True, f='res_kamachos', h=(13, 23), hrs='Lun a vie 8:00–23:00 · sáb y dom 10:30–23:00 · hookah y snacks',
+ dict(n='Kamachos Hookah Interlomas', cat='Bar', col='Interlomas, Huixquilucan', addr='Pasaje Interlomas 10 (Google Maps)', lat=19.40158, lng=-99.27436, f='res_kamachos', h=(13, 23), hrs='Lun a vie 8:00–23:00 · sáb y dom 10:30–23:00 · hookah y snacks',
       act=['copas'], who=['amigos', 'compa'], tags=['social', 'chill'], apto='no',
       precio=dict(min=300, rep=400, max=500, unidad='persona', canasta='$300–500 por persona según su ficha de Reservándonos.'), estado='rango'),
 ]

@@ -202,4 +202,30 @@ test('los ids de OSM viajan en el enlace compartido', () => {
     if (v) assert(app.largaId(app.cortaId(v)) === v.id, v.id); });
 });
 
+section('26e · Lugares de búsquedas en Google Maps (data/maps.js)');
+
+test('cada lugar de Maps trae su ficha, calificación >= 4.2 con >= 30 reseñas y horario por confirmar', () => {
+  const app = makeApp({});
+  const L = app.cat().filter(v => /^gm-/.test(v.id));
+  assert(L.length >= 60, 'sólo ' + L.length);
+  L.forEach(v => {
+    assert(/^https:\/\/www\.google\.com\/maps\/search\/\?api=1/.test(v.pUrl || ''), v.n + ' sin ficha de Maps');
+    const m = (v.d || '').match(/\((\d\.\d)★ en Google Maps, (\d+) reseñas\)/);
+    assert(m && +m[1] >= 4.2 && +m[2] >= 30, v.n + ': ' + v.d);
+    assert(v.horaEstimada && v.pEstado === 'por_confirmar', v.n + ' presenta horario o precio como confirmados');
+  });
+});
+
+test('Maps suma restaurantes vegetarianos fuera de la Roma (Polanco, Coyoacán, Condesa, Del Valle)', () => {
+  const app = makeApp({});
+  const veg = z => app.cat().filter(v => v.z === z && v.dieta && v.dieta.length && app.esRecomendable(v)).length;
+  ['polanco', 'coyoacan', 'condesa', 'delvalle'].forEach(z => assert(veg(z) >= 4, z + ' tiene ' + veg(z) + ' vegetarianos'));
+});
+
+test('los ids de Maps viajan en el enlace compartido', () => {
+  const app = makeApp({});
+  const v = app.cat().find(x => /^gm-/.test(x.id));
+  assert(app.largaId(app.cortaId(v)) === v.id, v.id);
+});
+
 if (require.main === module) report();

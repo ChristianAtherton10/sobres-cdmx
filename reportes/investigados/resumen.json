@@ -351,21 +351,21 @@
   "aprox": false
  },
  {
-  "id": "iv-7374a188b1",
+  "id": "iv-0d49988691",
   "n": "Paxil",
   "zone": "roma",
   "km": 0.1,
-  "lat": 19.42003,
-  "lng": -99.16043,
+  "lat": 19.42019,
+  "lng": -99.16047,
   "aprox": false
  },
  {
-  "id": "iv-2bc10f73c8",
+  "id": "iv-11cb5d8de4",
   "n": "U.TO.PIA. · cocina vegana",
   "zone": "condesa",
   "km": 0.4,
-  "lat": 19.41483,
-  "lng": -99.17524,
+  "lat": 19.41494,
+  "lng": -99.17472,
   "aprox": false
  },
  {
@@ -558,12 +558,12 @@
   "aprox": true
  },
  {
-  "id": "iv-b3d5c3b1df",
+  "id": "iv-2b07aeaecc",
   "n": "Kamachos Hookah Interlomas",
   "zone": "santafe",
   "km": 4.2,
-  "lat": 19.40242,
-  "lng": -99.27207,
-  "aprox": true
+  "lat": 19.40158,
+  "lng": -99.27436,
+  "aprox": false
  }
 ]

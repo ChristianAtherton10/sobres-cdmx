@@ -82,6 +82,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Lugares de OpenStreetMap aprobados (define window.SOBRES_OSM)
   const osmp = path.join(ROOT, 'data', 'osm.js');
   if (fs.existsSync(osmp) && !opts.sinOsm) new Function('window', fs.readFileSync(osmp, 'utf8'))(win);
+  // Búsquedas simples en Google Maps (define window.SOBRES_MAPS)
+  const mp = path.join(ROOT, 'data', 'maps.js');
+  if (fs.existsSync(mp) && !opts.sinMaps) new Function('window', fs.readFileSync(mp, 'utf8'))(win);
   // Eventos con fecha (define window.SOBRES_EVENTOS)
   const evp = path.join(ROOT, 'data', 'eventos.js');
   if (fs.existsSync(evp) && !opts.sinEventos) new Function('window', fs.readFileSync(evp, 'utf8'))(win);
