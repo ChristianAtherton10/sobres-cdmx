@@ -1,0 +1,3802 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-11-04T17:35:04Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1359936894,
+  "lat": 19.5076748,
+  "lon": -99.2342255,
+  "timestamp": "2024-10-24T22:41:43Z",
+  "version": 8,
+  "changeset": 158316071,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "addr:street": "Calle Fernando Leal Novelo",
+    "amenity": "bar",
+    "name": "La Tradicional",
+    "wheelchair": "no",
+    "wifi": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 1359937388,
+  "lat": 19.5072020,
+  "lon": -99.2337991,
+  "timestamp": "2024-10-24T22:39:26Z",
+  "version": 2,
+  "changeset": 158316021,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "addr:street": "Circuito Médicos",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks",
+    "wheelchair": "limited",
+    "wifi": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1359941892,
+  "lat": 19.5078492,
+  "lon": -99.2339815,
+  "timestamp": "2024-10-24T22:41:31Z",
+  "version": 3,
+  "changeset": 158316067,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "addr:street": "Privada Carlos Arellano",
+    "amenity": "bar",
+    "name": "Bar Plaza",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 1975915768,
+  "lat": 19.4963448,
+  "lon": -99.2468682,
+  "timestamp": "2025-03-24T13:31:57Z",
+  "version": 4,
+  "changeset": 164033002,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "cinema",
+    "name": "Cinemex Lomas Verdes",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 2682518329,
+  "lat": 19.4944192,
+  "lon": -99.2461798,
+  "timestamp": "2019-11-25T19:11:40Z",
+  "version": 3,
+  "changeset": 77540388,
+  "user": "pasukanoren",
+  "uid": 9562851,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia": "en:McDonald's",
+    "cuisine": "burger",
+    "name": "McDonald's",
+    "takeaway": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3792058798,
+  "lat": 19.4954234,
+  "lon": -99.2473360,
+  "timestamp": "2017-09-15T12:04:45Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "amenity": "cafe",
+    "internet_access": "wlan",
+    "name": "Cielito querido Café",
+    "toilets:wheelchair": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3792073249,
+  "lat": 19.5189268,
+  "lon": -99.2468680,
+  "timestamp": "2019-04-26T02:31:12Z",
+  "version": 3,
+  "changeset": 69584912,
+  "user": "Timothy Smith",
+  "uid": 115918,
+  "tags": {
+    "amenity": "cafe",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "brand:wikipedia": "en:Starbucks",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks"
+  }
+},
+{
+  "type": "node",
+  "id": 3792081525,
+  "lat": 19.5190837,
+  "lon": -99.2467047,
+  "timestamp": "2019-04-26T02:31:12Z",
+  "version": 3,
+  "changeset": 69584912,
+  "user": "Timothy Smith",
+  "uid": 115918,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia": "en:McDonald's",
+    "cuisine": "burger",
+    "name": "McDonald's"
+  }
+},
+{
+  "type": "node",
+  "id": 4337115689,
+  "lat": 19.4893721,
+  "lon": -99.2475652,
+  "timestamp": "2017-09-15T11:52:48Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "addr:housenumber": "181",
+    "addr:postcode": "53140",
+    "addr:street": "Colina del Silencio",
+    "amenity": "restaurant",
+    "cuisine": "mexican;coffee_shop",
+    "internet_access": "wlan",
+    "name": "Los Dorados",
+    "toilets:wheelchair": "no",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4337115789,
+  "lat": 19.4955004,
+  "lon": -99.2474029,
+  "timestamp": "2024-07-02T11:28:23Z",
+  "version": 3,
+  "changeset": 153451563,
+  "user": "CjMalone",
+  "uid": 21425661,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Burger King",
+    "brand:wikidata": "Q177054",
+    "brand:wikipedia": "en:Burger King",
+    "check_date": "2024-07-02",
+    "check_date:opening_hours": "2024-07-02",
+    "cuisine": "burger",
+    "name": "Burger King",
+    "opening_hours": "Mo-Su 11:00-21:00",
+    "takeaway": "yes",
+    "website": "https://www.burgerking.com.mx/restaurantes/cc-gran-terraza-lomas-verdes-calle-colina-de-la-paz-25/?id=458"
+  }
+},
+{
+  "type": "node",
+  "id": 4337115889,
+  "lat": 19.4957479,
+  "lon": -99.2473475,
+  "timestamp": "2019-11-21T17:30:50Z",
+  "version": 3,
+  "changeset": 77391388,
+  "user": "Timothy Smith",
+  "uid": 115918,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Subway",
+    "brand:wikidata": "Q244457",
+    "brand:wikipedia": "en:Subway (restaurant)",
+    "cuisine": "sandwich",
+    "name": "Subway",
+    "takeaway": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4337116089,
+  "lat": 19.4870758,
+  "lon": -99.2379377,
+  "timestamp": "2017-07-11T04:50:22Z",
+  "version": 2,
+  "changeset": 50191648,
+  "user": "Dapeaco",
+  "uid": 5224693,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "tea;regional;mexican;coffee_shop",
+    "name": "Bisquets Obregón",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4341810523,
+  "lat": 19.4856143,
+  "lon": -99.2344800,
+  "timestamp": "2016-08-08T22:43:53Z",
+  "version": 1,
+  "changeset": 41334729,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Carnitas Alfonso"
+  }
+},
+{
+  "type": "node",
+  "id": 4341826503,
+  "lat": 19.4864856,
+  "lon": -99.2350507,
+  "timestamp": "2019-08-29T05:13:42Z",
+  "version": 2,
+  "changeset": 73865347,
+  "user": "Timothy Smith",
+  "uid": 115918,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Carl's Jr.",
+    "brand:wikidata": "Q1043486",
+    "brand:wikipedia": "en:Carl's Jr.",
+    "cuisine": "burger",
+    "internet_access": "wlan",
+    "name": "Carl's Jr.",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4341826509,
+  "lat": 19.4892428,
+  "lon": -99.2442167,
+  "timestamp": "2017-09-15T12:02:04Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "amenity": "bar",
+    "cuisine": "burger;american;steak_house;friture",
+    "name": "Stars and Legends",
+    "toilets:wheelchair": "no",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 4341828607,
+  "lat": 19.4855003,
+  "lon": -99.2337831,
+  "timestamp": "2016-08-08T22:43:51Z",
+  "version": 1,
+  "changeset": 41334729,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "mexican",
+    "name": "La Casa de Toño"
+  }
+},
+{
+  "type": "node",
+  "id": 4341828609,
+  "lat": 19.4857252,
+  "lon": -99.2429492,
+  "timestamp": "2016-08-08T22:44:08Z",
+  "version": 1,
+  "changeset": 41334729,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "steak_house;fish;seafood",
+    "name": "Fisher's"
+  }
+},
+{
+  "type": "node",
+  "id": 4341828610,
+  "lat": 19.4862847,
+  "lon": -99.2436469,
+  "timestamp": "2016-08-08T22:44:11Z",
+  "version": 1,
+  "changeset": 41334729,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "bar",
+    "cuisine": "seafood",
+    "name": "Moby Dick"
+  }
+},
+{
+  "type": "node",
+  "id": 4341871890,
+  "lat": 19.4886833,
+  "lon": -99.2463475,
+  "timestamp": "2016-08-08T23:37:23Z",
+  "version": 1,
+  "changeset": 41335200,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Viva Arracheras"
+  }
+},
+{
+  "type": "node",
+  "id": 4341877291,
+  "lat": 19.4887516,
+  "lon": -99.2465587,
+  "timestamp": "2016-08-08T23:37:27Z",
+  "version": 1,
+  "changeset": 41335200,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "La catrina"
+  }
+},
+{
+  "type": "node",
+  "id": 4348553098,
+  "lat": 19.5056884,
+  "lon": -99.2369873,
+  "timestamp": "2016-08-13T14:28:51Z",
+  "version": 1,
+  "changeset": 41430600,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Beefy's"
+  }
+},
+{
+  "type": "node",
+  "id": 4348556202,
+  "lat": 19.5096379,
+  "lon": -99.2367263,
+  "timestamp": "2016-08-13T14:28:37Z",
+  "version": 1,
+  "changeset": 41430600,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Pizza hut"
+  }
+},
+{
+  "type": "node",
+  "id": 4348556403,
+  "lat": 19.5101043,
+  "lon": -99.2365719,
+  "timestamp": "2016-08-13T14:28:28Z",
+  "version": 1,
+  "changeset": 41430600,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Friday's"
+  }
+},
+{
+  "type": "node",
+  "id": 4348559096,
+  "lat": 19.4986164,
+  "lon": -99.2498320,
+  "timestamp": "2016-08-13T14:54:16Z",
+  "version": 1,
+  "changeset": 41430986,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "steak_house;grill",
+    "name": "El embrujo"
+  }
+},
+{
+  "type": "node",
+  "id": 4348630590,
+  "lat": 19.5187341,
+  "lon": -99.2312298,
+  "timestamp": "2016-08-13T14:28:02Z",
+  "version": 1,
+  "changeset": 41430600,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "mambo cafe"
+  }
+},
+{
+  "type": "node",
+  "id": 4348976591,
+  "lat": 19.4951762,
+  "lon": -99.2471375,
+  "timestamp": "2017-09-15T12:04:01Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "sushi",
+    "name": "Sushi Roll",
+    "toilets:wheelchair": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4348989989,
+  "lat": 19.5165400,
+  "lon": -99.2328071,
+  "timestamp": "2016-08-13T19:48:44Z",
+  "version": 1,
+  "changeset": 41435500,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "P&W"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990089,
+  "lat": 19.4873875,
+  "lon": -99.2382583,
+  "timestamp": "2016-08-13T19:48:48Z",
+  "version": 1,
+  "changeset": 41435500,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Fisher's"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990090,
+  "lat": 19.4973775,
+  "lon": -99.2496060,
+  "timestamp": "2016-08-13T19:48:53Z",
+  "version": 1,
+  "changeset": 41435500,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "chicken",
+    "name": "La alborada"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990091,
+  "lat": 19.4976257,
+  "lon": -99.2496910,
+  "timestamp": "2020-09-03T15:58:00Z",
+  "version": 2,
+  "changeset": 90371267,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "barbecue",
+    "name": "Barbacoa El Mexiquense"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990189,
+  "lat": 19.4876711,
+  "lon": -99.2392037,
+  "timestamp": "2016-08-13T19:48:50Z",
+  "version": 1,
+  "changeset": 41435500,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Burger king"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990389,
+  "lat": 19.4978600,
+  "lon": -99.2497844,
+  "timestamp": "2016-08-13T19:48:57Z",
+  "version": 1,
+  "changeset": 41435500,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Los arcos"
+  }
+},
+{
+  "type": "node",
+  "id": 4348990489,
+  "lat": 19.4984145,
+  "lon": -99.2499515,
+  "timestamp": "2016-08-13T19:48:59Z",
+  "version": 1,
+  "changeset": 41435500,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "ice_cream",
+    "name": "Santa Clara"
+  }
+},
+{
+  "type": "node",
+  "id": 4362069390,
+  "lat": 19.5254298,
+  "lon": -99.2277867,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "tea;coffee_shop",
+    "internet_access": "wlan",
+    "name": "Cielito Querido"
+  }
+},
+{
+  "type": "node",
+  "id": 4374779993,
+  "lat": 19.5280285,
+  "lon": -99.2278780,
+  "timestamp": "2020-10-08T21:12:46Z",
+  "version": 4,
+  "changeset": 92196583,
+  "user": "Kaarti_B",
+  "uid": 9029309,
+  "tags": {
+    "addr:street": "Calle Benito Juárez",
+    "amenity": "cafe",
+    "name": "Cielito Querido",
+    "name:es": "Cielito Querido"
+  }
+},
+{
+  "type": "node",
+  "id": 4374780292,
+  "lat": 19.5280994,
+  "lon": -99.2284505,
+  "timestamp": "2021-05-05T21:15:05Z",
+  "version": 4,
+  "changeset": 104208125,
+  "user": "joshieadalid",
+  "uid": 4847504,
+  "tags": {
+    "addr:street": "Calle Benito Juárez",
+    "amenity": "fast_food",
+    "brand": "Papa John's",
+    "brand:wikidata": "Q2759586",
+    "brand:wikipedia": "en:Papa John's Pizza",
+    "cuisine": "pizza",
+    "name": "Papa John's",
+    "name:es": "Papa John's",
+    "phone": "53657676",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4374833990,
+  "lat": 19.5280315,
+  "lon": -99.2280851,
+  "timestamp": "2020-10-08T21:12:46Z",
+  "version": 3,
+  "changeset": 92196583,
+  "user": "Kaarti_B",
+  "uid": 9029309,
+  "tags": {
+    "addr:postcode": "54058",
+    "addr:street": "Calle Benito Juárez",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "internet_access": "wlan",
+    "name": "Starbucks coffe",
+    "name:es": "Starbucks coffe"
+  }
+},
+{
+  "type": "node",
+  "id": 4374839291,
+  "lat": 19.5253715,
+  "lon": -99.2272662,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "bar",
+    "name": "Beer Factory",
+    "name:es": "Beer Factory"
+  }
+},
+{
+  "type": "node",
+  "id": 4374839490,
+  "lat": 19.5251569,
+  "lon": -99.2278183,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cinema",
+    "name": "Cinemex",
+    "name:es": "Cinemex"
+  }
+},
+{
+  "type": "node",
+  "id": 4406806592,
+  "lat": 19.4866894,
+  "lon": -99.2397918,
+  "timestamp": "2016-09-18T13:26:50Z",
+  "version": 1,
+  "changeset": 42247298,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "GabyLu",
+    "name:es": "GabyLu"
+  }
+},
+{
+  "type": "node",
+  "id": 4411643589,
+  "lat": 19.4867508,
+  "lon": -99.2393090,
+  "timestamp": "2016-09-21T14:48:03Z",
+  "version": 1,
+  "changeset": 42325685,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "burger;chicken",
+    "internet_access": "wlan",
+    "name": "Wing's Star",
+    "name:es": "Wing's Star"
+  }
+},
+{
+  "type": "node",
+  "id": 4411931191,
+  "lat": 19.5265534,
+  "lon": -99.2263801,
+  "timestamp": "2016-09-21T17:40:24Z",
+  "version": 1,
+  "changeset": 42329895,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "pub",
+    "name": "Plaza Paseo Santa Mónica",
+    "name:es": "Plaza Paseo Santa Mónica"
+  }
+},
+{
+  "type": "node",
+  "id": 4430073893,
+  "lat": 19.5260422,
+  "lon": -99.2291268,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Santa Clara",
+    "name:es": "Santa Clara"
+  }
+},
+{
+  "type": "node",
+  "id": 4430079000,
+  "lat": 19.5025081,
+  "lon": -99.2598195,
+  "timestamp": "2016-10-04T02:09:36Z",
+  "version": 1,
+  "changeset": 42618779,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Tacos",
+    "name:es": "Tacos"
+  }
+},
+{
+  "type": "node",
+  "id": 4443092090,
+  "lat": 19.5069053,
+  "lon": -99.2457359,
+  "timestamp": "2017-01-30T07:01:10Z",
+  "version": 2,
+  "changeset": 45640446,
+  "user": "Dapeaco",
+  "uid": 5224693,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Wing's Stop",
+    "name:es": "Wing's Stop",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 4458632290,
+  "lat": 19.4983107,
+  "lon": -99.2528532,
+  "timestamp": "2016-10-22T00:49:37Z",
+  "version": 1,
+  "changeset": 43072322,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Burritos",
+    "name:es": "Burritos"
+  }
+},
+{
+  "type": "node",
+  "id": 4458634289,
+  "lat": 19.4922072,
+  "lon": -99.2531465,
+  "timestamp": "2016-10-22T00:49:24Z",
+  "version": 1,
+  "changeset": 43072322,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "La Palma",
+    "name:es": "La Palma"
+  }
+},
+{
+  "type": "node",
+  "id": 4458635489,
+  "lat": 19.5024190,
+  "lon": -99.2598180,
+  "timestamp": "2016-10-22T00:50:23Z",
+  "version": 1,
+  "changeset": 43072322,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Tacos Lucio",
+    "name:es": "Tacos Lucio"
+  }
+},
+{
+  "type": "node",
+  "id": 4465346693,
+  "lat": 19.5261658,
+  "lon": -99.2274014,
+  "timestamp": "2016-10-27T17:11:53Z",
+  "version": 2,
+  "changeset": 43221211,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:city": "Tlanepantla,México.",
+    "addr:postcode": "54056",
+    "addr:street": "Mundo e , M.Avila Camacho 1007 local 19A San Lucas Tepetlacalco",
+    "amenity": "restaurant",
+    "name": "Beer Factory Mundo e",
+    "toilets:wheelchair": "no",
+    "website": "http://beerfactory.com",
+    "wheelchair": "limited",
+    "wheelchair:description": "Restaurante con accesos , los baños no muy adaptables para una silla."
+  }
+},
+{
+  "type": "node",
+  "id": 4466580889,
+  "lat": 19.4973724,
+  "lon": -99.2376846,
+  "timestamp": "2020-09-01T23:01:17Z",
+  "version": 3,
+  "changeset": 90267270,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "addr:city": "Satélite , Naucalpan de Juárez",
+    "addr:postcode": "3228",
+    "addr:street": "Boulevard Manuel Ávila Camacho",
+    "amenity": "bar",
+    "name": "Beer Factory Satélite",
+    "toilets:wheelchair": "no",
+    "website": "http://beerfactory.com",
+    "wheelchair": "yes",
+    "wheelchair:description": "Restaurante-Bar con estacionamiento y rampas para entrar y baños no ,muy accesibles para sillas de ruedas."
+  }
+},
+{
+  "type": "node",
+  "id": 4487315889,
+  "lat": 19.4948512,
+  "lon": -99.2466624,
+  "timestamp": "2019-03-04T18:59:30Z",
+  "version": 2,
+  "changeset": 67778701,
+  "user": "b-jazz-bot",
+  "uid": 9451067,
+  "tags": {
+    "addr:city": "Naucalpan de Juárez",
+    "addr:housenumber": "25 local 17 Colonia residencial Boulevares , Estado de México, Boulevares",
+    "addr:postcode": "53140",
+    "addr:street": "Dentix Gran Terraza Lomas verdes , colina de La Paz",
+    "amenity": "restaurant",
+    "name": "Toks Lomas verdes",
+    "website": "https://www.toks.com.mx/",
+    "wheelchair": "yes",
+    "wheelchair:description": "Restaurante con estacionamiento, cuenta con rampas para acceso, baños muy accesibles."
+  }
+},
+{
+  "type": "node",
+  "id": 4487346789,
+  "lat": 19.4999203,
+  "lon": -99.2363233,
+  "timestamp": "2019-03-06T05:16:53Z",
+  "version": 2,
+  "changeset": 67830505,
+  "user": "b-jazz-bot",
+  "uid": 9451067,
+  "tags": {
+    "addr:city": "Naucalpan , Méx.",
+    "addr:postcode": "53100",
+    "addr:street": "Circuito Geógrafos Lte.4 Mz 201,ColoniaLoma suave",
+    "amenity": "restaurant",
+    "name": "Toks Torres de satélite",
+    "website": "https://www.toks.com.mx/",
+    "wheelchair": "yes",
+    "wheelchair:description": "Restaurante con estacionamiento,rampas con accesos ,baños muy accesibles para silla de ruedas."
+  }
+},
+{
+  "type": "node",
+  "id": 4536236201,
+  "lat": 19.5071562,
+  "lon": -99.2370277,
+  "timestamp": "2016-12-03T19:22:58Z",
+  "version": 1,
+  "changeset": 44144292,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "bar",
+    "name": "Hooters",
+    "name:es": "Hooters"
+  }
+},
+{
+  "type": "node",
+  "id": 4536274305,
+  "lat": 19.5171352,
+  "lon": -99.2323238,
+  "timestamp": "2016-12-03T19:22:56Z",
+  "version": 1,
+  "changeset": 44144292,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Potzolcalli",
+    "name:es": "Potzolcalli"
+  }
+},
+{
+  "type": "node",
+  "id": 4543749889,
+  "lat": 19.4953948,
+  "lon": -99.2481910,
+  "timestamp": "2016-12-07T20:48:11Z",
+  "version": 1,
+  "changeset": 44244543,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "chinese",
+    "name": "Loon-Chiy",
+    "name:es": "Loon-Chiy"
+  }
+},
+{
+  "type": "node",
+  "id": 4570936990,
+  "lat": 19.4897216,
+  "lon": -99.2481922,
+  "timestamp": "2017-09-15T11:52:30Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "steak_house",
+    "name": "El asadero",
+    "name:es": "El asadero",
+    "toilets:wheelchair": "no",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4570937089,
+  "lat": 19.5157438,
+  "lon": -99.2449056,
+  "timestamp": "2016-12-24T21:22:04Z",
+  "version": 1,
+  "changeset": 44652108,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "pizza",
+    "name": "Domino's Pizza",
+    "name:es": "Domino's Pizza",
+    "phone": "53933001"
+  }
+},
+{
+  "type": "node",
+  "id": 4643537490,
+  "lat": 19.5253221,
+  "lon": -99.2281814,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "name": "Mundo E",
+    "shop": "mall",
+    "wheelchair": "limited",
+    "wheelchair:description": "Centro comercial con accesos para silla de ruedas, algunos locales de la planta baja tienen escalón a la entrada"
+  }
+},
+{
+  "type": "node",
+  "id": 4643602798,
+  "lat": 19.4961710,
+  "lon": -99.2363460,
+  "timestamp": "2017-01-30T07:05:11Z",
+  "version": 1,
+  "changeset": 45640446,
+  "user": "Dapeaco",
+  "uid": 5224693,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "La Parrilla Leonesa",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4643633489,
+  "lat": 19.4948340,
+  "lon": -99.2364070,
+  "timestamp": "2017-01-30T07:06:57Z",
+  "version": 1,
+  "changeset": 45640446,
+  "user": "Dapeaco",
+  "uid": 5224693,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Mariscos Don Roque",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4908362321,
+  "lat": 19.5107645,
+  "lon": -99.2294476,
+  "timestamp": "2024-10-25T21:32:03Z",
+  "version": 3,
+  "changeset": 158355742,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "cafe",
+    "internet_access": "wlan",
+    "name": "Starbucks Centro cívico",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4936995324,
+  "lat": 19.4913944,
+  "lon": -99.2442817,
+  "timestamp": "2017-09-15T12:02:50Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "GabyLu",
+    "name:es": "GabyLu",
+    "toilets:wheelchair": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4940457922,
+  "lat": 19.5283673,
+  "lon": -99.2279718,
+  "timestamp": "2017-06-28T13:45:55Z",
+  "version": 1,
+  "changeset": 49888998,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Romana Green Salads",
+    "name:es": "Romana Green Salads",
+    "phone": "65969390"
+  }
+},
+{
+  "type": "node",
+  "id": 4941364621,
+  "lat": 19.5200266,
+  "lon": -99.2373929,
+  "timestamp": "2017-06-29T01:25:13Z",
+  "version": 1,
+  "changeset": 49905417,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "La Hawaiana",
+    "name:es": "La Hawaiana"
+  }
+},
+{
+  "type": "node",
+  "id": 4941364921,
+  "lat": 19.5011025,
+  "lon": -99.2502809,
+  "timestamp": "2022-11-06T16:38:02Z",
+  "version": 2,
+  "changeset": 128562603,
+  "user": "melcomsx",
+  "uid": 313111,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Subway",
+    "brand:wikidata": "Q244457",
+    "cuisine": "sandwich",
+    "name": "Subway",
+    "name:es": "Subway"
+  }
+},
+{
+  "type": "node",
+  "id": 4953276223,
+  "lat": 19.5270381,
+  "lon": -99.2248421,
+  "timestamp": "2020-10-15T22:30:02Z",
+  "version": 2,
+  "changeset": 92545758,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "addr:street": "Calle Convento de Actopan",
+    "amenity": "restaurant",
+    "cuisine": "argentinian",
+    "name": "Punta Recoleta",
+    "name:es": "Punta Recoleta"
+  }
+},
+{
+  "type": "node",
+  "id": 4963048822,
+  "lat": 19.4983160,
+  "lon": -99.2364670,
+  "timestamp": "2017-07-11T04:48:10Z",
+  "version": 1,
+  "changeset": 50191648,
+  "user": "Dapeaco",
+  "uid": 5224693,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Film Club Cafe",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 4979795321,
+  "lat": 19.5268171,
+  "lon": -99.2221123,
+  "timestamp": "2025-03-19T20:20:44Z",
+  "version": 4,
+  "changeset": 163835041,
+  "user": "toototabon",
+  "uid": 20808014,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "chinese",
+    "name": "Loy Ming",
+    "opening_hours": "Mo-Fr 11:00-18:00; Sa,Su 11:00-20:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5144219322,
+  "lat": 19.5135737,
+  "lon": -99.2338806,
+  "timestamp": "2026-09-26T09:13:09Z",
+  "version": 3,
+  "changeset": 189577760,
+  "user": "Mateusz Konieczny - bot account",
+  "uid": 3199858,
+  "tags": {
+    "addr:street": "Calle Panuncio Padilla",
+    "amenity": "fast_food",
+    "cuisine": "burger;steak_house;hot_dog",
+    "name": "La BTK",
+    "name:es": "La BTK"
+  }
+},
+{
+  "type": "node",
+  "id": 5184319977,
+  "lat": 19.5166361,
+  "lon": -99.2148396,
+  "timestamp": "2017-10-23T18:08:10Z",
+  "version": 1,
+  "changeset": 53186355,
+  "user": "dabro28",
+  "uid": 2528168,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Tacos El Fogón",
+    "source": "survey"
+  }
+},
+{
+  "type": "node",
+  "id": 5257999192,
+  "lat": 19.5047627,
+  "lon": -99.2481387,
+  "timestamp": "2024-10-24T22:19:31Z",
+  "version": 2,
+  "changeset": 158315656,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:city": "Naucalpan",
+    "addr:housenumber": "20-21",
+    "addr:postcode": "53100",
+    "addr:street": "Circuito Economistas",
+    "amenity": "ice_cream",
+    "delivery": "no",
+    "name": "Aguas de la zona azul",
+    "outdoor_seating": "yes",
+    "takeaway": "yes",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5474372473,
+  "lat": 19.4929141,
+  "lon": -99.2386939,
+  "timestamp": "2020-09-03T20:37:01Z",
+  "version": 2,
+  "changeset": 90380154,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "addr:city": "Naucalpan",
+    "addr:postcode": "53140",
+    "addr:street": "Boulevard Manuel Ávila Camacho",
+    "amenity": "arts_centre",
+    "description": "Foro al aire libre para obras y conciertos dentro del Parque Naucalli",
+    "name": "Foro Felipe Villanueva"
+  }
+},
+{
+  "type": "node",
+  "id": 5474373151,
+  "lat": 19.4954558,
+  "lon": -99.2382429,
+  "timestamp": "2020-09-01T23:01:17Z",
+  "version": 2,
+  "changeset": 90267270,
+  "user": "birdymaps",
+  "uid": 9319541,
+  "tags": {
+    "addr:postcode": "53140",
+    "addr:street": "Boulevard Manuel Ávila Camacho",
+    "amenity": "arts_centre",
+    "description": "Casa Agora para exposiciones de arte dentro del Parque Naucalli",
+    "name": "Agora"
+  }
+},
+{
+  "type": "node",
+  "id": 5501872039,
+  "lat": 19.4887785,
+  "lon": -99.2438074,
+  "timestamp": "2023-06-02T07:56:09Z",
+  "version": 3,
+  "changeset": 136856994,
+  "user": "LudovicG",
+  "uid": 209796,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "chicken;burger;hot_dog",
+    "internet_access": "wlan",
+    "name": "Wing's star"
+  }
+},
+{
+  "type": "node",
+  "id": 5560791024,
+  "lat": 19.5104915,
+  "lon": -99.2321597,
+  "timestamp": "2024-10-24T22:49:07Z",
+  "version": 2,
+  "changeset": 158316266,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Los Bisquets Obregón",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 5594982726,
+  "lat": 19.5158811,
+  "lon": -99.2332556,
+  "timestamp": "2019-04-06T03:28:16Z",
+  "version": 2,
+  "changeset": 68942245,
+  "user": "Timothy Smith",
+  "uid": 115918,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Chili's",
+    "brand:wikidata": "Q1072948",
+    "brand:wikipedia": "en:Chili's",
+    "cuisine": "tex-mex",
+    "name": "Chili's",
+    "name:es": "Chilli's"
+  }
+},
+{
+  "type": "node",
+  "id": 5594982727,
+  "lat": 19.5053751,
+  "lon": -99.2370380,
+  "timestamp": "2018-05-03T18:05:10Z",
+  "version": 1,
+  "changeset": 58656006,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Entre fuegos",
+    "name:es": "Entre fuegos"
+  }
+},
+{
+  "type": "node",
+  "id": 5594982728,
+  "lat": 19.4981434,
+  "lon": -99.2376121,
+  "timestamp": "2019-01-30T20:36:41Z",
+  "version": 2,
+  "changeset": 66783185,
+  "user": "thetornado76",
+  "uid": 1624486,
+  "tags": {
+    "amenity": "fast_food",
+    "brand:wikidata": "Q847743",
+    "brand:wikipedia": "en:Dunkin' Donuts",
+    "cuisine": "donut",
+    "name": "Dunkin' Donuts",
+    "name:es": "Dunkin' Donuts"
+  }
+},
+{
+  "type": "node",
+  "id": 5594994922,
+  "lat": 19.5026848,
+  "lon": -99.2373183,
+  "timestamp": "2018-10-25T00:52:04Z",
+  "version": 2,
+  "changeset": 63850625,
+  "user": "davv",
+  "uid": 8999431,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Centro Castellano",
+    "name:es": "Centro Castellano"
+  }
+},
+{
+  "type": "node",
+  "id": 5620300823,
+  "lat": 19.5246168,
+  "lon": -99.2274363,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 2,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "addr:street": "Periferico",
+    "amenity": "restaurant",
+    "name": "La Casa del Pastor"
+  }
+},
+{
+  "type": "node",
+  "id": 5846369987,
+  "lat": 19.5059922,
+  "lon": -99.2469159,
+  "timestamp": "2024-10-24T22:21:44Z",
+  "version": 2,
+  "changeset": 158315708,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Mr Sushi",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5846381285,
+  "lat": 19.5063330,
+  "lon": -99.2466333,
+  "timestamp": "2024-10-24T22:22:45Z",
+  "version": 3,
+  "changeset": 158315724,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "addr:street": "Circuito Circunvalación Poniente",
+    "amenity": "cafe",
+    "internet_access": "wlan",
+    "name": "Starbucks coffee",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5846381386,
+  "lat": 19.5065661,
+  "lon": -99.2463321,
+  "timestamp": "2024-10-24T22:23:52Z",
+  "version": 2,
+  "changeset": 158315740,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:postcode": "53100",
+    "amenity": "restaurant",
+    "cuisine": "fish;seafood",
+    "name": "LuiMars",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5888361717,
+  "lat": 19.4899873,
+  "lon": -99.2486377,
+  "timestamp": "2018-09-06T15:53:04Z",
+  "version": 1,
+  "changeset": 62348254,
+  "user": "Athelwolf",
+  "uid": 8773086,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "El Servantino"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381424,
+  "lat": 19.5065379,
+  "lon": -99.2286031,
+  "timestamp": "2018-10-25T00:52:03Z",
+  "version": 1,
+  "changeset": 63850625,
+  "user": "davv",
+  "uid": 8999431,
+  "tags": {
+    "amenity": "ice_cream",
+    "name": "Helados Rocío"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381430,
+  "lat": 19.5132478,
+  "lon": -99.2292791,
+  "timestamp": "2024-10-25T21:54:08Z",
+  "version": 2,
+  "changeset": 158356297,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "argentinian",
+    "name": "La Biela",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381432,
+  "lat": 19.5135158,
+  "lon": -99.2300462,
+  "timestamp": "2024-10-25T21:53:42Z",
+  "version": 2,
+  "changeset": 158356286,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "argentinian",
+    "name": "La Biela",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381435,
+  "lat": 19.5090317,
+  "lon": -99.2338106,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 2,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cinema",
+    "name": "Cinepolis"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381436,
+  "lat": 19.5084676,
+  "lon": -99.2338528,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 2,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cinema",
+    "name": "Cinepolis VIP"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381437,
+  "lat": 19.5086410,
+  "lon": -99.2360571,
+  "timestamp": "2024-10-24T22:37:58Z",
+  "version": 3,
+  "changeset": 158315999,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Vips",
+    "brand:wikidata": "Q48783378",
+    "brand:wikipedia": "es:Vips",
+    "cuisine": "mexican",
+    "name": "Vips",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381441,
+  "lat": 19.5030623,
+  "lon": -99.2364046,
+  "timestamp": "2024-10-24T22:58:26Z",
+  "version": 2,
+  "changeset": 158316440,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "IHOP",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381444,
+  "lat": 19.5063961,
+  "lon": -99.2334678,
+  "timestamp": "2024-10-24T22:47:11Z",
+  "version": 2,
+  "changeset": 158316215,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Central de Pizzas",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381446,
+  "lat": 19.5127927,
+  "lon": -99.2320185,
+  "timestamp": "2018-10-25T00:52:04Z",
+  "version": 1,
+  "changeset": 63850625,
+  "user": "davv",
+  "uid": 8999431,
+  "tags": {
+    "amenity": "bar",
+    "name": "Hookah"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381451,
+  "lat": 19.5049662,
+  "lon": -99.2258957,
+  "timestamp": "2024-10-25T21:55:51Z",
+  "version": 3,
+  "changeset": 158356334,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Pizza Hut",
+    "brand:wikidata": "Q191615",
+    "brand:wikipedia": "en:Pizza Hut",
+    "cuisine": "pizza",
+    "name": "Pizza Hut",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6011381452,
+  "lat": 19.5141030,
+  "lon": -99.2311269,
+  "timestamp": "2018-10-25T00:52:04Z",
+  "version": 1,
+  "changeset": 63850625,
+  "user": "davv",
+  "uid": 8999431,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "wings",
+    "name": "Wings Army"
+  }
+},
+{
+  "type": "node",
+  "id": 6047730186,
+  "lat": 19.5078332,
+  "lon": -99.2330963,
+  "timestamp": "2024-10-24T22:47:31Z",
+  "version": 2,
+  "changeset": 158316222,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Santo Gallo",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 6129225985,
+  "lat": 19.4986382,
+  "lon": -99.2362088,
+  "timestamp": "2018-12-10T20:23:04Z",
+  "version": 1,
+  "changeset": 65355710,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "La Chilanguita"
+  }
+},
+{
+  "type": "node",
+  "id": 6177366688,
+  "lat": 19.5134428,
+  "lon": -99.2318856,
+  "timestamp": "2019-01-01T23:17:50Z",
+  "version": 1,
+  "changeset": 65945088,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "pub",
+    "name": "McCarthy's Irish Pub"
+  }
+},
+{
+  "type": "node",
+  "id": 6296109882,
+  "lat": 19.5121218,
+  "lon": -99.2133454,
+  "timestamp": "2020-09-16T18:33:44Z",
+  "version": 2,
+  "changeset": 91002516,
+  "user": "tomincolorado",
+  "uid": 10304315,
+  "tags": {
+    "addr:street": "Autopista Naucalpan-Ecatepec",
+    "amenity": "fast_food",
+    "brand": "Little Caesars",
+    "brand:wikidata": "Q1393809",
+    "brand:wikipedia": "en:Little Caesars",
+    "cuisine": "pizza",
+    "name": "Little Caesars"
+  }
+},
+{
+  "type": "node",
+  "id": 6309134020,
+  "lat": 19.5064874,
+  "lon": -99.2282157,
+  "timestamp": "2024-10-25T22:10:14Z",
+  "version": 2,
+  "changeset": 158356672,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Sonora en casa",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6433451785,
+  "lat": 19.5094549,
+  "lon": -99.2202976,
+  "timestamp": "2019-04-28T03:27:11Z",
+  "version": 1,
+  "changeset": 69653813,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "cinema",
+    "name": "Cinépolis"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768367,
+  "lat": 19.5249960,
+  "lon": -99.2291965,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cafe",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "brand:wikipedia": "en:Starbucks",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks",
+    "official_name": "Starbucks Coffee",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768368,
+  "lat": 19.5249960,
+  "lon": -99.2293144,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Krispy Kreme",
+    "brand:wikidata": "Q1192805",
+    "brand:wikipedia": "en:Krispy Kreme",
+    "cuisine": "donut",
+    "name": "Krispy Kreme",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768369,
+  "lat": 19.5240780,
+  "lon": -99.2276023,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Sonora Grill"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768373,
+  "lat": 19.5245270,
+  "lon": -99.2280885,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "leisure": "bowling_alley",
+    "name": "Alboa"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768377,
+  "lat": 19.5259414,
+  "lon": -99.2282738,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Toks",
+    "brand:wikidata": "Q48835586",
+    "brand:wikipedia": "en:Toks",
+    "cuisine": "mexican",
+    "name": "Toks"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768379,
+  "lat": 19.5244983,
+  "lon": -99.2280223,
+  "timestamp": "2024-11-02T00:31:58Z",
+  "version": 2,
+  "changeset": 158641745,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Mr. Pampas"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768380,
+  "lat": 19.5252296,
+  "lon": -99.2267219,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Parilla Urbana"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768381,
+  "lat": 19.5241410,
+  "lon": -99.2273987,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Buffalo Wild Wings",
+    "brand:wikidata": "Q509255",
+    "brand:wikipedia": "en:Buffalo Wild Wings",
+    "cuisine": "wings",
+    "name": "Buffalo Wild Wings"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768382,
+  "lat": 19.5242612,
+  "lon": -99.2271755,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "50 Friends"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768383,
+  "lat": 19.5243747,
+  "lon": -99.2270266,
+  "timestamp": "2022-01-10T16:10:06Z",
+  "version": 3,
+  "changeset": 115988271,
+  "user": "b-jazz-bot",
+  "uid": 9451067,
+  "tags": {
+    "addr:city": "Tlanepantla,México.",
+    "addr:housenumber": "1007",
+    "addr:postcode": "54055",
+    "addr:street": "Boulevard Manuel Ávila Camacho",
+    "amenity": "restaurant",
+    "cuisine": "japanese;sushi",
+    "name": "Moshi Moshi",
+    "opening_hours": "Mo-Su 12:00-22:00",
+    "phone": "+525585993744",
+    "website": "https://www.moshimoshi.mx/"
+  }
+},
+{
+  "type": "node",
+  "id": 7295768384,
+  "lat": 19.5245116,
+  "lon": -99.2269026,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Cerveceria de Barrio"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812685,
+  "lat": 19.5246252,
+  "lon": -99.2268211,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Mr. Sushi"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812686,
+  "lat": 19.5247421,
+  "lon": -99.2267397,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Wing's Army"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812687,
+  "lat": 19.5260473,
+  "lon": -99.2281324,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cafe",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "brand:wikipedia": "en:Starbucks",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks",
+    "official_name": "Starbucks Coffee",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812688,
+  "lat": 19.5259686,
+  "lon": -99.2281568,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Italiannis"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812690,
+  "lat": 19.5258016,
+  "lon": -99.2283462,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "La 3ra Ronda"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812691,
+  "lat": 19.5257422,
+  "lon": -99.2284073,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "El Bajío"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812692,
+  "lat": 19.5256577,
+  "lon": -99.2284582,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Chili's",
+    "brand:wikidata": "Q1072948",
+    "brand:wikipedia": "en:Chili's",
+    "cuisine": "tex-mex",
+    "name": "Chili's",
+    "official_name": "Chili's Grill & Bar"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812695,
+  "lat": 19.5251029,
+  "lon": -99.2276397,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "leisure": "amusement_arcade",
+    "name": "Arena"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812696,
+  "lat": 19.5266123,
+  "lon": -99.2287345,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "leisure": "amusement_arcade",
+    "name": "Recorcholis"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812698,
+  "lat": 19.5247063,
+  "lon": -99.2271909,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "IHOP",
+    "brand:wikidata": "Q1185675",
+    "brand:wikipedia": "en:IHOP",
+    "cuisine": "breakfast;pancake",
+    "name": "IHOP"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812700,
+  "lat": 19.5260478,
+  "lon": -99.2280000,
+  "timestamp": "2024-11-02T00:31:58Z",
+  "version": 2,
+  "changeset": 158641745,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Asador City Wok"
+  }
+},
+{
+  "type": "node",
+  "id": 7295812702,
+  "lat": 19.5266865,
+  "lon": -99.2278892,
+  "timestamp": "2020-03-15T02:23:25Z",
+  "version": 1,
+  "changeset": 82207624,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "La Casa de Toño"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841860,
+  "lat": 19.5105227,
+  "lon": -99.2337120,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Chili's",
+    "brand:wikidata": "Q1072948",
+    "brand:wikipedia": "en:Chili's",
+    "cuisine": "tex-mex",
+    "name": "Chili's",
+    "official_name": "Chili's Grill & Bar"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841862,
+  "lat": 19.5104463,
+  "lon": -99.2336107,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "P.F. Chang's",
+    "brand:wikidata": "Q5360181",
+    "brand:wikipedia": "en:P. F. Chang's China Bistro",
+    "cuisine": "asian",
+    "name": "P.F. Chang's",
+    "official_name": "P.F. Chang's China Bistro"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841863,
+  "lat": 19.5098862,
+  "lon": -99.2350423,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Crepes & Waffles"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841864,
+  "lat": 19.5101217,
+  "lon": -99.2346776,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Maison Kayser"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841865,
+  "lat": 19.5096825,
+  "lon": -99.2339079,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Macarroni's"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841875,
+  "lat": 19.5102943,
+  "lon": -99.2331356,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Shake Shack"
+  }
+},
+{
+  "type": "node",
+  "id": 7295841876,
+  "lat": 19.5101543,
+  "lon": -99.2331828,
+  "timestamp": "2020-03-15T02:45:29Z",
+  "version": 1,
+  "changeset": 82207789,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "El Bife del Padrino"
+  }
+},
+{
+  "type": "node",
+  "id": 7364192779,
+  "lat": 19.4915291,
+  "lon": -99.2278993,
+  "timestamp": "2020-04-03T17:02:03Z",
+  "version": 1,
+  "changeset": 83046859,
+  "user": "Chucho Irigoyen",
+  "uid": 10977943,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "La Esperanza"
+  }
+},
+{
+  "type": "node",
+  "id": 7364192780,
+  "lat": 19.4916410,
+  "lon": -99.2278637,
+  "timestamp": "2020-04-03T17:02:03Z",
+  "version": 1,
+  "changeset": 83046859,
+  "user": "Chucho Irigoyen",
+  "uid": 10977943,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "SushiRoll"
+  }
+},
+{
+  "type": "node",
+  "id": 7364192782,
+  "lat": 19.4927262,
+  "lon": -99.2275670,
+  "timestamp": "2020-04-03T17:02:03Z",
+  "version": 1,
+  "changeset": 83046859,
+  "user": "Chucho Irigoyen",
+  "uid": 10977943,
+  "tags": {
+    "amenity": "cafe",
+    "name": "El Globo"
+  }
+},
+{
+  "type": "node",
+  "id": 7392762359,
+  "lat": 19.5060495,
+  "lon": -99.2337575,
+  "timestamp": "2024-10-24T22:57:51Z",
+  "version": 2,
+  "changeset": 158316429,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "El Califa",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7423895997,
+  "lat": 19.5068648,
+  "lon": -99.2594800,
+  "timestamp": "2020-04-19T22:51:47Z",
+  "version": 1,
+  "changeset": 83787461,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Little Caesars",
+    "brand:wikidata": "Q1393809",
+    "brand:wikipedia": "en:Little Caesars",
+    "cuisine": "pizza",
+    "name": "Little Caesars",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 7423895999,
+  "lat": 19.5066789,
+  "lon": -99.2591792,
+  "timestamp": "2020-04-19T22:51:47Z",
+  "version": 1,
+  "changeset": 83787461,
+  "user": "Ubalca",
+  "uid": 10818070,
+  "tags": {
+    "amenity": "cafe",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "brand:wikipedia": "en:Starbucks",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks",
+    "official_name": "Starbucks Coffee",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8209552420,
+  "lat": 19.5167623,
+  "lon": -99.2147845,
+  "timestamp": "2020-12-09T12:02:03Z",
+  "version": 1,
+  "changeset": 95552015,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "El Fogón Mixe"
+  }
+},
+{
+  "type": "node",
+  "id": 8633341219,
+  "lat": 19.4896202,
+  "lon": -99.2478629,
+  "timestamp": "2021-04-15T20:30:51Z",
+  "version": 1,
+  "changeset": 103016480,
+  "user": "quiron",
+  "uid": 2873170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "mexican",
+    "name": "OTY",
+    "name:es": "OTY Quesadillas"
+  }
+},
+{
+  "type": "node",
+  "id": 8707898917,
+  "lat": 19.5047486,
+  "lon": -99.2373565,
+  "timestamp": "2021-05-07T01:12:13Z",
+  "version": 1,
+  "changeset": 104279832,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Fisher's House"
+  }
+},
+{
+  "type": "node",
+  "id": 9965047017,
+  "lat": 19.5092090,
+  "lon": -99.2355674,
+  "timestamp": "2022-08-20T01:05:16Z",
+  "version": 1,
+  "changeset": 125130699,
+  "user": "Rich Canseco S",
+  "uid": 15237832,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Hunan"
+  }
+},
+{
+  "type": "node",
+  "id": 9984413805,
+  "lat": 19.4979765,
+  "lon": -99.2427030,
+  "timestamp": "2022-08-29T01:57:40Z",
+  "version": 1,
+  "changeset": 125500018,
+  "user": "UIDX",
+  "uid": 16967175,
+  "tags": {
+    "leisure": "park",
+    "name": "El Polvorín"
+  }
+},
+{
+  "type": "node",
+  "id": 10602415465,
+  "lat": 19.5095630,
+  "lon": -99.2339622,
+  "timestamp": "2023-02-02T21:40:40Z",
+  "version": 1,
+  "changeset": 132019955,
+  "user": "Red Creactiva",
+  "uid": 12912069,
+  "tags": {
+    "addr:city": "Naucalpan de Juárez",
+    "addr:housenumber": "2251",
+    "addr:postcode": "53100",
+    "addr:street": "Circuito Centro Comercial",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "name": "Boicot Café Plaza Satélite"
+  }
+},
+{
+  "type": "node",
+  "id": 11413492274,
+  "lat": 19.4970663,
+  "lon": -99.2266555,
+  "timestamp": "2023-12-12T21:08:06Z",
+  "version": 1,
+  "changeset": 145053426,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Bisquets Obregón"
+  }
+},
+{
+  "type": "node",
+  "id": 11413518171,
+  "lat": 19.4944206,
+  "lon": -99.2272010,
+  "timestamp": "2023-12-13T01:08:19Z",
+  "version": 2,
+  "changeset": 145057197,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Tortas la Vaquita"
+  }
+},
+{
+  "type": "node",
+  "id": 11413616150,
+  "lat": 19.4908828,
+  "lon": -99.2267679,
+  "timestamp": "2023-12-13T01:08:19Z",
+  "version": 2,
+  "changeset": 145057197,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Finca Santa Veracruz"
+  }
+},
+{
+  "type": "node",
+  "id": 11413617469,
+  "lat": 19.4857817,
+  "lon": -99.2283647,
+  "timestamp": "2023-12-13T01:08:19Z",
+  "version": 2,
+  "changeset": 145057197,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "ice_cream",
+    "brand": "La Michoacana",
+    "brand:wikidata": "Q17118857",
+    "name": "La Michoacana"
+  }
+},
+{
+  "type": "node",
+  "id": 11413695570,
+  "lat": 19.5058719,
+  "lon": -99.2469569,
+  "timestamp": "2024-10-24T22:21:35Z",
+  "version": 3,
+  "changeset": 158315707,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "addr:housenumber": "30",
+    "addr:postcode": "53100",
+    "addr:street": "Circuito Economistas",
+    "amenity": "restaurant",
+    "name": "Tacos El Fogon Zona Azul Satelite",
+    "opening_hours": "Su-Fr 11:00-02:00; Sa 11:00-03:00",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 11413703569,
+  "lat": 19.4961918,
+  "lon": -99.2467868,
+  "timestamp": "2023-12-12T23:53:25Z",
+  "version": 1,
+  "changeset": 145056383,
+  "user": "NAmliton",
+  "uid": 7957838,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Wingstop Terraza Lomas Verdes"
+  }
+},
+{
+  "type": "node",
+  "id": 11413710247,
+  "lat": 19.4908232,
+  "lon": -99.2267722,
+  "timestamp": "2023-12-13T01:08:19Z",
+  "version": 2,
+  "changeset": 145057197,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "ice_cream",
+    "brand": "La Michoacana",
+    "brand:wikidata": "Q17118857",
+    "name": "La Michoacana"
+  }
+},
+{
+  "type": "node",
+  "id": 11413734428,
+  "lat": 19.4960290,
+  "lon": -99.2268601,
+  "timestamp": "2023-12-13T00:23:38Z",
+  "version": 1,
+  "changeset": 145056687,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Mariscos Chilo\"s"
+  }
+},
+{
+  "type": "node",
+  "id": 11413735851,
+  "lat": 19.4909810,
+  "lon": -99.2280873,
+  "timestamp": "2023-12-13T01:08:19Z",
+  "version": 2,
+  "changeset": 145057197,
+  "user": "kitsis",
+  "uid": 2144104,
+  "tags": {
+    "amenity": "ice_cream",
+    "name": "Santa Clara"
+  }
+},
+{
+  "type": "node",
+  "id": 12517202401,
+  "lat": 19.4938007,
+  "lon": -99.2533754,
+  "timestamp": "2025-01-20T00:31:53Z",
+  "version": 1,
+  "changeset": 161544453,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "Viking Goes"
+  }
+},
+{
+  "type": "node",
+  "id": 12801762724,
+  "lat": 19.5083317,
+  "lon": -99.2348383,
+  "timestamp": "2026-07-16T20:46:50Z",
+  "version": 2,
+  "changeset": 185868510,
+  "user": "wikimax",
+  "uid": 38546,
+  "tags": {
+    "addr:city": "Satélite",
+    "addr:housenumber": "38",
+    "addr:neighbourhood": "local C",
+    "addr:postcode": "53100",
+    "addr:street": "Enrique Sada Muguerza",
+    "amenity": "restaurant",
+    "cuisine": "mexican;burger",
+    "name": "La Burre Satélite",
+    "opening_hours": "24/7",
+    "phone": "+52 55 1818 3870",
+    "website": "https://g.co/kgs/M24iv1D",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12829265812,
+  "lat": 19.5209015,
+  "lon": -99.2329864,
+  "timestamp": "2025-05-11T23:03:40Z",
+  "version": 1,
+  "changeset": 166128821,
+  "user": "caprilo",
+  "uid": 223574,
+  "tags": {
+    "addr:street": "Hidalgo",
+    "amenity": "restaurant",
+    "name": "Casa Moranchel"
+  }
+},
+{
+  "type": "node",
+  "id": 13146287701,
+  "lat": 19.5065910,
+  "lon": -99.2591016,
+  "timestamp": "2025-09-16T02:24:09Z",
+  "version": 1,
+  "changeset": 171991210,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "ice_cream",
+    "name": "Santa Clara"
+  }
+},
+{
+  "type": "node",
+  "id": 13191066601,
+  "lat": 19.5063241,
+  "lon": -99.2588214,
+  "timestamp": "2025-10-03T17:13:33Z",
+  "version": 1,
+  "changeset": 172802466,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Camelia Tea House"
+  }
+},
+{
+  "type": "node",
+  "id": 13195381002,
+  "lat": 19.5068446,
+  "lon": -99.2372205,
+  "timestamp": "2025-10-05T10:08:12Z",
+  "version": 1,
+  "changeset": 172859879,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "bar",
+    "name": "Copperstill Cocktail Bar"
+  }
+},
+{
+  "type": "node",
+  "id": 13195383602,
+  "lat": 19.5177897,
+  "lon": -99.2304239,
+  "timestamp": "2025-10-05T10:08:13Z",
+  "version": 1,
+  "changeset": 172859879,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Tacos La Bici"
+  }
+},
+{
+  "type": "node",
+  "id": 14160043103,
+  "lat": 19.5090270,
+  "lon": -99.2493964,
+  "timestamp": "2026-09-07T16:39:57Z",
+  "version": 1,
+  "changeset": 188680760,
+  "user": "ItsNickBarry",
+  "uid": 8636899,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Olivo"
+  }
+},
+{
+  "type": "node",
+  "id": 14196074601,
+  "lat": 19.4935320,
+  "lon": -99.2414447,
+  "timestamp": "2026-09-19T04:31:26Z",
+  "version": 1,
+  "changeset": 189236494,
+  "user": "MaxChort",
+  "uid": 24569868,
+  "tags": {
+    "leisure": "park",
+    "name": "Skatepark Naucalli",
+    "name:es": "Skatepark Naucalli",
+    "opening_hours": "Tu-Su 06:00-18:00"
+  }
+},
+{
+  "type": "way",
+  "id": 24833494,
+  "timestamp": "2017-05-23T16:11:14Z",
+  "version": 5,
+  "changeset": 48921450,
+  "user": "flarios",
+  "uid": 6059659,
+  "center": {
+    "lat": 19.4957015,
+    "lon": -99.2470685
+  },
+  "nodes": [
+    269786980,
+    4872454138,
+    4872454137,
+    269786981,
+    269786982,
+    269786983,
+    2682507398,
+    269786984,
+    269786985,
+    4872454136,
+    269786986,
+    269786987,
+    4872454135,
+    4872454134,
+    4872454133,
+    4872454132,
+    269786980
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "Gran Terraza Lomas Verdes",
+    "shop": "mall",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 34408111,
+  "timestamp": "2023-08-19T14:36:41Z",
+  "version": 8,
+  "changeset": 140097707,
+  "user": "tg4567",
+  "uid": 12500589,
+  "center": {
+    "lat": 19.4994293,
+    "lon": -99.2097837
+  },
+  "nodes": [
+    395224101,
+    395224102,
+    9616899842,
+    9616899843,
+    395224103,
+    8170579250,
+    6363398098,
+    8170579251,
+    8170579252,
+    4562121074,
+    395224106,
+    395224101
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Tezozómoc",
+    "source": "Yahoo",
+    "wikidata": "Q3375727",
+    "wikimedia_commons": "Category:Parque Tezozómoc",
+    "wikipedia": "en:Parque Tezozómoc"
+  }
+},
+{
+  "type": "way",
+  "id": 220679375,
+  "timestamp": "2023-07-12T21:51:42Z",
+  "version": 8,
+  "changeset": 138439721,
+  "user": "suchAnight",
+  "uid": 11880302,
+  "center": {
+    "lat": 19.5102421,
+    "lon": -99.2341556
+  },
+  "nodes": [
+    2297682834,
+    2297682830,
+    2297682831,
+    2297682856,
+    2297682827,
+    2297682840,
+    2297682828,
+    2297682851,
+    2297682846,
+    11033431540,
+    11033431554,
+    2297682841,
+    11043024887,
+    2297682839,
+    10998499228,
+    2297682843,
+    8396084044,
+    8396084043,
+    8396084045,
+    8396084048,
+    8396084047,
+    8396084046,
+    4464580492,
+    2297682855,
+    9939601452,
+    9939601449,
+    2297682853,
+    1981472732,
+    2297682823,
+    2297682849,
+    9939601456,
+    2297682848,
+    2297682860,
+    9939601454,
+    2297682859,
+    9939601453,
+    2297682864,
+    2297682825,
+    2297682834
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "Plaza Satélite",
+    "shop": "mall",
+    "wheelchair": "yes",
+    "wheelchair:description": "Plaza comercial , con lugares de estacionamiento , elevadores y escaleras eléctricas ."
+  }
+},
+{
+  "type": "way",
+  "id": 413037828,
+  "timestamp": "2017-02-24T04:53:54Z",
+  "version": 3,
+  "changeset": 46357345,
+  "user": "Eduardo Gayosso Lucio",
+  "uid": 4377009,
+  "center": {
+    "lat": 19.5042039,
+    "lon": -99.2495796
+  },
+  "nodes": [
+    4143672783,
+    4143672784,
+    4143672785,
+    4143672786,
+    4143672788,
+    4369851055,
+    4143672789,
+    4143672790,
+    4369851054,
+    4143672791,
+    4143672792,
+    4143672793,
+    4143672780,
+    4143672794,
+    4143672783
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "Fresko Zona Azul",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 413037829,
+  "timestamp": "2016-04-23T23:02:59Z",
+  "version": 1,
+  "changeset": 38822951,
+  "user": "The Saiyan",
+  "uid": 3069718,
+  "center": {
+    "lat": 19.5036433,
+    "lon": -99.2491601
+  },
+  "nodes": [
+    4143672795,
+    4143672796,
+    4143672797,
+    4143672798,
+    4143672795
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "B Store Zona Azul",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 413470947,
+  "timestamp": "2017-09-15T11:54:51Z",
+  "version": 3,
+  "changeset": 52066628,
+  "user": "Damián Mendez",
+  "uid": 6649925,
+  "center": {
+    "lat": 19.4884754,
+    "lon": -99.2468736
+  },
+  "nodes": [
+    4147942763,
+    4147942764,
+    4147942765,
+    4147942766,
+    4147942763
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "Superama",
+    "shop": "mall",
+    "toilets:wheelchair": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 463012546,
+  "timestamp": "2023-12-13T00:23:46Z",
+  "version": 2,
+  "changeset": 145056687,
+  "user": "kitsis",
+  "uid": 2144104,
+  "center": {
+    "lat": 19.4908549,
+    "lon": -99.2275341
+  },
+  "nodes": [
+    4583298974,
+    4583298975,
+    4583298976,
+    4583298977,
+    4583298978,
+    4583298979,
+    4583298981,
+    4583298980,
+    4583298983,
+    4583298974
+  ],
+  "tags": {
+    "amenity": "restaurant",
+    "building": "yes",
+    "name": "Toks"
+  }
+},
+{
+  "type": "way",
+  "id": 463012550,
+  "timestamp": "2020-02-27T21:23:09Z",
+  "version": 2,
+  "changeset": 81564458,
+  "user": "MTG5093",
+  "uid": 9220580,
+  "center": {
+    "lat": 19.4910734,
+    "lon": -99.2314226
+  },
+  "nodes": [
+    4583303303,
+    4583303304,
+    4583303305,
+    7248589301,
+    4583303307,
+    4583303303
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "parque hundido"
+  }
+},
+{
+  "type": "way",
+  "id": 543942882,
+  "timestamp": "2017-12-01T18:14:47Z",
+  "version": 1,
+  "changeset": 54244943,
+  "user": "Ggbeta",
+  "uid": 7118481,
+  "center": {
+    "lat": 19.5050763,
+    "lon": -99.2448739
+  },
+  "nodes": [
+    5258135742,
+    5258135743,
+    5258135744,
+    5258135745,
+    5258135746,
+    5258135747,
+    5258135748,
+    5258135749,
+    5258135750,
+    5258135751,
+    5258135752,
+    5258135753,
+    5258135754,
+    5258135755,
+    5258135756,
+    5258135757,
+    5258135758,
+    5258135742
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Limantour"
+  }
+},
+{
+  "type": "way",
+  "id": 544058221,
+  "timestamp": "2018-02-13T23:40:06Z",
+  "version": 4,
+  "changeset": 56337692,
+  "user": "Alonsos",
+  "uid": 7615512,
+  "center": {
+    "lat": 19.5325210,
+    "lon": -99.2329328
+  },
+  "nodes": [
+    5259199326,
+    5259199327,
+    5259199328,
+    5411146062,
+    5411151442,
+    5411151441,
+    5259199329,
+    5259199330,
+    5259199331,
+    5259199332,
+    5259199333,
+    5259199334,
+    5259199335,
+    5411151443,
+    5411146063,
+    5259199336,
+    5259199337,
+    5259199338,
+    5259199339,
+    5259199341,
+    5259199340,
+    5259199326
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Nuevo parque lineal Sta Monica"
+  }
+},
+{
+  "type": "way",
+  "id": 553213051,
+  "timestamp": "2024-10-25T22:12:11Z",
+  "version": 4,
+  "changeset": 158356723,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "center": {
+    "lat": 19.5136498,
+    "lon": -99.2293563
+  },
+  "nodes": [
+    8178858802,
+    8178858801,
+    8178858789,
+    8178858790,
+    8178858791,
+    8178858792,
+    4927622842,
+    4927622843,
+    4241458195,
+    4241458234,
+    4241458233,
+    8178858793,
+    8178858794,
+    8178858795,
+    8178858796,
+    8178858797,
+    8178858798,
+    8178858799,
+    8178858800,
+    8178858803,
+    8178858804,
+    8178858802
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque del Circuito Centro Cívico",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 553213052,
+  "timestamp": "2020-11-25T10:12:29Z",
+  "version": 7,
+  "changeset": 94765004,
+  "user": "Curecanti",
+  "uid": 10278841,
+  "center": {
+    "lat": 19.5099561,
+    "lon": -99.2248106
+  },
+  "nodes": [
+    8164001752,
+    8164001746,
+    8164001749,
+    8164001756,
+    8164001747,
+    7206419154,
+    8164001757,
+    8164001755,
+    8164001754,
+    8154368347,
+    8154368348,
+    4927622850,
+    8154368349,
+    8154368350,
+    8154368351,
+    8154368352,
+    7206419153,
+    8164001753,
+    8164001750,
+    8164001748,
+    8164001751,
+    8164001752
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque del Circuito Centro Cívico"
+  }
+},
+{
+  "type": "way",
+  "id": 553213053,
+  "timestamp": "2024-10-25T21:56:19Z",
+  "version": 3,
+  "changeset": 158356352,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "center": {
+    "lat": 19.5057752,
+    "lon": -99.2234602
+  },
+  "nodes": [
+    6307105405,
+    6307105404,
+    6307105403,
+    6307105402,
+    6307105400,
+    6307105399,
+    6307105398,
+    6307105412,
+    6307105414,
+    6307105413,
+    6307105411,
+    6307105410,
+    6307105409,
+    360055111,
+    6307105408,
+    6307105407,
+    6307105406,
+    6307105405
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Circuito Músicos",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "way",
+  "id": 561116546,
+  "timestamp": "2018-02-13T23:44:00Z",
+  "version": 1,
+  "changeset": 56337750,
+  "user": "Alonsos",
+  "uid": 7615512,
+  "center": {
+    "lat": 19.5311487,
+    "lon": -99.2351203
+  },
+  "nodes": [
+    5411153160,
+    5411153161,
+    5411153162,
+    5411153163,
+    5411153164,
+    5411153165,
+    5411153166,
+    5411153167,
+    5411153168,
+    5411153169,
+    5411153170,
+    5411153171,
+    5411153160
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque puente jorobado"
+  }
+},
+{
+  "type": "way",
+  "id": 562635796,
+  "timestamp": "2018-02-20T03:59:06Z",
+  "version": 1,
+  "changeset": 56509214,
+  "user": "Noé Ortiz",
+  "uid": 6269679,
+  "center": {
+    "lat": 19.5199371,
+    "lon": -99.2436446
+  },
+  "nodes": [
+    5423828453,
+    5423828454,
+    5423828455,
+    5423828456,
+    5423828453
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque \"Circuito Oradores"
+  }
+},
+{
+  "type": "way",
+  "id": 564478972,
+  "timestamp": "2018-02-27T01:00:06Z",
+  "version": 1,
+  "changeset": 56707017,
+  "user": "Jorge Flores Preciado",
+  "uid": 7676557,
+  "center": {
+    "lat": 19.5202450,
+    "lon": -99.2451057
+  },
+  "nodes": [
+    5438710356,
+    5438710357,
+    5438710358,
+    5438710359,
+    5438710360,
+    5438710361,
+    5438710356
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Para Perros"
+  }
+},
+{
+  "type": "way",
+  "id": 564479226,
+  "timestamp": "2018-02-27T01:00:55Z",
+  "version": 1,
+  "changeset": 56707036,
+  "user": "Jorge Flores Preciado",
+  "uid": 7676557,
+  "center": {
+    "lat": 19.5197540,
+    "lon": -99.2451191
+  },
+  "nodes": [
+    5438714758,
+    5438714759,
+    5438714760,
+    5438714761,
+    5438714758
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Paque de Niños"
+  }
+},
+{
+  "type": "way",
+  "id": 564479286,
+  "timestamp": "2018-02-27T01:02:55Z",
+  "version": 1,
+  "changeset": 56707061,
+  "user": "Jorge Flores Preciado",
+  "uid": 7676557,
+  "center": {
+    "lat": 19.5201646,
+    "lon": -99.2438583
+  },
+  "nodes": [
+    5438713970,
+    5438713971,
+    5438713972,
+    5438713973,
+    5438713970
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Area Comun/Canchas de Basquetball"
+  }
+},
+{
+  "type": "way",
+  "id": 622374029,
+  "timestamp": "2018-10-17T13:22:19Z",
+  "version": 2,
+  "changeset": 63610731,
+  "user": "Athelwolf",
+  "uid": 8773086,
+  "center": {
+    "lat": 19.4898501,
+    "lon": -99.2493952
+  },
+  "nodes": [
+    5879010256,
+    5993292588,
+    5879010280,
+    5879010257,
+    5879010258,
+    5879010259,
+    5879010260,
+    5879010261,
+    2335504861,
+    2335504864,
+    5879010262,
+    5879010263,
+    5879010264,
+    5879010265,
+    5879010266,
+    5879010267,
+    5879010268,
+    5879010269,
+    5879010270,
+    5879010271,
+    5879010272,
+    5879010273,
+    5879010274,
+    5879010275,
+    5879010276,
+    5879010277,
+    5879010278,
+    5879010279,
+    5879010256
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque San Mateo"
+  }
+},
+{
+  "type": "way",
+  "id": 628362795,
+  "timestamp": "2021-01-25T19:49:59Z",
+  "version": 2,
+  "changeset": 98141949,
+  "user": "CapAhab",
+  "uid": 6172866,
+  "center": {
+    "lat": 19.4883577,
+    "lon": -99.2450964
+  },
+  "nodes": [
+    5932085194,
+    8361801677,
+    5932085196,
+    5932085197,
+    5932085198,
+    5932085199,
+    5932085200,
+    5932085201,
+    5932085202,
+    5932085194
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Scouts"
+  }
+},
+{
+  "type": "way",
+  "id": 628362796,
+  "timestamp": "2021-01-25T19:49:59Z",
+  "version": 4,
+  "changeset": 98141949,
+  "user": "CapAhab",
+  "uid": 6172866,
+  "center": {
+    "lat": 19.4881323,
+    "lon": -99.2444206
+  },
+  "nodes": [
+    5932085203,
+    5932085204,
+    5932085205,
+    5932085206,
+    5932085207,
+    5932085208,
+    5932085209,
+    5932085210,
+    5932085211,
+    6848859470,
+    5932085212,
+    5932085213,
+    5932085214,
+    5932085215,
+    5932085216,
+    8361801678,
+    8361801679,
+    5932085217,
+    5932085218,
+    6874187507,
+    5932085220,
+    5932085203
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Puente con parque"
+  }
+},
+{
+  "type": "way",
+  "id": 687533181,
+  "timestamp": "2026-07-28T18:06:15Z",
+  "version": 4,
+  "changeset": 186535357,
+  "user": "EZorro",
+  "uid": 21338664,
+  "center": {
+    "lat": 19.4880014,
+    "lon": -99.2261773
+  },
+  "nodes": [
+    6444932151,
+    6444932152,
+    7206846015,
+    7206846012,
+    7206846013,
+    7206846017,
+    7206846018,
+    10707559670,
+    14056801014,
+    7206846014,
+    10707559673,
+    14056801012,
+    14056801013,
+    14056801019,
+    14056801018,
+    14056801015,
+    14056801016,
+    14056801017,
+    14056801011,
+    7206846016,
+    10707559668,
+    7206846011,
+    10707559672,
+    7206846019,
+    10707559671,
+    6444932153,
+    6444932154,
+    6444932155,
+    6444932151
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "parque bosques de echegaray",
+    "natural": "wood"
+  }
+},
+{
+  "type": "way",
+  "id": 790783392,
+  "timestamp": "2020-04-11T16:04:30Z",
+  "version": 2,
+  "changeset": 83403728,
+  "user": "Daniela de la Torre",
+  "uid": 11015158,
+  "center": {
+    "lat": 19.4909802,
+    "lon": -99.2441739
+  },
+  "nodes": [
+    7392725005,
+    7392725006,
+    7392725007,
+    7392725008,
+    7392725005
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "Green Plaza",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 800666008,
+  "timestamp": "2020-05-06T08:46:32Z",
+  "version": 1,
+  "changeset": 84745908,
+  "user": "PedroGalbraith",
+  "uid": 11134963,
+  "center": {
+    "lat": 19.5105008,
+    "lon": -99.2217843
+  },
+  "nodes": [
+    7488680826,
+    7488680838,
+    7488680827,
+    7488680828,
+    7488680829,
+    7488680830,
+    7488680831,
+    7488680832,
+    7488680856,
+    7488680833,
+    7488680834,
+    7488680835,
+    7488680836,
+    7488680837,
+    7488680826
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Juan Cordero",
+    "operator": "Municipio de Naucalpan de Juárez"
+  }
+},
+{
+  "type": "way",
+  "id": 923780958,
+  "timestamp": "2021-03-30T12:37:20Z",
+  "version": 2,
+  "changeset": 101986206,
+  "user": "NewDorp",
+  "uid": 9847917,
+  "center": {
+    "lat": 19.5291323,
+    "lon": -99.2315802
+  },
+  "nodes": [
+    8575192965,
+    8575192964,
+    8575192963,
+    8575192962,
+    8575192961,
+    8575192960,
+    8575192958,
+    8575192957,
+    4465615190,
+    4430079191,
+    8575192959,
+    8575192965
+  ],
+  "tags": {
+    "name": "Museo Hacienda de Santa Mónica",
+    "name:es": "Hacienda de Santa Mónica",
+    "tourism": "museum"
+  }
+},
+{
+  "type": "way",
+  "id": 1089975743,
+  "timestamp": "2022-08-29T02:00:30Z",
+  "version": 1,
+  "changeset": 125500058,
+  "user": "UIDX",
+  "uid": 16967175,
+  "center": {
+    "lat": 19.4978056,
+    "lon": -99.2426411
+  },
+  "nodes": [
+    9984426655,
+    9984426656,
+    9984426657,
+    9984426658,
+    9984426659,
+    9984426660,
+    9984426661,
+    9984426655
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "El Polvorín"
+  }
+},
+{
+  "type": "way",
+  "id": 1113381255,
+  "timestamp": "2022-11-16T06:07:12Z",
+  "version": 2,
+  "changeset": 128971063,
+  "user": "Diana Noriega",
+  "uid": 17629767,
+  "center": {
+    "lat": 19.5135462,
+    "lon": -99.2545806
+  },
+  "nodes": [
+    10186181839,
+    10186181840,
+    10187683240,
+    10187683241,
+    10187683242,
+    10187683238,
+    10187683239,
+    10186181841,
+    10186181846,
+    10186181847,
+    10186181848,
+    10186181849,
+    10186181852,
+    10186181851,
+    10187683253,
+    10186181850,
+    10186181842,
+    10186181843,
+    10186181844,
+    10186181845,
+    10186181839
+  ],
+  "tags": {
+    "addr:city": "Jardines de Satelite",
+    "addr:street": "Avenida Andromeda",
+    "leisure": "park",
+    "name": "Parque Andromeda"
+  }
+},
+{
+  "type": "way",
+  "id": 1151032173,
+  "timestamp": "2023-03-03T18:28:46Z",
+  "version": 1,
+  "changeset": 133265521,
+  "user": "GMendoza11",
+  "uid": 18603783,
+  "center": {
+    "lat": 19.4936913,
+    "lon": -99.2533485
+  },
+  "nodes": [
+    10707540050,
+    10707540051,
+    10707540052,
+    10707540053,
+    10707540054,
+    10707540055,
+    10707540050
+  ],
+  "tags": {
+    "amenity": "restaurant",
+    "building": "yes",
+    "cuisine": "tacos",
+    "name": "Tacos Latosos"
+  }
+},
+{
+  "type": "way",
+  "id": 1151032174,
+  "timestamp": "2023-03-03T18:28:46Z",
+  "version": 1,
+  "changeset": 133265521,
+  "user": "GMendoza11",
+  "uid": 18603783,
+  "center": {
+    "lat": 19.4929087,
+    "lon": -99.2531404
+  },
+  "nodes": [
+    10707540062,
+    10707540063,
+    10707540064,
+    10707540065,
+    10707540066,
+    10707540067,
+    10707540068,
+    10707540062
+  ],
+  "tags": {
+    "amenity": "restaurant",
+    "building": "yes",
+    "cuisine": "tacos",
+    "name": "Tacos Latosos"
+  }
+},
+{
+  "type": "way",
+  "id": 1151035761,
+  "timestamp": "2023-03-03T18:48:04Z",
+  "version": 1,
+  "changeset": 133266243,
+  "user": "GMendoza11",
+  "uid": 18603783,
+  "center": {
+    "lat": 19.4958040,
+    "lon": -99.2564038
+  },
+  "nodes": [
+    10707589528,
+    10707589529,
+    10707589530,
+    10707589531,
+    10707589528
+  ],
+  "tags": {
+    "amenity": "fast_food",
+    "building": "yes",
+    "name": "Carnilas Estilo Michoacán"
+  }
+},
+{
+  "type": "relation",
+  "id": 16086716,
+  "timestamp": "2023-07-12T21:16:25Z",
+  "version": 1,
+  "changeset": 138438839,
+  "user": "suchAnight",
+  "uid": 11880302,
+  "center": {
+    "lat": 19.5254802,
+    "lon": -99.2281727
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 1189245634,
+      "role": "inner"
+    },
+    {
+      "type": "way",
+      "ref": 1189245633,
+      "role": "inner"
+    },
+    {
+      "type": "way",
+      "ref": 220554958,
+      "role": "outer"
+    }
+  ],
+  "tags": {
+    "building": "yes",
+    "name": "Mundo E",
+    "shop": "mall",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}

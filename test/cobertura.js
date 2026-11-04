@@ -74,6 +74,47 @@ function fila(etq, r) {
     + '  ' + act);
 }
 
+// ─── TABLA DE COBERTURA POR ZONA (Fase 4) ───
+// `node test/cobertura.js --tabla` (o --tabla --md para Markdown). Cuenta sólo
+// lo que el motor PROPONE (recomendable y no "lejos"), contra la meta mínima.
+const GRUPOS = {
+  comer:   ['Restaurante', 'Taquería', 'Fonda de autor', 'Izakaya', 'Mercado'],
+  postres: ['Café', 'Heladería', 'Churrería'],
+  beber:   ['Bar', 'Bar de autor', 'Speakeasy', 'Cantina', 'Mezcalería', 'Rooftop'],
+  bailar:  ['Antro', 'Salón de baile'],
+  cultura: ['Museo', 'Galería', 'Teatro', 'Foro', 'Centro cultural', 'Librería', 'Biblioteca', 'Sitio histórico', 'Espectáculo'],
+  exper:   ['Cine', 'Boliche', 'Billar', 'Escape room', 'Taller', 'Tour', 'Parque de diversiones', 'Atracción', 'Parque', 'Al aire libre']
+};
+const META = { comer: 40, veg: 8, beber: 15, bailar: 5, cultura: 10, exper: 8, familia: 10 };
+const VEG = /vegan|vegetari|veggie|plant.?based|basad[ao] en plantas/i;
+function tablaCobertura(md, extra) {
+  const app = makeApp({}, { extra: extra || [] });
+  const todos = app.cat().filter(v => app.esRecomendable(v) && !v.lejos);
+  const grupo = v => { if (/karaoke|cantabar/i.test(v.n)) return 'exper'; return Object.keys(GRUPOS).find(g => GRUPOS[g].includes(v.cat)) || 'otro'; };
+  const filas = app.ZONES.map(z => {
+    const L = todos.filter(v => v.z === z[0]);
+    const c = { zona: z[1], total: L.length };
+    Object.keys(GRUPOS).forEach(g => { c[g] = L.filter(v => grupo(v) === g).length; });
+    c.veg = L.filter(v => GRUPOS.comer.concat(GRUPOS.postres).includes(v.cat) && VEG.test([v.n, v.cocina, v.d].join(' '))).length;
+    c.familia = L.filter(v => app.aptoFamiliaDe(v) === 'sí').length;
+    c.tarde1am = L.filter(v => v.oh && v.oh[1] > 25).length;
+    c.faltan = ['comer', 'veg', 'beber', 'bailar', 'cultura', 'exper', 'familia'].filter(k => c[k] < META[k]).map(k => k + ' ' + c[k] + '/' + META[k]);
+    return c; }).sort((a, b) => a.total - b.total);
+  const cols = ['zona', 'total', 'comer', 'veg', 'postres', 'beber', 'bailar', 'cultura', 'exper', 'familia', 'tarde1am'];
+  const nom = { zona: 'Zona', total: 'Total', comer: 'Comer', veg: 'Vegetariano', postres: 'Café/postres', beber: 'Beber', bailar: 'Bailar',
+    cultura: 'Cultura', exper: 'Experiencias', familia: 'Aptos familia', tarde1am: 'Abiertos >1 am' };
+  if (md) {
+    console.log('| ' + cols.map(k => nom[k]).join(' | ') + ' | Debajo de la meta |');
+    console.log('|' + cols.map((k, i) => i ? '---:' : '---').join('|') + '|---|');
+    filas.forEach(f => console.log('| ' + cols.map(k => f[k]).join(' | ') + ' | ' + (f.faltan.join(', ') || '—') + ' |'));
+  } else filas.forEach(f => console.log(cols.map(k => String(f[k]).padEnd(k === 'zona' ? 22 : 6)).join(' ') + '  ' + f.faltan.join(', ')));
+  return filas;
+}
+// --con-osm: cómo quedaría si se aprueban los candidatos de reportes/osm/candidatos_osm.json.
+if (process.argv.includes('--tabla')) { tablaCobertura(process.argv.includes('--md'),
+  process.argv.includes('--con-osm') ? require('../reportes/osm/candidatos_osm.json') : []); process.exit(0); }
+module.exports = { tablaCobertura };
+
 console.log('\n════ EMBUDO POR ZONA (sin vibra, 11:00–23:00, tope $1,000+) ════');
 console.log('catálogo → zona → vibra → horario → presupuesto → abre a la hora de la parada');
 ZONAS.forEach(z => {
