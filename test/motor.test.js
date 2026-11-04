@@ -152,8 +152,11 @@ test('reordenar las mismas paradas NO cuenta como plan nuevo', () => {
   assert(app.comboSig(a) === app.comboSig(b), 'la firma debería ignorar el orden');
 });
 
+// Con la regla de no repetir lugares entre opciones, Santa Fe de noche sólo
+// alcanza para 2 (todas cierran en Cervecería de Barrio): eso lo cubre la Fase 4
+// del catálogo. Aquí se mide en una zona con oferta suficiente.
 test('el motor devuelve 3 planes distintos para comparar', () => {
-  const app = makeApp(BASE, { dseed: 55 });
+  const app = makeApp(BASE_VARIEDAD, { dseed: 55 });
   const r = app.engine(0);
   assert(r.plans.length === 3, 'devolvió ' + r.plans.length + ' planes');
   assert(new Set(r.plans.map(p => p.sig)).size === r.plans.length, 'hay planes repetidos entre sí');
@@ -1119,7 +1122,11 @@ test('once tandas en Santa Fe descubren muchos más destinos que antes', () => {
   }
   // Antes: 32 combinaciones pero sólo 3 destinos finales distintos.
   assert(lugares.size >= 15, 'sólo ' + lugares.size + ' lugares distintos en 11 tandas');
-  assert(combos.size >= 25, 'sólo ' + combos.size + ' combinaciones distintas');
+  // Desde el 3 nov 2026 las 3 opciones de una tanda no comparten lugares; en
+  // Santa Fe de noche casi todo cierra en Cervecería de Barrio, así que muchas
+  // tandas traen 2 opciones. El umbral baja de 25 a 20 hasta que la Fase 4
+  // agregue bares en Santa Fe; los lugares distintos (arriba) siguen en 15.
+  assert(combos.size >= 20, 'sólo ' + combos.size + ' combinaciones distintas');
   // Santa Fe tiene UN solo lugar abierto a medianoche, así que el cierre puede
   // repetirse — pero entonces la app tiene que decirlo, no disimularlo.
   if (finales.size < 3) {
@@ -1911,13 +1918,15 @@ test('R08/R09 · un antro por noche, siempre al final y llegando cerca de 23:30'
   assert(conAntro > 0, 'la prueba no vio ningún plan con antro: no mide nada');
 });
 
-test('P13 · "sólo antro": noche que empieza tarde → una parada válida, sin relleno', () => {
+// Antes: una noche que empieza tarde podía ser sólo el antro. Desde la regla del
+// 3 nov 2026 todo plan lleva al menos dos paradas: un trago y luego el antro.
+test('P13 · noche que empieza tarde → un trago y el antro cierra (mínimo dos paradas)', () => {
   const app = makeApp(Object.assign({}, NOCHE_ROMA, { planFrom: 23.5, planTo: 27 }), { dseed: 21 });
   const r = app.runSearch({ nueva: true });
   assert(r.plans.length > 0, 'no hubo planes');
-  const solos = r.plans.filter(pl => pl.stops.length === 1);
-  assert(solos.length > 0, 'ninguna opción fue el antro directo: ' + r.plans.map(pl => names(pl).join('+')).join(' / '));
-  solos.forEach(pl => assert(app.esAntro(pl.stops[0]), 'una parada sola que no es antro: ' + names(pl)));
+  r.plans.forEach(pl => assert(pl.stops.length >= 2, 'plan de una sola parada: ' + names(pl)));
+  const cierran = r.plans.filter(pl => app.bailable(pl.stops[pl.stops.length - 1]));
+  assert(cierran.length >= 2, 'casi ninguna opción cierra bailando: ' + r.plans.map(pl => names(pl).join('+')).join(' / '));
 });
 
 test('P06 · "ya comimos": no se mete ninguna comida ni cena', () => {
@@ -2263,5 +2272,8 @@ test('en celular el formulario va por pasos y en compu en una tabla', () => {
 test('Hunan Polanco no existe', () => {
   assert(!makeApp(BASE, { dseed: 7 }).cat().some(v => /Hunan · Polanco/.test(v.n)), 'sigue Hunan Polanco');
 });
+
+// Fase 1 (3 nov 2026): errores del motor reportados con los anuncios.
+require('./fase1.test.js');
 
 report();

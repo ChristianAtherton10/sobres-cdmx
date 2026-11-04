@@ -40,8 +40,18 @@ function makeApp(stateOverrides = {}, opts = {}) {
     }
   }
 
+  // sessionStorage PROPIO de cada app: Node 26 trae un sessionStorage global que
+  // se comparte entre todas las apps de una corrida, y los "lugares vistos en
+  // esta sesión" de una prueba se filtraban a la siguiente.
+  const sstore = {};
+  const sessionStorage = {
+    getItem: k => (k in sstore ? sstore[k] : null),
+    setItem: (k, v) => { sstore[k] = String(v); },
+    removeItem: k => { delete sstore[k]; }
+  };
+  win.sessionStorage = sessionStorage;
   const sandbox = {
-    DCLogic, window: win, localStorage, document: doc,
+    DCLogic, window: win, localStorage, sessionStorage, document: doc,
     location: { search: '' }, setTimeout: (fn) => { try { fn(); } catch(e) {} return 0; }, clearTimeout: () => {},
     setInterval: () => 0, clearInterval: () => {}, fetch: () => Promise.reject(new Error('sin red')),
     console, Math: MathS, Date, JSON, URLSearchParams, crypto: cryptoS
