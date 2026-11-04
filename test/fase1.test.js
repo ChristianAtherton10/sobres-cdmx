@@ -97,8 +97,10 @@ test('5 · ningún lugar se repite entre las 3 opciones y la primera parada var�
       assert(vistos[m] == null || vistos[m] === i, k + '/' + sd + ': ' + v.n + ' sale en dos opciones');
       vistos[m] = i;
     }));
+    // Tipo de inicio = categoría; en restaurantes, la cocina (tres restaurantes
+    // de cocinas distintas sí son variedad — "Comer rico" sólo da restaurantes).
     if (plans.length === 3) {
-      const cats = plans.map(p => p.stops[0].cat);
+      const cats = plans.map(p => app.tipoInicio(p.stops[0]));
       assert(!(cats[0] === cats[1] && cats[1] === cats[2]), k + '/' + sd + ': las 3 empiezan en ' + cats[0]);
     }
   }));
@@ -117,7 +119,10 @@ test('5b · sin repetir lugares igual salen varias opciones: se cambia la parada
 test('6 · mínimo 2 paradas; fuera de la zona sólo si no hay opciones dentro, y con aviso', () => {
   Object.keys(ESC).forEach(k => SEMILLAS.forEach(sd => {
     const { app, plans, r } = corre(ESC[k], sd);
-    plans.forEach(p => assert(p.stops.length >= 2, k + '/' + sd + ': plan de una sola parada: ' + txt(p)));
+    // Única excepción (4 nov 2026): "Comer rico" con presupuesto justo puede ser
+    // una cena sola, y la opción lo explica.
+    plans.forEach(p => assert(p.stops.length >= 2 || (p.unaParada && p.avisoUnaParada),
+      k + '/' + sd + ': plan de una sola parada sin explicación: ' + txt(p)));
     const fuera = plans.some(p => p.stops.some(v => !app.zoneList().includes(v.z)));
     if (fuera) assert(/ampliamos|zona/i.test(r.expandNote || ''), k + '/' + sd + ': salió de la zona sin avisar');
   }));
@@ -229,6 +234,35 @@ test('13b · "Más económico" nunca cuesta más que las otras opciones', () => 
     plans.forEach((p, j) => assert(j === i || app.costoEstimado(p.stops) >= ci,
       k + '/' + sd + ': "Más económico" (~$' + ci + ') cuesta más que la opción ' + (j + 1) + ' (~$' + app.costoEstimado(p.stops) + ')'));
   }));
+});
+
+// 14 ─────────────────────────────────────────────────────────────
+// Reporte del usuario (4 nov 2026): "si sólo quiero comer rico, ¿por qué pone
+// bares? ¿y taquería?". Comer rico = restaurante o terraza, sin bares ni tacos.
+test('14 · "Comer rico" no propone bares, cantinas, antros ni taquerías', () => {
+  const NO = ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Cantina', 'Antro', 'Salón de baile', 'Taquería'];
+  const zonas = ['roma', 'condesa', 'polanco', 'juarez', 'coyoacan', 'santafe', 'centro'];
+  zonas.forEach((z, i) => [3, 29, 83].forEach(sd => {
+    const st = { who:'amigos', groupSize:4, zone:z, zonesSel:[z], vibes:['foodie'], when:'noche', budget:'b600' };
+    const { app, plans } = corre(i % 2 ? Object.assign(st, { budget:'b1000', planFrom:19, planTo:24 }) : st, sd);
+    assert(plans.length, z + '/' + sd + ': comer rico no dio planes');
+    plans.forEach(p => {
+      p.stops.forEach(v => assert(!NO.includes(v.cat), z + '/' + sd + ': comer rico propuso ' + v.n + ' (' + v.cat + '): ' + txt(p)));
+      p.stops.forEach(v => assert(!app.esCadenaCasual(v), z + '/' + sd + ': comer rico propuso la cadena ' + v.n));
+      assert(p.stops.length >= 2 || (p.avisoUnaParada && p.avisoUnaParada.length > 20), z + '/' + sd + ': una parada sin explicar');
+      assert(p.stops.some(v => app.CATS_MESA().includes(v.cat)), z + '/' + sd + ': comer rico sin restaurante: ' + txt(p));
+    });
+  }));
+});
+test('14c · con "Comer rico" ninguna opción se anuncia "Para unos tragos"', () => {
+  ['roma', 'condesa', 'polanco'].forEach(z => [3, 29].forEach(sd => {
+    const { app, plans } = corre({ who:'amigos', groupSize:4, zone:z, zonesSel:[z], vibes:['foodie'], when:'noche', budget:'b1000' }, sd);
+    assert(app.frasesOpciones(plans).indexOf('Para unos tragos') < 0, z + '/' + sd + ': dice "Para unos tragos" en comer rico');
+  }));
+});
+test('14b · con "Comer rico" + "Noche y fiesta" sí puede haber bares', () => {
+  const { plans } = corre({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], vibes:['foodie','nightlife'], when:'noche', budget:'b1000', planFrom:19, planTo:26 }, 3);
+  assert(plans.some(p => p.stops.some(v => ['Bar','Bar de autor','Speakeasy','Mezcalería','Antro','Rooftop'].includes(v.cat))), 'comer + fiesta se quedó sin bares');
 });
 
 if (require.main === module) report();
