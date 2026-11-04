@@ -15,8 +15,11 @@ section('1 · Variedad (antes: Rehacer alternaba entre 2 planes)');
 
 // Santa Fe de noche ya no sirve para medir variedad: sin cine sin función, con
 // cena obligatoria y tramos cortos, ahí sólo hay ~14 combinaciones válidas.
+// Desde el 4 nov 2026 "Comer rico" solo = restaurante + café o postre (sin bares
+// ni taquerías), y en Juárez eso da ~6 combinaciones. Para medir variedad se usa
+// "Comer rico + Noche y fiesta" (cena y tragos), que sí tiene universo amplio.
 const BASE_VARIEDAD = { who:'amigos', groupSize:4, zone:'juarez', zonesSel:['juarez'], when:'noche',
-  budget:'b1000', budgetCustom:null, vibes:['foodie'] };
+  budget:'b1000', budgetCustom:null, vibes:['foodie','nightlife'] };
 test('10 Rehacer seguidos dan 10 combinaciones distintas', () => {
   const app = makeApp(BASE_VARIEDAD, { dseed: 1234 });
   app.runSearch();                 // como en la app real: fija el contexto de búsqueda

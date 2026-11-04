@@ -1589,6 +1589,9 @@ class Component extends DCLogic {
     let a = this.actsDe(v);
     if (this.state.yaComimos) a = a.filter(k => k !== 'comida' && k !== 'cena' && k !== 'desayuno');
     if (this.state.sinAlcohol) a = a.filter(k => k !== 'copas' && k !== 'baile');
+    // "Comer rico" sin "Noche y fiesta": un restaurante con barra cuenta como
+    // comida, no como "parada de copas" (salían dos cenas seguidas).
+    if ((this.state.vibes || []).includes('foodie') && !this.pideNoche()) a = a.filter(k => k !== 'copas' && k !== 'baile');
     if (m.libre) return a.slice();
     return a.filter(k => !m.no.has(k)); }
 
@@ -1626,6 +1629,10 @@ class Component extends DCLogic {
     if (a.indexOf('comida') >= 0 || a.indexOf('cena') >= 0) return true;
     return !!v.cocina && (this.DRINK.includes(v.cat) || v.cat === 'Rooftop'); }
   // ¿Se baila? Antro, salón de baile o un bar que de noche se vuelve pista.
+  // Tipo de la primera parada para medir variedad entre opciones: tres
+  // restaurantes de cocinas distintas SÍ son tres opciones distintas.
+  tipoInicio(v) { return v.cat === 'Restaurante' ? 'Restaurante:' + (v.cocina || v.n) : v.cat; }
+  esCadenaCasual(v) { return /chili'?s|olive garden|italianni|p\.? ?f\.? ?chang|shake shack|hard rock|\bvips\b|sanborns|\btoks\b|hello kitty|burger|wings|hooters|applebee|tgi|domino|little caesars|carl'?s jr|mcdonald|kfc|starbucks|potzolcalli|el portón|wings army/i.test(v.n || ''); }
   bailable(v) { return !!v && (this.esAntro(v) || this.actsDe(v).indexOf('baile') >= 0); }
   // Zonas vecinas por DISTANCIA REAL entre los centros de cada zona (lat/lng),
   // sin repetir. Antes era una lista escrita a mano y Santa Fe "ampliaba" a
@@ -1663,6 +1670,13 @@ class Component extends DCLogic {
     if ((this.state.vibes || []).includes('romántico') && (['Taquería','Mercado','Churrería','Centro comercial','Cantina','Antro'].includes(v.cat)
         || /chili'?s|olive garden|italianni|p\.? ?f\.? chang|shake shack|hard rock|vips|sanborns|toks|hello kitty|burger|wings/i.test(v.n || ''))) return false;
     if (this.soloNoche() && !this.CATS_NOCHE().includes(v.cat)) return false;
+    // "Comer rico" SIN "Noche y fiesta" = restaurante o terraza (y si acaso un
+    // café o postre). Ni bares, ni cantinas, ni antros, ni taquerías: el usuario
+    // lo reportó el 4 nov 2026 ("si sólo quiero comer rico, ¿por qué pone bares?").
+    if ((this.state.vibes || []).includes('foodie') && !this.pideNoche()
+        && ['Bar','Bar de autor','Speakeasy','Mezcalería','Cantina','Antro','Salón de baile','Taquería'].includes(v.cat)) return false;
+    // ...ni cadenas casuales: "comer rico" no es un Chili's ni un Shake Shack.
+    if ((this.state.vibes || []).includes('foodie') && this.esCadenaCasual(v)) return false;
     if (!this.actsUtiles(v, m).length) return false;
     // Un bar o un rooftop NO entra por una actividad secundaria. Toledo Rooftop
     // se colaba en un plan chill + cultural porque además de copas tiene vistas:
@@ -2856,7 +2870,8 @@ class Component extends DCLogic {
     // Las 3 opciones como CONJUNTO: ningún lugar repetido, la primera parada no
     // es del mismo tipo en las tres, y con fiesta pasada la 1 am al menos dos
     // terminan donde se baila.
-    const variaInicio = (c, lista) => !(lista.length === 2 && lista[0].stops[0].cat === lista[1].stops[0].cat && c.stops[0].cat === lista[0].stops[0].cat);
+    const ti = c => this.tipoInicio(c.stops[0]);
+    const variaInicio = (c, lista) => !(lista.length === 2 && ti(lista[0]) === ti(lista[1]) && ti(c) === ti(lista[0]));
     // Cuántas opciones PUEDEN terminar bailando sin repetir lugar: se exigen dos
     // si hay al menos dos pistas distintas entre los candidatos; si sólo hay una,
     // una (y el aviso de la zona lo explica). Se calcula al seleccionar.
@@ -2914,7 +2929,7 @@ class Component extends DCLogic {
     const sinRepetir = c => !hechos.some(h => comparte(h, c));
     // Primero se buscan opciones que ARRANQUEN distinto (otra categoría en la
     // primera parada); así la tercera no se queda sin lugar por la regla.
-    const iniNuevo = c => !hechos.some(h => h.stops[0].cat === c.stops[0].cat);
+    const iniNuevo = c => !hechos.some(h => ti(h) === ti(c));
     const rondas = [
       c => req(c) && c.cubre && c.enZona && c.enRango && iniNuevo(c) && !choca(c, hechos),
       c => req(c) && c.cubre && c.enZona && iniNuevo(c) && !choca(c, hechos),
@@ -3094,11 +3109,36 @@ class Component extends DCLogic {
         }
       }
     }
-    // Red de seguridad de las reglas del 3 nov 2026: mínimo dos paradas y
-    // ningún lugar (ni sucursal de la misma marca) en dos opciones.
+    // "COMER RICO" CON POCO PRESUPUESTO. Si en la zona no alcanzan tres planes de
+    // dos paradas (de noche casi no hay postres ni cafés abiertos y la cena se
+    // come el presupuesto), las opciones que faltan son RESTAURANTES de la zona,
+    // de una sola parada y con la explicación. Antes salían bares y taquerías, o
+    // nada (Santa Fe con $300–600).
+    const soloComer = (s.vibes || []).includes('foodie') && !this.pideNoche();
+    if (soloComer && plans.length < 3 && !opts.subBusqueda) {
+      const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
+      const solos = pool.filter(v => (cityWide || sel.includes(v.z)) && this.CATS_MESA().includes(v.cat) && this.sirveComida(v)
+          && !marcas.has(this.marcaDe(v)) && this.atHour(v, from) && this.cabeEnVentana(v, from, to) && this.cabeEnTope([v], max).ok
+          && !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)))
+        .sort((a, b) => (rk(b) - nivel(b) * 6 - (b.ppUnknown ? 3 : 0)) - (rk(a) - nivel(a) * 6 - (a.ppUnknown ? 3 : 0)));
+      for (const v of solos) { if (plans.length >= 3) break;
+        if (plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(v)))) continue;
+        if (v.cocina && plans.some(p => p.stops[0].cocina === v.cocina) && solos.some(w => w.cocina !== v.cocina && !plans.some(p => p.stops.some(x => x === w)))) continue;
+        const ak = this.actsUtiles(v, VM).find(k => k === 'cena' || k === 'comida') || comidaEn(from) || 'cena';
+        const sg = this.comboSig([v]);
+        plans.push({ stops: [v], times: [from], acts: [ak], spent: v.pp, label: this.ACTLBL[ak] || 'Cena', sig: sg, sigs: [sg], unaParada: true }); }
+    }
+    // Red de seguridad de las reglas del 3 nov 2026: mínimo dos paradas (salvo
+    // la cena sola de arriba, que lleva su explicación) y ningún lugar (ni
+    // sucursal de la misma marca) en dos opciones.
     { const fin = [];
-      plans.forEach(p => { if (!p.stops || p.stops.length < 2) return; if (fin.some(h => comparte(h, p))) return; fin.push(p); });
+      plans.forEach(p => { if (!p.stops || (p.stops.length < 2 && !p.unaParada)) return; if (fin.some(h => comparte(h, p))) return; fin.push(p); });
       plans = fin; }
+    // De noche, el postre o el café van DESPUÉS de cenar, no antes.
+    plans = plans.map(p => { const POSTRE = ['Café', 'Heladería', 'Churrería'];
+      if (p.stops.length >= 2 && POSTRE.includes(p.stops[0].cat) && this.CATS_MESA().includes(p.stops[1].cat) && p.times[0] >= 17) {
+        const n = invertir(p); if (n) { n.sig = p.sig; n.sigs = p.sigs; return n; } }
+      return p; });
     // Cada opción dice, si aplica, por qué no llena la ventana, por qué no trae
     // dónde comer o por qué cuesta menos que el rango elegido.
     plans.forEach(p => { califica(p);
@@ -3119,6 +3159,8 @@ class Component extends DCLogic {
       p.avisoVentana = motivo ? 'Termina a las ' + this.time12(finP) + ' y pediste hasta las ' + this.time12(to) + ': ' + motivo : '';
       p.avisoComida = (!pideComida || p.comida) ? '' : ('Su horario cruza la hora de comer, pero en ' + this.zonesLabel()
         + ' no encontramos dónde comer que abra a esa hora y quepa en ' + this.budLabel() + '.');
+      p.avisoUnaParada = p.unaParada ? ('Una sola parada: con ' + this.budLabel() + ' en ' + this.zonesLabel()
+        + ' no cabe un postre o un café abierto después de comer. Si suben el presupuesto, le agregamos la sobremesa.') : '';
       p.avisoPrecio = p.enRango ? '' : ('Cuesta ~$' + p.costoEst.toLocaleString('es-MX') + ' por persona, menos de lo que pensaban gastar ('
         + this.budLabel() + '): en ' + this.zonesLabel() + ' no encontramos una opción en ese rango que cumpla lo demás.'); });
     // ¿Qué restricción está limitando de verdad? Se mide cuántos lugares de la
@@ -3256,6 +3298,22 @@ class Component extends DCLogic {
     if (!plans.length && !cityWide && !opts.ampliar && !opts.subBusqueda) {
       const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
       if (r2.plans && r2.plans.length) return r2;
+    }
+    // Menos de tres en la zona (p. ej. "Comer rico" en la Roma con $300–600:
+    // casi no cabe una cena y un postre): las que faltan se buscan en las zonas
+    // vecinas más cercanas, sin repetir lugares y marcadas como fuera de tu zona.
+    if (plans.length && plans.length < 3 && !cityWide && !opts.ampliar && !opts.subBusqueda) {
+      const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
+      const fuera = ((r2 && r2.plans) || []).filter(p => p.stops.some(v => !sel.includes(v.z)) && !plans.some(h => comparte(h, p)));
+      const antes = plans.length;
+      for (const p of fuera) { if (plans.length >= 3) break; if (plans.some(h => comparte(h, p))) continue; plans.push(p); }
+      if (plans.length > antes) {
+        const zs = []; plans.slice(antes).forEach(p => p.stops.forEach(v => { if (!sel.includes(v.z) && zs.indexOf(v.z) < 0) zs.push(v.z); }));
+        const nota = 'En ' + this.zonesLabel() + ' sólo ' + (antes === 1 ? 'cupo una opción' : 'cupieron dos opciones') + ' con estos filtros; '
+          + (plans.length - antes === 1 ? 'la otra es' : 'las otras son') + ' en la zona vecina más cercana (' + zs.map(z => this.zLabel(z)).join(', ') + '), marcada en cada lugar.';
+        expandNote = (expandNote || '').replace(/Con estos filtros sólo encontramos [^.]*\.[^.]*\.[^.]*\./, '').trim();
+        expandNote = expandNote ? expandNote + ' ' + nota : nota;
+      }
     }
     return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
       reqSeed: opts.reqSeed || 0, reqId: opts.reqId || '', dseed,
@@ -4929,7 +4987,9 @@ class Component extends DCLogic {
     if (plans.length > 1) { const mx = Math.max.apply(null, D.map(d => d.n)); const cuantos = D.filter(d => d.n === mx).length;
       if (cuantos === 1) pon(D.findIndex(d => d.n === mx), 'Más completo'); }
     D.forEach((d, i) => { if (d.aire) pon(i, 'Al aire libre'); });
-    D.forEach((d, i) => { if (d.copas) pon(i, 'Para unos tragos'); });
+    // Con "Comer rico" (sin fiesta) un rooftop con cocina es para cenar, no "para unos tragos".
+    const soloComerF = (this.state.vibes || []).includes('foodie') && !this.pideNoche();
+    D.forEach((d, i) => { if (d.copas && !soloComerF) pon(i, 'Para unos tragos'); });
     D.forEach((d, i) => { if (d.comida) pon(i, 'Para comer rico'); });
     return out.map((x, i) => x || ('Opción ' + (i + 1)));
   }
@@ -5050,8 +5110,8 @@ class Component extends DCLogic {
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
-        avisoOp: [p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
-        hayAvisoOp: !!(p.avisoVentana || p.avisoComida || p.avisoPrecio),
+        avisoOp: [p.avisoUnaParada, p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
+        hayAvisoOp: !!(p.avisoUnaParada || p.avisoVentana || p.avisoComida || p.avisoPrecio),
         ...(() => { if (!(r && r.compartida)) return { votoOn: false };
           const pid = this.planOptId(p); const sp = ((s.sync && s.sync.plans) || []).find(x => x.id === pid);
           const vv = (sp && sp.votes) || {}; const yo = s.userName; const mio = yo ? vv[yo] : null;
