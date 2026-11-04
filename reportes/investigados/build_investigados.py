@@ -68,14 +68,14 @@ L = [
       f='turismo', url='https://mexicocity.cdmx.gob.mx/venues/embarcadero-nuevo-nativitas/?lang=es',
       h=(6, 22), hrs='Diario 6:00–22:00', act=['paseo'], who=['familia', 'amigos', 'date'], tags=['familiar', 'aventurero', 'romántico'],
       precio=dict(min=750, rep=750, max=750, unidad='trajinera_hora', canasta='Tarifa oficial por trajinera por hora (hasta 15–18 personas), según la Alcaldía Xochimilco citada por N+ (3 abr 2026). No incluye comida, bebida ni música.'),
-      estado='rango', pf='nmas_traj', apto='si'),
+      estado='rango', pf='nmas_traj', apto='sí'),
  dict(n='Trajineras · Embarcadero Cuemanco', cat='Atracción', col='Barrio 18, Xochimilco',
       addr='Periférico Sur (Blvd. Adolfo Ruiz Cortines) s/n, Barrio 18', lat=19.2869, lng=-99.1022,
       f='turismo', url='https://mexicocity.cdmx.gob.mx/venues/lago-de-xochimilco-embarcadero-de-cuemanco/',
       h=(8, 22), hrs='8:00–22:00 (horario general de las trajineras según N+, abr 2026; la ficha oficial no lo publica)', act=['paseo'],
       who=['familia', 'amigos', 'date'], tags=['familiar', 'aventurero', 'romántico'],
       precio=dict(min=750, rep=750, max=750, unidad='trajinera_hora', canasta='Tarifa oficial por trajinera por hora (hasta 15–18 personas), según la Alcaldía Xochimilco citada por N+ (3 abr 2026). Recorridos de 1 a 5 horas.'),
-      estado='rango', pf='nmas_traj', apto='si'),
+      estado='rango', pf='nmas_traj', apto='sí'),
  # Karaoke ----------------------------------------------------------------
  dict(n='Terraza Karaoke Roma', cat='Bar', col='Roma Norte', addr='Av. Chapultepec 400, Roma Norte',
       f='sopitas_kar', h=(17, 26), hrs='Mié a sáb 17:00–2:00', dias=[3, 4, 5, 6], act=['copas', 'juego'],
@@ -108,19 +108,19 @@ L = [
  # Boliche ----------------------------------------------------------------
  dict(n='Bolerama Coyoacán', geo='Bolerama Coyoacán, Ciudad de México', cat='Boliche', col='Del Valle', addr='Eje 8 Sur José María Rico 626, Del Valle',
       f='to_billar', h=(13, 22), hrs='Mar a vie 13:00–22:00 · sáb y dom 12:00–22:00 (Sopitas, dic 2023; Time Out, feb 2025, lo confirma sin horario)',
-      dias=[0, 2, 3, 4, 5, 6], who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='si'),
+      dias=[0, 2, 3, 4, 5, 6], who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='sí'),
  dict(n='Sport & Chips', cat='Boliche', col='Coyoacán', addr='Av. Miguel Ángel de Quevedo 1144',
       f='to_billar', h=(13, 24), hrs='Lun y mar 13:00–24:00 · mié y jue 13:00–1:00 · vie y sáb 13:00–2:00 · dom 11:00–22:00 (boliche y billar)',
       who=['amigos', 'familia', 'compa'], tags=['social', 'familiar']),
  dict(n='Bowlero · Chapultepec Morales', geo='Vázquez de Mella 315, Ciudad de México', cat='Boliche', col='Chapultepec Morales', addr='Vázquez de Mella 315, Chapultepec Morales',
       f='sopitas_bol', h=(12, 22), hrs='Mié a sáb 11:00–22:00 · mar y dom 12:00–22:00', dias=[0, 2, 3, 4, 5, 6],
-      who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='si'),
+      who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='sí'),
  dict(n='Royal Bol · Torre Manacar', geo='Torre Manacar, Ciudad de México', cat='Boliche', col='Insurgentes Mixcoac', addr='Av. Insurgentes Sur 1457, Sótano 1, Insurgentes Mixcoac',
       f='sopitas_bol', h=(12, 22), hrs='Horario por confirmar', horaEstimada=True,
-      who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='si'),
+      who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='sí'),
  dict(n='Royal Bol · Santa Fe', geo='Garden Santa Fe, Ciudad de México', cat='Boliche', col='Santa Fe', addr='Guillermo González Camarena 1205, Nivel B, Santa Fe',
       f='sopitas_bol', h=(12, 22), hrs='Horario por confirmar', horaEstimada=True,
-      who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='si'),
+      who=['amigos', 'familia', 'compa'], tags=['social', 'familiar'], apto='sí'),
  # Go karts ---------------------------------------------------------------
  dict(n='Go Kart Mania · Plaza Carso', cat='Atracción', col='Granada', addr='Lago Zurich 219-245, Granada',
       f='to_karts', h=(12, 20.5), hrs='Lun a vie 12:00–20:30 · sáb y dom 11:30–20:30', act=['juego'],
@@ -156,7 +156,7 @@ L = [
  dict(n='Mercado Molière', cat='Mercado', col='Ampliación Granada', addr='Prolongación Molière 500, Ampliación Granada',
       f='to_moliere', h=(11, 20), hrs='Lun a dom 11:00–20:00', who=['amigos', 'familia', 'date', 'compa'], tags=['foodie'],
       precio=dict(min=None, rep=150, max=None, unidad='persona', canasta='Consumo promedio de $150 según Time Out (2016); seguramente subió.'),
-      estado='estimado', apto='si'),
+      estado='estimado', apto='sí'),
  # Bazar / tianguis -------------------------------------------------------
  dict(n='Tianguis Cultural del Chopo', geo='Tianguis Cultural del Chopo, Ciudad de México', cat='Atracción', col='Buenavista', addr='Aldama y Luna s/n, Buenavista',
       f='chil_chopo', h=(11, 17), hrs='Sábados (horario por confirmar, aprox. 11:00–17:00)', horaEstimada=True, dias=[6],
@@ -187,7 +187,7 @@ L = [
       f='sopitas_bici', h=(5, 21), hrs='Bicis en la 1.ª sección 5:00–21:00; 2.ª y 3.ª secciones 24 h', act=['recorrido', 'paseo'],
       who=['amigos', 'date', 'compa', 'familia'], tags=['aventurero', 'romántico', 'chill'],
       precio=dict(min=123, rep=123, max=None, unidad='persona', canasta='Pase Ecobici de un día, tarifa 2025 según Chilango; puede haber cambiado.'),
-      estado='estimado', pf='chil_ecobici', geo='Los Pinos, Bosque de Chapultepec, Ciudad de México', apto='si'),
+      estado='estimado', pf='chil_ecobici', geo='Los Pinos, Bosque de Chapultepec, Ciudad de México', apto='sí'),
  # Vino ------------------------------------------------------------------
  dict(n='La Vinería', cat='Bar', col='Condesa', addr='Fernando Montes de Oca 52, Condesa',
       f='ot_vineria', h=(14, 23), hrs='Horario por confirmar', horaEstimada=True, act=['copas', 'cena'],
@@ -238,7 +238,7 @@ for x in L:
     if x.get('sesion'): rec['sesion'] = True
     if aprox: rec['coordAprox'] = True
     if dz > 5.5: rec['lejos'] = True
-    if x.get('apto') == 'si': rec['aptoFamilia'] = 'si'
+    if x.get('apto') == 'sí': rec['aptoFamilia'] = 'sí'
     if 'precio' in x:
         p = dict(x['precio']); p['moneda'] = 'MXN'
         rec['precio'] = p; rec['estado'] = x['estado']
