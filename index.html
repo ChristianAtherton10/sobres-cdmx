@@ -33,6 +33,7 @@
 <script src="data/excel.js"></script>
 <script src="data/paquete.js"></script>
 <script src="data/investigados.js"></script>
+<script src="data/eventos.js"></script>
 <script src="data/recetas.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
@@ -1456,7 +1457,9 @@ class Component extends DCLogic {
         .concat((window.SOBRES_PAQUETE && window.SOBRES_PAQUETE.lugares) || [])
         // + los investigados a mano el 4 nov 2026 para las piezas de receta
         // con poca oferta (data/investigados.js, con fuente y fecha cada uno).
-        .concat((window.SOBRES_INVESTIGADOS && window.SOBRES_INVESTIGADOS.lugares) || []);
+        .concat((window.SOBRES_INVESTIGADOS && window.SOBRES_INVESTIGADOS.lugares) || [])
+        // + eventos con fecha (data/eventos.js): los vencidos ni se cargan.
+        .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
       for (const r0 of A.NUEVOS.concat(XL)) {
         if (A.BAJA[r0.id]) continue;
@@ -1476,6 +1479,7 @@ class Component extends DCLogic {
           recomendable: r.recomendable === false ? false : undefined, lejos: !!r.lejos, pNotaLugar: r.nota || '',
           otRt: r.otRt || null, otRc: r.otRc || null, vestimenta: r.vestimenta || '', tel: r.tel || '',
           consultado: r.consultado || '', hrsFuente: r.hrsFuente || '',
+          evento: !!r.evento, fechas: r.fechas || null, sede: r.sede || '',
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -2049,6 +2053,8 @@ class Component extends DCLogic {
     if (/^pq-[0-9a-f]+$/.test(id)) return 'Q' + id.slice(3);
     // Lugares investigados el 4 nov 2026 ('iv-6f1a2b3c4d'): 'V' + resto.
     if (/^iv-[0-9a-f]+$/.test(id)) return 'V' + id.slice(3);
+    // Eventos con fecha ('ev-1a2b3c4d5e'): 'E' + resto.
+    if (/^ev-[0-9a-f]+$/.test(id)) return 'E' + id.slice(3);
     if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
     // Cualquier otro id que lleve un separador se escapa para no romper nada.
     return /[~_.!]/.test(id) ? '%' + encodeURIComponent(id) : id;
@@ -2058,6 +2064,7 @@ class Component extends DCLogic {
     if (/^L[A-Z]\d+$/.test(x)) return 'xl-' + x.slice(1);
     if (/^Q[0-9a-f]+$/.test(x)) return 'pq-' + x.slice(1);
     if (/^V[0-9a-f]+$/.test(x)) return 'iv-' + x.slice(1);
+    if (/^E[0-9a-f]+$/.test(x)) return 'ev-' + x.slice(1);
     if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
     if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
     return x;
@@ -2266,7 +2273,8 @@ class Component extends DCLogic {
   esHorarioDeLugar(v) { return ['Cine','Teatro','Foro','Espectáculo','Salón de baile'].includes(v.cat); }
   // Una función (cine, teatro, foro, espectáculo) sin película/obra y hora
   // verificadas NO se agenda: no existe "Cinépolis a la 1:20" sin cartelera.
-  funcionSinConfirmar(v) { return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
+  // Un evento con hora publicada (Garbage, sáb 14 nov, 20:00) sí tiene horario.
+  funcionSinConfirmar(v) { if (v.evento) return !!v.horaEstimada; return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
   // Importar una ficha no la vuelve recomendable. Fondos, archivos, centros de
   // documentación, auditorios internos, tiendas de museo y bibliotecas
   // especializadas existen y se pueden buscar, pero no son una salida.
@@ -2447,7 +2455,21 @@ class Component extends DCLogic {
     return true;   // sin dato, no se inventa un cierre
   }
   isWknd(iso) { try { const [y,m,d] = iso.split('-').map(Number); const wd = new Date(y,m-1,d).getDay(); return wd === 0 || wd === 6; } catch(e) { return false; } }
+  // Fecha del plan que se está armando (la misma regla que runSearch).
+  fechaDelPlan() { const s = this.state; if (s.when === 'fecha' && s.customDate) return s.customDate;
+    const d = new Date(this.todayISO() + 'T12:00:00'); if (s.when === 'manana') d.setDate(d.getDate() + 1);
+    if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
+    return d.toISOString().slice(0, 10); }
+  vigenteEn(v, iso) { const f = v && v.fechas; if (!f) return true;
+    if (f.solo && f.solo.length) return f.solo.indexOf(iso) >= 0;
+    return (!f.desde || iso >= f.desde) && (!f.hasta || iso <= f.hasta); }
+  fechasTxt(v) { const f = v.fechas; if (!f) return ''; const d = x => this.fmtDate(x);
+    if (f.solo && f.solo.length) return f.solo.length === 1 ? 'sólo el ' + d(f.solo[0]) : 'algunos días hasta el ' + d(f.solo[f.solo.length - 1]);
+    if (f.desde && f.desde === f.hasta) return 'sólo el ' + d(f.desde);
+    return 'hasta el ' + d(f.hasta); }
   timingOk(v) { const s = this.state, w = s.when;
+    // Un evento con fecha sólo cuenta si el plan cae dentro de sus fechas.
+    if (v.fechas && !this.vigenteEn(v, this.fechaDelPlan())) return false;
     if (!this.abreEseDia(v)) return false;
     if (v.date) { if (w === 'fecha' && s.customDate) return v.date === s.customDate; const today = new Date().toISOString().slice(0,10); if (w === 'ahora' || w === 'noche') return v.date === today; return true; }
     if (s.planFrom != null || s.planTo != null) { const r2 = this.range(); const cov = []; if (r2[0] < 12) cov.push('manana'); if (r2[0] < 18 && r2[1] > 12) cov.push('tarde'); if (r2[1] > 18) cov.push('noche'); if (w === 'finde' || (w === 'fecha' && s.customDate && this.isWknd(s.customDate))) cov.push('finde'); const wo = v.tm.length === 1 && v.tm[0] === 'finde'; if (wo && !cov.includes('finde')) return false; return v.tm.some(x => cov.includes(x)); }
@@ -2469,7 +2491,7 @@ class Component extends DCLogic {
     if (v.ppUnknown) return true;   // sin precio: entra, pero el total nunca se declara completo
     return v.pp <= max;
   }
-  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc; }
+  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } if (v.evento) sc += 3; return sc; }
   groupOrder(seg, pi, seed) { const s = this.state; const base = (this.SEGG[seg] || ['comida']).slice();
     const want = {}; (s.vibes || []).forEach(vb => (this.VIBEG[vb] || []).forEach(g => { want[g] = (want[g] || 0) + 1; }));
     const noFoodie = (s.vibes || []).length > 0 && !s.vibes.includes('foodie') && !s.vibes.includes('romántico');
@@ -2513,6 +2535,10 @@ class Component extends DCLogic {
     const porCat = p.cats ? p.cats.indexOf(v.cat) >= 0 : false;
     const porNombre = p.nombre ? this.piezaRe(p.nombre).test(n) : false;
     const tambien = p.nombreTambien ? this.piezaRe(p.nombreTambien).test(n) : false;
+    // Pieza "evento": un evento con fecha que va con alguno de los ambientes pedidos.
+    if (p.evento) { if (!v.evento) return false; const amb = this.ambientesReceta();
+      return amb.some(a => a === '_libre' || (v.tags || []).indexOf(a) >= 0); }
+    if (v.evento && !p.cats && !p.nombre && !p.nombreTambien) return false;
     let ok = p.cats && p.nombre ? (porCat && porNombre) : (porCat || porNombre || tambien || (p.barPorNombre && this.esBarDeNombre(v)));
     if (!ok) return false;
     if (p.nombreSiCat && p.nombreSiCat[v.cat] && !this.piezaRe(p.nombreSiCat[v.cat]).test(n)) return false;
@@ -2568,9 +2594,12 @@ class Component extends DCLogic {
           if (st.indexOf(v) >= 0 || st.some(x => this.marcaDe(x) === this.marcaDe(v))) continue;
           let viaje = 0;
           if (prev) { const m = this.minutosTramo(this.legKm(prev, v)); if (m != null && m > this.MAX_TRAMO()) continue; viaje = m || 0; }
-          const t = this.horaPieza(p, prevFin == null ? null : prevFin + viaje / 60, desde0, to);
+          let t = this.horaPieza(p, prevFin == null ? null : prevFin + viaje / 60, desde0, to);
           if (t == null) continue;
           const conf0 = !!p.porConfirmar && this.funcionSinConfirmar(v);
+          // Un evento con hora fija entra a SU hora (el concierto empieza a las
+          // 8, no a las 7), si no deja más de 1.5 h muertas.
+          if (v.evento && !conf0 && !this.atHour(v, t) && v.oh && v.oh[0] > t && v.oh[0] < to - 0.5 && v.oh[0] - t <= 1.5) t = v.oh[0];
           if (!conf0 && !this.atHour(v, t)) continue;
           if (!this.cabeEnVentana(v, t, to)) continue;
           if (prev && !this.alcanzaTramo(prev, v, t - ts[ts.length - 1])) continue;
@@ -2592,7 +2621,9 @@ class Component extends DCLogic {
         cartelera: st.length === 1 && conf[0], unaParada: st.length === 1,
         // Una función o sesión sin horario confirmado resta: se prefiere lo seguro.
         puntaje: st.reduce((a, v) => a + puntaje(v), 0) / st.length + pl.peso * 3 + (st.length > 1 ? 2 : 0) - conf.filter(Boolean).length * 4
-          + (exigeBaile && this.bailable(st[st.length - 1]) ? 8 : 0) + (pideComida && st.some(v => this.sirveComida(v)) ? 4 : 0) };
+          + (exigeBaile && this.bailable(st[st.length - 1]) ? 8 : 0) + (pideComida && st.some(v => this.sirveComida(v)) ? 4 : 0)
+          // Lo que sólo pasa ese día (un concierto, una feria) va primero.
+          + (st.some(v => v.evento) ? 5 : 0) };
     };
     const cands = []; const usoCand = new Map();
     // 10 intentos por plantilla: si una elección temprana deja sin opciones a
@@ -5363,7 +5394,7 @@ class Component extends DCLogic {
         photoFail: () => this.setState(st2 => { const q = Object.assign({}, st2.photos); delete q[a.id]; return { photos: q }; }),
         aria: 'Opción ' + (i + 1) + ', ' + frases[i] + ': ' + st.map(v => v.n).join(', '),
         stops: st.map((v, j) => ({ time: (p.cartelera || (p.porConfirmar && p.porConfirmar[j]))
-            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: v.cat + ' · ' + v.col + (v.horaEstimada ? ' · horario por confirmar' : '')
+            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + v.col) + (v.horaEstimada ? ' · horario por confirmar' : '')
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
           + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
