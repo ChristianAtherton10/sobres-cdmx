@@ -95,7 +95,7 @@ function tablaCobertura(md, extra) {
     const L = todos.filter(v => v.z === z[0]);
     const c = { zona: z[1], total: L.length };
     Object.keys(GRUPOS).forEach(g => { c[g] = L.filter(v => grupo(v) === g).length; });
-    c.veg = L.filter(v => GRUPOS.comer.concat(GRUPOS.postres).includes(v.cat) && VEG.test([v.n, v.cocina, v.d].join(' '))).length;
+    c.veg = L.filter(v => GRUPOS.comer.concat(GRUPOS.postres).includes(v.cat) && ((v.dieta && v.dieta.length) || VEG.test([v.n, v.cocina, v.d].join(' ')))).length;
     c.familia = L.filter(v => app.aptoFamiliaDe(v) === 'sí').length;
     c.tarde1am = L.filter(v => v.oh && v.oh[1] > 25).length;
     c.faltan = ['comer', 'veg', 'beber', 'bailar', 'cultura', 'exper', 'familia'].filter(k => c[k] < META[k]).map(k => k + ' ' + c[k] + '/' + META[k]);
