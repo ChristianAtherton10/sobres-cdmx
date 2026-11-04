@@ -2,16 +2,16 @@
 
 Generado por `reportes/osm/build_osm.py`. **No están en el catálogo**: se mezclan sólo si los apruebas (`--mezclar`).
 
-Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 161, tipo que no es salida (comida rápida sin tacos, etc.) 158, parque sin nombre propio 44, escuela, academia o maquinitas (no es salida) 28, repetido en OSM 14, maquinitas sin ficha propia 4, cerrado 2.
+Descartados: fuera de las 6 zonas pedidas 734, cadena 214, ya en el catálogo 201, tipo que no es salida (comida rápida sin tacos, etc.) 158, parque sin nombre propio 44, escuela, academia o maquinitas (no es salida) 28, repetido en OSM 14, mismo nombre en la zona sin sucursal que lo distinga 11, sin nombre propio 6, maquinitas sin ficha propia 4, cerrado 2, mismo nombre y dirección que otro de OSM 2.
 
 | Zona | Candidatos | Comer | Vegetariano | Café/postres | Beber | Bailar | Cultura | Experiencias | Familia | Para reverificar |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Santa Fe · Poniente | 55 | 23 | 0 | 7 | 1 | 0 | 4 | 16 | 20 | 34 |
-| Satélite · Naucalpan | 110 | 67 | 0 | 7 | 11 | 0 | 3 | 20 | 25 | 82 |
-| Lomas · Tecamachalco | 21 | 10 | 0 | 2 | 0 | 0 | 1 | 6 | 8 | 14 |
-| Xochimilco | 22 | 4 | 0 | 3 | 3 | 1 | 3 | 8 | 8 | 13 |
-| Roma Sur | 175 | 103 | 3 | 43 | 14 | 0 | 6 | 8 | 11 | 95 |
-| Del Valle · Nápoles | 327 | 215 | 6 | 66 | 17 | 1 | 6 | 18 | 27 | 189 |
+| Santa Fe · Poniente | 52 | 22 | 0 | 7 | 1 | 0 | 4 | 15 | 18 | 32 |
+| Satélite · Naucalpan | 105 | 64 | 0 | 7 | 11 | 0 | 3 | 18 | 23 | 77 |
+| Lomas · Tecamachalco | 20 | 9 | 0 | 2 | 0 | 0 | 1 | 6 | 8 | 13 |
+| Xochimilco | 19 | 3 | 0 | 2 | 3 | 1 | 3 | 7 | 7 | 11 |
+| Roma Sur | 172 | 103 | 3 | 41 | 14 | 0 | 6 | 7 | 10 | 95 |
+| Del Valle · Nápoles | 313 | 205 | 6 | 63 | 17 | 1 | 6 | 17 | 25 | 177 |
 
 ## Santa Fe · Poniente
 
@@ -29,7 +29,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | La Karpa | Café | Entrada Ibero | Horario por confirmar | [2026-10-23](https://www.openstreetmap.org/node/3045991220) |
 | The Basement Coffee | Café | Guillermo González Camarena 999 | Horario por confirmar | [2026-07-23](https://www.openstreetmap.org/node/5618552421) |
 | Pasaje Santa Fe | Centro comercial | Guillermo González Camarena 999 | Horario por confirmar | [2025-01-30](https://www.openstreetmap.org/way/569727414) |
-| Samara Shops *(reverificar)* | Centro comercial | Santa Fe · Poniente | Horario por confirmar | [2021-03-25](https://www.openstreetmap.org/way/579366044) |
 | The Point *(reverificar)* | Centro comercial | Prolongación Paseo de la Reforma 1015 | Horario por confirmar | [2017-08-06](https://www.openstreetmap.org/node/5017198749) |
 | Zentrika *(reverificar)* | Centro comercial | Santa Fe · Poniente | Horario por confirmar | [2018-08-27](https://www.openstreetmap.org/way/255861980) |
 | Area 900 | Centro cultural | Calle Guillermo González Camarena | Horario por confirmar | [2025-01-29](https://www.openstreetmap.org/node/12542185217) |
@@ -41,7 +40,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Parque Fortín | Parque | Santa Fe · Poniente | Horario por confirmar | [2024-04-10](https://www.openstreetmap.org/way/1271555491) |
 | Parque Ivan Ramirez *(reverificar)* | Parque | Santa Fe · Poniente | Horario por confirmar | [2022-12-13](https://www.openstreetmap.org/way/923585521) |
 | Parque Jalalpa 2000 | Parque | Avenida Jalalpa Norte | Horario por confirmar | [2024-04-10](https://www.openstreetmap.org/way/1113495081) |
-| Parque La Mexicana | Parque | Avenida Luis Barragán 505 | Mo-Su 05:00-22:00 | [2026-03-08](https://www.openstreetmap.org/way/607127540) |
 | Parque Prados de la Montaña *(reverificar)* | Parque | Santa Fe · Poniente | Horario por confirmar | [2020-03-29](https://www.openstreetmap.org/way/453368240) |
 | Parque de VIstahermosa *(reverificar)* | Parque | Santa Fe · Poniente | Horario por confirmar | [2019-04-19](https://www.openstreetmap.org/way/528461797) |
 | parque san francisco *(reverificar)* | Parque | Santa Fe · Poniente | Horario por confirmar | [2018-09-02](https://www.openstreetmap.org/way/622115734) |
@@ -69,7 +67,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Taqueria El Gorilon *(reverificar)* | Restaurante | Avenida Jalalpa Norte | Horario por confirmar | [2022-11-16](https://www.openstreetmap.org/node/10187364446) |
 | Taquería El Califa | Restaurante | Santa Fe · Poniente | Horario por confirmar | [2025-10-16](https://www.openstreetmap.org/node/13236247101) |
 | Vesubio *(reverificar)* | Restaurante | Santa Fe · Poniente | Horario por confirmar | [2018-04-17](https://www.openstreetmap.org/way/579366040) |
-| moshi moshi *(reverificar)* | Restaurante | Santa Fe · Poniente | Horario por confirmar | [2017-09-26](https://www.openstreetmap.org/node/4013921239) |
 | Anfiteatro | Teatro | Santa Fe · Poniente | Horario por confirmar | [2025-01-08](https://www.openstreetmap.org/way/1349364745) |
 | Foro Barrio Santa Fe | Teatro | Santa Fe · Poniente | Horario por confirmar | [2024-09-12](https://www.openstreetmap.org/way/569098278) |
 
@@ -102,7 +99,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Cinemex Lomas Verdes | Cine | Satélite · Naucalpan | Horario por confirmar | [2025-03-24](https://www.openstreetmap.org/node/1975915768) |
 | Cinepolis *(reverificar)* | Cine | Satélite · Naucalpan | Horario por confirmar | [2020-03-15](https://www.openstreetmap.org/node/6011381435) |
 | Cinepolis VIP *(reverificar)* | Cine | Satélite · Naucalpan | Horario por confirmar | [2020-03-15](https://www.openstreetmap.org/node/6011381436) |
-| Cinépolis *(reverificar)* | Cine | Satélite · Naucalpan | Horario por confirmar | [2019-04-28](https://www.openstreetmap.org/node/6433451785) |
 | Aguas de la zona azul | Heladería | Circuito Economistas 20-21 | Horario por confirmar | [2024-10-24](https://www.openstreetmap.org/node/5257999192) |
 | Helados Rocío *(reverificar)* | Heladería | Satélite · Naucalpan | Horario por confirmar | [2018-10-25](https://www.openstreetmap.org/node/6011381424) |
 | Museo Hacienda de Santa Mónica *(reverificar)* | Museo | Satélite · Naucalpan | Horario por confirmar | [2021-03-30](https://www.openstreetmap.org/way/923780958) |
@@ -115,7 +111,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Parque Para Perros *(reverificar)* | Parque | Satélite · Naucalpan | Horario por confirmar | [2018-02-27](https://www.openstreetmap.org/way/564478972) |
 | Parque San Mateo *(reverificar)* | Parque | Satélite · Naucalpan | Horario por confirmar | [2018-10-17](https://www.openstreetmap.org/way/622374029) |
 | Parque del Circuito Centro Cívico | Parque | Satélite · Naucalpan | Horario por confirmar | [2024-10-25](https://www.openstreetmap.org/way/553213051) |
-| Parque del Circuito Centro Cívico *(reverificar)* | Parque | Satélite · Naucalpan | Horario por confirmar | [2020-11-25](https://www.openstreetmap.org/way/553213052) |
 | Parque puente jorobado *(reverificar)* | Parque | Satélite · Naucalpan | Horario por confirmar | [2018-02-13](https://www.openstreetmap.org/way/561116546) |
 | Puente con parque *(reverificar)* | Parque | Satélite · Naucalpan | Horario por confirmar | [2021-01-25](https://www.openstreetmap.org/way/628362796) |
 | parque bosques de echegaray | Parque | Satélite · Naucalpan | Horario por confirmar | [2026-07-28](https://www.openstreetmap.org/way/687533181) |
@@ -141,11 +136,9 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | El embrujo *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-08-13](https://www.openstreetmap.org/node/4348559096) |
 | Entre fuegos *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2018-05-03](https://www.openstreetmap.org/node/5594982727) |
 | Fisher's *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-08-08](https://www.openstreetmap.org/node/4341828609) |
-| Fisher's *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-08-13](https://www.openstreetmap.org/node/4348990089) |
 | Fisher's House *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2021-05-07](https://www.openstreetmap.org/node/8707898917) |
 | Friday's *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-08-13](https://www.openstreetmap.org/node/4348556403) |
 | GabyLu *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-09-18](https://www.openstreetmap.org/node/4406806592) |
-| GabyLu *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2017-09-15](https://www.openstreetmap.org/node/4936995324) |
 | Hunan *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2022-08-20](https://www.openstreetmap.org/node/9965047017) |
 | Italiannis *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2020-03-15](https://www.openstreetmap.org/node/7295812688) |
 | La 3ra Ronda *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2020-03-15](https://www.openstreetmap.org/node/7295812690) |
@@ -181,7 +174,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Viva Arracheras *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-08-08](https://www.openstreetmap.org/node/4341871890) |
 | Wing's Stop *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2017-01-30](https://www.openstreetmap.org/node/4443092090) |
 | mambo cafe *(reverificar)* | Restaurante | Satélite · Naucalpan | Horario por confirmar | [2016-08-13](https://www.openstreetmap.org/node/4348630590) |
-| Tacos *(reverificar)* | Taquería | Satélite · Naucalpan | Horario por confirmar | [2016-10-04](https://www.openstreetmap.org/node/4430079000) |
 | Tacos El Fogon Zona Azul Satelite | Taquería | Circuito Economistas 30 | Su-Fr 11:00-02:00; Sa 11:00-03:00 | [2024-10-24](https://www.openstreetmap.org/node/11413695570) |
 | Tacos El Fogón *(reverificar)* | Taquería | Satélite · Naucalpan | Horario por confirmar | [2017-10-23](https://www.openstreetmap.org/node/5184319977) |
 | Tacos La Bici | Taquería | Satélite · Naucalpan | Horario por confirmar | [2025-10-05](https://www.openstreetmap.org/node/13195383602) |
@@ -208,8 +200,7 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | El rincon del guero *(reverificar)* | Restaurante | Lomas · Tecamachalco | Horario por confirmar | [2015-09-12](https://www.openstreetmap.org/node/3740617049) |
 | Giornale *(reverificar)* | Restaurante | Avenida Paseo de las Palmas 820 B | Horario por confirmar | [2019-07-09](https://www.openstreetmap.org/node/1156904395) |
 | Macarella *(reverificar)* | Restaurante | Lomas · Tecamachalco | Horario por confirmar | [2022-07-31](https://www.openstreetmap.org/node/9921707917) |
-| Pancho Birria - Barbacoa | Restaurante | Lomas · Tecamachalco | Mo-Su 09:00-22:00 | [2026-07-15](https://www.openstreetmap.org/node/13482280101) |
-| TK Terraza Grill *(reverificar)* | Restaurante | Lomas · Tecamachalco | Horario por confirmar | [2021-04-20](https://www.openstreetmap.org/way/742693349) |
+| Pancho Birria-Barbacoa | Restaurante | Lomas · Tecamachalco | Mo-Su 09:00-22:00 | [2026-07-15](https://www.openstreetmap.org/node/13482280101) |
 | El Original ¡Que Lata! Tacos *(reverificar)* | Taquería | Lomas · Tecamachalco | Horario por confirmar | [2018-09-05](https://www.openstreetmap.org/node/5883249885) |
 | Flash Taco *(reverificar)* | Taquería | Lomas · Tecamachalco | Horario por confirmar | [2015-08-13](https://www.openstreetmap.org/node/3695991661) |
 | Centro Banamex *(reverificar)* | Teatro | Avenida del Conscripto | Horario por confirmar | [2019-10-13](https://www.openstreetmap.org/node/6874916385) |
@@ -222,12 +213,10 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Pulqueria La Botijona *(reverificar)* | Bar | Xochimilco | Horario por confirmar | [2013-08-20](https://www.openstreetmap.org/node/2426033203) |
 | Pulqueria Templo de Diana *(reverificar)* | Bar | Xochimilco | Horario por confirmar | [2013-08-20](https://www.openstreetmap.org/node/2426033191) |
 | Pulquerías Doña Cande *(reverificar)* | Bar | Xochimilco | Horario por confirmar | [2020-02-22](https://www.openstreetmap.org/node/7235811685) |
-| Cafeteria *(reverificar)* | Café | Xochimilco | Horario por confirmar | [2015-10-09](https://www.openstreetmap.org/node/3779091557) |
 | Don Juan *(reverificar)* | Café | Xochimilco | Horario por confirmar | [2016-05-07](https://www.openstreetmap.org/node/4172136296) |
 | Soconus Coffee *(reverificar)* | Café | Xochimilco | Horario por confirmar | [2016-05-07](https://www.openstreetmap.org/node/4172108592) |
 | DIF | Centro cultural | Plan de Muyuguarda | Horario por confirmar | [2024-09-09](https://www.openstreetmap.org/way/262581290) |
 | Cinema Xochimilco *(reverificar)* | Cine | Xochimilco | Horario por confirmar | [2013-08-20](https://www.openstreetmap.org/node/2426034682) |
-| Bosque de Nativitas | Parque | Xochimilco | Mo-Su 06:00-18:30 | [2023-10-19](https://www.openstreetmap.org/way/52835117) |
 | Isla de las muñecas | Parque | Xochimilco | Horario por confirmar | [2025-08-21](https://www.openstreetmap.org/way/361191169) |
 | Jardín Juárez | Parque | Xochimilco | Horario por confirmar | [2023-10-17](https://www.openstreetmap.org/way/52834012) |
 | Parque Hueso Periférico *(reverificar)* | Parque | Xochimilco | Horario por confirmar | [2019-08-14](https://www.openstreetmap.org/way/704974385) |
@@ -236,7 +225,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Parque Residencial Villa Coapa | Parque | Xochimilco | Horario por confirmar | [2024-06-02](https://www.openstreetmap.org/way/52504276) |
 | Marisqueria La Güera | Restaurante | Xochimilco | Horario por confirmar | [2023-03-07](https://www.openstreetmap.org/node/10717967540) |
 | Pozolería Blanquita | Restaurante | Xochimilco | Horario por confirmar | [2026-05-11](https://www.openstreetmap.org/node/13816442922) |
-| Taquería *(reverificar)* | Restaurante | Xochimilco | Horario por confirmar | [2016-09-18](https://www.openstreetmap.org/node/4407367333) |
 | Tacos "Huichapan" *(reverificar)* | Taquería | Xochimilco | Horario por confirmar | [2015-10-09](https://www.openstreetmap.org/node/3779090398) |
 | Auditorio "Matilde Montoya Lafragua" *(reverificar)* | Teatro | Xochimilco | Horario por confirmar | [2021-01-26](https://www.openstreetmap.org/way/862243332) |
 | Carlos Pellicer *(reverificar)* | Teatro | Xochimilco | Horario por confirmar | [2010-03-19](https://www.openstreetmap.org/node/670030559) |
@@ -246,7 +234,7 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Lugar | Tipo | Dirección | Horario | Ficha OSM (última edición) |
 |---|---|---|---|---|
 | Arracheras *(reverificar)* | Bar | Roma Sur | Horario por confirmar | [2018-08-16](https://www.openstreetmap.org/node/4162397591) |
-| BACAL - apericena *(reverificar)* | Bar | Avenida Baja California 158 | Horario por confirmar | [2021-08-19](https://www.openstreetmap.org/node/7122920746) |
+| BACAL-apericena *(reverificar)* | Bar | Avenida Baja California 158 | Horario por confirmar | [2021-08-19](https://www.openstreetmap.org/node/7122920746) |
 | Cantina La Pompa *(reverificar)* | Bar | Roma Sur | Horario por confirmar | [2018-08-17](https://www.openstreetmap.org/node/4040557294) |
 | Cantina La Valenciana *(reverificar)* | Bar | Roma Sur | Horario por confirmar | [2021-10-23](https://www.openstreetmap.org/node/9196355071) |
 | Cervecería de Barrio *(reverificar)* | Bar | Roma Sur | Horario por confirmar | [2018-08-16](https://www.openstreetmap.org/node/4576622594) |
@@ -260,7 +248,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Villa de Sarria | Bar | Roma Sur | Horario por confirmar | [2025-08-16](https://www.openstreetmap.org/node/13073499502) |
 | bière artisanal *(reverificar)* | Bar | Roma Sur | Horario por confirmar | [2018-05-20](https://www.openstreetmap.org/node/5630903423) |
 | 3 Amores barra de café | Café | Calle La Morena | Horario por confirmar | [2024-02-17](https://www.openstreetmap.org/node/11635872469) |
-| Alma Café | Café | Calle Heriberto Frías 205 | Horario por confirmar | [2025-01-08](https://www.openstreetmap.org/node/12484754502) |
 | Bizcochito Café | Café | Calle Bajío 273 | Horario por confirmar | [2026-06-02](https://www.openstreetmap.org/node/13905958501) |
 | Brown caffeine lab *(reverificar)* | Café | Calle Tonalá 313 | Horario por confirmar | [2021-11-23](https://www.openstreetmap.org/node/9220123617) |
 | Brujelarre *(reverificar)* | Café | Dr. José Vertiz | Horario por confirmar | [2022-12-08](https://www.openstreetmap.org/node/10247657189) |
@@ -275,7 +262,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Chapata Vive | Café | Avenida Diagonal San Antonio 1410 | Horario por confirmar | [2026-07-23](https://www.openstreetmap.org/node/4252006143) |
 | Chefspeare *(reverificar)* | Café | Roma Sur | Horario por confirmar | [2019-12-03](https://www.openstreetmap.org/node/7029764787) |
 | Craving Crown | Café | Roma Sur | Horario por confirmar | [2025-09-05](https://www.openstreetmap.org/node/13121580289) |
-| Craving Crown | Café | Roma Sur | Horario por confirmar | [2026-08-29](https://www.openstreetmap.org/node/14133603795) |
 | Dulce Romita | Café | Tepic 5A | Mo-Fr 08:30-20:30; Sa-Su 09:30-17:00 | [2026-07-10](https://www.openstreetmap.org/node/5022838521) |
 | EMILIA CAFE & BISTRO | Café | CALLE YACATAS 98 | Horario por confirmar | [2026-10-28](https://www.openstreetmap.org/node/14329473925) |
 | El Jugador Café | Café | Calle Tonalá 268 | Horario por confirmar | [2025-07-26](https://www.openstreetmap.org/node/13019018802) |
@@ -312,7 +298,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Parque Felipe Santiago Xicotencatl | Parque | Roma Sur | Horario por confirmar | [2026-10-21](https://www.openstreetmap.org/way/39544325) |
 | Parque Las Américas | Parque | Avenida Diagonal San Antonio 1737 | Horario por confirmar | [2023-04-14](https://www.openstreetmap.org/way/617513718) |
 | Parque Lineal Ecoducto Río de la Piedad | Parque | Roma Sur | Horario por confirmar | [2024-09-18](https://www.openstreetmap.org/way/1316005299) |
-| Parque Lineal Ecoducto Río de la Piedad | Parque | Roma Sur | Horario por confirmar | [2024-09-18](https://www.openstreetmap.org/way/1316005300) |
 | Parque María Enriqueta *(reverificar)* | Parque | Roma Sur | Horario por confirmar | [2018-02-19](https://www.openstreetmap.org/way/39544327) |
 | "Los sabores de México" *(reverificar)* | Restaurante | Roma Sur | Horario por confirmar | [2013-05-10](https://www.openstreetmap.org/node/2298877520) |
 | Amory Sale & Pizza *(reverificar)* | Restaurante | Roma Sur | Horario por confirmar | [2018-08-16](https://www.openstreetmap.org/node/3779351848) |
@@ -407,7 +392,7 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Las Quekas *(reverificar)* | Taquería | Roma Sur | Horario por confirmar | [2018-08-16](https://www.openstreetmap.org/node/4162393504) |
 | Los Pollos Pioneros | Taquería | Calle Campeche 75 | Horario por confirmar | [2026-09-19](https://www.openstreetmap.org/node/14196318710) |
 | Miercoles de Pechugon | Taquería | Monterrey 271 | Mo-Su 11:00-18:00 | [2026-07-10](https://www.openstreetmap.org/node/8164047918) |
-| Pancita - local 43 | Taquería | Roma Sur | Mo-Su 09:00-13:00 | [2025-01-28](https://www.openstreetmap.org/node/12539631001) |
+| Pancita-local 43 | Taquería | Roma Sur | Mo-Su 09:00-13:00 | [2025-01-28](https://www.openstreetmap.org/node/12539631001) |
 | Prau-Prau *(reverificar)* | Taquería | Roma Sur | Horario por confirmar | [2018-08-16](https://www.openstreetmap.org/node/4162398493) |
 | Sonora Taco Steak *(reverificar)* | Taquería | Obrero Mundial 295 | Mo-Sa 10:00-00:00, Su 13:00-22:00 | [2016-11-16](https://www.openstreetmap.org/node/4070528798) |
 | Taco Game | Taquería | Calle Nayarit 27 | Horario por confirmar | [2026-05-15](https://www.openstreetmap.org/node/6397219114) |
@@ -445,7 +430,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Warehouse *(reverificar)* | Bar | Avenida Revolución 823 | Horario por confirmar | [2020-09-23](https://www.openstreetmap.org/way/86203649) |
 | cerveceria la curva *(reverificar)* | Bar | Del Valle · Nápoles | Horario por confirmar | [2019-04-18](https://www.openstreetmap.org/node/5547896223) |
 | Bol Narvarte *(reverificar)* | Boliche | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/5834968631) |
-| Alma Negra Café *(reverificar)* | Café | Avenida Universidad 420A | Horario por confirmar | [2014-12-31](https://www.openstreetmap.org/node/3262187768) |
 | Alquimia Café *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2020-12-18](https://www.openstreetmap.org/node/8239042718) |
 | Ann's Bakery *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2017-03-24](https://www.openstreetmap.org/node/4036863109) |
 | Apapacho Café *(reverificar)* | Café | Avenida Dr. José Maria Vertiz 903-A | Horario por confirmar | [2021-08-19](https://www.openstreetmap.org/node/3536401538) |
@@ -481,12 +465,12 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Flavourite *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036934524) |
 | Hey! Brew Bar | Café | Calle Texas 81 | 09:00-22:00 | [2023-12-14](https://www.openstreetmap.org/node/4222791152) |
 | K-fe | Café | Del Valle · Nápoles | Horario por confirmar | [2025-01-08](https://www.openstreetmap.org/node/8934181577) |
-| La Caravana - Juegos de Mesa *(reverificar)* | Café | Calle Fresas 59 | Mo-Su 15:00-22:00 | [2021-03-20](https://www.openstreetmap.org/way/919752027) |
+| La Caravana-Juegos de Mesa *(reverificar)* | Café | Calle Fresas 59 | Mo-Su 15:00-22:00 | [2021-03-20](https://www.openstreetmap.org/way/919752027) |
 | La Celostina | Café | Calle Matías Romero 1454 | Horario por confirmar | [2025-05-21](https://www.openstreetmap.org/node/3484587996) |
 | La Esquina del Café *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2018-04-06](https://www.openstreetmap.org/node/5532234295) |
 | La Finca *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036894579) |
 | La Parroquia | Café | Del Valle · Nápoles | Horario por confirmar | [2025-02-20](https://www.openstreetmap.org/node/12602381547) |
-| La Trigueña - Pan para todos *(reverificar)* | Café | Calle Nicolás San Juan 570 | Mo-Fr 08:00-21:00; Sa-Su 08:00-17:00 | [2021-07-11](https://www.openstreetmap.org/way/526466466) |
+| La Trigueña-Pan para todos *(reverificar)* | Café | Calle Nicolás San Juan 570 | Mo-Fr 08:00-21:00; Sa-Su 08:00-17:00 | [2021-07-11](https://www.openstreetmap.org/way/526466466) |
 | Libre Café *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2021-06-19](https://www.openstreetmap.org/node/8848975733) |
 | Libreria del Ermitaño *(reverificar)* | Café | Del Valle · Nápoles | Mo-Fr 09:00-21:00; Sa, Su 12:00-21:00 | [2017-02-21](https://www.openstreetmap.org/node/4697715920) |
 | Mandorle Narvarte | Café | Calle Torres Adalid 1562 | Horario por confirmar | [2025-05-10](https://www.openstreetmap.org/node/7185595560) |
@@ -502,7 +486,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Relámpago Café | Café | Extremadura | Horario por confirmar | [2024-10-06](https://www.openstreetmap.org/node/12229043303) |
 | Rooibos Café de Barrio | Café | Del Valle · Nápoles | Horario por confirmar | [2025-02-11](https://www.openstreetmap.org/node/12578248280) |
 | The Coffee Company *(reverificar)* | Café | Del Valle · Nápoles | Horario por confirmar | [2020-03-07](https://www.openstreetmap.org/node/4036640829) |
-| Tierra Garat | Café | Del Valle · Nápoles | Horario por confirmar | [2025-02-11](https://www.openstreetmap.org/node/12431932821) |
 | Tierra Garat Café y Chocolate | Café | Calle Nueva York 178 | Horario por confirmar | [2025-11-03](https://www.openstreetmap.org/node/13270698501) |
 | Tierra-Garat | Café | Del Valle · Nápoles | Horario por confirmar | [2024-05-07](https://www.openstreetmap.org/node/10196298508) |
 | Village Café *(reverificar)* | Café | Avenida Porfirio Diaz 69A | Horario por confirmar | [2021-08-19](https://www.openstreetmap.org/node/4622762992) |
@@ -513,7 +496,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Plaza Sama Center | Centro comercial | Del Valle · Nápoles | Horario por confirmar | [2026-04-06](https://www.openstreetmap.org/way/1496825498) |
 | Cinemex WTC *(reverificar)* | Cine | Del Valle · Nápoles | Horario por confirmar | [2022-07-12](https://www.openstreetmap.org/node/473043663) |
 | FRODY | Heladería | Del Valle · Nápoles | Horario por confirmar | [2025-04-09](https://www.openstreetmap.org/way/1359121965) |
-| Heladería *(reverificar)* | Heladería | Del Valle · Nápoles | Horario por confirmar | [2015-09-23](https://www.openstreetmap.org/node/3681551991) |
 | Helados QBE | Heladería | Del Valle · Nápoles | Horario por confirmar | [2025-01-23](https://www.openstreetmap.org/node/2973867331) |
 | Moyo *(reverificar)* | Heladería | Del Valle · Nápoles | Horario por confirmar | [2018-04-01](https://www.openstreetmap.org/node/5521302122) |
 | Museo Casa Luis Buñuel | Museo | Cerrada Félix Cuevas 27 | Horario por confirmar | [2023-07-29](https://www.openstreetmap.org/way/1191545030) |
@@ -530,7 +512,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Parque Rosendo Arnaiz *(reverificar)* | Parque | Del Valle · Nápoles | Horario por confirmar | [2022-07-24](https://www.openstreetmap.org/way/30972031) |
 | Parque San Lorenzo | Parque | Del Valle · Nápoles | Horario por confirmar | [2023-07-29](https://www.openstreetmap.org/way/4809205) |
 | Parque Zapata | Parque | Del Valle · Nápoles | Horario por confirmar | [2025-03-12](https://www.openstreetmap.org/way/515991545) |
-| Parque de los Venados | Parque | Del Valle · Nápoles | Horario por confirmar | [2023-08-19](https://www.openstreetmap.org/way/26967313) |
 | Parque entre patriotismo y calle 1 | Parque | Del Valle · Nápoles | Horario por confirmar | [2025-11-01](https://www.openstreetmap.org/way/552251287) |
 | 3 Sesenta Pizzería de Barrio *(reverificar)* | Restaurante | Calle Miguel Laurent 1154 | Horario por confirmar | [2020-10-28](https://www.openstreetmap.org/node/4066846465) |
 | Alibaba *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2019-03-28](https://www.openstreetmap.org/node/4037003777) |
@@ -570,7 +551,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Costello Chef *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2021-06-18](https://www.openstreetmap.org/node/8843484358) |
 | Costra *(reverificar)* | Restaurante | Avenida Universidad 371 | 08:00-09:00 | [2018-10-20](https://www.openstreetmap.org/node/4630012686) |
 | Daruma Parque Hundido | Restaurante | Avenida Porfirio Diaz | Horario por confirmar | [2025-03-26](https://www.openstreetmap.org/way/674171713) |
-| Debarbas *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2021-09-04](https://www.openstreetmap.org/way/819143995) |
 | Dembo Café | Restaurante | Avenida San Antonio 79 | Horario por confirmar | [2026-02-16](https://www.openstreetmap.org/node/13568784519) |
 | Doble Malta | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2024-12-18](https://www.openstreetmap.org/node/5208673821) |
 | Don Capitán Del Valle | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-02-12](https://www.openstreetmap.org/node/3454250664) |
@@ -588,7 +568,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | El Indio taquero | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2024-12-24](https://www.openstreetmap.org/node/5018602122) |
 | El Mexicano *(reverificar)* | Restaurante | Calle San Borja 24 | Horario por confirmar | [2020-10-26](https://www.openstreetmap.org/node/5333894217) |
 | El Mexiquense | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-08-20](https://www.openstreetmap.org/node/13085532312) |
-| El Naranjito *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-18](https://www.openstreetmap.org/node/4066889784) |
 | El Quijote del Valle *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2022-11-17](https://www.openstreetmap.org/node/10043902982) |
 | El Regreso | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-02-19](https://www.openstreetmap.org/node/12599870795) |
 | El Rincón del Parque *(reverificar)* | Restaurante | Matías Romero 1114 | Mo-Sa 08:00-22:00; Su 8:30-20:00 | [2018-10-27](https://www.openstreetmap.org/node/1152532797) |
@@ -606,14 +585,12 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Gelee *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2012-01-17](https://www.openstreetmap.org/node/1594868463) |
 | Giancarlo's *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2011-02-02](https://www.openstreetmap.org/node/473826888) |
 | Gino's *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036854775) |
-| Gino's *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4037023391) |
 | Giorgio's Pizzas | Restaurante | Avenida Universidad 360 | Horario por confirmar | [2026-07-10](https://www.openstreetmap.org/node/3443642058) |
 | Gorditas Mixcoac | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-02-17](https://www.openstreetmap.org/node/8843484338) |
 | Gorditas Zacazonapan *(reverificar)* | Restaurante | Avenida Revolución 749 | Horario por confirmar | [2020-09-23](https://www.openstreetmap.org/way/528263093) |
 | Green Grass Del Valle *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2021-11-24](https://www.openstreetmap.org/way/1005949485) |
 | HM Hamburguesas *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2017-03-24](https://www.openstreetmap.org/node/4753706626) |
 | Harumi Valle | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2024-05-07](https://www.openstreetmap.org/node/4036969261) |
-| Heladería *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2015-10-09](https://www.openstreetmap.org/node/3779151815) |
 | Henry Sailor *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/5109767321) |
 | Humbertos | Restaurante | Patricio Sanz 1440 | Horario por confirmar | [2026-05-15](https://www.openstreetmap.org/node/3444123713) |
 | Ikaya Sushi *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2022-08-14](https://www.openstreetmap.org/node/9952061219) |
@@ -654,7 +631,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Las Quekas *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/5017201541) |
 | Le Gourmet *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2009-08-25](https://www.openstreetmap.org/node/473817670) |
 | Los Arcos | Restaurante | Avenida Coyoacán 527 | Mo-Sa 08:00-18:00 | [2026-02-25](https://www.openstreetmap.org/node/13596807801) |
-| Los Arcos *(reverificar)* | Restaurante | 75 C | Horario por confirmar | [2021-08-09](https://www.openstreetmap.org/node/8843484351) |
 | Los Asustacos *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2022-08-14](https://www.openstreetmap.org/node/9953536518) |
 | Los Caporales | Restaurante | Calle Miguel Ángel Buonarroti 85 | Horario por confirmar | [2023-07-27](https://www.openstreetmap.org/way/1192762463) |
 | Los Chamorros de Tlacoquemecatl | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2024-05-07](https://www.openstreetmap.org/node/4036639437) |
@@ -674,7 +650,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Nanaya *(reverificar)* | Restaurante | Matías Romero 1166 C | Mo-Su 11:30-21:30 | [2019-03-06](https://www.openstreetmap.org/node/4456412590) |
 | Nikola *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2021-08-14](https://www.openstreetmap.org/node/9005472495) |
 | Pajares *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2011-02-02](https://www.openstreetmap.org/node/473817623) |
-| Palomino's *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2017-03-24](https://www.openstreetmap.org/node/4753706631) |
 | Pan y Pasta *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036863108) |
 | Pane en Vía *(reverificar)* | Restaurante | Avenida Insurgentes Sur 1285 | Horario por confirmar | [2020-01-11](https://www.openstreetmap.org/node/6358978598) |
 | Papa Guapa *(reverificar)* | Restaurante | Calle Eugenia 101 | Mo-Su 01:00-22:00 | [2022-05-14](https://www.openstreetmap.org/node/7984727745) |
@@ -688,7 +663,7 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Proyecto Gourmet *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/4066846467) |
 | Quesadillas y Sopes *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/5017202292) |
 | Rafaello's *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2009-08-25](https://www.openstreetmap.org/node/473817677) |
-| Ramen -ya *(reverificar)* | Restaurante | Fresas 59 | Horario por confirmar | [2015-04-08](https://www.openstreetmap.org/node/3443941003) |
+| Ramen-ya *(reverificar)* | Restaurante | Fresas 59 | Horario por confirmar | [2015-04-08](https://www.openstreetmap.org/node/3443941003) |
 | Restaurante El Amaranto *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-18](https://www.openstreetmap.org/node/4066846464) |
 | Restaurante Hanal K'U | Restaurante | Calle Concepción Beistegui 1407 | Horario por confirmar | [2026-07-10](https://www.openstreetmap.org/node/3445448193) |
 | Restaurante Shoya | Restaurante | Pedro Romero de Terreros 200 | Mo-Fr 11:00-18:00 | [2026-07-10](https://www.openstreetmap.org/node/3445321675) |
@@ -699,17 +674,14 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Semillero | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-04-09](https://www.openstreetmap.org/node/4753734622) |
 | Shake shack burgers *(reverificar)* | Restaurante | Avenida Insurgentes Sur 866 | Horario por confirmar | [2022-07-19](https://www.openstreetmap.org/node/9896407517) |
 | Sonora Grill *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036793388) |
-| Sonora Grill *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036969259) |
-| Sonora Grill - Félix Cuevas *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2022-05-14](https://www.openstreetmap.org/node/4067931786) |
+| Sonora Grill-Félix Cuevas *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2022-05-14](https://www.openstreetmap.org/node/4067931786) |
 | Suntory *(reverificar)* | Restaurante | Torres Adalid 14 | Horario por confirmar | [2011-02-02](https://www.openstreetmap.org/node/473513012) |
 | Suntory del Valle | Restaurante | Calle Torres Adalid 14 | Horario por confirmar | [2026-07-10](https://www.openstreetmap.org/node/5590534621) |
 | Sushi Dashi | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-09-03](https://www.openstreetmap.org/way/1426760273) |
 | Sushi ito *(reverificar)* | Restaurante | Avenida Insurgentes Sur | Horario por confirmar | [2017-08-12](https://www.openstreetmap.org/node/5029711823) |
 | Sushiitto *(reverificar)* | Restaurante | Avenida Insurgentes Sur 1020 | Horario por confirmar | [2017-03-18](https://www.openstreetmap.org/node/4740906623) |
-| Sushiitto *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2018-04-01](https://www.openstreetmap.org/node/5521302121) |
 | Take a Wok *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2016-03-02](https://www.openstreetmap.org/node/4036948742) |
 | Taquearte | Restaurante | Colonia Nochebuena | Horario por confirmar | [2025-03-26](https://www.openstreetmap.org/way/674171711) |
-| Taquería *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2019-07-18](https://www.openstreetmap.org/node/6625252870) |
 | Taquería "La Chinampa" *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2022-12-12](https://www.openstreetmap.org/node/10218721059) |
 | Taquería El Huequito | Restaurante | Del Valle · Nápoles | Mo-Su 09:00-04:00 | [2026-05-15](https://www.openstreetmap.org/node/994311271) |
 | Taquería Green House San Pedro *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2019-07-18](https://www.openstreetmap.org/node/3681551997) |
@@ -728,7 +700,6 @@ Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 16
 | Villa Casona *(reverificar)* | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/5835130297) |
 | Villa Casona San Pedro de los Pinos *(reverificar)* | Restaurante | Calle 25 3 | Mo-Su 09:00-21:00 | [2021-10-07](https://www.openstreetmap.org/way/674109277) |
 | Yoko Ramen | Restaurante | Del Valle · Nápoles | Horario por confirmar | [2025-09-05](https://www.openstreetmap.org/node/13120581801) |
-| El Vilsito *(reverificar)* | Taquería | Del Valle · Nápoles | Horario por confirmar | [2022-08-14](https://www.openstreetmap.org/node/5010308177) |
 | Gold Taco *(reverificar)* | Taquería | Eugenia 1562 | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/5349365822) |
 | Taco fish *(reverificar)* | Taquería | Del Valle · Nápoles | Horario por confirmar | [2017-08-12](https://www.openstreetmap.org/node/5029711821) |
 | Tacos Guapos *(reverificar)* | Taquería | Del Valle · Nápoles | Horario por confirmar | [2018-08-15](https://www.openstreetmap.org/node/4009808491) |

@@ -81,19 +81,30 @@ ACT = {'Restaurante': ['comida', 'cena'], 'Taquería': ['comida', 'cena'], 'Caf�
 
 catalogo = json.load(open(os.path.join(AQUI, 'catalogo_actual.json')))
 def repetido(n, lat, lng):
-    a = norm(n)
+    a = norm(n.replace("'", '').replace('’', ''))
+    a0 = a.replace(' ', '')
     for c in catalogo:
         if c.get('lat') is None: continue
         if km((c['lat'], c['lng']), (lat, lng)) > 0.3: continue
-        b = norm(c['n'])
+        b = norm(c['n'].replace("'", '').replace('’', '')); b0 = b.replace(' ', '')
         if a == b or (len(a) > 5 and a in b) or (len(b) > 5 and b in a): return c
+        # Sin espacios: "Almanegra Café" = "Alma Negra Café", "Palomino's" = "Palominos".
+        if a0 == b0 or (len(a0) > 6 and a0 in b0) or (len(b0) > 6 and b0 in a0): return c
         # Misma primera palabra propia a menos de 150 m ("MIAH Speakeasy Bar" = "Miah Bar").
         STOPW = {'el', 'la', 'los', 'las', 'bar', 'cafe', 'restaurante', 'tacos', 'taqueria', 'the', 'de', 'cine', 'parque', 'museo'}
         pa = [w for w in a.split() if w not in STOPW]; pb = [w for w in b.split() if w not in STOPW]
         if pa and pb and pa[0] == pb[0] and len(pa[0]) >= 4 and km((c['lat'], c['lng']), (lat, lng)) < 0.15: return c
     return None
 
+# Misma "raíz" de nombre (palabras ordenadas) en la misma zona y categoría = el
+# mismo lugar para la app (prueba "no quedan duplicados"). Una sucursal distinta
+# se nombra con su calle o colonia, como las del catálogo ("Sonora Grill · Antara").
+def raiz(n):
+    n = unicodedata.normalize('NFD', n.lower()); n = ''.join(c for c in n if unicodedata.category(c) != 'Mn')
+    return ' '.join(sorted(re.sub(r'[·,.]', ' ', n).split()))
+RAICES = set(raiz(c['n']) + '|' + c['z'] + '|' + c['cat'] for c in catalogo)
 cands, desc = [], collections.Counter()
+NOMBRE_DIR = set()
 vistos = set()
 for zona in PEDIDAS:
     f = os.path.join(AQUI, zona + '.json')
@@ -108,15 +119,27 @@ for zona in PEDIDAS:
         cat = categoria(t)
         if not cat: desc['tipo que no es salida (comida rápida sin tacos, etc.)'] += 1; continue
         if cat not in SALIDA_AUNQUE_CADENA and (t.get('brand') or t.get('brand:wikidata') or CADENAS.search(norm(n.replace("'", '').replace('’', '')))): desc['cadena'] += 1; continue
+        if re.fullmatch(r'(la |el )?(heladeria|neveria|cafe|cafeteria|restaurante|restaurant|bar|taqueria|tacos|cantina|parque|jardin|cine|museo|galeria|antro|pizzeria|sushi|mariscos)', norm(n)): desc['sin nombre propio'] += 1; continue
         if NO_SALIDA.search(norm(n)): desc['escuela, academia o maquinitas (no es salida)'] += 1; continue
         if cat == 'Atracción' and t.get('leisure') == 'amusement_arcade' and not (t.get('website') or t.get('brand')): desc['maquinitas sin ficha propia'] += 1; continue
         if cat == 'Parque' and not (t.get('wikidata') or t.get('website') or re.search(r'parque|bosque|jard[ií]n|alameda', norm(n))): desc['parque sin nombre propio'] += 1; continue
         if t.get('disused:amenity') or t.get('was:amenity') or 'closed' in (t.get('opening_hours') or '').lower(): desc['cerrado'] += 1; continue
         r0 = repetido(n, lat, lng)
         if r0: desc['ya en el catálogo'] += 1; continue
+        # Un parque o bosque grande puede tener la ficha lejos de su centro: mismo nombre a menos de 3 km = el mismo.
+        if any(norm(c['n']) == norm(n) and c.get('lat') is not None and km((c['lat'], c['lng']), (lat, lng)) < 3 for c in catalogo): desc['ya en el catálogo'] += 1; continue
         if any(norm(c['n']) == norm(n) and km((c['lat'], c['lng']), (lat, lng)) < 0.3 for c in cands): desc['repetido en OSM'] += 1; continue
         z, dz = zona_de(lat, lng)
         if z not in PEDIDAS: desc['fuera de las 6 zonas pedidas'] += 1; continue
+        n = re.sub(r'\s+-\s*', '-', n)   # "Ramen -ya" → "Ramen-ya"
+        if raiz(n) + '|' + z + '|' + cat in RAICES:
+            suc = t.get('branch') or t.get('addr:street') or t.get('addr:suburb') or t.get('addr:neighbourhood')
+            if not suc or raiz(n + ' · ' + suc) + '|' + z + '|' + cat in RAICES: desc['mismo nombre en la zona sin sucursal que lo distinga'] += 1; continue
+            n = n + ' · ' + suc
+        RAICES.add(raiz(n) + '|' + z + '|' + cat)
+        _calle = ' '.join(x for x in [t.get('addr:street', ''), t.get('addr:housenumber', '')] if x) or (t.get('addr:suburb') or t.get('addr:neighbourhood') or ZL.get(z, z))
+        if (norm(n), norm(_calle)) in NOMBRE_DIR: desc['mismo nombre y dirección que otro de OSM'] += 1; continue
+        NOMBRE_DIR.add((norm(n), norm(_calle)))
         h = horario(t.get('opening_hours'))
         fecha = (e.get('timestamp') or '')[:10]
         url = 'https://www.openstreetmap.org/%s/%d' % (e['type'], e['id'])
