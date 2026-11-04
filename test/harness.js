@@ -66,6 +66,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Lugares del Excel de candidatos (define window.SOBRES_EXCEL)
   const xl = path.join(ROOT, 'data', 'excel.js');
   if (fs.existsSync(xl)) new Function('window', fs.readFileSync(xl, 'utf8'))(win);
+  // Recetas por ambiente (define window.SOBRES_RECETAS)
+  const rc = path.join(ROOT, 'data', 'recetas.js');
+  if (fs.existsSync(rc) && !opts.sinRecetas) new Function('window', fs.readFileSync(rc, 'utf8'))(win);
 
   const Component = new Function(...Object.keys(sandbox),
     m[1] + '\n;return Component;')(...Object.values(sandbox));
