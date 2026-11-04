@@ -21,6 +21,22 @@
   try { if (sobresQA) sessionStorage.setItem('sobres_qa', '1'); else if (sessionStorage.getItem('sobres_qa') === '1') sobresQA = true; } catch (e) {}
   if (!sobresQA) gtag('config', 'G-4QP6QKRDJK');
 </script>
+<script>
+  /* Fase 5: ?tema=a|b|c activa un tema de prueba (se recuerda en la sesión);
+     ?tema=hoy vuelve al de siempre. Sin parámetro se ve como hoy. */
+  (function () { try {
+    var q = new URLSearchParams(location.search).get('tema'); var t = q;
+    if (q === 'hoy' || q === '0') { sessionStorage.removeItem('sobres_tema'); t = null; }
+    else if (!q) t = sessionStorage.getItem('sobres_tema');
+    if (!t || !/^[abc]$/.test(t)) return;
+    sessionStorage.setItem('sobres_tema', t); document.documentElement.setAttribute('data-tema', t);
+    var F = { a: 'Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800',
+              b: 'Archivo+Black&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800',
+              c: 'Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800' }[t];
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + F + '&display=swap'; document.head.appendChild(l);
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', { a: '#111827', b: '#ffffff', c: '#ffffff' }[t]);
+  } catch (e) {} })();
+</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -52,7 +68,62 @@
   /* Alias de las piezas nuevas sobre la paleta original de SOBRES. */
   --noche:#2b211b; --noche-2:#453a30; --lila:#f8f3ea; --lila-2:#f2eadd; --electrico:#c8442c; --electrico-2:#b03a22;
   --nav-h:64px;
+  /* Papeles de color (Fase 5). Por defecto valen lo mismo que hoy: tinta de
+     títulos, relleno oscuro (chip elegido, barras), tarjeta y texto encima. */
+  --ink:var(--noche); --fill:var(--noche); --fill-2:var(--noche-2); --on-fill:#fff; --on-accent:#fff; --card:#fff;
 }
+/* ═════════════ Temas de prueba (Fase 5, rama rediseno) ═════════════
+   Sólo con ?tema=a|b|c. Todos los colores y fuentes viven aquí.
+   Contraste revisado con reportes/rediseno/contraste.js (mínimo 4.5:1). */
+:root:root[data-tema="a"]{ /* A · Noche CDMX */
+  color-scheme:dark;
+  --color-bg:#111827; --color-surface:#1f2937; --card:#1a2335; --color-text:#ffffff; --ink:#ffffff;
+  --color-accent:#c6f432; --color-accent-600:#b3e01f; --color-accent-700:#9fcb12; --color-accent-100:#2b3a1a; --color-accent-200:#3a4f1c; --on-accent:#111827;
+  --color-accent-2:#7dd3fc; --color-accent-2-100:#16324a; --color-accent-2-700:#7dd3fc;
+  --fill:#c6f432; --fill-2:#b3e01f; --on-fill:#111827;
+  --color-neutral-100:#1a2335; --color-neutral-200:#253045; --color-neutral-300:#334058; --color-neutral-400:#4b5870; --color-neutral-500:#7c879a;
+  --color-neutral-600:#a7b0bf; --color-neutral-700:#cbd2dd; --color-neutral-800:#e2e7ee; --color-neutral-900:#f3f5f8;
+  --color-divider:rgba(255,255,255,.18);
+  --noche:#ffffff; --noche-2:#e2e7ee; --lila:#1a2335; --lila-2:#253045; --electrico:#c6f432; --electrico-2:#b3e01f;
+  --font-heading:"Bricolage Grotesque", system-ui, sans-serif; --font-body:"Inter", system-ui, sans-serif;
+}
+:root[data-tema="a"] .leaflet-tile-pane{filter:invert(.92) hue-rotate(180deg) saturate(.5) brightness(.9)}
+:root:root[data-tema="b"]{ /* B · Fiesta mexicana */
+  --color-bg:#ffffff; --color-surface:#fff6dc; --card:#ffffff; --color-text:#1d1d1f; --ink:#1d1d1f;
+  --color-accent:#d10073; --color-accent-600:#b80065; --color-accent-700:#9e0057; --color-accent-100:#fde6f2; --color-accent-200:#fbc8e3; --on-accent:#ffffff;
+  --color-accent-2:#00a6a6; --color-accent-2-100:#d9f4f4; --color-accent-2-700:#00777a; --amarillo:#ffc72c;
+  --fill:#00777a; --fill-2:#006466; --on-fill:#ffffff;
+  --color-neutral-100:#fafafa; --color-neutral-200:#eeeeef; --color-neutral-300:#d9d9dc; --color-neutral-400:#b4b4b9; --color-neutral-500:#8b8b92;
+  --color-neutral-600:#5f5f66; --color-neutral-700:#46464c; --color-neutral-800:#2e2e33; --color-neutral-900:#1d1d1f;
+  --color-divider:rgba(29,29,31,.18);
+  --noche:#1d1d1f; --noche-2:#2e2e33; --lila:#fff6dc; --lila-2:#ffeab0; --electrico:#d10073; --electrico-2:#b80065;
+  --font-heading:"Archivo Black", system-ui, sans-serif; --font-body:"DM Sans", system-ui, sans-serif;
+}
+/* Archivo Black sólo tiene un grueso: sin negritas falsas. */
+:root[data-tema="b"] .sb-h1,:root[data-tema="b"] .sb-h2,:root[data-tema="b"] .sb-h3{font-weight:400;letter-spacing:-.01em}
+:root[data-tema="b"] .sb-kicker{color:var(--color-accent-2-700)}
+:root[data-tema="b"] .sb-home::before{content:"";display:block;height:6px;margin:0 0 16px;border-radius:3px;background:linear-gradient(90deg,var(--color-accent) 0 33%,var(--amarillo) 33% 66%,var(--color-accent-2) 66%)}
+:root:root[data-tema="c"]{ /* C · Limpio para adultos */
+  --color-bg:#ffffff; --color-surface:#f3f5f9; --card:#ffffff; --color-text:#1b2a4a; --ink:#1b2a4a;
+  --color-accent:#c63d31; --color-accent-600:#ad3328; --color-accent-700:#932a21; --color-accent-100:#ffe9e6; --color-accent-200:#ffd0ca; --on-accent:#ffffff;
+  --color-accent-2:#ff6b5b; --color-accent-2-100:#ffe9e6; --color-accent-2-700:#c63d31;
+  --fill:#1b2a4a; --fill-2:#2a3c63; --on-fill:#ffffff;
+  --color-neutral-100:#f7f8fb; --color-neutral-200:#e9edf3; --color-neutral-300:#d3d9e3; --color-neutral-400:#a9b2c2; --color-neutral-500:#7b869a;
+  --color-neutral-600:#56627a; --color-neutral-700:#3f4a61; --color-neutral-800:#2a3550; --color-neutral-900:#1b2a4a;
+  --color-divider:rgba(27,42,74,.16);
+  --noche:#1b2a4a; --noche-2:#2a3c63; --lila:#f3f5f9; --lila-2:#e9edf3; --electrico:#c63d31; --electrico-2:#ad3328;
+  --font-heading:"Instrument Serif", Georgia, serif; --font-body:"Inter", system-ui, sans-serif;
+}
+/* Instrument Serif sólo tiene un grueso: se compensa con tamaño, no con negritas falsas. */
+:root[data-tema="c"] .sb-h1,:root[data-tema="c"] .sb-h2,:root[data-tema="c"] .sb-h3{font-weight:400;letter-spacing:-.005em}
+:root[data-tema="c"] .sb-h1{font-size:clamp(36px,9vw,60px)}
+/* Espacio para la mascota (no es un sobre): sólo en los temas de prueba. */
+.sb-mascota{display:none}
+:root[data-tema] .sb-mascota{display:flex;align-items:center;justify-content:center;flex:none;width:88px;height:88px;border-radius:24px;background:var(--color-surface);border:1.5px dashed var(--color-neutral-400);margin:0 0 12px}
+:root[data-tema] .sb-mascota svg{width:64px;height:64px}
+:root[data-tema] .sb-mascota-res{width:64px;height:64px;border-radius:18px;margin:8px 0 0}
+:root[data-tema] .sb-mascota-res svg{width:46px;height:46px}
+@media (min-width:820px){:root[data-tema] .sb-mascota:not(.sb-mascota-res){width:120px;height:120px}:root[data-tema] .sb-mascota:not(.sb-mascota-res) svg{width:88px;height:88px}}
 /* Mosaicos de OSM atenuados para que combinen con el crema de Sobres. */
 .leaflet-tile-pane{filter:saturate(.42) sepia(.16) brightness(1.05) contrast(.94)}
 html{-webkit-text-size-adjust:100%}
@@ -109,37 +180,37 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .sb-wrap{max-width:600px;margin:0 auto}
 .sb-wide{max-width:1120px;margin:0 auto}
 .sb-kicker{font:700 11px var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)}
-.sb-h1{font:800 clamp(30px,8vw,52px)/1.02 var(--font-heading);letter-spacing:-.03em;margin:10px 0 12px;text-wrap:balance;color:var(--noche)}
-.sb-h2{font:800 clamp(24px,6vw,34px)/1.08 var(--font-heading);letter-spacing:-.02em;margin:8px 0 6px;text-wrap:balance;color:var(--noche)}
-.sb-h3{font:800 18px/1.2 var(--font-heading);margin:0;color:var(--noche)}
+.sb-h1{font:800 clamp(30px,8vw,52px)/1.02 var(--font-heading);letter-spacing:-.03em;margin:10px 0 12px;text-wrap:balance;color:var(--ink)}
+.sb-h2{font:800 clamp(24px,6vw,34px)/1.08 var(--font-heading);letter-spacing:-.02em;margin:8px 0 6px;text-wrap:balance;color:var(--ink)}
+.sb-h3{font:800 18px/1.2 var(--font-heading);margin:0;color:var(--ink)}
 .sb-sub{font:400 16px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0}
 .sb-note{font:500 13px/1.5 var(--font-body);color:var(--color-neutral-600)}
-.sb-label{font:700 13px var(--font-body);color:var(--noche);margin:0 0 10px;display:block}
-.sb-card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--color-divider)}
+.sb-label{font:700 13px var(--font-body);color:var(--ink);margin:0 0 10px;display:block}
+.sb-card{background:var(--card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--color-divider)}
 .sb-soft{background:var(--lila-2);border-radius:var(--radius-md)}
-.sb-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:999px;border:none;background:var(--electrico);color:#fff;font:700 16px var(--font-body);cursor:pointer;box-shadow:0 6px 16px rgba(200,68,44,.26);text-decoration:none}
-.sb-btn:hover{background:var(--electrico-2);color:#fff}
+.sb-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:999px;border:none;background:var(--electrico);color:var(--on-accent);font:700 16px var(--font-body);cursor:pointer;box-shadow:0 6px 16px rgba(200,68,44,.26);text-decoration:none}
+.sb-btn:hover{background:var(--electrico-2);color:var(--on-accent)}
 .sb-btn[disabled]{background:var(--color-neutral-300);box-shadow:none;cursor:default}
-.sb-btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:999px;border:1.5px solid var(--noche);background:#fff;color:var(--noche);font:700 15px var(--font-body);cursor:pointer;text-decoration:none}
-.sb-btn2:hover{background:var(--lila-2);color:var(--noche)}
+.sb-btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:999px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);font:700 15px var(--font-body);cursor:pointer;text-decoration:none}
+.sb-btn2:hover{background:var(--lila-2);color:var(--ink)}
 .sb-btn3{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px;border-radius:999px;border:none;background:none;color:var(--color-accent-700);font:700 14.5px var(--font-body);cursor:pointer;text-decoration:none}
 .sb-btn3:hover{background:var(--color-accent-100)}
-.sb-dark{background:var(--noche);color:#fff;box-shadow:none}.sb-dark:hover{background:var(--noche-2)}
+.sb-dark{background:var(--fill);color:var(--on-fill);box-shadow:none}.sb-dark:hover{background:var(--fill-2)}
 .sb-full{width:100%}
 .sb-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .sb-chips{display:flex;flex-wrap:wrap;gap:8px}
-.sb-chip{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:#fff;color:var(--noche);font:600 14.5px var(--font-body);cursor:pointer}
-.sb-chip:hover{border-color:var(--noche)}
-.sb-chip[aria-pressed="true"]{background:var(--noche);border-color:var(--noche);color:#fff;animation:scPop .26s cubic-bezier(.34,1.3,.64,1)}
-.sb-tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px 14px 13px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:#fff;color:var(--noche);cursor:pointer;min-height:84px}
-.sb-tile:hover{border-color:var(--noche)}
-.sb-tile[aria-pressed="true"]{background:var(--noche);border-color:var(--noche);color:#fff;animation:scPop .26s cubic-bezier(.34,1.3,.64,1)}
+.sb-chip{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);font:600 14.5px var(--font-body);cursor:pointer}
+.sb-chip:hover{border-color:var(--ink)}
+.sb-chip[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill);animation:scPop .26s cubic-bezier(.34,1.3,.64,1)}
+.sb-tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px 14px 13px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);cursor:pointer;min-height:84px}
+.sb-tile:hover{border-color:var(--ink)}
+.sb-tile[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill);animation:scPop .26s cubic-bezier(.34,1.3,.64,1)}
 .sb-tile .t1{font:700 15.5px var(--font-body)}
 .sb-tile .t2{font:500 12.5px/1.35 var(--font-body);opacity:.72}
 .sb-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:640px){.sb-grid2{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.sb-sel{min-height:48px;padding:0 12px;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:#fff;font:600 15px var(--font-body);color:var(--noche)}
-.sb-input{min-height:48px;padding:0 14px;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:#fff;font:600 16px var(--font-body);color:var(--noche);box-sizing:border-box}
+.sb-sel{min-height:48px;padding:0 12px;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--card);font:600 15px var(--font-body);color:var(--ink)}
+.sb-input{min-height:48px;padding:0 14px;border-radius:12px;border:1.5px solid var(--color-neutral-300);background:var(--card);font:600 16px var(--font-body);color:var(--ink);box-sizing:border-box}
 .sb-input:focus,.sb-sel:focus{border-color:var(--electrico);outline:none;box-shadow:0 0 0 3px rgba(200,68,44,.18)}
 .sb-sec{margin:0 0 28px}
 .sb-progress{height:6px;border-radius:99px;background:var(--color-neutral-200);overflow:hidden}
@@ -153,17 +224,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .sb-top{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--color-divider)}
 .sb-top>div{max-width:1120px;margin:0 auto;padding:0 16px;height:58px;display:flex;align-items:center;gap:14px}
 .sb-topnav{display:flex;gap:4px}
-.sb-topnav button{min-height:40px;padding:0 14px;border-radius:999px;border:none;background:none;color:var(--noche);font:600 14.5px var(--font-body);cursor:pointer}
-.sb-topnav button[aria-current="page"]{background:var(--noche);color:#fff}
+.sb-topnav button{min-height:40px;padding:0 14px;border-radius:999px;border:none;background:none;color:var(--ink);font:600 14.5px var(--font-body);cursor:pointer}
+.sb-topnav button[aria-current="page"]{background:var(--fill);color:var(--on-fill)}
 @media (max-width:819px){.sb-topnav{display:none}}
 @media (min-width:820px){.sb-nav{display:none}}
-.sb-avatar{width:38px;height:38px;border-radius:50%;border:none;background:var(--noche);color:#fff;font:800 15px var(--font-body);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.sb-avatar{width:38px;height:38px;border-radius:50%;border:none;background:var(--fill);color:var(--on-fill);font:800 15px var(--font-body);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
 .sb-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font:700 11.5px var(--font-body);background:var(--color-accent-100);color:var(--color-accent-700)}
-.sb-tag.dark{background:var(--noche);color:#fff}
+.sb-tag.dark{background:var(--fill);color:var(--on-fill)}
 .sb-tag.lila{background:var(--color-accent-2-100);color:var(--color-accent-2-700)}
 .sb-info{border-radius:var(--radius-md);background:var(--color-accent-2-100);color:var(--color-neutral-800);padding:12px 14px;font:500 13.5px/1.5 var(--font-body)}
 .sb-opt{display:flex;flex-direction:column;overflow:hidden}
-.sb-opt .foto{position:relative;height:150px;background:var(--noche);color:#fff;display:flex;align-items:flex-end;padding:12px 14px;overflow:hidden}
+.sb-opt .foto{position:relative;height:150px;background:var(--fill);color:var(--on-fill);display:flex;align-items:flex-end;padding:12px 14px;overflow:hidden}
 .sb-opt .foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .sb-opt .foto::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,33,27,0) 35%,rgba(43,33,27,.8) 100%)}
 .sb-opt .foto>*{position:relative;z-index:1}
@@ -171,22 +242,22 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (min-width:560px){.sb-datos{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (min-width:980px){.sb-optgrid .sb-datos{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .sb-datos>div{background:var(--lila);padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
-.sb-datos>div>b{font:800 15.5px/1.2 var(--font-body);color:var(--noche);overflow-wrap:anywhere}
+.sb-datos>div>b{font:800 15.5px/1.2 var(--font-body);color:var(--ink);overflow-wrap:anywhere}
 .sb-datos>div>span{font:700 10.5px var(--font-body);letter-spacing:.06em;color:var(--color-neutral-600);text-transform:uppercase}
 .sb-ruta{list-style:none;margin:10px 0 0;padding:0}
 .sb-ruta li{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--color-divider)}
 .sb-ruta li:first-child{border-top:none}
 .sb-ruta .h{font:700 12.5px var(--font-body);color:var(--color-neutral-600);min-width:62px;padding-top:1px}
-.sb-ruta .n{font:700 14.5px/1.25 var(--font-body);color:var(--noche)}
+.sb-ruta .n{font:700 14.5px/1.25 var(--font-body);color:var(--ink)}
 .sb-ruta .c{font:500 12.5px/1.35 var(--font-body);color:var(--color-neutral-600);margin-top:2px}
 .sb-veil{position:fixed;inset:0;z-index:95;background:rgba(43,33,27,.5);display:flex;align-items:flex-end;justify-content:center;animation:sbFade .2s ease}
 @media (min-width:820px){.sb-veil{align-items:center;padding:20px}}
-.sb-sheet{width:100%;max-width:520px;background:#fff;border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;animation:sbSheet .3s cubic-bezier(.2,.8,.2,1)}
+.sb-sheet{width:100%;max-width:520px;background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;animation:sbSheet .3s cubic-bezier(.2,.8,.2,1)}
 @media (min-width:820px){.sb-sheet{border-radius:24px}}
 .sb-grab{width:44px;height:5px;border-radius:9px;background:var(--color-neutral-300);margin:-8px auto 14px}
 .sb-gen{min-height:62vh;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:18px}
 .sb-gen li{display:flex;gap:12px;align-items:center;font:600 16px var(--font-body);color:var(--color-neutral-500);opacity:.5;transition:opacity .25s,color .25s}
-.sb-gen li.on{opacity:1;color:var(--noche)}
+.sb-gen li.on{opacity:1;color:var(--ink)}
 .sb-gen .dot{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--color-neutral-300);display:inline-flex;align-items:center;justify-content:center;flex:none}
 .sb-gen li.on .dot{border-color:var(--electrico);border-top-color:transparent;animation:sbSpin .8s linear infinite}
 .sb-gen li.ok .dot{border-color:var(--electrico);background:var(--electrico);animation:none}
@@ -196,14 +267,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (min-width:980px){.sb-res-head{max-width:none}}
 .sb-tabs{display:flex;gap:6px;background:var(--lila-2);padding:5px;border-radius:999px;margin:0 0 18px}
 .sb-tabs button{flex:1;min-height:42px;border:none;border-radius:999px;background:none;font:700 14px var(--font-body);color:var(--color-neutral-700);cursor:pointer}
-.sb-tabs button[aria-selected="true"]{background:#fff;color:var(--noche);box-shadow:var(--shadow-sm)}
-.sb-pin{width:42px;height:42px;border-radius:12px;background:var(--lila-2);display:inline-flex;align-items:center;justify-content:center;font:800 18px var(--font-heading);color:var(--noche);flex:none;overflow:hidden}
+.sb-tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm)}
+.sb-pin{width:42px;height:42px;border-radius:12px;background:var(--lila-2);display:inline-flex;align-items:center;justify-content:center;font:800 18px var(--font-heading);color:var(--ink);flex:none;overflow:hidden}
 .sb-pin img{width:100%;height:100%;object-fit:cover}
 .sb-leg{display:flex;align-items:center;gap:8px;padding:6px 0 6px 74px;font:600 12.5px var(--font-body);color:var(--color-neutral-600)}
 .sb-leg::before{content:'';width:2px;height:18px;background:var(--color-neutral-300);border-radius:2px;margin-right:4px}
 .sb-stop{display:flex;gap:12px;align-items:flex-start;padding:12px 0}
-.sb-stop .h{font:800 14px var(--font-body);color:var(--noche);min-width:62px;padding-top:2px}
-.sb-x{width:40px;height:40px;border-radius:50%;border:none;background:var(--lila-2);color:var(--noche);font:700 16px var(--font-body);cursor:pointer;flex:none}
+.sb-stop .h{font:800 14px var(--font-body);color:var(--ink);min-width:62px;padding-top:2px}
+.sb-x{width:40px;height:40px;border-radius:50%;border:none;background:var(--lila-2);color:var(--ink);font:700 16px var(--font-body);cursor:pointer;flex:none}
 
 /* ─────────────── Inicio: celular apilado, compu en una sola tabla ─────────────── */
 .sb-col{padding:18px 16px;margin-top:14px;scroll-margin-top:72px}
@@ -227,7 +298,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .sb-home-cta{flex:none;width:460px;max-width:460px}
   .sb-home-cta .sb-resumen-fijo{min-height:2.9em}
   /* Una sola tabla: tres columnas dentro de una misma tarjeta. */
-  .sb-tabla{display:grid;grid-template-columns:1.08fr 1fr 1fr;background:#fff;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-top:18px;overflow:hidden}
+  .sb-tabla{display:grid;grid-template-columns:1.08fr 1fr 1fr;background:var(--card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-top:18px;overflow:hidden}
   .sb-tabla>.sb-col,.sb-tabla>.sb-col:first-child{margin:0;border:none;border-radius:0;box-shadow:none;padding:18px 20px 20px}
   .sb-tabla>.sb-col+.sb-col{border-left:1px solid var(--color-divider)}
   .sb-tabla .sb-h3{font-size:17px}
@@ -290,9 +361,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .sb-det{display:grid;gap:22px;margin-top:6px}
 @media (min-width:860px){.sb-det{grid-template-columns:minmax(300px,440px) 1fr;gap:30px}}
 .sb-hechos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;background:var(--color-divider);border-radius:12px;overflow:hidden}
-.sb-hechos>div{background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sb-hechos>div{background:var(--card);padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .sb-hechos>div>span{font:700 10.5px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600)}
-.sb-hechos>div>b{font:700 13.5px/1.35 var(--font-body);color:var(--noche);overflow-wrap:anywhere}
+.sb-hechos>div>b{font:700 13.5px/1.35 var(--font-body);color:var(--ink);overflow-wrap:anywhere}
 .sb-combos{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:700px){.sb-combos{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
@@ -313,21 +384,21 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <sc-if value="{{ addPlanOn }}" hint-placeholder-val="{{ false }}">
 <div style="position:fixed;inset:0;background:rgba(32,30,29,.55);z-index:96;display:flex;align-items:center;justify-content:center;padding:20px" onClick="{{ addPlanClose }}">
-<div style="background:#fff;border:2px solid var(--color-text);max-width:460px;width:100%;padding:22px;max-height:86vh;overflow-y:auto" onClick="{{ noop }}">
+<div style="background:var(--card);border:2px solid var(--color-text);max-width:460px;width:100%;padding:22px;max-height:86vh;overflow-y:auto" onClick="{{ noop }}">
 <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px">
 <div style="flex:1"><div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">AGREGAR A UN PLAN</div>
 <h3 style="font:800 20px/1.15 var(--font-heading);margin:8px 0 0">{{ addPlanVenue }}</h3></div>
 <button aria-label="Cerrar" style="width:32px;height:32px;background:none;border:2px solid var(--color-neutral-300);font:700 13px var(--font-body);cursor:pointer;flex:none" onClick="{{ addPlanClose }}">✕</button>
 </div>
 <sc-if value="{{ addPlanHasCur }}" hint-placeholder-val="{{ false }}">
-<button onClick="{{ addPlanCur }}" style="width:100%;text-align:left;padding:13px 15px;background:#fff;border:2px solid var(--color-text);font:700 13.5px var(--font-body);cursor:pointer;margin-bottom:-2px" style-hover="background:var(--color-neutral-200)">{{ addPlanCurLabel }}</button>
+<button onClick="{{ addPlanCur }}" style="width:100%;text-align:left;padding:13px 15px;background:var(--card);border:2px solid var(--color-text);font:700 13.5px var(--font-body);cursor:pointer;margin-bottom:-2px" style-hover="background:var(--color-neutral-200)">{{ addPlanCurLabel }}</button>
 </sc-if>
 <sc-if value="{{ addPlanHasExisting }}" hint-placeholder-val="{{ false }}">
 <sc-for list="{{ addPlanExisting }}" as="ap" hint-placeholder-count="2">
-<button onClick="{{ ap.pick }}" style="width:100%;text-align:left;padding:12px 15px;background:#fff;border:2px solid var(--color-text);cursor:pointer;margin-bottom:-2px" style-hover="background:var(--color-neutral-200)"><span style="display:block;font:700 13.5px var(--font-body)">{{ ap.name }}</span><span style="display:block;font:500 11px var(--font-body);color:var(--color-neutral-600)">{{ ap.meta }}</span></button>
+<button onClick="{{ ap.pick }}" style="width:100%;text-align:left;padding:12px 15px;background:var(--card);border:2px solid var(--color-text);cursor:pointer;margin-bottom:-2px" style-hover="background:var(--color-neutral-200)"><span style="display:block;font:700 13.5px var(--font-body)">{{ ap.name }}</span><span style="display:block;font:500 11px var(--font-body);color:var(--color-neutral-600)">{{ ap.meta }}</span></button>
 </sc-for>
 </sc-if>
-<button onClick="{{ addPlanNew }}" style="width:100%;text-align:left;padding:13px 15px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 13.5px var(--font-body);cursor:pointer;margin-top:10px" style-hover="background:var(--color-accent-600)">+ Crear un plan nuevo con este lugar</button>
+<button onClick="{{ addPlanNew }}" style="width:100%;text-align:left;padding:13px 15px;background:var(--color-accent);color:var(--on-accent);border:2px solid var(--color-accent);font:700 13.5px var(--font-body);cursor:pointer;margin-top:10px" style-hover="background:var(--color-accent-600)">+ Crear un plan nuevo con este lugar</button>
 </div></div>
 </sc-if>
 
@@ -363,10 +434,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div style="position:relative">
 <input class="sb-input" style="width:100%" aria-label="Buscar amigo por su nombre" value="{{ sendQ }}" onInput="{{ setSendQ }}" placeholder="Busca su nombre en SOBRES">
 <sc-if value="{{ sendQOpen }}" hint-placeholder-val="{{ false }}">
-<div style="border:1px solid var(--color-divider);border-radius:12px;margin-top:6px;max-height:200px;overflow-y:auto;background:#fff">
+<div style="border:1px solid var(--color-divider);border-radius:12px;margin-top:6px;max-height:200px;overflow-y:auto;background:var(--card)">
 <sc-for list="{{ sendQResults }}" as="sq" hint-placeholder-count="2">
 <button onClick="{{ sq.pick }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 12px;background:none;border:none;border-bottom:1px solid var(--color-divider);cursor:pointer;min-height:48px">
-<span style="font:700 14px var(--font-body);flex:1;color:var(--noche)">{{ sq.name }}</span><span style="font:700 13px var(--font-body);color:var(--electrico)">Agregar</span>
+<span style="font:700 14px var(--font-body);flex:1;color:var(--ink)">{{ sq.name }}</span><span style="font:700 13px var(--font-body);color:var(--electrico)">Agregar</span>
 </button>
 </sc-for>
 <sc-if value="{{ sendQEmpty }}" hint-placeholder-val="{{ false }}"><div class="sb-note" style="padding:11px 12px">Nadie con ese nombre en SOBRES todavía. Mándale el enlace por WhatsApp.</div></sc-if>
@@ -425,7 +496,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div>
 <button onClick="{{ brandGo }}" aria-label="SOBRES, ir al inicio" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0;min-height:44px;flex:none">
 <span style="width:20px;height:20px;background:var(--electrico);display:inline-block;border-radius:6px;flex:none"></span>
-<span style="font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--noche)">SOBRES</span>
+<span style="font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--ink)">SOBRES</span>
 </button>
 <nav class="sb-topnav" aria-label="Secciones">
 <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3"><button aria-current="{{ n.current }}" onClick="{{ n.go }}">{{ n.label }}</button></sc-for>
@@ -441,7 +512,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <sc-if value="{{ hasInbox }}" hint-placeholder-val="{{ false }}">
 <div class="sb-wrap" style="padding-top:14px">
-<button onClick="{{ inboxGo }}" class="sb-card sc-rise" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;text-align:left;border-color:var(--electrico)"><span class="sb-tag dark">Nuevo</span><span style="flex:1;font:700 14.5px/1.35 var(--font-body);color:var(--noche)">{{ inboxLine }}</span><span style="font:700 14px var(--font-body);color:var(--electrico)">Ver →</span></button>
+<button onClick="{{ inboxGo }}" class="sb-card sc-rise" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;text-align:left;border-color:var(--electrico)"><span class="sb-tag dark">Nuevo</span><span style="flex:1;font:700 14.5px/1.35 var(--font-body);color:var(--ink)">{{ inboxLine }}</span><span style="font:700 14px var(--font-body);color:var(--electrico)">Ver →</span></button>
 </div>
 </sc-if>
 
@@ -449,6 +520,9 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" data-paso="{{ paso }}" style="padding:26px 0 32px">
 <div class="sb-home-top">
 <div class="sb-home-txt">
+<div class="sb-mascota" role="img" aria-label="Espacio para la mascota de SOBRES (imagen de relleno)">
+<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="36" rx="22" ry="20" fill="var(--color-accent)"/><ellipse cx="24" cy="32" rx="5" ry="6" fill="var(--card)"/><ellipse cx="40" cy="32" rx="5" ry="6" fill="var(--card)"/><circle cx="25" cy="33" r="2.6" fill="var(--ink)"/><circle cx="41" cy="33" r="2.6" fill="var(--ink)"/><path d="M26 44 q6 5 12 0" fill="none" stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round"/><path d="M20 18 q-4 -8 2 -10 M44 18 q4 -8 -2 -10" fill="none" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round"/></svg>
+</div>
 <div class="sb-kicker">{{ homeKicker }}</div>
 <h1 class="sb-h1">Arma tu salida en tres opciones.</h1>
 <p class="sb-sub">Dinos el ambiente, la zona y cuánto quieren gastar. Te damos tres planes completos para comparar: horario, trayectos y costo por persona.</p>
@@ -475,14 +549,14 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <sc-if value="{{ hayGustos }}" hint-placeholder-val="{{ false }}">
 <div class="sb-card sc-rise" style="margin-top:18px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
-<span style="flex:1;min-width:200px"><span class="sb-kicker" style="display:block;margin-bottom:4px">Lo que ya sabemos de ti</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ gustosResumen }}</span></span>
+<span style="flex:1;min-width:200px"><span class="sb-kicker" style="display:block;margin-bottom:4px">Lo que ya sabemos de ti</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ gustosResumen }}</span></span>
 <button class="sb-btn" onClick="{{ gustosGo }}"><span>Arma con mis gustos</span><span aria-hidden="true">→</span></button>
 <button class="sb-btn2" onClick="{{ diferenteGo }}">Quiero algo diferente</button>
 </div>
 </sc-if>
 <sc-if value="{{ hayRetomar }}" hint-placeholder-val="{{ false }}">
 <button onClick="{{ retomar }}" class="sb-card sc-rise solo-celular" style="width:100%;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;text-align:left;margin-top:18px">
-<span style="flex:1;min-width:0"><span class="sb-kicker" style="display:block;margin-bottom:4px">Retomar</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ retomarTxt }}</span></span><span style="font:700 18px var(--font-body);color:var(--electrico)">→</span></button>
+<span style="flex:1;min-width:0"><span class="sb-kicker" style="display:block;margin-bottom:4px">Retomar</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ retomarTxt }}</span></span><span style="font:700 18px var(--font-body);color:var(--electrico)">→</span></button>
 </sc-if>
 
 <sc-if value="{{ rapidoOn }}" hint-placeholder-val="{{ false }}">
@@ -535,7 +609,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-row sb-cuantos">
 <span class="sb-note" style="font-weight:600">Cuántos</span>
 <button class="sb-x" aria-label="Quitar una persona" onClick="{{ sizeDown }}">−</button>
-<span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--noche)" aria-live="polite">{{ groupSizeN }}</span>
+<span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--ink)" aria-live="polite">{{ groupSizeN }}</span>
 <button class="sb-x" aria-label="Agregar una persona" onClick="{{ sizeUp }}">+</button>
 </div>
 </sc-if>
@@ -591,6 +665,9 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
 <section data-screen-label="Tus opciones" class="sb-wide" style="padding:12px 0 40px">
 <div class="sb-res-head">
+<div class="sb-mascota sb-mascota-res" role="img" aria-label="Espacio para la mascota de SOBRES (imagen de relleno)">
+<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="36" rx="22" ry="20" fill="var(--color-accent)"/><ellipse cx="24" cy="32" rx="5" ry="6" fill="var(--card)"/><ellipse cx="40" cy="32" rx="5" ry="6" fill="var(--card)"/><circle cx="25" cy="33" r="2.6" fill="var(--ink)"/><circle cx="41" cy="33" r="2.6" fill="var(--ink)"/><path d="M26 44 q6 5 12 0" fill="none" stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round"/><path d="M20 18 q-4 -8 2 -10 M44 18 q4 -8 -2 -10" fill="none" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round"/></svg>
+</div>
 <button class="sb-btn3" style="margin-left:-12px" onClick="{{ ajustar }}">← Ajustar</button>
 <sc-if value="{{ tandaDe }}" hint-placeholder-val="{{ '' }}">
 <div class="sb-tag dark sc-rise" style="margin:8px 0 4px">{{ tandaDeTxt }}</div>
@@ -620,7 +697,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="foto" style="background:{{ o.fondo }}">
 <sc-if value="{{ o.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ o.photo }}" alt="" loading="lazy" onError="{{ o.photoFail }}"></sc-if>
 <div style="display:flex;flex-direction:column;gap:8px;width:100%">
-<div class="sb-row" style="gap:6px"><span class="sb-tag" style="background:rgba(255,255,255,.2);color:#fff">{{ o.num }}</span><span class="sb-tag" style="background:#fff;color:var(--noche)">{{ o.frase }}</span><sc-if value="{{ o.editado }}" hint-placeholder-val="{{ false }}"><span class="sb-tag lila">Editado</span></sc-if></div>
+<div class="sb-row" style="gap:6px"><span class="sb-tag" style="background:rgba(255,255,255,.2);color:#fff">{{ o.num }}</span><span class="sb-tag" style="background:var(--card);color:var(--ink)">{{ o.frase }}</span><sc-if value="{{ o.editado }}" hint-placeholder-val="{{ false }}"><span class="sb-tag lila">Editado</span></sc-if></div>
 <div style="font:800 21px/1.12 var(--font-heading);overflow-wrap:anywhere">{{ o.titulo }}</div>
 </div>
 </div>
@@ -710,7 +787,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <span class="sb-label" style="margin-bottom:6px">Qué hacer ahí</span>
 <ul style="margin:0;padding-left:18px;display:grid;gap:4px"><sc-for list="{{ detail.queHacer }}" as="q" hint-placeholder-count="2"><li class="sb-note" style="color:var(--color-neutral-800)">{{ q.t }}</li></sc-for></ul>
 </div>
-<sc-if value="{{ detail.why }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 14px"><b style="color:var(--noche)">Para ustedes:</b> {{ detail.why }}</p></sc-if>
+<sc-if value="{{ detail.why }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 14px"><b style="color:var(--ink)">Para ustedes:</b> {{ detail.why }}</p></sc-if>
 <div class="sb-hechos">
 <sc-for list="{{ detail.facts }}" as="f" hint-placeholder-count="6"><div><span>{{ f.k }}</span><b>{{ f.v }}</b></div></sc-for>
 </div>
@@ -735,7 +812,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <sc-if value="{{ detail.verResenas }}" hint-placeholder-val="{{ false }}">
 <div class="sb-card" style="padding:14px 16px;margin-top:18px">
-<div class="sb-row" style="margin-bottom:6px"><span class="sb-label" style="margin:0">Reseñas de la comunidad</span><sc-if value="{{ detail.hasAvg }}" hint-placeholder-val="{{ false }}"><span style="font:800 18px var(--font-heading);color:var(--noche)">★ {{ detail.rateAvg }}</span><span class="sb-note">{{ detail.rateNTxt }}</span></sc-if></div>
+<div class="sb-row" style="margin-bottom:6px"><span class="sb-label" style="margin:0">Reseñas de la comunidad</span><sc-if value="{{ detail.hasAvg }}" hint-placeholder-val="{{ false }}"><span style="font:800 18px var(--font-heading);color:var(--ink)">★ {{ detail.rateAvg }}</span><span class="sb-note">{{ detail.rateNTxt }}</span></sc-if></div>
 <sc-if value="{{ detail.canRate }}" hint-placeholder-val="{{ false }}">
 <div class="sb-row" style="gap:2px;margin-bottom:8px"><sc-for list="{{ detail.starBtns }}" as="st" hint-placeholder-count="5"><button aria-label="{{ st.aria }}" style="{{ st.style }}" onClick="{{ st.pick }}">{{ st.label }}</button></sc-for></div>
 <div class="sb-row" style="flex-wrap:nowrap"><input class="sb-input" style="flex:1;min-width:0" aria-label="Escribe una reseña corta (opcional)" value="{{ detail.myTxt }}" onInput="{{ detail.setMyTxt }}" placeholder="Reseña corta (opcional)"><button class="sb-btn2" style="flex:none" onClick="{{ detail.sendRate }}">Publicar</button></div>
@@ -758,7 +835,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-for list="{{ detail.combos }}" as="c" hint-placeholder-count="3">
 <button onClick="{{ c.open }}" class="sb-card" style="display:flex;gap:12px;align-items:center;cursor:pointer;padding:12px;text-align:left">
 <span class="sb-pin">{{ c.letter }}</span>
-<span style="min-width:0"><span class="sb-kicker" style="display:block;font-size:10px;margin-bottom:2px">{{ c.para }}</span><span style="display:block;font:700 14px var(--font-body);color:var(--noche)">{{ c.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ c.meta }}</span></span>
+<span style="min-width:0"><span class="sb-kicker" style="display:block;font-size:10px;margin-bottom:2px">{{ c.para }}</span><span style="display:block;font:700 14px var(--font-body);color:var(--ink)">{{ c.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ c.meta }}</span></span>
 </button>
 </sc-for>
 </div>
@@ -789,7 +866,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ planWhy }}" hint-placeholder-val="{{ '' }}"><div class="sb-info" style="margin:14px 0 0">{{ planWhy }}</div></sc-if>
 
 <sc-if value="{{ planZero }}" hint-placeholder-val="{{ false }}">
-<div class="sb-soft" style="padding:16px;margin-top:16px"><b style="display:block;font:700 15px var(--font-body);color:var(--noche)">Plan en blanco</b><span class="sb-note">Agrega tu primera parada abajo — del catálogo o escrita a mano.</span></div>
+<div class="sb-soft" style="padding:16px;margin-top:16px"><b style="display:block;font:700 15px var(--font-body);color:var(--ink)">Plan en blanco</b><span class="sb-note">Agrega tu primera parada abajo — del catálogo o escrita a mano.</span></div>
 </sc-if>
 
 <sc-if value="{{ hasPlanNow }}" hint-placeholder-val="{{ true }}">
@@ -802,7 +879,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 <span class="sb-pin"><sc-if value="{{ st.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ st.photo }}" alt="" loading="lazy"></sc-if><sc-if value="{{ st.noPhoto }}" hint-placeholder-val="{{ true }}">{{ st.letter }}</sc-if></span>
 <div style="flex:1;min-width:0">
-<button onClick="{{ st.open }}" style="background:none;border:none;padding:6px 0;margin:-6px 0;min-height:34px;font:700 15.5px/1.25 var(--font-body);cursor:pointer;text-align:left;color:var(--noche);overflow-wrap:anywhere">{{ st.name }}</button>
+<button onClick="{{ st.open }}" style="background:none;border:none;padding:6px 0;margin:-6px 0;min-height:34px;font:700 15.5px/1.25 var(--font-body);cursor:pointer;text-align:left;color:var(--ink);overflow-wrap:anywhere">{{ st.name }}</button>
 <div class="sb-note" style="font-size:12.5px;margin-top:2px">{{ st.sub }}</div>
 <div style="font:700 13px var(--font-body);color:var(--color-neutral-700);margin-top:4px">{{ st.pp }}</div>
 <sc-if value="{{ st.editar }}" hint-placeholder-val="{{ false }}">
@@ -838,10 +915,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-row" style="margin-bottom:8px"><span class="sb-label" style="margin:0;color:{{ swapLabelColor }}">{{ swapLabel }}</span><sc-if value="{{ swapMode }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" style="margin-left:auto;min-height:34px" onClick="{{ cancelSwap }}">Cancelar</button></sc-if></div>
 <input class="sb-input" style="width:100%" aria-label="Buscar un lugar para el plan" value="{{ planQ }}" onInput="{{ setPlanQ }}" placeholder="Busca: Ryoshi, boliche, Cineteca…">
 <sc-if value="{{ planQOpen }}" hint-placeholder-val="{{ false }}">
-<div style="border:1px solid var(--color-divider);border-radius:12px;margin-top:6px;max-height:260px;overflow-y:auto;background:#fff">
+<div style="border:1px solid var(--color-divider);border-radius:12px;margin-top:6px;max-height:260px;overflow-y:auto;background:var(--card)">
 <sc-for list="{{ planQResults }}" as="pr" hint-placeholder-count="3">
 <button onClick="{{ pr.add }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 12px;background:none;border:none;border-bottom:1px solid var(--color-divider);cursor:pointer;min-height:48px">
-<span style="min-width:0;flex:1"><span style="display:block;font:700 14px var(--font-body);color:var(--noche)">{{ pr.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ pr.meta }}</span></span>
+<span style="min-width:0;flex:1"><span style="display:block;font:700 14px var(--font-body);color:var(--ink)">{{ pr.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ pr.meta }}</span></span>
 <span style="font:700 13px var(--font-body);color:var(--electrico)">Agregar</span>
 </button>
 </sc-for>
@@ -864,7 +941,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <sc-if value="{{ hasPlanNow }}" hint-placeholder-val="{{ true }}">
 <div style="margin-top:18px">
-<div class="sb-row" style="justify-content:space-between"><span style="font:800 20px var(--font-heading);color:var(--noche)">{{ planTotal }}</span><button class="sb-btn3" onClick="{{ toggleDesglose }}" aria-expanded="{{ desgloseAbierto }}">{{ desgloseBtn }}</button></div>
+<div class="sb-row" style="justify-content:space-between"><span style="font:800 20px var(--font-heading);color:var(--ink)">{{ planTotal }}</span><button class="sb-btn3" onClick="{{ toggleDesglose }}" aria-expanded="{{ desgloseAbierto }}">{{ desgloseBtn }}</button></div>
 <sc-if value="{{ desgloseAbierto }}" hint-placeholder-val="{{ false }}"><p class="sb-note sc-rise" style="margin:6px 0 0">{{ planMeta }}</p></sc-if>
 </div>
 
@@ -890,7 +967,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <sc-if value="{{ planLocked }}" hint-placeholder-val="{{ false }}">
 <div key="{{ listoFx }}" class="sb-card sc-pop" style="margin-top:18px;overflow:hidden">
-<div class="sc-listo" style="background:var(--noche);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:13px">
+<div class="sc-listo" style="background:var(--fill);color:var(--on-fill);padding:16px 18px;display:flex;align-items:center;gap:13px">
 <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="11" fill="var(--electrico)"/><path d="M6.5 12.4l3.6 3.6 7.4-7.6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="34" style="animation:scCheck .5s ease-out .12s both"/></svg>
 <div style="min-width:0"><div style="font:800 19px/1.15 var(--font-heading)">{{ listoTitulo }}</div><div style="font:500 13px/1.45 var(--font-body);opacity:.85;margin-top:3px">{{ listoSub }}</div></div>
 </div>
@@ -898,8 +975,8 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-kicker">Ahora sí, apártalo</div><p class="sb-note" style="margin:4px 0 8px">{{ reservaProgreso }}</p>
 <sc-for list="{{ reservaItems }}" as="rs" hint-placeholder-count="3">
 <div class="sb-row" style="flex-wrap:nowrap;padding:10px 0;border-top:1px solid var(--color-divider);{{ rs.estilo }}">
-<span style="font:800 13.5px var(--font-body);min-width:62px;color:var(--noche)">{{ rs.hora }}</span>
-<span style="flex:1;min-width:0"><span style="display:block;font:700 14px var(--font-body);color:var(--noche)">{{ rs.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ rs.sub }}</span></span>
+<span style="font:800 13.5px var(--font-body);min-width:62px;color:var(--ink)">{{ rs.hora }}</span>
+<span style="flex:1;min-width:0"><span style="display:block;font:700 14px var(--font-body);color:var(--ink)">{{ rs.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ rs.sub }}</span></span>
 <button class="sb-btn2" style="min-height:40px;padding:0 14px;font-size:13px;flex:none" onClick="{{ rs.go }}" aria-label="{{ rs.aria }}">{{ rs.cta }}</button>
 </div>
 </sc-for>
@@ -938,7 +1015,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <h2 class="sb-h3" style="margin-bottom:10px">Confirmados · ¡se armó!</h2>
 <sc-for list="{{ confPlans }}" as="cp2" hint-placeholder-count="1">
 <div class="sb-card sc-rise" style="padding:14px 16px;margin-bottom:10px;border-color:var(--electrico)">
-<div style="font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ cp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ cp2.meta }}</div>
+<div style="font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ cp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ cp2.meta }}</div>
 <div class="sb-row" style="margin-top:10px"><button class="sb-btn2" style="min-height:40px" onClick="{{ cp2.open }}">Abrir</button><button class="sb-btn3" onClick="{{ cp2.goVote }}">Ver votos</button></div>
 </div>
 </sc-for>
@@ -949,7 +1026,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <h2 class="sb-h3" style="margin-bottom:10px">Te los mandaron</h2>
 <sc-for list="{{ recvPlans }}" as="rp2" hint-placeholder-count="2">
 <div class="sb-card" style="padding:14px 16px;margin-bottom:10px">
-<div style="font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ rp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ rp2.meta }}</div>
+<div style="font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ rp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ rp2.meta }}</div>
 <div class="sb-row" style="margin-top:10px"><button class="sb-btn2" style="min-height:40px" onClick="{{ rp2.open }}">Abrir</button><button class="sb-btn" style="min-height:40px;padding:0 16px;font-size:14px" onClick="{{ rp2.goVote }}">Votar</button></div>
 </div>
 </sc-for>
@@ -960,8 +1037,8 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <h2 class="sb-h3" style="margin-bottom:10px">Guardados</h2>
 <sc-for list="{{ savedPlans }}" as="sp" hint-placeholder-count="2">
 <div class="sb-card sc-rise" style="padding:14px 16px;margin-bottom:10px">
-<div class="sb-row" style="justify-content:space-between;gap:6px"><span class="sb-kicker">{{ sp.tag }}</span><span style="font:700 13px var(--font-body);color:var(--noche)">{{ sp.total }}</span></div>
-<div style="font:700 15px/1.35 var(--font-body);color:var(--noche);margin:6px 0 10px;overflow-wrap:anywhere">{{ sp.route }}</div>
+<div class="sb-row" style="justify-content:space-between;gap:6px"><span class="sb-kicker">{{ sp.tag }}</span><span style="font:700 13px var(--font-body);color:var(--ink)">{{ sp.total }}</span></div>
+<div style="font:700 15px/1.35 var(--font-body);color:var(--ink);margin:6px 0 10px;overflow-wrap:anywhere">{{ sp.route }}</div>
 <div class="sb-row"><button class="sb-btn2" style="min-height:40px" onClick="{{ sp.open }}">Abrir</button><button class="sb-btn3" style="color:var(--color-neutral-700)" onClick="{{ sp.del }}">Quitar</button></div>
 </div>
 </sc-for>
@@ -972,7 +1049,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <h2 class="sb-h3" style="margin-bottom:10px">Los que mandaste</h2>
 <sc-for list="{{ sentPlans }}" as="sp2" hint-placeholder-count="2">
 <div class="sb-card" style="padding:14px 16px;margin-bottom:10px">
-<div style="font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ sp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ sp2.meta }}</div>
+<div style="font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ sp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ sp2.meta }}</div>
 <div class="sb-row" style="margin-top:10px"><button class="sb-btn2" style="min-height:40px" onClick="{{ sp2.open }}">Abrir</button><button class="sb-btn3" onClick="{{ sp2.goVote }}">Ver votos</button><button class="sb-btn3" style="color:var(--color-neutral-700)" onClick="{{ sp2.del }}" aria-label="Borrar plan">Borrar</button></div>
 </div>
 </sc-for>
@@ -988,7 +1065,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-for list="{{ savedVenues }}" as="v" hint-placeholder-count="3">
 <div class="sb-card" style="display:flex;gap:12px;align-items:center;padding:12px 14px;margin-bottom:10px">
 <span class="sb-pin">{{ v.letter }}</span>
-<span style="min-width:0;flex:1"><button onClick="{{ v.open }}" style="background:none;border:none;padding:0;font:700 15px var(--font-body);cursor:pointer;text-align:left;color:var(--noche)">{{ v.name }}</button><span class="sb-note" style="display:block;font-size:12.5px">{{ v.meta }}</span></span>
+<span style="min-width:0;flex:1"><button onClick="{{ v.open }}" style="background:none;border:none;padding:0;font:700 15px var(--font-body);cursor:pointer;text-align:left;color:var(--ink)">{{ v.name }}</button><span class="sb-note" style="display:block;font-size:12.5px">{{ v.meta }}</span></span>
 <button class="sb-x" aria-label="{{ v.delAria }}" onClick="{{ v.del }}">✕</button>
 </div>
 </sc-for>
@@ -1010,7 +1087,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="4">
 <button onClick="{{ r.open }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 14px;background:none;border:none;border-bottom:1px solid var(--color-divider);cursor:pointer;min-height:52px">
 <span class="sb-pin" style="width:34px;height:34px;font-size:15px">{{ r.letter }}</span>
-<span style="min-width:0;flex:1"><span style="display:block;font:700 14px var(--font-body);color:var(--noche)">{{ r.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ r.meta }}</span></span>
+<span style="min-width:0;flex:1"><span style="display:block;font:700 14px var(--font-body);color:var(--ink)">{{ r.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ r.meta }}</span></span>
 </button>
 </sc-for>
 <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ false }}"><div class="sb-note" style="padding:12px 14px">Nada con ese nombre en el catálogo. Prueba otra palabra.</div></sc-if>
@@ -1026,7 +1103,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <span style="font:700 9.5px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-right:4px">ZONA:</span>
 <sc-for list="{{ mapZones }}" as="z" hint-placeholder-count="13"><button style="{{ z.style }}" onClick="{{ z.pick }}">{{ z.label }}</button></sc-for>
 </div>
-<div style="border:2px solid var(--color-text);background:#fff;position:relative">
+<div style="border:2px solid var(--color-text);background:var(--card);position:relative">
 <sc-if value="{{ hasRealMap }}" hint-placeholder-val="{{ false }}">
 <div id="lmap" role="application" aria-label="Mapa de lugares de la Ciudad de México" style="height:min(62vh,560px);width:100%;z-index:1"></div>
 </sc-if>
@@ -1043,23 +1120,23 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-for>
 </svg>
 </sc-if>
-<div style="position:absolute;left:12px;bottom:12px;background:#fff;border:2px solid var(--color-text);padding:9px 12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 24px);z-index:1000">
-<span style="display:inline-flex;align-items:center;gap:6px;font:600 10.5px var(--font-body)"><span style="width:9px;height:9px;background:var(--color-text);border-radius:50%"></span>Comer · beber</span>
+<div style="position:absolute;left:12px;bottom:12px;background:var(--card);border:2px solid var(--color-text);padding:9px 12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 24px);z-index:1000">
+<span style="display:inline-flex;align-items:center;gap:6px;font:600 10.5px var(--font-body)"><span style="width:9px;height:9px;background:var(--fill);border-radius:50%"></span>Comer · beber</span>
 <span style="display:inline-flex;align-items:center;gap:6px;font:600 10.5px var(--font-body)"><span style="width:9px;height:9px;background:var(--color-accent);border-radius:50%"></span>Cultura · experiencias</span>
 <span style="font:700 10.5px var(--font-body);color:var(--color-neutral-600)">{{ mapCount }}</span>
 </div>
 <sc-if value="{{ mapZoneOn }}" hint-placeholder-val="{{ false }}">
-<button style="position:absolute;right:12px;top:12px;padding:10px 14px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer;z-index:1000" style-hover="background:var(--color-accent-600)" onClick="{{ searchArea }}">Buscar en esta zona →</button>
+<button style="position:absolute;right:12px;top:12px;padding:10px 14px;background:var(--color-accent);color:var(--on-accent);border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer;z-index:1000" style-hover="background:var(--color-accent-600)" onClick="{{ searchArea }}">Buscar en esta zona →</button>
 </sc-if>
 </div>
 <sc-if value="{{ pinOn }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:#fff;border:2px solid var(--color-text);border-top:none;padding:14px 16px;margin-bottom:50px">
+<div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:var(--card);border:2px solid var(--color-text);border-top:none;padding:14px 16px;margin-bottom:50px">
 <span style="width:46px;height:46px;background:var(--color-neutral-200);display:inline-flex;align-items:center;justify-content:center;font:800 22px var(--font-heading);flex:none">{{ pinSel.letter }}</span>
 <span style="min-width:170px;flex:1"><span style="display:block;font:800 17px var(--font-heading)">{{ pinSel.name }}</span><span style="display:block;font:500 12px var(--font-body);color:var(--color-neutral-600)">{{ pinSel.meta }}</span></span>
 <span style="font:600 11.5px var(--font-body);color:var(--color-accent-700)">{{ pinSel.av }}</span>
 <div style="margin-left:auto;display:flex;gap:9px">
-<button style="padding:10px 14px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ pinSel.open }}">Ver detalle →</button>
-<button style="padding:10px 14px;background:#fff;border:2px solid var(--color-text);font:600 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ pinSel.save }}">{{ pinSel.saveLabel }}</button>
+<button style="padding:10px 14px;background:var(--color-accent);color:var(--on-accent);border:2px solid var(--color-accent);font:700 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ pinSel.open }}">Ver detalle →</button>
+<button style="padding:10px 14px;background:var(--card);border:2px solid var(--color-text);font:600 12.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ pinSel.save }}">{{ pinSel.saveLabel }}</button>
 </div>
 </div>
 </sc-if>
@@ -1074,33 +1151,33 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">PLAN CON AMIGOS · VOTACIÓN</div>
 <h1 style="font:800 clamp(30px,4.5vw,52px)/1 var(--font-heading);letter-spacing:-.025em;margin:8px 0 0">Voten y se arma</h1>
 </div>
-<div style="margin-left:auto;display:flex;align-items:center;gap:0;border:2px solid var(--color-text);background:#fff">
+<div style="margin-left:auto;display:flex;align-items:center;gap:0;border:2px solid var(--color-text);background:var(--card)">
 <span style="font:600 12.5px ui-monospace,monospace;padding:11px 14px">{{ gLink }}</span>
-<button style="padding:11px 14px;background:var(--color-text);color:#fff;border:none;font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent)" onClick="{{ gCopy }}">Copiar link</button>
-<button style="padding:11px 14px;background:#fff;border:none;border-left:2px solid var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ qrToggle }}">QR</button>
+<button style="padding:11px 14px;background:var(--fill);color:var(--on-fill);border:none;font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent)" onClick="{{ gCopy }}">Copiar link</button>
+<button style="padding:11px 14px;background:var(--card);border:none;border-left:2px solid var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ qrToggle }}">QR</button>
 </div>
 </div>
 <sc-if value="{{ qrOpen }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-text);background:#fff;padding:16px 18px;margin-bottom:14px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+<div style="border:2px solid var(--color-text);background:var(--card);padding:16px 18px;margin-bottom:14px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
 <img src="{{ qrSrc }}" alt="QR del sitio" style="width:200px;height:200px;border:2px solid var(--color-text)">
 <div><div style="font:800 16px var(--font-heading);margin-bottom:4px">Escanéame para entrar</div><div style="font:500 13px/1.5 var(--font-body);color:var(--color-neutral-700);max-width:300px">Proyecta esto en clase: cada quien lo escanea con su cámara, pone su nombre y ya está adentro votando.</div></div>
 </div>
 </sc-if>
 <sc-if value="{{ showLiveVoters }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-accent);background:#fff;padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<div style="border:2px solid var(--color-accent);background:var(--card);padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
 <span style="font:700 10px var(--font-body);letter-spacing:.14em;color:var(--color-accent)">● VOTACIÓN EN VIVO — TODOS VEN LO MISMO</span>
 <span style="font:600 12.5px var(--font-body)">{{ liveVotersLine }}</span>
 </div>
 </sc-if>
 <sc-if value="{{ groupNeedName }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-accent);background:#fff;padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<div style="border:2px solid var(--color-accent);background:var(--card);padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
 <span style="font:700 12.5px var(--font-body)">Pon tu nombre para entrar a la votación en vivo:</span>
 <input aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:9px 11px;border:2px solid var(--color-neutral-300);font:600 13px var(--font-body)">
-<button style="padding:9px 13px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ joinGo }}">Entrar</button>
+<button style="padding:9px 13px;background:var(--color-accent);color:var(--on-accent);border:2px solid var(--color-accent);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ joinGo }}">Entrar</button>
 </div>
 </sc-if>
 <sc-if value="{{ showLoosePropose }}" hint-placeholder-val="{{ true }}">
-<div style="border:2px solid var(--color-text);background:#fff;padding:14px 16px;margin-bottom:18px;position:relative">
+<div style="border:2px solid var(--color-text);background:var(--card);padding:14px 16px;margin-bottom:18px;position:relative">
 <div style="font:700 10px var(--font-body);letter-spacing:.14em;color:var(--color-neutral-600);margin-bottom:8px">PROPONER UN LUGAR SUELTO · "YO QUIERO IR A…"</div>
 <input aria-label="Escribe el nombre: Contramar, MUAC, lucha libre" value="{{ gQ }}" onInput="{{ setGQ }}" placeholder="Escribe el nombre: Contramar, MUAC, lucha libre…" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)">
 <sc-if value="{{ gQOpen }}" hint-placeholder-val="{{ false }}">
@@ -1118,27 +1195,27 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <div style="max-width:920px">
 <sc-if value="{{ hasLinkPlan }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-accent);background:var(--color-accent);color:#fff;padding:15px 18px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+<div style="border:2px solid var(--color-accent);background:var(--color-accent);color:var(--on-accent);padding:15px 18px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
 <span style="font:800 16px var(--font-heading)">📩 {{ linkPlanBy }} te envió este plan</span>
 <span style="font:500 12.5px var(--font-body);opacity:.9">Vótalo aquí abajo: "Sobres, me late" o "No jalo".</span>
-<button style="margin-left:auto;padding:9px 14px;background:#fff;color:var(--color-accent);border:2px solid #fff;font:700 12.5px var(--font-body);cursor:pointer" onClick="{{ addSenderFriend }}">{{ senderFriendLabel }}</button>
+<button style="margin-left:auto;padding:9px 14px;background:var(--card);color:var(--color-accent);border:2px solid #fff;font:700 12.5px var(--font-body);cursor:pointer" onClick="{{ addSenderFriend }}">{{ senderFriendLabel }}</button>
 </div>
 </sc-if>
 <sc-if value="{{ hasFocus }}" hint-placeholder-val="{{ false }}">
-<button style="margin-bottom:12px;padding:9px 14px;background:#fff;border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ clearFocus }}">← Ver todos los planes</button>
+<button style="margin-bottom:12px;padding:9px 14px;background:var(--card);border:2px solid var(--color-text);font:600 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ clearFocus }}">← Ver todos los planes</button>
 </sc-if>
 <sc-if value="{{ hasGPlans }}" hint-placeholder-val="{{ false }}"><div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:10px">PLANES PROPUESTOS · VOTA EL PLAN COMPLETO Y CADA PARADA</div></sc-if>
 <sc-for list="{{ gPlans }}" as="o" hint-placeholder-count="2">
 <div style="{{ o.rowStyle }}">
 <sc-if value="{{ o.isConf }}" hint-placeholder-val="{{ false }}">
-<div style="background:var(--color-accent);color:#fff;margin:-16px -18px 12px;padding:10px 18px;font:800 14px var(--font-heading);letter-spacing:.02em">🎉 ¡SE ARMÓ! Todos dijeron que sí — este plan está confirmado</div>
+<div style="background:var(--color-accent);color:var(--on-accent);margin:-16px -18px 12px;padding:10px 18px;font:800 14px var(--font-heading);letter-spacing:.02em">🎉 ¡SE ARMÓ! Todos dijeron que sí — este plan está confirmado</div>
 </sc-if>
 <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
 <span style="min-width:200px;flex:1"><span style="display:block;font:800 17px var(--font-heading)">{{ o.name }}</span><span style="display:block;font:500 12px var(--font-body);color:var(--color-neutral-600);margin-top:2px">{{ o.byLine }}</span></span>
 <div style="display:flex;gap:7px;flex-wrap:wrap">
-<sc-if value="{{ o.hasPlan }}" hint-placeholder-val="{{ false }}"><button style="white-space:nowrap;padding:9px 12px;border:2px solid var(--color-text);background:#fff;font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ o.openPlan }}">Ver plan →</button></sc-if>
-<button style="white-space:nowrap;padding:9px 12px;border:2px solid var(--color-neutral-300);background:#fff;font:700 12px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ o.copyLink }}">🔗 Copiar link</button>
-<button aria-label="Cerrar" style="padding:9px 10px;border:2px solid var(--color-neutral-300);background:#fff;font:700 12px var(--font-body);cursor:pointer;color:var(--color-neutral-600)" style-hover="border-color:var(--color-text)" onClick="{{ o.del }}">✕</button>
+<sc-if value="{{ o.hasPlan }}" hint-placeholder-val="{{ false }}"><button style="white-space:nowrap;padding:9px 12px;border:2px solid var(--color-text);background:var(--card);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)" onClick="{{ o.openPlan }}">Ver plan →</button></sc-if>
+<button style="white-space:nowrap;padding:9px 12px;border:2px solid var(--color-neutral-300);background:var(--card);font:700 12px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ o.copyLink }}">🔗 Copiar link</button>
+<button aria-label="Cerrar" style="padding:9px 10px;border:2px solid var(--color-neutral-300);background:var(--card);font:700 12px var(--font-body);cursor:pointer;color:var(--color-neutral-600)" style-hover="border-color:var(--color-text)" onClick="{{ o.del }}">✕</button>
 </div>
 </div>
 <sc-if value="{{ o.hasStops }}" hint-placeholder-val="{{ false }}">
@@ -1155,7 +1232,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px">
 <button class="{{ o.sobFx }}" style="{{ o.sobStyle }}" onClick="{{ o.voteSobres }}" aria-pressed="{{ o.sobOn }}" aria-label="{{ o.sobAria }}"><span class="{{ o.sobIcon }}">🙌</span> Sobres, me late · {{ o.sobres }}</button>
 <button style="{{ o.nojStyle }}" onClick="{{ o.voteNojalo }}" aria-pressed="{{ o.nojOn }}" aria-label="{{ o.nojAria }}">No jalo · {{ o.nojalo }}</button>
-<button style="white-space:nowrap;padding:10px 15px;border:2px solid var(--color-neutral-300);background:#fff;font:700 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ o.proposeMore }}">+ Proponer algo más</button>
+<button style="white-space:nowrap;padding:10px 15px;border:2px solid var(--color-neutral-300);background:var(--card);font:700 13px var(--font-body);cursor:pointer" style-hover="border-color:var(--color-text)" onClick="{{ o.proposeMore }}">+ Proponer algo más</button>
 <span style="font:700 11.5px var(--font-body);color:var(--color-neutral-600);margin-left:auto">{{ o.countLabel }}</span>
 </div>
 <sc-if value="{{ o.hasVoterLine }}" hint-placeholder-val="{{ false }}"><div style="font:500 11px var(--font-body);color:var(--color-neutral-600);margin-top:7px">{{ o.voterLine }}</div></sc-if>
@@ -1166,10 +1243,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </div>
 </sc-for>
-<div style="background:var(--color-text);color:#fff;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+<div style="background:var(--fill);color:var(--on-fill);padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:14px">
 <span style="font:700 10px var(--font-body);letter-spacing:.16em;color:#f5a08f">CONSENSO</span>
 <span style="font:800 17px var(--font-heading)">{{ gConsensus }}</span>
-<button style="margin-left:auto;display:flex;gap:26px;padding:12px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 13.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ gConfirm }}"><span>Abrir el plan ganador</span><span>→</span></button>
+<button style="margin-left:auto;display:flex;gap:26px;padding:12px 16px;background:var(--color-accent);color:var(--on-accent);border:2px solid var(--color-accent);font:700 13.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ gConfirm }}"><span>Abrir el plan ganador</span><span>→</span></button>
 </div>
 <p style="font:500 12px/1.5 var(--font-body);color:var(--color-neutral-600);margin:12px 0 50px">{{ gFootNote }}</p>
 </div>
@@ -1180,23 +1257,23 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <section data-screen-label="Perfil">
 <div style="padding:30px 0 18px"><div style="font:700 11px var(--font-body);letter-spacing:.18em;color:var(--color-accent)">TU PERFIL · APRENDE CON CADA PLAN</div><h1 style="font:800 clamp(30px,4.5vw,52px)/1 var(--font-heading);letter-spacing:-.025em;margin:8px 0 0">Hola, {{ profileName }}</h1></div>
 <sc-if value="{{ needJoin }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-accent);background:#fff;padding:16px 18px;margin-bottom:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<div style="border:2px solid var(--color-accent);background:var(--card);padding:16px 18px;margin-bottom:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
 <span style="font:700 14px var(--font-body)">Ponte un nombre para calificar lugares, agregar amigos y votar:</span>
 <input aria-label="Tu nombre" value="{{ nameInput }}" onInput="{{ setNameInput }}" placeholder="Tu nombre…" style="padding:10px 12px;border:2px solid var(--color-neutral-300);font:600 14px var(--font-body)">
-<button style="padding:10px 16px;background:var(--color-accent);color:#fff;border:2px solid var(--color-accent);font:700 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ joinGo }}">Entrar →</button>
+<button style="padding:10px 16px;background:var(--color-accent);color:var(--on-accent);border:2px solid var(--color-accent);font:700 14px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent-600)" onClick="{{ joinGo }}">Entrar →</button>
 </div>
 </sc-if>
-<div style="border:2px solid var(--color-text);background:#fff;padding:16px 18px;margin-bottom:22px">
+<div style="border:2px solid var(--color-text);background:var(--card);padding:16px 18px;margin-bottom:22px">
 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
 <div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent)">TUS AMIGOS · CON ELLOS ARMAS Y COMPARTES PLANES</div>
-<button style="padding:9px 15px;background:var(--color-text);color:#fff;border:2px solid var(--color-text);font:700 13.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ toggleFriends }}">{{ friendCountLabel }}</button>
+<button style="padding:9px 15px;background:var(--fill);color:var(--on-fill);border:2px solid var(--fill);font:700 13.5px var(--font-body);cursor:pointer" style-hover="background:var(--color-accent);border-color:var(--color-accent)" onClick="{{ toggleFriends }}">{{ friendCountLabel }}</button>
 </div>
 <sc-if value="{{ friendsOpen }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:12px"></div>
 <sc-if value="{{ hasFriendChips }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
 <sc-for list="{{ myFriendChips }}" as="f" hint-placeholder-count="3">
-<span style="display:inline-flex;align-items:center;gap:8px;border:2px solid var(--color-accent);background:var(--color-accent);color:#fff;padding:7px 8px 7px 13px">
+<span style="display:inline-flex;align-items:center;gap:8px;border:2px solid var(--color-accent);background:var(--color-accent);color:var(--on-accent);padding:7px 8px 7px 13px">
 <span style="font:700 13.5px var(--font-body)">{{ f.name }}</span>
 <button aria-label="Cerrar" style="background:none;border:none;color:#fff;font:700 13px var(--font-body);cursor:pointer;padding:0 4px;opacity:.8" onClick="{{ f.un }}">✕</button>
 </span>
@@ -1206,7 +1283,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div style="position:relative;max-width:420px">
 <input aria-label="Busca a tus amigos por su nombre" value="{{ friendQ }}" onInput="{{ setFriendQ }}" placeholder="Busca a tus amigos por su nombre…" style="width:100%;box-sizing:border-box;padding:11px 12px;border:2px solid var(--color-neutral-300);font:600 13.5px var(--font-body)">
 <sc-if value="{{ friendQOpen }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-text);border-top:none;background:#fff">
+<div style="border:2px solid var(--color-text);border-top:none;background:var(--card)">
 <sc-for list="{{ friendResults }}" as="fr" hint-placeholder-count="2">
 <button onClick="{{ fr.add }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px 12px;background:none;border:none;border-bottom:1.5px solid var(--color-neutral-200);cursor:pointer" style-hover="background:var(--color-neutral-100,#faf9f8)">
 <span style="font:700 13.5px var(--font-body);flex:1">{{ fr.name }}</span>
@@ -1220,7 +1297,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 </div>
 <sc-if value="{{ hasGroupReservas }}" hint-placeholder-val="{{ false }}">
-<div style="border:2px solid var(--color-text);background:#fff;padding:16px 18px;margin-bottom:22px">
+<div style="border:2px solid var(--color-text);background:var(--card);padding:16px 18px;margin-bottom:22px">
 <div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent);margin-bottom:10px">RESERVAS DEL GRUPO · EN VIVO</div>
 <sc-for list="{{ groupReservas }}" as="gr" hint-placeholder-count="2">
 <div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1.5px solid var(--color-neutral-200);padding:7px 0">
@@ -1232,10 +1309,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:26px">
 <sc-for list="{{ insights }}" as="i" hint-placeholder-count="3">
-<div style="background:#fff;border:2px solid var(--color-text);padding:16px"><div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent);margin-bottom:8px">{{ i.k }}</div><div style="font:600 14.5px/1.5 var(--font-body)">{{ i.v }}</div></div>
+<div style="background:var(--card);border:2px solid var(--color-text);padding:16px"><div style="font:800 10px var(--font-body);letter-spacing:.16em;color:var(--color-accent);margin-bottom:8px">{{ i.k }}</div><div style="font:600 14.5px/1.5 var(--font-body)">{{ i.v }}</div></div>
 </sc-for>
 </div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:2px solid var(--color-text);background:#fff;margin-bottom:30px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:2px solid var(--color-text);background:var(--card);margin-bottom:30px">
 <sc-for list="{{ pStats }}" as="s" hint-placeholder-count="4"><div style="padding:14px 16px;border:.75px solid var(--color-neutral-300)"><div style="font:800 26px var(--font-heading)">{{ s.v }}</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600);margin-top:3px">{{ s.k }}</div></div></sc-for>
 </div>
 <div style="margin-bottom:26px">
@@ -1294,10 +1371,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <h2 id="acerca-titulo" class="sb-h2" style="margin-top:0">Acerca de SOBRES</h2>
 <p class="sb-sub" style="font-size:15px">SOBRES arma salidas en la Ciudad de México: te da tres planes completos para comparar y después te ayuda a ajustarlos, guardarlos y compartirlos.</p>
 <div style="display:grid;gap:12px;margin:18px 0">
-<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--noche)">Proyecto</b><span class="sb-note">Prototipo académico de Emprendimiento en Acción, por Christian Atherton y Pablo Masso.</span></div>
-<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--noche)">Catálogo</b><span class="sb-note">{{ catCount }} lugares: dataset de la CDMX 2025 y curaduría propia. Cada ficha dice de dónde sale su precio.</span></div>
-<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--noche)">Precios y horarios</b><span class="sb-note">La mayoría son estimados. Cuando un dato no está confirmado lo decimos en la ficha y en el plan; confírmalo antes de ir.</span></div>
-<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--noche)">Fotos</b><span class="sb-note">Wikimedia Commons, con licencias abiertas.</span></div>
+<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--ink)">Proyecto</b><span class="sb-note">Prototipo académico de Emprendimiento en Acción, por Christian Atherton y Pablo Masso.</span></div>
+<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--ink)">Catálogo</b><span class="sb-note">{{ catCount }} lugares: dataset de la CDMX 2025 y curaduría propia. Cada ficha dice de dónde sale su precio.</span></div>
+<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--ink)">Precios y horarios</b><span class="sb-note">La mayoría son estimados. Cuando un dato no está confirmado lo decimos en la ficha y en el plan; confírmalo antes de ir.</span></div>
+<div class="sb-soft" style="padding:12px 14px"><b style="display:block;font:700 14px var(--font-body);color:var(--ink)">Fotos</b><span class="sb-note">Wikimedia Commons, con licencias abiertas.</span></div>
 </div>
 <button class="sb-btn2 sb-full" onClick="{{ acercaCerrar }}">Cerrar</button>
 </div>
@@ -2516,7 +2593,7 @@ class Component extends DCLogic {
   }
 
   planConfirmed(p) { const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
-  chip(on) { return `padding:9px 14px;min-height:40px;border-radius:999px;border:1.5px solid ${on?'var(--noche)':'var(--color-neutral-300)'};background:${on?'var(--noche)':'#fff'};color:${on?'#fff':'var(--noche)'};font:600 13.5px var(--font-body);cursor:pointer;white-space:nowrap`; }
+  chip(on) { return `padding:9px 14px;min-height:40px;border-radius:999px;border:1.5px solid ${on?'var(--fill)':'var(--color-neutral-300)'};background:${on?'var(--fill)':'var(--card)'};color:${on?'var(--on-fill)':'var(--ink)'};font:600 13.5px var(--font-body);cursor:pointer;white-space:nowrap`; }
   strip(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
   budgetMax() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const b = this.BUD.find(x => x[0] === s.budget); return b ? b[2] : 99999; }
   zoneList() { const s = this.state; if (s.zone === 'all') return this.ZONES.map(z => z[0]);
@@ -4611,7 +4688,7 @@ class Component extends DCLogic {
     const navDef = [['home','Hoy'],['map','Mapa'],['plan','Mis planes'],['saved','Guardados'],['profile','Perfil']];
     const goPlan = () => { this.setState({ planView: 'list', sendOpen: false, swapIdx: null, results: r || this.engine() }); this.nav('plan'); };
     const navItems = navDef.map(([id,label]) => ({ label, style: `padding:9px 12px;background:none;border:none;font:${view===id?'800':'600'} 13.5px var(--font-body);cursor:pointer;color:${view===id?'var(--color-accent)':'var(--color-text)'};border-bottom:3px solid ${view===id?'var(--color-accent)':'transparent'};white-space:nowrap`, go: () => id==='plan' ? goPlan() : (id==='map' && s.zone !== 'all' && s.results) ? this.nav('map', { mapZone: s.zone }) : this.nav(id) }));
-    const bottomNav = navDef.map(([id,label]) => ({ label: label==='Mis planes'?'Planes':label, style: `flex:1;padding:13px 4px 15px;background:${view===id?'var(--color-text)':'transparent'};color:${view===id?'#fff':'var(--color-text)'};border:none;font:700 11.5px var(--font-body);cursor:pointer;letter-spacing:.04em`, go: () => id==='plan' ? goPlan() : (id==='map' && s.zone !== 'all' && s.results) ? this.nav('map', { mapZone: s.zone }) : this.nav(id) }));
+    const bottomNav = navDef.map(([id,label]) => ({ label: label==='Mis planes'?'Planes':label, style: `flex:1;padding:13px 4px 15px;background:${view===id?'var(--fill)':'transparent'};color:${view===id?'var(--on-fill)':'var(--color-text)'};border:none;font:700 11.5px var(--font-body);cursor:pointer;letter-spacing:.04em`, go: () => id==='plan' ? goPlan() : (id==='map' && s.zone !== 'all' && s.results) ? this.nav('map', { mapZone: s.zone }) : this.nav(id) }));
     // Los chips son botones de alternancia: aria-pressed dice si están puestos.
     // Un aria-label por sí solo no comunica el estado a un lector de pantalla.
     const mkChips = (list, sel, set, grupo) => list.map(([id,label]) => ({ label,
@@ -4794,7 +4871,7 @@ class Component extends DCLogic {
           + ' no hay nada con copas abierto a esa hora dentro de tu presupuesto.');
       }
       if (_av.length) planWhy = _av.map(x => x.replace(/^⚠️ /, '')).join(' ') + (planWhy ? ' ' + planWhy : ''); }
-    const stopOpts = [1,2,3,4,5].map(n => ({ label: String(n), style: `padding:9px 15px;border:none;background:${s.planStops===n?'var(--color-text)':'#fff'};color:${s.planStops===n?'#fff':'var(--color-text)'};font:700 13px var(--font-body);cursor:pointer;border-left:${n>1?'2px solid var(--color-text)':'none'}`, pick: () => this.setState({ planStops: n }) }));
+    const stopOpts = [1,2,3,4,5].map(n => ({ label: String(n), style: `padding:9px 15px;border:none;background:${s.planStops===n?'var(--fill)':'var(--card)'};color:${s.planStops===n?'var(--on-fill)':'var(--color-text)'};font:700 13px var(--font-body);cursor:pointer;border-left:${n>1?'2px solid var(--color-text)':'none'}`, pick: () => this.setState({ planStops: n }) }));
     const catGroups = { todo: null, comer: this.FOOD, beber: this.DRINK, cultura: ['Museo','Galería','Cine','Teatro','Biblioteca','Librería','Centro cultural','Sitio histórico'], experiencias: ['Taller','Tour','Espectáculo','Mercado','Al aire libre','Foro','Experiencia','Evento','Concierto','Pop-up','Promoción'] };
     const mapCats = [['todo','Todo'],['comer','Comer'],['beber','Beber'],['cultura','Cultura'],['experiencias','Experiencias y eventos']].map(([id,label]) => ({ label, style: this.chip(s.mapCat === id).replace('9px 14px','8px 12px'), pick: () => this.setState({ mapCat: id, pinId: null }) }));
     const mapZones = [{ label: 'Toda la ciudad', style: this.chip(s.mapZone === 'all').replace('9px 14px','7px 11px'), pick: () => this.setState({ mapZone: 'all', pinId: null }) }].concat(this.ZONES.map(z => ({ label: z[1], style: this.chip(s.mapZone === z[0]).replace('9px 14px','7px 11px'), pick: () => this.setState({ mapZone: z[0], pinId: null }) })));
@@ -4853,16 +4930,16 @@ class Component extends DCLogic {
       const conf = this.planConfirmed(p);
       const votes = p.votes || {}; const cnt = k => Object.values(votes).filter(x => x === k).length;
       const sob = cnt('sobres'), noj = cnt('nojalo'); const mine = votes[me];
-      const vb = (kind, on) => `white-space:nowrap;padding:10px 15px;border:2px solid ${on ? (kind === 'sobres' ? 'var(--color-accent)' : 'var(--color-text)') : 'var(--color-neutral-300)'};background:${on ? (kind === 'sobres' ? 'var(--color-accent)' : 'var(--color-text)') : '#fff'};color:${on ? '#fff' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:pointer`;
+      const vb = (kind, on) => `white-space:nowrap;padding:10px 15px;border:2px solid ${on ? (kind === 'sobres' ? 'var(--color-accent)' : 'var(--color-text)') : 'var(--color-neutral-300)'};background:${on ? (kind === 'sobres' ? 'var(--color-accent)' : 'var(--fill)') : 'var(--card)'};color:${on ? 'var(--on-fill)' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:pointer`;
       const votePl = kind => () => { if (!this.state.userName) { this.pedirCuenta('votar', () => this.mutate('votePlan', { user: this.state.userName, planId: p.id, kind })); return; }
         const k2 = mine === kind ? null : kind; if (sOn) { this.mutate('votePlan', { user: me, planId: p.id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const v2 = Object.assign({}, x.votes); if (k2) v2[me] = k2; else delete v2[me]; return Object.assign({}, x, { votes: v2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
       const sv = p.stopVotes || {};
       const stopRows = (p.stops || []).map(id => { const v = C.find(x => x.id === id); const d = sv[id] || {}; const upN = Object.values(d).filter(x => x === 'up').length, dnN = Object.values(d).filter(x => x === 'down').length; const myS = d[me];
-        const sb = on => `padding:6px 11px;border:1.5px solid ${on ? 'var(--color-text)' : 'var(--color-neutral-300)'};background:${on ? 'var(--color-text)' : '#fff'};color:${on ? '#fff' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:pointer;white-space:nowrap`;
+        const sb = on => `padding:6px 11px;border:1.5px solid ${on ? 'var(--color-text)' : 'var(--color-neutral-300)'};background:${on ? 'var(--fill)' : 'var(--card)'};color:${on ? 'var(--on-fill)' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:pointer;white-space:nowrap`;
         const voteS = kind => () => { if (!this.state.userName) { this.pedirCuenta('votar', () => this.mutate('voteStop', { user: this.state.userName, planId: p.id, venueId: id, kind })); return; }
           const k2 = myS === kind ? null : kind; if (sOn) { this.mutate('voteStop', { user: me, planId: p.id, venueId: id, kind: k2 }); return; } const l = s.gPlans.map(x => { if (x.id !== p.id) return x; const sv2 = JSON.parse(JSON.stringify(x.stopVotes || {})); const dd = sv2[id] = sv2[id] || {}; if (k2) dd[me] = k2; else delete dd[me]; return Object.assign({}, x, { stopVotes: sv2 }); }); this.setState({ gPlans: l }, () => this.persist()); };
         return { name: v ? v.n : ((p.ext && p.ext[id]) || 'Opción externa'), meta: v ? `${v.cat} · ${v.col} · ${this.precioTxt(v)}` : 'Agregado a mano · fuera del catálogo', up: String(upN), down: String(dnN), upStyle: sb(myS === 'up'), downStyle: sb(myS === 'down'), voteUp: voteS('up'), voteDown: voteS('down'), open: () => { if (v) openV(v.id); } }; });
-      const shareChips = myFr.map(f => { const sent = (p.sharedWith || []).includes(f); return { label: sent ? '✓ ' + f : '→ ' + f, style: `padding:6px 11px;border:1.5px solid ${sent ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sent ? 'var(--color-accent)' : '#fff'};color:${sent ? '#fff' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:${sent ? 'default' : 'pointer'}`, send: () => { if (sent) return; if (!sOn) { this.toast('El envío en vivo funciona con el link del salón'); return; } this.mutate('sharePlan', { user: me, planId: p.id, to: [f] }).then(() => this.toast(`Enviado a ${f} — le llega a su dispositivo`)); } }; });
+      const shareChips = myFr.map(f => { const sent = (p.sharedWith || []).includes(f); return { label: sent ? '✓ ' + f : '→ ' + f, style: `padding:6px 11px;border:1.5px solid ${sent ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sent ? 'var(--color-accent)' : 'var(--card)'};color:${sent ? 'var(--on-fill)' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:${sent ? 'default' : 'pointer'}`, send: () => { if (sent) return; if (!sOn) { this.toast('El envío en vivo funciona con el link del salón'); return; } this.mutate('sharePlan', { user: me, planId: p.id, to: [f] }).then(() => this.toast(`Enviado a ${f} — le llega a su dispositivo`)); } }; });
       const voterNames = Object.keys(votes);
       return { letter: (p.name || 'P').replace('Plan: ', '')[0], name: p.name, byLine: `${p.date && !(p.meta || '').includes('·') ? this.fmtDate(p.date) + ' · ' : ''}${p.meta ? p.meta + ' · ' : ''}propone ${p.by}`, isConf: conf,
         stops: stopRows, hasStops: stopRows.length > 0,
@@ -4877,7 +4954,7 @@ class Component extends DCLogic {
         openPlan: () => this.openPlanOpt({ plan: p }), hasPlan: (p.stops || []).length > 0,
         del: () => { if (sOn) { this.mutate('delPlan', { planId: p.id }); return; } this.setState({ gPlans: s.gPlans.filter(x => x.id !== p.id) }, () => this.persist()); },
         proposeMore: () => { this.toast('Escoge o arma otro plan y dale "Enviar plan"'); this.nav(s.results ? 'results' : 'home'); },
-        rowStyle: `background:#fff;border:2px solid ${conf ? 'var(--color-accent)' : 'var(--color-text)'};padding:16px 18px;margin-bottom:14px${conf ? ';box-shadow:0 0 0 3px var(--color-accent-200,#fde8e2);animation:planpop .55s ease' : sob >= 2 && sob > noj ? ';box-shadow:inset 5px 0 0 var(--color-accent)' : ''}`,
+        rowStyle: `background:var(--card);border:2px solid ${conf ? 'var(--color-accent)' : 'var(--color-text)'};padding:16px 18px;margin-bottom:14px${conf ? ';box-shadow:0 0 0 3px var(--color-accent-200,#fde8e2);animation:planpop .55s ease' : sob >= 2 && sob > noj ? ';box-shadow:inset 5px 0 0 var(--color-accent)' : ''}`,
         countLabel: `${sob} sobres · ${noj} no jalo`, hasVoterLine: voterNames.length > 0,
         voterLine: 'Votaron: ' + voterNames.map(k => `${k} (${votes[k] === 'sobres' ? 'sobres' : 'no jalo'})`).join(', '), yes: sob, no: noj, conf, plan: p }; });
     const hasGPlans = gPlans.length > 0;
@@ -4915,7 +4992,7 @@ class Component extends DCLogic {
       { name: 'Eventbrite', use: 'Talleres, pop-ups y eventos locales', status: 'NO CONECTADO' }
     ];
     const vTabDef = [['resumen','Resumen'],['inv','Inventario y promos'],['new','Publicar'],['ana','Analytics']];
-    const vTabs = vTabDef.map(([id,label], i) => ({ label, style: `padding:11px 15px;border:none;border-left:${i>0?'2px solid var(--color-text)':'none'};background:${s.venueTab===id?'var(--color-text)':'#fff'};color:${s.venueTab===id?'#fff':'var(--color-text)'};font:700 12.5px var(--font-body);cursor:pointer`, pick: () => this.setState({ venueTab: id }) }));
+    const vTabs = vTabDef.map(([id,label], i) => ({ label, style: `padding:11px 15px;border:none;border-left:${i>0?'2px solid var(--color-text)':'none'};background:${s.venueTab===id?'var(--fill)':'var(--card)'};color:${s.venueTab===id?'var(--on-fill)':'var(--color-text)'};font:700 12.5px var(--font-body);cursor:pointer`, pick: () => this.setState({ venueTab: id }) }));
     // ── MÉTRICAS REALES: se calculan de lo que la gente hace en Sobres ──
     const allStats = (s.sync && s.sync.stats) || {};
     const myVenueName = (((s.sync && s.sync.venues) || []).filter(v => !s.userName || v.by === s.userName)[0] || {}).n || '';
@@ -4949,7 +5026,7 @@ class Component extends DCLogic {
     const vOffers = s.offers.map((o, i) => ({ badge: o.badge, title: o.title, detail: o.detail, venue: o.venue, status: o.on ? 'ACTIVA' : 'PAUSADA', stColor: o.on ? 'var(--color-accent-700)' : 'var(--color-neutral-500)', toggleLabel: o.on ? 'Pausar' : 'Activar', toggle: () => { const l = s.offers.map((x,j) => j===i ? Object.assign({}, x, {on:!x.on}) : x); this.setState({ offers: l }, () => this.persist()); } }));
     const fBase = Math.max(1, agg.v);
     const funnel = [['Vistas de perfil', agg.v], ['Guardados', agg.s], ['Clics a reservar', agg.r], ['Reservas / leads', totalRes]]
-      .map(([k, n]) => { const w = Math.round(n / fBase * 100); return { k, v: nfmt(n), barStyle: `width:${Math.min(100, w)}%;height:100%;background:${k.indexOf('Reservas') === 0 ? 'var(--color-accent)' : 'var(--color-text)'}` }; });
+      .map(([k, n]) => { const w = Math.round(n / fBase * 100); return { k, v: nfmt(n), barStyle: `width:${Math.min(100, w)}%;height:100%;background:${k.indexOf('Reservas') === 0 ? 'var(--color-accent)' : 'var(--fill)'}` }; });
     const DLBL = ['D','L','M','X','J','V','S'];
     const last7 = []; for (let i = 6; i >= 0; i--) { const dt = new Date(); dt.setDate(dt.getDate() - i);
       const key = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
@@ -5006,7 +5083,7 @@ class Component extends DCLogic {
       venueSwitchLabel: view === 'venues' ? '← Lado consumidor' : 'Para venues', venueSwitchGo: () => this.nav(view === 'venues' ? 'home' : 'venues'), venueBtnBg: view === 'venues' ? 'var(--color-text)' : 'transparent', venueBtnFg: view === 'venues' ? '#fff' : 'var(--color-text)',
       demoBadge: (this.props.insigniasDemo ?? true) && !s.isMobile, catCount: String(this.cat().length),
       searchQ: s.searchQ, setSearchQ: e => { const q = e.target.value; this.setState({ searchQ: q }); this.evSearch(q); }, searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
-      toast: s.toast, toastStyle: `position:fixed;left:50%;transform:translateX(-50%);bottom:${s.isMobile?'72px':'24px'};z-index:100;background:var(--color-text);color:#fff;padding:12px 18px;font:600 13px var(--font-body);box-shadow:var(--shadow-lg);transition:opacity .25s;opacity:${s.toast?'1':'0'};pointer-events:none;max-width:90vw`,
+      toast: s.toast, toastStyle: `position:fixed;left:50%;transform:translateX(-50%);bottom:${s.isMobile?'72px':'24px'};z-index:100;background:var(--fill);color:var(--on-fill);padding:12px 18px;font:600 13px var(--font-body);box-shadow:var(--shadow-lg);transition:opacity .25s;opacity:${s.toast?'1':'0'};pointer-events:none;max-width:90vw`,
       resOtUrl, resMapsUrl, resWeb, resHasWeb, resPeople: String(resPeople), resDate,
       resOnOT, resNoBook: !resBookable,
       resNoBookMsg: '',
@@ -5242,7 +5319,7 @@ class Component extends DCLogic {
       swapMode: s.swapIdx != null, swapLabel: s.swapIdx != null && plan && plan.stops[s.swapIdx] ? `CAMBIAR "${plan.stops[s.swapIdx].n.toUpperCase()}" POR OTRA COSA · BUSCA O ELIGE UNA SUGERENCIA` : '+ AGREGAR OTRA PARADA · RESTAURANTE, BAR, EVENTO, LO QUE SEA',
       cancelSwap: () => this.setState({ swapIdx: null, planQ: '' }), swapLabelColor: s.swapIdx != null ? 'var(--color-accent)' : 'var(--color-neutral-600)',
       planFriendChips: myFr.map(f => { const sentAlready = !!(plan0Exists && (((rawPlans.find(x => x.id === this.planOptId(plan0Exists)) || {}).sharedWith || []).includes(f))); const sel = s.sendSel.includes(f);
-        return { pressed: sel ? 'true' : 'false', label: sentAlready ? '✓ ' + f : f, style: `padding:9px 14px;border:2px solid ${sel ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sel ? 'var(--color-accent)' : '#fff'};color:${sel ? '#fff' : sentAlready ? 'var(--color-neutral-500)' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:${sentAlready ? 'default' : 'pointer'}`, send: () => { if (sentAlready) { this.toast(`Ya se lo enviaste a ${f}`); return; } this.setState({ sendSel: sel ? s.sendSel.filter(x => x !== f) : s.sendSel.concat([f]) }); } }; }),
+        return { pressed: sel ? 'true' : 'false', label: sentAlready ? '✓ ' + f : f, style: `padding:9px 14px;border:2px solid ${sel ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sel ? 'var(--color-accent)' : 'var(--card)'};color:${sel ? 'var(--on-fill)' : sentAlready ? 'var(--color-neutral-500)' : 'var(--color-text)'};font:700 13px var(--font-body);cursor:${sentAlready ? 'default' : 'pointer'}`, send: () => { if (sentAlready) { this.toast(`Ya se lo enviaste a ${f}`); return; } this.setState({ sendSel: sel ? s.sendSel.filter(x => x !== f) : s.sendSel.concat([f]) }); } }; }),
       hasPlanFriends: myFr.length > 0, copyCurLink: () => this.copyCurPlanLink(),
       hasSendSel: s.sendSel.length > 0, waShare: () => this.waShare(), mapsRoute: () => this.mapsRoute(), sendGoBg: s.sendSel.length ? 'var(--color-accent)' : 'var(--color-neutral-400)',
       sendGo: () => { if (!s.sendSel.length) { this.toast('Primero pica a quién se lo quieres enviar'); return; } if (!(s.syncOn && s.userName)) { this.toast('El envío en vivo funciona con el link del salón'); return; } const p = this.getPlan(); if (!p || !p.stops.length) return; const sel = s.sendSel.slice();
@@ -5648,7 +5725,7 @@ class Component extends DCLogic {
       navItems, bottomNav, showBottomNav,
       padBottom: showBottomNav ? 'calc(var(--nav-h) + env(safe-area-inset-bottom))' : '0px',
       toastStyle: 'position:fixed;left:50%;transform:translateX(-50%);bottom:' + (showBottomNav ? 'calc(var(--nav-h) + 14px)' : (enArmar || editando) ? '96px' : '24px')
-        + ';z-index:100;background:var(--noche);color:#fff;padding:12px 18px;border-radius:14px;font:600 14px/1.4 var(--font-body);box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px);'
+        + ';z-index:100;background:var(--fill);color:var(--on-fill);padding:12px 18px;border-radius:14px;font:600 14px/1.4 var(--font-body);box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px);'
         + (s.toast ? 'opacity:1' : 'opacity:0;pointer-events:none') + ';transition:opacity .2s',
       brandGo: () => this.nav('home'),
       hasUser: !!s.userName, isGuest: !s.userName, avatarLetter: (s.userName || '?')[0].toUpperCase(),
