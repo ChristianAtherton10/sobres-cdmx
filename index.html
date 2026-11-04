@@ -34,6 +34,7 @@
 <script src="data/paquete.js"></script>
 <script src="data/investigados.js"></script>
 <script src="data/eventos.js"></script>
+<script src="data/osm.js"></script>
 <script src="data/recetas.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
@@ -1458,6 +1459,8 @@ class Component extends DCLogic {
         // + los investigados a mano el 4 nov 2026 para las piezas de receta
         // con poca oferta (data/investigados.js, con fuente y fecha cada uno).
         .concat((window.SOBRES_INVESTIGADOS && window.SOBRES_INVESTIGADOS.lugares) || [])
+        // + lugares de OpenStreetMap aprobados el 4 nov 2026 (data/osm.js).
+        .concat((window.SOBRES_OSM && window.SOBRES_OSM.lugares) || [])
         // + eventos con fecha (data/eventos.js): los vencidos ni se cargan.
         .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
@@ -1479,7 +1482,7 @@ class Component extends DCLogic {
           recomendable: r.recomendable === false ? false : undefined, lejos: !!r.lejos, pNotaLugar: r.nota || '',
           otRt: r.otRt || null, otRc: r.otRc || null, vestimenta: r.vestimenta || '', tel: r.tel || '',
           consultado: r.consultado || '', hrsFuente: r.hrsFuente || '',
-          evento: !!r.evento, fechas: r.fechas || null, sede: r.sede || '',
+          evento: !!r.evento, fechas: r.fechas || null, sede: r.sede || '', dieta: r.dieta || null,
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -2053,6 +2056,8 @@ class Component extends DCLogic {
     if (/^pq-[0-9a-f]+$/.test(id)) return 'Q' + id.slice(3);
     // Lugares investigados el 4 nov 2026 ('iv-6f1a2b3c4d'): 'V' + resto.
     if (/^iv-[0-9a-f]+$/.test(id)) return 'V' + id.slice(3);
+    // Lugares de OpenStreetMap ('os-n123456', 'os-w…', 'os-r…'): 'O' + resto.
+    if (/^os-[nwr]\d+$/.test(id)) return 'O' + id.slice(3);
     // Eventos con fecha ('ev-1a2b3c4d5e'): 'E' + resto.
     if (/^ev-[0-9a-f]+$/.test(id)) return 'E' + id.slice(3);
     if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
@@ -2065,6 +2070,7 @@ class Component extends DCLogic {
     if (/^Q[0-9a-f]+$/.test(x)) return 'pq-' + x.slice(1);
     if (/^V[0-9a-f]+$/.test(x)) return 'iv-' + x.slice(1);
     if (/^E[0-9a-f]+$/.test(x)) return 'ev-' + x.slice(1);
+    if (/^O[nwr]\d+$/.test(x)) return 'os-' + x.slice(1);
     if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
     if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
     return x;
@@ -4070,7 +4076,9 @@ class Component extends DCLogic {
     const GEN = ['museo','teatro','cine','parque','mercado','centro','plaza','galeria','cafe',
       'bar','restaurante','taqueria','cantina','salon','casa','club','hotel','foro','jardin',
       'biblioteca','libreria','mirador','terraza','bosque','palacio','templo','iglesia',
-      'caminar','somos','santa','maximo','quiero','comida','noche','ciudad','grande','nuevo'];
+      'caminar','somos','santa','maximo','quiero','comida','noche','ciudad','grande','nuevo',
+      // Comidas y bebidas genéricas: "cenar mariscos" no es pedir "Mariscos Margarito".
+      'mariscos','tacos','sushi','pizza','pizzas','ramen','tortas','pozole','birria','carnitas','helados','cerveza','cervezas','mezcal','vinos','postres','hamburguesas','alitas','pastes','tamales','churros'];
     // Prefijos válidos de una marca: la marca completa, y los prefijos que resultan
     // de quitarle palabras finales ('Cinépolis VIP' → 'cinepolis').
     // Un prefijo sólo vale si tiene 2+ palabras o 8+ letras, y no es palabra común;
@@ -4271,6 +4279,9 @@ class Component extends DCLogic {
         if (cc.cui) { const f = cands.filter(v => this.cuisine(v) === cc.cui); if (f.length) cands = f; }
         // "Cenar" o "comer" = restaurante o terraza, no una taquería (salvo tope de $300).
         if (cc.g === 'comida' && tope > 300) { const f = cands.filter(v => this.cumpleCat(v, { k: 'mesa', cats: this.CATS_MESA() })); if (f.length) cands = f; }
+        // Para algo pedido en concreto se prefieren lugares con horario y precio
+        // confirmados; uno "por confirmar" (p. ej. de OpenStreetMap) sólo si no hay otro.
+        { const seguros = cands.filter(v => !v.horaEstimada && !v.ppUnknown); if (seguros.length) cands = seguros; }
         cands.sort((a, b) => this.rank(b, this.DSEED) - this.rank(a, this.DSEED));
         // Respetar el tope del itinerario completo, no sólo el precio de cada lugar.
         const idx = seq.indexOf(item);

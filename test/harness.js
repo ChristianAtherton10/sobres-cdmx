@@ -75,6 +75,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Lugares extra para simular un catálogo ampliado (p. ej. candidatos de OSM sin aprobar).
   if (opts.extra && opts.extra.length) { win.SOBRES_INVESTIGADOS = win.SOBRES_INVESTIGADOS || { lugares: [] };
     win.SOBRES_INVESTIGADOS = { version: 1, lugares: win.SOBRES_INVESTIGADOS.lugares.concat(opts.extra) }; }
+  // Lugares de OpenStreetMap aprobados (define window.SOBRES_OSM)
+  const osmp = path.join(ROOT, 'data', 'osm.js');
+  if (fs.existsSync(osmp) && !opts.sinOsm) new Function('window', fs.readFileSync(osmp, 'utf8'))(win);
   // Eventos con fecha (define window.SOBRES_EVENTOS)
   const evp = path.join(ROOT, 'data', 'eventos.js');
   if (fs.existsSync(evp) && !opts.sinEventos) new Function('window', fs.readFileSync(evp, 'utf8'))(win);
