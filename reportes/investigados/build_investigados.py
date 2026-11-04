@@ -53,6 +53,14 @@ F = {
  'chil_cantinas': ('Chilango — cantinas de la vieja escuela en el Centro Histórico', 'https://www.chilango.com/agenda/vida-nocturna/cantinas-de-la-vieja-escuela-en-el-centro-historico-ciudad-de-mexico/', '2023-07-13'),
  'md_jamaica': ('México Desconocido — Mercado de Jamaica: lo que tienes que saber', 'https://www.mexicodesconocido.com.mx/mercado-de-jamaica-cdmx-tips.html', 'sin fecha'),
  'md_vasconcelos': ('México Desconocido — Biblioteca Vasconcelos, la más grande de México', 'https://escapadas.mexicodesconocido.com.mx/atractivos/biblioteca-vasconcelos-la-mas-grande-de-mexico/', 'sin fecha'),
+ 'hap_veg': ('The Happening — restaurantes veganos y vegetarianos en CDMX', 'https://thehappening.com/restaurantes-veganos-y-vegetarianos-con-buenos-platillos-en-cdmx/', '2026-02-27'),
+ 'trend_veg': ('Trend México — Restaurantes veganos en la CDMX 2026', 'https://www.trendmexico.com/restaurantes-veganos-en-la-cdmx/', '2026 (título del artículo)'),
+ 'exc_xochi': ('Excélsior — dónde comer en Xochimilco', 'https://www.excelsior.com.mx/estilo-de-vida/donde-comer-xochimilco-mejores-restaurantes-y-antojitos', '2025 (posterior a jul 2025: cita la tarifa de trajineras de $750)'),
+ 'fever_bb': ('Fever — Auditorio BlackBerry (cartelera vigente)', 'https://feverup.com/es/ciudad-de-mexico/venue/auditorio-blackberry', 'sin fecha (consultada ' + HOY + ')'),
+ 'fever_gnp': ('Fever — Estadio GNP Seguros (cartelera vigente)', 'https://feverup.com/es/ciudad-de-mexico/venue/foro-sol', 'sin fecha (consultada ' + HOY + ')'),
+ 'to_palacio': ('Time Out México — conciertos en el oriente de la CDMX en 2026 (Palacio de los Deportes)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/musica/conciertos-en-oriente', '2026'),
+ 'nmas_torres': ('N+ — Torres de Satélite recuperan su luz', 'https://www.nmas.com.mx/estado-de-mexico/estilo-de-vida/lugares/torres-de-satelite-recuperan-su-luz-asi-se-ven-iluminadas-de-noche/', '2025-05'),
+ 'to_capitana': ('Time Out México — La Capitana (mezcalería en Satélite)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/antros-bares/la-capitana', 'sin fecha'),
  'ot_vineria': ('OpenTable — La Vinería, Ciudad de México', 'https://opentable.ae/r/la-vineria-ciudad-de-mexico', 'sin fecha (consultada ' + HOY + ')'),
 }
 
@@ -61,7 +69,7 @@ def fuente(k, url=None):
     return n, url or u, f
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
-VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc'}
+VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -221,6 +229,44 @@ L = [
       f='md_jamaica', h=(8, 20), hrs='Abierto 24 h (flores); horario de la zona de comida por confirmar', horaEstimada=True, act=['comida', 'compras', 'paseo'],
       who=['familia', 'amigos', 'date'], tags=['foodie', 'familiar'], apto='sí'),
  # Biblioteca Vasconcelos ya estaba en el catálogo: no se repite.
+
+ # Veganos y vegetarianos (casi no había fuera de la Roma) --------------------
+ dict(n='Paxil', cat='Restaurante', col='Roma Norte', addr='Orizaba 83, Roma Norte', f='hap_veg', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True,
+      act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie'], dieta=['vegano', 'vegetariano']),
+ dict(n='U.TO.PIA. · cocina vegana', cat='Restaurante', col='Condesa', addr='Juan Escutia 66, Condesa', f='trend_veg', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True,
+      act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie', 'chill'], dieta=['vegano', 'vegetariano']),
+ dict(n='Vegan Inc. · Miyana', cat='Restaurante', col='Polanco', addr='Plaza Miyana, planta alta, Polanco', geo='Miyana, Polanco, Ciudad de México', f='trend_veg',
+      h=(13, 22), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], dieta=['vegano', 'vegetariano']),
+ dict(n='Vegan Inc. · Guadalupe Inn', cat='Restaurante', col='Guadalupe Inn', addr='Av. Revolución 1544, Guadalupe Inn', f='trend_veg',
+      h=(13, 22), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], dieta=['vegano', 'vegetariano']),
+ dict(n='Forever Vegano · Polanco', cat='Restaurante', col='Polanco', addr='Alejandro Dumas 16, Polanco', f='trend_veg',
+      h=(9, 22), hrs='Horario por confirmar', horaEstimada=True, act=['desayuno', 'comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], dieta=['vegano', 'vegetariano']),
+ # Xochimilco: dónde comer (además de trajineras) -------------------------------
+ dict(n='Arca Tierra · desayuno en chinampa', cat='Tour', col='Xochimilco', addr='Chinampas de Xochimilco (punto de encuentro al reservar)', geo='Cuemanco, Xochimilco, Ciudad de México',
+      f='exc_xochi', h=(7, 12), hrs='Experiencia de 3 a 4 horas · reserva tu horario', horaEstimada=True, act=['desayuno', 'recorrido'],
+      who=['date', 'amigos', 'familia'], tags=['foodie', 'aventurero', 'romántico'],
+      precio=dict(min=1100, rep=1100, max=None, unidad='persona', canasta='Desde $1,100 por persona (Excélsior).'), estado='rango', apto='sí'),
+ dict(n='Terraza del Barrio Nativitas', cat='Restaurante', col='Nativitas, Xochimilco', addr='Nativitas, Xochimilco (junto a los canales)', geo='Embarcadero Nuevo Nativitas, Xochimilco',
+      f='exc_xochi', h=(10, 19), hrs='Sáb y dom 10:00–19:00 · brunch con vista a los canales', dias=[0, 6], act=['desayuno', 'comida'],
+      who=['familia', 'amigos', 'date'], tags=['foodie', 'familiar'], apto='sí'),
+ dict(n='Patio Ciento20 Xochimilco', cat='Restaurante', col='Xochimilco', addr='Pedro Ramírez del Castillo 120, Xochimilco', f='exc_xochi',
+      h=(13, 21), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['familia', 'amigos', 'date'], tags=['foodie', 'familiar'], apto='sí'),
+ dict(n='Mercado de Xochimilco', cat='Mercado', col='Santa Crucita, Xochimilco', addr='Av. Nuevo León s/n, Santa Crucita, Xochimilco', geo='Mercado de Xochimilco, Ciudad de México',
+      f='exc_xochi', h=(8, 18), hrs='Horario por confirmar · antojitos, quesadillas y tlacoyos', horaEstimada=True, act=['comida', 'compras'],
+      who=['familia', 'amigos'], tags=['foodie', 'familiar'], apto='sí'),
+ # Recintos de conciertos (salen con "consulta la cartelera") -------------------
+ dict(n='Auditorio BlackBerry', cat='Foro', col='Hipódromo', addr='Tlaxcala 160, Hipódromo', f='fever_bb', h=(19, 24), hrs='Según cartelera', horaEstimada=True,
+      act=['funcion'], sesion=True, who=['amigos', 'date', 'compa'], tags=['nightlife', 'cultural']),
+ dict(n='Estadio GNP Seguros', cat='Foro', col='Granjas México', addr='Viaducto Río de la Piedad s/n, Granjas México, Iztacalco', geo='Estadio GNP Seguros, Ciudad de México',
+      f='fever_gnp', h=(17, 24), hrs='Según cartelera', horaEstimada=True, act=['funcion'], sesion=True, who=['amigos', 'compa', 'date'], tags=['nightlife', 'social']),
+ dict(n='Palacio de los Deportes', cat='Foro', col='Granjas México', addr='Añil 667, Granjas México, Iztacalco', geo='Palacio de los Deportes, Ciudad de México',
+      f='to_palacio', h=(18, 24), hrs='Según cartelera', horaEstimada=True, act=['funcion'], sesion=True, who=['amigos', 'compa', 'date'], tags=['nightlife', 'social']),
+ # Satélite ------------------------------------------------------------------
+ dict(n='Torres de Satélite', cat='Atracción', col='Ciudad Satélite', addr='Camellón del Periférico (Blvd. Manuel Ávila Camacho), Ciudad Satélite',
+      lat=19.4992, lng=-99.2369, f='nmas_torres', h=(7, 23), hrs='A toda hora · se ven desde el auto; de noche iluminadas (desde may 2025)', act=['vista'],
+      who=['amigos', 'date', 'familia'], tags=['cultural'], apto='sí', soloExplorar='Están en un camellón del Periférico: se ven desde el auto, no son una parada a pie.'),
+ dict(n='La Capitana · mezcalería', cat='Mezcalería', col='Ciudad Satélite', addr='Federico T. de la Chica 12, Ciudad Satélite', f='to_capitana',
+      h=(15, 24), hrs='Mar a dom 15:00–24:00', dias=[0, 2, 3, 4, 5, 6], act=['copas'], who=['amigos', 'date', 'compa'], tags=['nightlife', 'social']),
 ]
 
 # ------------------------------------------------------------------ geocodificación
@@ -266,6 +312,7 @@ for x in L:
     if aprox: rec['coordAprox'] = True
     if dz > 5.5: rec['lejos'] = True
     if x.get('apto') == 'sí': rec['aptoFamilia'] = 'sí'
+    if x.get('dieta'): rec['dieta'] = x['dieta']
     if 'precio' in x:
         p = dict(x['precio']); p['moneda'] = 'MXN'
         rec['precio'] = p; rec['estado'] = x['estado']
@@ -276,6 +323,7 @@ for x in L:
         rec['precio'] = {'min': None, 'rep': None, 'max': None, 'unidad': 'persona', 'moneda': 'MXN', 'canasta': 'La fuente no publica precios.'}
         rec['estado'] = 'por_confirmar'; rec['falta'] = 'el precio'
     vieja = antigua(x['f'], fecha_f)
+    if x.get('soloExplorar'): vieja = True
     sc = 70 if vieja else 76
     rec['score'] = sc; rec['tier'] = 'B'
     rec['basis'] = x['cat'] + ' en ' + x['col']
@@ -284,7 +332,7 @@ for x in L:
     if aprox: notas.append('Ubicación aproximada (centro de la colonia).')
     if vieja:
         rec['recomendable'] = False
-        notas.append('La fuente es de ' + fecha_f + ': confirma que siga abierto. Mientras tanto no lo proponemos en planes.')
+        notas.append(x.get('soloExplorar') or ('La fuente es de ' + fecha_f + ': confirma que siga abierto. Mientras tanto no lo proponemos en planes.'))
     if rec.get('lejos'): notas.append('Queda lejos del centro de su zona; sólo aparece al buscar en toda la ciudad.')
     if notas: rec['nota'] = ' '.join(notas)
     salida.append(rec)

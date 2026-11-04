@@ -89,7 +89,10 @@ test('ningún lugar investigado repite uno que ya estaba (La Casa del Cine ya ve
   const dup = [];
   app.cat().filter(v => /^iv-/.test(v.id)).forEach(v => viejos.forEach(o => {
     const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
-    if (a.length > 3 && (a === b || (km(v, o) < 0.3 && v.cat === o.cat && (a.includes(b) && b.length > 5 || b.includes(a) && a.length > 5)))) dup.push(v.n + ' = ' + o.n);
+    // Una sucursal con el mismo nombre en OTRA zona y a más de 1.5 km es válida
+    // ("Forever Vegano · Polanco" vs. "Forever Vegano" en la Roma), como en el resto del catálogo.
+    const mismaSucursal = v.z === o.z || km(v, o) < 1.5;
+    if (a.length > 3 && ((a === b && mismaSucursal) || (km(v, o) < 0.3 && v.cat === o.cat && (a.includes(b) && b.length > 5 || b.includes(a) && a.length > 5)))) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.join(' · '));
 });

@@ -349,5 +349,131 @@
   "lat": 19.40799,
   "lng": -99.12291,
   "aprox": false
+ },
+ {
+  "id": "iv-7374a188b1",
+  "n": "Paxil",
+  "zone": "roma",
+  "km": 0.1,
+  "lat": 19.42003,
+  "lng": -99.16043,
+  "aprox": false
+ },
+ {
+  "id": "iv-2bc10f73c8",
+  "n": "U.TO.PIA. · cocina vegana",
+  "zone": "condesa",
+  "km": 0.4,
+  "lat": 19.41483,
+  "lng": -99.17524,
+  "aprox": false
+ },
+ {
+  "id": "iv-0d4331b1ee",
+  "n": "Vegan Inc. · Miyana",
+  "zone": "polanco",
+  "km": 0.9,
+  "lat": 19.43951,
+  "lng": -99.19984,
+  "aprox": false
+ },
+ {
+  "id": "iv-cd3fcc4bf6",
+  "n": "Vegan Inc. · Guadalupe Inn",
+  "zone": "sanangel",
+  "km": 0.7,
+  "lat": 19.35158,
+  "lng": -99.19019,
+  "aprox": false
+ },
+ {
+  "id": "iv-4c19a4d69a",
+  "n": "Forever Vegano · Polanco",
+  "zone": "polanco",
+  "km": 0.1,
+  "lat": 19.4327,
+  "lng": -99.1957,
+  "aprox": false
+ },
+ {
+  "id": "iv-6368cfb861",
+  "n": "Arca Tierra · desayuno en chinampa",
+  "zone": "xochimilco",
+  "km": 1.0,
+  "lat": 19.28229,
+  "lng": -99.1043,
+  "aprox": false
+ },
+ {
+  "id": "iv-0ba5ebce0b",
+  "n": "Terraza del Barrio Nativitas",
+  "zone": "xochimilco",
+  "km": 2.6,
+  "lat": 19.25206,
+  "lng": -99.09335,
+  "aprox": false
+ },
+ {
+  "id": "iv-0c23467d23",
+  "n": "Patio Ciento20 Xochimilco",
+  "zone": "xochimilco",
+  "km": 1.1,
+  "lat": 19.26336,
+  "lng": -99.10474,
+  "aprox": true
+ },
+ {
+  "id": "iv-76e67a3af5",
+  "n": "Mercado de Xochimilco",
+  "zone": "xochimilco",
+  "km": 1.2,
+  "lat": 19.26231,
+  "lng": -99.10409,
+  "aprox": false
+ },
+ {
+  "id": "iv-4805863865",
+  "n": "Auditorio BlackBerry",
+  "zone": "condesa",
+  "km": 0.6,
+  "lat": 19.40667,
+  "lng": -99.17002,
+  "aprox": false
+ },
+ {
+  "id": "iv-7147e5b595",
+  "n": "Estadio GNP Seguros",
+  "zone": "centro",
+  "km": 5.4,
+  "lat": 19.40502,
+  "lng": -99.09557,
+  "aprox": false
+ },
+ {
+  "id": "iv-548a4ce945",
+  "n": "Palacio de los Deportes",
+  "zone": "centro",
+  "km": 5.0,
+  "lat": 19.40531,
+  "lng": -99.09968,
+  "aprox": false
+ },
+ {
+  "id": "iv-18e67f9b7e",
+  "n": "Torres de Satélite",
+  "zone": "satelite",
+  "km": 1.0,
+  "lat": 19.4992,
+  "lng": -99.2369,
+  "aprox": false
+ },
+ {
+  "id": "iv-de21278c03",
+  "n": "La Capitana · mezcalería",
+  "zone": "satelite",
+  "km": 0.6,
+  "lat": 19.51366,
+  "lng": -99.23739,
+  "aprox": true
  }
 ]
