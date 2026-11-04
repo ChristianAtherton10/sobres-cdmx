@@ -32,6 +32,7 @@
 <script src="data/auditoria.js"></script>
 <script src="data/excel.js"></script>
 <script src="data/paquete.js"></script>
+<script src="data/recetas.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
 /* El resumen de filtros nunca pasa de dos líneas (así su alto es fijo). */
@@ -2474,6 +2475,146 @@ class Component extends DCLogic {
   // Lugares que el usuario excluyó explícitamente (por lenguaje natural).
   exclSet() { return new Set(this.state.aiExcluded || []); }
 
+  // ============================================================
+  // MOTOR POR RECETAS (4 nov 2026). Cada ambiente tiene su receta
+  // (data/recetas.js): qué tipos de lugar propone y en qué orden. Aquí se
+  // llenan esas plantillas con lugares reales que estén en la zona, abran a esa
+  // hora, quepan en el presupuesto y queden cerca entre sí.
+  // ============================================================
+  RECETAS() { return (typeof window !== 'undefined' && window.SOBRES_RECETAS) || null; }
+  // Ambientes que mandan en la búsqueda. Sin ambiente, se deduce de con quién van.
+  ambientesReceta() { const R = this.RECETAS(); if (!R) return [];
+    const s = this.state; let vb = (s.vibes || []).filter(x => x !== 'clásico' && R.recetas[x]);
+    const soloJoya = vb.length === 1 && vb[0] === 'joyita';
+    if (vb.length > 1) vb = vb.filter(x => x !== 'joyita');   // joyita sólo cambia la preferencia
+    if (!vb.length || soloJoya) {
+      if (soloJoya) return ['joyita'];
+      if (s.who === 'familia') return ['familiar'];
+      if (s.who === 'date') return ['romántico'];
+      if (s.who === 'amigos' || s.who === 'compa') return ['_libre', 'social'];
+      return ['_libre'];
+    }
+    // "En familia" como con quién manda aunque elijan otro ambiente.
+    if (s.who === 'familia' && vb.indexOf('familiar') < 0) vb = ['familiar'].concat(vb);
+    // Si pidieron copas o bailar con palabras ("y unos tragos"), entra la receta de noche.
+    if ((s.aiPide || []).some(k => k === 'copas' || k === 'baile') && vb.indexOf('nightlife') < 0) vb = vb.concat(['nightlife']);
+    return vb; }
+  piezaRe(txt) { this._reC = this._reC || {}; return this._reC[txt] || (this._reC[txt] = new RegExp(txt, 'i')); }
+  esPieza(v, p) {
+    if (!v || !p) return false;
+    const n = v.n || '';
+    const porCat = p.cats ? p.cats.indexOf(v.cat) >= 0 : false;
+    const porNombre = p.nombre ? this.piezaRe(p.nombre).test(n) : false;
+    const tambien = p.nombreTambien ? this.piezaRe(p.nombreTambien).test(n) : false;
+    let ok = p.cats && p.nombre ? (porCat && porNombre) : (porCat || porNombre || tambien || (p.barPorNombre && this.esBarDeNombre(v)));
+    if (!ok) return false;
+    if (p.nombreSiCat && p.nombreSiCat[v.cat] && !this.piezaRe(p.nombreSiCat[v.cat]).test(n)) return false;
+    if (p.sinNombre && this.piezaRe(p.sinNombre).test(n)) return false;
+    if (p.acts && !p.acts.some(a => this.actsDe(v).indexOf(a) >= 0)) return false;
+    if (p.maxPP != null && !v.ppUnknown && v.pp > p.maxPP) return false;
+    if (p.sinCadenas && this.esCadenaCasual(v)) return false;
+    if (v.cat === 'Rooftop' && p.comida && !this.sirveComida(v)) return false;
+    if (!p.porConfirmar && this.funcionSinConfirmar(v)) return false;
+    return true; }
+  // Hora de llegada de una pieza dado cuándo termina la anterior, o null.
+  horaPieza(p, prevFin, from, to) {
+    const t0 = prevFin == null ? from : prevFin;
+    const rangos = { desayuno: [8, 11.5], comida: [13, 16.5], cena: [19, 22.5], noche: [18, 26], antro: [22.5, 24.5], dia: [9, 18], libre: [0, 30] };
+    const r = (rangos[p.momento] || rangos.libre).slice();
+    // Si la noche empieza tarde (11:30 pm), el antro puede llegar más tarde.
+    if (p.momento === 'antro') r[1] = Math.max(r[1], from + 2);
+    const t = Math.max(t0, r[0]);
+    if (t > r[1] || t >= to - 0.5) return null;
+    // Sin huecos muertos: más de 1.5 h esperando no es un plan (2 h para el antro).
+    if (prevFin != null && t - prevFin > (p.momento === 'antro' ? 2 : 1.5)) return null;
+    return Math.ceil(t * 4) / 4; }
+  armarConRecetas(ctx) {
+    const R = this.RECETAS(); if (!R) return { planes: [], suelto: null };
+    const { pool, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq } = ctx;
+    const amb = this.ambientesReceta();
+    const joya = (this.state.vibes || []).indexOf('joyita') >= 0;
+    const franjas = []; if (from < 12) franjas.push('manana'); if (from < 18 && to > 12) franjas.push('tarde'); if (to > 18) franjas.push('noche');
+    // Piezas de cada ambiente, para premiar plantillas que mezclan lo pedido.
+    const piezasDe = {}; amb.forEach(a => { const set = new Set(); ['manana', 'tarde', 'noche'].forEach(f => (R.recetas[a][f] || []).forEach(t => t.forEach(x => set.add(x)))); piezasDe[a] = set; });
+    const plantillas = [];
+    amb.forEach(a => franjas.forEach(f => (R.recetas[a][f] || []).forEach(t => {
+      const mezcla = amb.filter(b => t.some(x => piezasDe[b].has(x))).length;
+      if (!plantillas.some(p => p.t.join() === t.join())) plantillas.push({ t, a, f, peso: mezcla }); })));
+    let semilla = (dseed * 2654435761 + 97) >>> 0;
+    const azar = () => { semilla = (Math.imul(semilla ^ (semilla >>> 15), 2246822519) + 0x9e3779b9) >>> 0; return semilla / 4294967296; };
+    const { exigeBaile, pideComida } = ctx;
+    const puntaje = v => rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0) + (joya && (v.tags || []).indexOf('joyita') >= 0 ? 4 : 0);
+    const porPieza = {}; const candDe = k => porPieza[k] || (porPieza[k] = pool.filter(v => this.esPieza(v, R.piezas[k])).sort((a, b) => puntaje(b) - puntaje(a)));
+    const llenar = pl => {
+      const st = [], ts = [], ac = [], conf = [];
+      for (let i = 0; i < pl.t.length; i++) {
+        const k = pl.t[i], p = R.piezas[k]; if (!p) return null;
+        if (p.comida && this.state.yaComimos) return null;   // "ya comimos": sin comidas
+        const prev = st[st.length - 1] || null;
+        let prevFin = prev ? ts[ts.length - 1] + this.duracionAct(prev) : null;
+        // Si la plantilla cierra en el antro, la noche arranca a una hora que
+        // deje llegar ~22:30, no a las 7 pm con dos horas muertas.
+        const iAntro = pl.t.indexOf('antro');
+        const desde0 = (!prev && iAntro > 0) ? Math.max(from, 22.5 - iAntro * 1.5) : from;
+        const opciones = [];
+        for (const v of candDe(k)) {
+          if (st.indexOf(v) >= 0 || st.some(x => this.marcaDe(x) === this.marcaDe(v))) continue;
+          let viaje = 0;
+          if (prev) { const m = this.minutosTramo(this.legKm(prev, v)); if (m != null && m > this.MAX_TRAMO()) continue; viaje = m || 0; }
+          const t = this.horaPieza(p, prevFin == null ? null : prevFin + viaje / 60, desde0, to);
+          if (t == null) continue;
+          const conf0 = !!p.porConfirmar && this.funcionSinConfirmar(v);
+          if (!conf0 && !this.atHour(v, t)) continue;
+          if (!this.cabeEnVentana(v, t, to)) continue;
+          if (prev && !this.alcanzaTramo(prev, v, t - ts[ts.length - 1])) continue;
+          if (!this.cabeEnTope(st.concat([v]), max).ok) continue;
+          if (!this.comidasSeparadas(st.concat([v]), ts.concat([t]))) continue;
+          // Variedad entre intentos: un lugar que ya salió en otros candidatos baja.
+          opciones.push({ v, t, sc: puntaje(v) - viaje / 6 - (usoCand.get(v.id) || 0) * 3, conf: conf0 });
+          if (opciones.length >= 24) break;
+        }
+        if (!opciones.length) return null;
+        opciones.sort((a, b) => b.sc - a.sc);
+        const o = opciones[Math.floor(azar() * Math.min(opciones.length, 6))];
+        st.push(o.v); ts.push(o.t); conf.push(o.conf);
+        const acts = this.actsDe(o.v); ac.push(p.momento === 'cena' && acts.indexOf('cena') >= 0 ? 'cena' : p.momento === 'comida' && acts.indexOf('comida') >= 0 ? 'comida' : acts[0] || 'visita');
+      }
+      const sg = this.comboSig(st);
+      return { stops: st, times: ts, acts: ac, spent: st.reduce((a, v) => a + (v.pp || 0), 0), porConfirmar: conf,
+        label: pl.t.map(k => R.piezas[k].lbl).join(' + '), plantilla: pl.t.join('+'), ambiente: pl.a, sig: sg, sigs: firmasDe(st),
+        cartelera: st.length === 1 && conf[0], unaParada: st.length === 1,
+        // Una función o sesión sin horario confirmado resta: se prefiere lo seguro.
+        puntaje: st.reduce((a, v) => a + puntaje(v), 0) / st.length + pl.peso * 3 + (st.length > 1 ? 2 : 0) - conf.filter(Boolean).length * 4
+          + (exigeBaile && this.bailable(st[st.length - 1]) ? 8 : 0) + (pideComida && st.some(v => this.sirveComida(v)) ? 4 : 0) };
+    };
+    const cands = []; const usoCand = new Map();
+    // 10 intentos por plantilla: si una elección temprana deja sin opciones a
+    // la siguiente pieza (un bar caro y ya no cabe el antro), se prueba otra.
+    plantillas.forEach(pl => { let fallas = 0; for (let i = 0; i < 10 && fallas < 6; i++) { const c = llenar(pl); if (!c) { fallas++; continue; }
+      c.stops.forEach(v => usoCand.set(v.id, (usoCand.get(v.id) || 0) + 1));
+      if (c.sigs.some(f => avoidC.has(f) || bloq.has(f))) continue;
+      if (!cands.some(x => x.sig === c.sig)) cands.push(c); } });
+    cands.sort((a, b) => b.puntaje - a.puntaje);
+    // Las tres como CONJUNTO: sin lugares (ni marcas) repetidos, plantillas y
+    // arranques distintos mientras se pueda.
+    const elegidos = [];
+    const comparte = (a, b) => a.stops.some(v => b.stops.some(x => x.id === v.id || this.marcaDe(x) === this.marcaDe(v)));
+    // Una opción por plantilla: tres veces "teatro + cena" no es variedad. Lo
+    // que falte lo completan lugares sueltos de la receta, y sólo si tampoco
+    // hay, se repite plantilla (reserva).
+    const pasos = [c => !elegidos.some(e => e.plantilla === c.plantilla) && !elegidos.some(e => this.tipoInicio(e.stops[0]) === this.tipoInicio(c.stops[0])),
+                   c => !elegidos.some(e => e.plantilla === c.plantilla)];
+    // Fiesta pasada la 1 am (horario elegido): primero dos que cierren bailando.
+    if (exigeBaile) cands.forEach(c => { if (elegidos.filter(e => this.bailable(e.stops[e.stops.length - 1])).length < 2 && this.bailable(c.stops[c.stops.length - 1])
+      && !elegidos.some(e => comparte(e, c))) elegidos.push(c); });   // aquí sí puede repetir plantilla con otros lugares
+    pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
+    const reserva = cands.filter(c => elegidos.indexOf(c) < 0);
+    // Lo que se ofrece suelto cuando no hay plan: las piezas "sueltos" de cada ambiente.
+    const sueltas = []; amb.forEach(a => (R.recetas[a].sueltos || []).forEach(k => { if (sueltas.indexOf(k) < 0) sueltas.push(k); }));
+    const suelto = v => sueltas.some(k => this.esPieza(v, R.piezas[k]) && this.horaPieza(R.piezas[k], null, from, to) != null
+      && !(R.piezas[k].comida && this.state.yaComimos));
+    return { planes: elegidos, suelto, sueltas, reserva };
+  }
   engine(seed, opts) {
     seed = seed || 0; opts = opts || {};
     this._surpriseRun = seed > 0;
@@ -2802,6 +2943,7 @@ class Component extends DCLogic {
           let mejor = null, mejorSc = -1e9;
           for (const v of pool) {
             if (!this.sirveComida(v) || st.includes(v) || st.some(x => this.marcaDe(x) === this.marcaDe(v))) continue;
+            if (enTanda(v)) continue;
             if (!this.atHour(v, t)) continue;
             if (prev) { const m = this.minutosTramo(this.legKm(prev, v)); if (m != null && m > this.MAX_TRAMO()) continue;
               if (!this.alcanzaTramo(prev, v, t - ts[i - 1])) continue; }
@@ -2829,6 +2971,7 @@ class Component extends DCLogic {
         let mejor = null, mejorSc = -1e9;
         for (const v of pool) {
           if (st.includes(v) || st.some(x => this.marcaDe(x) === this.marcaDe(v))) continue;
+          if (enTanda(v) && !c.stops.includes(v)) continue;   // ya está en otra opción
           if (this.esAntro(v) && st.some(x => this.esAntro(x))) continue;
           const km = this.legKm(last, v); const mm = km == null ? 10 : this.minutosTramo(km);
           if (mm == null || mm > this.MAX_TRAMO()) continue;
@@ -2871,7 +3014,34 @@ class Component extends DCLogic {
     // Muchas pasadas (antes 4) para poder ofrecer 3 planes distintos de verdad.
     const hechos = []; const vistos = new Set(); let repetidos = 0;
     const desde = (regen || 0) * 3;   // continúa el barrido donde quedó
-    const VUELTAS = avoidC.size ? 2000 : 220;   // barrido exhaustivo cuando hay historial
+    // RECETAS: si están cargadas (data/recetas.js), los planes salen de la
+    // receta de cada ambiente y el barrido viejo no corre.
+    const usarRecetas = !!this.RECETAS() && !opts.sinRecetas;
+    let poolReceta = null, recetaSuelto = null, recetaReserva = [], recetaSueltas = [];
+    if (usarRecetas) {
+      const fam = this.esFamiliar();
+      poolReceta = this.cat().filter(v => !excl.has(v.id) && this.budgetOk(v) && this.timingOk(v) && this.esRecomendable(v) && !v.cursoCerrado
+        && (cityWide || zones.includes(v.z)) && (cityWide || !v.lejos)
+        && !(this.state.sinAlcohol && this.implicaAlcohol(v)) && !(fam && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'no')
+        // "Comer rico" nunca es taquería ni cadena casual (reporte del 4 nov 2026).
+        && !((s.vibes || []).includes('foodie') && (v.cat === 'Taquería' || this.esCadenaCasual(v))));
+      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida });
+      // Con un horario ELEGIDO, el plan de la receta se completa hasta llenarlo
+      // (o trae su explicación): una familia de 1 a 9 pm no se va a las 2:15.
+      const ventanaElegida0 = s.planFrom != null || s.planTo != null;
+      // Uno por uno y marcando lo usado: lo que se agrega a un plan no puede ser
+      // un lugar de otra opción.
+      rr.planes.forEach(c => marcarLote(c.stops));
+      // Lo completado también se compara con el historial: si ese plan ya se
+      // mostró antes (aunque fuera tras recargar), no regresa.
+      const yaVisto = st => firmasDe(st).some(f => avoidC.has(f) || bloq.has(f));
+      if (ventanaElegida0) rr.planes = rr.planes.map(c => { const n = completar0(c); const ok = n !== c && this.comidasSeparadas(n.stops, n.times);
+        if (ok && yaVisto(n.stops)) return null;
+        if (ok) marcarLote(n.stops); return ok ? n : c; }).filter(Boolean);
+      rr.planes.forEach(c => { califica(c); c.ancla = this.anclaDe(c.stops, c.acts); c.prot = true; c.cerca = true; hechos.push(c); marcarLote(c.stops); (c.sigs || []).forEach(f => vistos.add(f)); });
+      recetaSuelto = rr.suelto; recetaReserva = rr.reserva; recetaSueltas = rr.sueltas;
+    }
+    const VUELTAS = usarRecetas ? 0 : avoidC.size ? 2000 : 220;   // barrido exhaustivo cuando hay historial
     // Si la vibra exige una actividad protagonista y SÍ la hay con estos filtros,
     // la primera pasada sólo acepta planes que la traigan. Antes bastaba con que
     // el plan cumpliera zona y horario, y se colaba un plan "aventurero" de
@@ -2984,7 +3154,7 @@ class Component extends DCLogic {
     // Fiesta sin pista suficiente cerca: además de los planes que cierran en la
     // vecina, se arman planes completos EN la zona con pista más cercana (con
     // aviso), para que al menos dos opciones terminen bailando.
-    if (hayBaile && addB.length && !opts.subBusqueda) {
+    if (hayBaile && addB.length && !opts.subBusqueda && !usarRecetas) {
       const finales = new Set(candidatos.filter(c => c.baileFin).map(c => this.marcaDe(c.stops[c.stops.length - 1])));
       if (finales.size < 2) {
         const z0 = s.zone, zs0 = s.zonesSel; let r2 = null;
@@ -3098,7 +3268,7 @@ class Component extends DCLogic {
     // Antes la enumeración exhaustiva sólo entraba si el barrido no encontraba
     // NADA. Si encontraba una o dos, las otras combinaciones válidas se quedaban
     // sin mostrar para siempre. Ahora completa la tanda siempre que falte.
-    if (hechos.length < 3 && avoidC.size) {
+    if (hechos.length < 3 && avoidC.size && !usarRecetas) {
       const todos = paresValidos();
       const nuevos = todos.filter(c => !firmasDe(c.stops).some(f => avoidC.has(f) || bloq.has(f)));
       const giro = (regen || 0) % Math.max(1, nuevos.length);
@@ -3113,7 +3283,7 @@ class Component extends DCLogic {
     // Si no quedan combinaciones nuevas, lo decimos — no relajamos restricciones.
     let exhausted = false;
     let plans = hechos;
-    if (!plans.length) {
+    if (!plans.length && !usarRecetas) {
       for (let k = 0; k < VUELTAS && plans.length < 3; k++) {
         const variant = desde + k;
         let c = buildOne(variant);
@@ -3128,7 +3298,7 @@ class Component extends DCLogic {
       // Si lo que acabamos de ofrecer ya se había mostrado, hay que decirlo.
       exhausted = plans.some(p => (p.sigs || [p.sig]).some(f => avoidC.has(f)));
     }
-    if (!plans.length && top.length >= 2) {
+    if (!plans.length && top.length >= 2 && !usarRecetas) {
       for (let i = 0; i < top.length && !plans.length; i++) {
         for (let j = i + 1; j < top.length; j++) {
           const a = top[i], b = top[j];
@@ -3176,16 +3346,17 @@ class Component extends DCLogic {
       : quiereComer ? (v => this.CATS_MESA().includes(v.cat) && this.sirveComida(v))
       : quiereNoche ? (v => this.CATS_NOCHE().includes(v.cat) || this.actsDe(v).indexOf('copas') >= 0)
       : this.soloCultural() ? (v => this.esCultural(v)) : null;
-    if (tipoSuelto && plans.length < 3 && !opts.subBusqueda) {
+    const tipoS = usarRecetas ? recetaSuelto : tipoSuelto;
+    if (tipoS && plans.length < 3 && !opts.subBusqueda) {
       const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
       const llegada = v => this.esAntro(v) ? Math.max(from, Math.min(this.ANTRO_IDEAL, to + this.MARGEN() / 60 - this.duracionAct(v))) : Math.max(from, v.oh[0]);
       // Para cultura también entran teatros y cines cuya función no está
       // confirmada: se ofrecen como lugar, con "consulta la cartelera".
-      const fuenteSueltos = this.soloCultural()
+      const fuenteSueltos = usarRecetas ? poolReceta : this.soloCultural()
         ? pool.concat(this.cat().filter(v => this.funcionSinConfirmar(v) && !pool.includes(v) && !excl.has(v.id) && this.budgetOk(v)
             && this.timingOk(v) && this.vibeAdmite(v, VM) && this.esRecomendable(v) && !v.lejos && (cityWide || sel.includes(v.z))))
         : pool;
-      const base0 = fuenteSueltos.filter(v => (cityWide || sel.includes(v.z)) && tipoSuelto(v) && !marcas.has(this.marcaDe(v))
+      const base0 = fuenteSueltos.filter(v => (cityWide || sel.includes(v.z)) && tipoS(v) && !marcas.has(this.marcaDe(v))
           && this.atHour(v, llegada(v)) && this.cabeEnVentana(v, llegada(v), to) && this.cabeEnTope([v], max).ok);
       let nuevos0 = base0.filter(v => !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)));
       // Si ya se mostraron todos y no queda NADA que ofrecer, se repiten y se
@@ -3201,9 +3372,13 @@ class Component extends DCLogic {
             && sueltos.some(w => this.tipoInicio(w) !== this.tipoInicio(v) && !plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(w))))) continue;
         const ak = this.actsUtiles(v, VM)[0] || 'cena';
         const sg = this.comboSig([v]);
-        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true,
+        const RR = this.RECETAS(); const kP = usarRecetas && recetaSueltas.find(k => this.esPieza(v, RR.piezas[k]));
+        const lblS = kP ? RR.piezas[kP].lbl : null;
+        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: lblS || this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true,
           cartelera: this.funcionSinConfirmar(v) }); }
     }
+    // Sin más lugares sueltos, se repite plantilla con otros lugares.
+    if (usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
     // Cada opción dice, si aplica, por qué no llena la ventana, por qué no trae
     // dónde comer o por qué cuesta menos que el rango elegido.
     plans.forEach(p => { califica(p);
@@ -5046,7 +5221,8 @@ class Component extends DCLogic {
       // lo que no publica precio, como el cover de un antro). Antes se comparaba
       // sólo lo confirmado y "Más económico" podía ser la opción más cara.
       pon(minPor(d => d.costoEst), 'Más económico');
-      pon(minPor(d => d.n > 1 ? d.rs.trasMin : null), 'Menos traslados');
+      // Sólo tiene sentido comparar traslados si todas las opciones son planes.
+      if (D.every(d => d.n > 1)) pon(minPor(d => d.rs.trasMin), 'Menos traslados');
     }
     D.forEach((d, i) => { if (d.baile) pon(i, 'Para bailar'); });
     D.forEach((d, i) => { if (d.reto) pon(i, 'Con algo que hacer'); });
@@ -5175,9 +5351,10 @@ class Component extends DCLogic {
         fondo: fondoDe(a) + ';height:' + (ph && ph.src ? '156px' : 'auto;min-height:96px'), hasPhoto: !!(ph && ph.src), photo: ph ? ph.src : '',
         photoFail: () => this.setState(st2 => { const q = Object.assign({}, st2.photos); delete q[a.id]; return { photos: q }; }),
         aria: 'Opción ' + (i + 1) + ', ' + frases[i] + ': ' + st.map(v => v.n).join(', '),
-        stops: st.map((v, j) => ({ time: p.cartelera ? 'Cartelera' : this.time12(ts[j]), name: v.n, sub: v.cat + ' · ' + v.col + (v.horaEstimada ? ' · horario por confirmar' : '')
+        stops: st.map((v, j) => ({ time: (p.cartelera || (p.porConfirmar && p.porConfirmar[j]))
+            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: v.cat + ' · ' + v.col + (v.horaEstimada ? ' · horario por confirmar' : '')
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
-          + (p.cartelera ? ' · consulta la cartelera' : '') })),
+          + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
         elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',

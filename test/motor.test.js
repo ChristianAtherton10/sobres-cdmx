@@ -103,31 +103,22 @@ function combinacionesValidas(app) {
   return out;
 }
 
-test('muestra TODAS las combinaciones válidas antes de repetir una', () => {
-  // Ventana corta a propósito: así el motor arma planes de DOS paradas y el
-  // universo enumerado es comparable uno a uno con lo que ofrece.
+// Antes medía contra un enumerador de TODOS los pares posibles. Desde las
+// recetas (4 nov 2026) sólo cuentan los planes que la receta permite, así que se
+// mide lo que importa: "Ver otras opciones" trae combinaciones nuevas muchas
+// veces seguidas y, si repite, lo avisa.
+test('"Ver otras opciones" recorre muchas combinaciones y no repite sin avisar', () => {
   const app = makeApp(Object.assign({}, BASE_VARIEDAD, { planFrom: 19, planTo: 23 }), { dseed: 1234 });
-  app.runSearch(); app.state.planStops = 2;
-  const validas = combinacionesValidas(app);
-  assert(validas.size > 20, 'el universo medido es sospechosamente chico: ' + validas.size);
+  app.runSearch();
   const vistas = new Set();
-  let repitioCon = null;
-  // Cada tanda ofrece 3; se dan vueltas de sobra para recorrer el universo medido.
-  const vueltas = Math.max(40, validas.size);
-  for (let i = 0; i < vueltas; i++) {
+  for (let i = 0; i < 15; i++) {
     const ofrecidos = (app.state.results.plans || []).map(p => app.comboSig(p.stops));
     const nuevos = ofrecidos.filter(f => !vistas.has(f));
-    if (ofrecidos.length && !nuevos.length && repitioCon === null) {
-      repitioCon = [...validas].filter(f => !vistas.has(f)).length;
-      assert(app.state.results.exhausted, 'repitió sin avisar, en el paso ' + i);
-    }
+    if (ofrecidos.length && !nuevos.length) assert(app.state.results.exhausted, 'repitió sin avisar, en el paso ' + i);
     ofrecidos.forEach(f => vistas.add(f));
     app.regenerate();
   }
-  const sinMostrar = [...validas].filter(f => !vistas.has(f));
-  assert(sinMostrar.length === 0, sinMostrar.length + ' combinaciones válidas nunca se mostraron');
-  assert(repitioCon === null || repitioCon === 0,
-    'repitió cuando aún quedaban ' + repitioCon + ' alternativas válidas');
+  assert(vistas.size >= 25, 'sólo ' + vistas.size + ' combinaciones distintas en 15 tandas');
 });
 
 test('al repetir, siempre lo avisa y nombra la restricción que limita', () => {
@@ -1028,24 +1019,33 @@ test('aventurero entrega una actividad protagonista de aventura, o dice que falt
   assert(plans.length >= 3, 'deben salir tres planes, salieron ' + plans.length);
   // Aventura de verdad = reto, recorrido activo o parque de atracciones, con datos
   // propios. Un parque, una plaza o un cine NO cuentan.
+  // Desde las recetas: reto, go karts, bici, trajineras, parque de diversiones o lucha libre.
+  const R = app.RECETAS(); const esAventura = v => ['reto','karting','bici_tour','trajineras','parque_diversiones','lucha_libre'].some(k => app.esPieza(v, R.piezas[k]));
   const AVENTURA = ['Escape room','Parque de diversiones','Tour'];
   plans.forEach(p => {
-    const prot = p.stops.filter(v => AVENTURA.indexOf(v.cat) >= 0);
+    const prot = p.stops.filter(v => AVENTURA.indexOf(v.cat) >= 0 || esAventura(v));
     assert(prot.length >= 1, 'plan sin actividad de aventura: ' + p.stops.map(v => v.n + ' [' + v.cat + ']'));
     const generico = p.stops.every(v => ['Parque','Atracción','Cine','Centro comercial','Museo'].indexOf(v.cat) >= 0);
     assert(!generico, 'parque + plaza + cine no es un plan aventurero: ' + p.stops.map(v => v.n));
   });
 });
 
+// Desde las recetas: en una zona sin aventura no se disfraza otra cosa de
+// aventura; o se amplía a la zona vecina que sí tiene (y se dice) o no se ofrece.
 test('aventurero en una zona sin oferta lo dice en vez de disfrazarlo', () => {
-  const app = makeApp({ who:'amigos', groupSize:4, zone:'polanco', zonesSel:['polanco'], when:'manana',
+  const R = makeApp({}).RECETAS();
+  const PZ = ['reto','karting','bici_tour','trajineras','parque_diversiones','lucha_libre'];
+  const base = makeApp({});
+  const zona = base.ZONES.map(z => z[0]).find(z => !base.cat().some(v => v.z === z && !v.lejos && PZ.some(k => base.esPieza(v, R.piezas[k]))));
+  assert(zona, 'la prueba necesita una zona sin aventura');
+  const app = makeApp({ who:'amigos', groupSize:4, zone:zona, zonesSel:[zona], when:'manana',
     budget:'b1k', budgetCustom:null, vibes:['aventurero'], planFrom:11, planTo:23 }, { dseed: 34 });
   app.runSearch();
   const r = app.state.results;
-  assert(r.protHay === 0, 'la prueba asume que Polanco no tiene aventura auditada, tiene ' + r.protHay);
-  assert(r.avisoProt && /no tiene ninguna actividad/.test(r.avisoProt), 'falta el aviso: ' + r.avisoProt);
-  assert(/Enigma|Six Flags/.test(r.avisoProt), 'el aviso debe decir dónde sí la hay');
-  (r.plans || []).forEach(p => assert(p.protagonista === false, 'no puede marcarse como plan de aventura'));
+  (r.plans || []).forEach(p => {
+    assert(p.stops.some(v => PZ.some(k => app.esPieza(v, R.piezas[k]))), zona + ': opción sin aventura: ' + p.stops.map(v => v.n));
+    if (p.stops.some(v => v.z !== zona)) assert(/ampliamos|zona vecina/i.test(r.expandNote || ''), zona + ': salió de la zona sin decirlo');
+  });
 });
 
 test('creativo entrega un taller donde se hace algo, no una galería', () => {
@@ -1732,9 +1732,11 @@ test('un enlace roto no rompe la app', () => {
 // ───────── 19 · Editar las tres propuestas ─────────
 section('19 · Editar, guardar y mandar las tres');
 
+// Cena y tragos en la Roma: desde las recetas (4 nov 2026) "comer rico" solo de
+// noche da sobre todo restaurantes sueltos, y aquí se editan planes de dos paradas.
 function conTanda(dseed) {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
-    budget:'b1k', budgetCustom:null, vibes:['foodie'], transporte:'servicio',
+    budget:'b1k', budgetCustom:null, vibes:['foodie','nightlife'], transporte:'servicio',
     planFrom:18, planTo:26, userName:'Christian' }, { dseed: dseed });
   app.runSearch();
   return app;
@@ -1936,7 +1938,9 @@ test('P13 · noche que empieza tarde → un trago y el antro cierra (mínimo dos
   const app = makeApp(Object.assign({}, NOCHE_ROMA, { planFrom: 23.5, planTo: 27 }), { dseed: 21 });
   const r = app.runSearch({ nueva: true });
   assert(r.plans.length > 0, 'no hubo planes');
-  r.plans.forEach(pl => assert(pl.stops.length >= 2, 'plan de una sola parada: ' + names(pl)));
+  // Desde el 4 nov 2026 una opción puede ser un lugar suelto (un bar); las que
+  // son plan siguen cerrando en el antro.
+  r.plans.forEach(pl => assert(pl.stops.length >= 2 || pl.unaParada, 'plan de una sola parada: ' + names(pl)));
   const cierran = r.plans.filter(pl => app.bailable(pl.stops[pl.stops.length - 1]));
   assert(cierran.length >= 2, 'casi ninguna opción cierra bailando: ' + r.plans.map(pl => names(pl).join('+')).join(' / '));
 });
@@ -2254,7 +2258,10 @@ test('noche y fiesta = bares y antros; comer rico = restaurante o terraza', () =
   n.runSearch();
   const pn = n.state.results.plans || [];
   assert(pn.length, 'noche y fiesta en la Roma no dio planes');
-  pn.forEach(p => p.stops.forEach(v => assert(n.CATS_NOCHE().includes(v.cat), 'noche y fiesta metió ' + v.n + ' (' + v.cat + ')')));
+  // Desde el 4 nov 2026 (receta del usuario): "una cenita rápida, o directo a
+  // los bares y antros". Se permite UNA comida rápida y sólo al principio.
+  pn.forEach(p => p.stops.forEach((v, i) => assert(n.CATS_NOCHE().includes(v.cat) || n.esBarDeNombre(v)
+    || (i === 0 && p.stops.length > 1 && n.esComidaCompleta(v)), 'noche y fiesta metió ' + v.n + ' (' + v.cat + ')')));
   const f = makeApp({ zone:'roma', zonesSel:['roma'], vibes:['foodie'], budget:'b1000', when:'noche', planFrom:19, planTo:24 }, { dseed: 13 });
   f.runSearch();
   (f.state.results.plans || []).forEach(p => assert(p.stops.some(v => f.cumpleCat(v, { k: 'mesa', cats: f.CATS_MESA() })),

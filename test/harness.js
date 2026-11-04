@@ -69,6 +69,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Lugares nuevos del paquete del 3 nov 2026 (define window.SOBRES_PAQUETE)
   const pq = path.join(ROOT, 'data', 'paquete.js');
   if (fs.existsSync(pq)) new Function('window', fs.readFileSync(pq, 'utf8'))(win);
+  // Recetas por ambiente (define window.SOBRES_RECETAS)
+  const rc = path.join(ROOT, 'data', 'recetas.js');
+  if (fs.existsSync(rc) && !opts.sinRecetas) new Function('window', fs.readFileSync(rc, 'utf8'))(win);
 
   const Component = new Function(...Object.keys(sandbox),
     m[1] + '\n;return Component;')(...Object.values(sandbox));
