@@ -31,6 +31,7 @@
 <script src="data/lugares.js"></script>
 <script src="data/auditoria.js"></script>
 <script src="data/excel.js"></script>
+<script src="data/paquete.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
 /* El resumen de filtros nunca pasa de dos líneas (así su alto es fijo). */
@@ -1447,7 +1448,10 @@ class Component extends DCLogic {
       const Z = {}; this.ZONES.forEach(z => { Z[z[0]] = z; });
       // NUEVOS (auditoría a mano) + los lugares del Excel de candidatos
       // (data/excel.js), que vienen en el mismo formato.
-      const XL = (window.SOBRES_EXCEL && window.SOBRES_EXCEL.lugares) || [];
+      // + los del paquete "Catálogo CDMX para SOBRES" (3 nov 2026), sólo los que
+      // no estaban (reportes/paquete/build_paquete.py).
+      const XL = ((window.SOBRES_EXCEL && window.SOBRES_EXCEL.lugares) || [])
+        .concat((window.SOBRES_PAQUETE && window.SOBRES_PAQUETE.lugares) || []);
       const yaEsta = new Set(out.map(x => x.id));
       for (const r0 of A.NUEVOS.concat(XL)) {
         if (A.BAJA[r0.id]) continue;
@@ -1466,6 +1470,7 @@ class Component extends DCLogic {
           horaEstimada: !!r.horaEstimada, cocina: r.cocina || '', distincion: r.distincion || '',
           recomendable: r.recomendable === false ? false : undefined, lejos: !!r.lejos, pNotaLugar: r.nota || '',
           otRt: r.otRt || null, otRc: r.otRc || null, vestimenta: r.vestimenta || '', tel: r.tel || '',
+          consultado: r.consultado || '', hrsFuente: r.hrsFuente || '',
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -1992,6 +1997,8 @@ class Component extends DCLogic {
     // Lugares del Excel ('xl-R0410'): 'L' + resto. No pueden empezar con 'x',
     // que es la marca de una parada agregada a mano.
     if (/^xl-[A-Z]\d+$/.test(id)) return 'L' + id.slice(3);
+    // Lugares del paquete del 3 nov 2026 ('pq-6f1a2b3c4d'): 'Q' + resto.
+    if (/^pq-[0-9a-f]+$/.test(id)) return 'Q' + id.slice(3);
     if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
     // Cualquier otro id que lleve un separador se escapa para no romper nada.
     return /[~_.!]/.test(id) ? '%' + encodeURIComponent(id) : id;
@@ -1999,6 +2006,7 @@ class Component extends DCLogic {
   largaId(x) {
     if (/^\d+$/.test(x)) return 'cdmx-' + x;
     if (/^L[A-Z]\d+$/.test(x)) return 'xl-' + x.slice(1);
+    if (/^Q[0-9a-f]+$/.test(x)) return 'pq-' + x.slice(1);
     if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
     if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
     return x;

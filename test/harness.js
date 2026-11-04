@@ -66,6 +66,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Lugares del Excel de candidatos (define window.SOBRES_EXCEL)
   const xl = path.join(ROOT, 'data', 'excel.js');
   if (fs.existsSync(xl)) new Function('window', fs.readFileSync(xl, 'utf8'))(win);
+  // Lugares nuevos del paquete del 3 nov 2026 (define window.SOBRES_PAQUETE)
+  const pq = path.join(ROOT, 'data', 'paquete.js');
+  if (fs.existsSync(pq)) new Function('window', fs.readFileSync(pq, 'utf8'))(win);
 
   const Component = new Function(...Object.keys(sandbox),
     m[1] + '\n;return Component;')(...Object.values(sandbox));

@@ -909,7 +909,8 @@ test('las fichas Soumaya distinguen sede y actividad', () => {
   assert(fichas.length >= 3, 'se perdieron fichas: ' + fichas.length);
   const nombres = fichas.map(v => v.n);
   assert(new Set(nombres).size === nombres.length, 'hay títulos repetidos');
-  fichas.forEach(v => assert(/carso|loreto|auditorio|fundación/i.test(v.n),
+  // La Casa Guillermo Tovar de Teresa (Roma) es otra sede, llegó con el paquete del 3 nov 2026.
+  fichas.forEach(v => assert(/carso|loreto|auditorio|fundación|tovar/i.test(v.n),
     'ficha sin sede ni actividad en el título: ' + v.n));
 });
 
