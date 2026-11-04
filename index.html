@@ -1636,6 +1636,13 @@ class Component extends DCLogic {
     for (let a = 0; a < ix.length; a++) for (let b = a + 1; b < ix.length; b++) if (Math.abs(times[ix[b]] - times[ix[a]]) < 4 - 1e-6) return false;
     return true; }
   tipoInicio(v) { return v.cat === 'Restaurante' ? 'Restaurante:' + (v.cocina || v.n) : v.cat; }
+  // Lo que cuenta como "cultural" (museo, galería, teatro, cine, foro, centro
+  // cultural, sitio histórico, biblioteca, librería, o una atracción que se visita).
+  esCultural(v) { return !!v && (['Museo','Galería','Centro cultural','Teatro','Cine','Foro','Sitio histórico','Biblioteca','Librería','Espectáculo'].includes(v.cat)
+    || (v.cat === 'Atracción' && this.actsDe(v).indexOf('visita') >= 0)); }
+  // ¿Pidieron SÓLO cultura? (joyita/clásico/con amigos no cambian el tipo de lugar)
+  soloCultural() { const vb = (this.state.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico' && x !== 'social');
+    return vb.length > 0 && vb.every(x => x === 'cultural'); }
   esBarDeNombre(v) { return /cervecer|cantina|\bpub\b|\bbeer|brew|mezcaler|pulquer/i.test(v.n || ''); }
   esCadenaCasual(v) { return /chili'?s|olive garden|italianni|p\.? ?f\.? ?chang|shake shack|hard rock|\bvips\b|sanborns|\btoks\b|hello kitty|burger|wings|hooters|applebee|tgi|domino|little caesars|carl'?s jr|mcdonald|kfc|starbucks|potzolcalli|el portón|wings army/i.test(v.n || ''); }
   bailable(v) { return !!v && (this.esAntro(v) || this.actsDe(v).indexOf('baile') >= 0); }
@@ -1683,6 +1690,9 @@ class Component extends DCLogic {
     if ((this.state.vibes || []).includes('foodie') && !this.pideNoche()
         && ['Bar','Bar de autor','Speakeasy','Mezcalería','Cantina','Antro','Salón de baile'].includes(v.cat)) return false;
     if ((this.state.vibes || []).includes('foodie') && v.cat === 'Taquería') return false;
+    // "Cultural" sola: lugares culturales y, si toca comer, un restaurante. Antes
+    // de noche salían "tacos → café" sin nada cultural (reporte del 4 nov 2026).
+    if (this.soloCultural() && !this.esCultural(v) && !['Restaurante', 'Fonda de autor', 'Mercado', 'Izakaya'].includes(v.cat)) return false;
     // Si sólo pidieron comer (y quizá tomar algo), las paradas son de comer o de
     // beber: un centro comercial o un museo no son "comer rico".
     { const vb = (this.state.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico' && x !== 'social');
@@ -3133,7 +3143,8 @@ class Component extends DCLogic {
     // sucursal de la misma marca) en dos opciones.
     { const fin = [];
       plans.forEach(p => { if (!p.stops || (p.stops.length < 2 && !p.unaParada)) return;
-        if (!this.comidasSeparadas(p.stops, p.times)) return; if (fin.some(h => comparte(h, p))) return; fin.push(p); });
+        if (!this.comidasSeparadas(p.stops, p.times)) return;
+        if (this.soloCultural() && !p.stops.some(v => this.esCultural(v))) return; if (fin.some(h => comparte(h, p))) return; fin.push(p); });
       plans = fin; }
     // De noche, el postre o el café van DESPUÉS de cenar, no antes.
     plans = plans.map(p => { const POSTRE = ['Café', 'Heladería', 'Churrería'];
@@ -3149,17 +3160,24 @@ class Component extends DCLogic {
     // toma algo. Sin texto de "una sola parada": es una opción, no un plan roto.
     const vbs = (s.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico');
     const quiereComer = vbs.includes('foodie'), quiereNoche = this.pideNoche();
-    const soloContexto = vbs.length > 0 && vbs.every(x => x === 'foodie' || x === 'nightlife' || x === 'social');
+    const soloContexto = vbs.length > 0 && (vbs.every(x => x === 'foodie' || x === 'nightlife' || x === 'social') || this.soloCultural());
     const tipoSuelto = !soloContexto ? null
       // Comer + tomar algo: casi cualquier restaurante sirve cerveza o vino; se
       // prefieren (abajo) los que además son bar.
       : quiereComer && quiereNoche ? (v => this.sirveComida(v) && (this.CATS_MESA().includes(v.cat) || this.CATS_NOCHE().includes(v.cat) || this.esBarDeNombre(v) || this.actsDe(v).indexOf('copas') >= 0))
       : quiereComer ? (v => this.CATS_MESA().includes(v.cat) && this.sirveComida(v))
-      : quiereNoche ? (v => this.CATS_NOCHE().includes(v.cat) || this.actsDe(v).indexOf('copas') >= 0) : null;
+      : quiereNoche ? (v => this.CATS_NOCHE().includes(v.cat) || this.actsDe(v).indexOf('copas') >= 0)
+      : this.soloCultural() ? (v => this.esCultural(v)) : null;
     if (tipoSuelto && plans.length < 3 && !opts.subBusqueda) {
       const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
       const llegada = v => this.esAntro(v) ? Math.max(from, Math.min(this.ANTRO_IDEAL, to + this.MARGEN() / 60 - this.duracionAct(v))) : Math.max(from, v.oh[0]);
-      const base0 = pool.filter(v => (cityWide || sel.includes(v.z)) && tipoSuelto(v) && !marcas.has(this.marcaDe(v))
+      // Para cultura también entran teatros y cines cuya función no está
+      // confirmada: se ofrecen como lugar, con "consulta la cartelera".
+      const fuenteSueltos = this.soloCultural()
+        ? pool.concat(this.cat().filter(v => this.funcionSinConfirmar(v) && !pool.includes(v) && !excl.has(v.id) && this.budgetOk(v)
+            && this.timingOk(v) && this.vibeAdmite(v, VM) && this.esRecomendable(v) && !v.lejos && (cityWide || sel.includes(v.z))))
+        : pool;
+      const base0 = fuenteSueltos.filter(v => (cityWide || sel.includes(v.z)) && tipoSuelto(v) && !marcas.has(this.marcaDe(v))
           && this.atHour(v, llegada(v)) && this.cabeEnVentana(v, llegada(v), to) && this.cabeEnTope([v], max).ok);
       let nuevos0 = base0.filter(v => !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)));
       // Si ya se mostraron todos y no queda NADA que ofrecer, se repiten y se
@@ -3169,13 +3187,14 @@ class Component extends DCLogic {
         .sort((a, b) => { const bar = v => quiereComer && quiereNoche && (this.esBarDeNombre(v) || this.actsDe(v).indexOf('copas') >= 0 || this.CATS_NOCHE().includes(v.cat)) ? 2 : 0;
           return (rk(b) + bar(b) - nivel(b) * 6 - (b.ppUnknown ? 3 : 0)) - (rk(a) + bar(a) - nivel(a) * 6 - (a.ppUnknown ? 3 : 0)); });
       for (const v of sueltos) { if (plans.length >= 3) break;
-        if (plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(v)))) continue;
+        if (plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(v) || (x.addr && x.addr === v.addr)))) continue;   // Teatro 1 y Teatro 2 del mismo edificio
         // Que las sueltas no sean tres del mismo tipo (tres italianos, tres antros).
         if (plans.length === 2 && plans.every(p => this.tipoInicio(p.stops[0]) === this.tipoInicio(v))
             && sueltos.some(w => this.tipoInicio(w) !== this.tipoInicio(v) && !plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(w))))) continue;
         const ak = this.actsUtiles(v, VM)[0] || 'cena';
         const sg = this.comboSig([v]);
-        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true }); }
+        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true,
+          cartelera: this.funcionSinConfirmar(v) }); }
     }
     // Cada opción dice, si aplica, por qué no llena la ventana, por qué no trae
     // dónde comer o por qué cuesta menos que el rango elegido.
@@ -5143,12 +5162,14 @@ class Component extends DCLogic {
       const ts = (p.times && p.times.length === st.length) ? p.times : this.planTimes(st.length);
       return { fx: 'sc-rise', fxDelay: 'animation-delay:' + (i * 90) + 'ms', num: 'Opción ' + (i + 1), frase: frases[i],
         editado: !!p.editado, titulo: st.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '),
-        horario: rs.horario, paradas: rs.paradas, costo: rs.costo, traslados: rs.traslados, costoNota: rs.costoNota,
+        // Un teatro sin función confirmada no tiene horario: no se inventa.
+        horario: p.cartelera ? 'Según cartelera' : rs.horario, paradas: rs.paradas, costo: rs.costo, traslados: rs.traslados, costoNota: rs.costoNota,
         fondo: fondoDe(a) + ';height:' + (ph && ph.src ? '156px' : 'auto;min-height:96px'), hasPhoto: !!(ph && ph.src), photo: ph ? ph.src : '',
         photoFail: () => this.setState(st2 => { const q = Object.assign({}, st2.photos); delete q[a.id]; return { photos: q }; }),
         aria: 'Opción ' + (i + 1) + ', ' + frases[i] + ': ' + st.map(v => v.n).join(', '),
-        stops: st.map((v, j) => ({ time: this.time12(ts[j]), name: v.n, sub: v.cat + ' · ' + v.col + (v.horaEstimada ? ' · horario por confirmar' : '')
-          + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '') })),
+        stops: st.map((v, j) => ({ time: p.cartelera ? 'Cartelera' : this.time12(ts[j]), name: v.n, sub: v.cat + ' · ' + v.col + (v.horaEstimada ? ' · horario por confirmar' : '')
+          + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
+          + (p.cartelera ? ' · consulta la cartelera' : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
         elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',
