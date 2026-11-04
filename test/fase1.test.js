@@ -119,10 +119,9 @@ test('5b · sin repetir lugares igual salen varias opciones: se cambia la parada
 test('6 · mínimo 2 paradas; fuera de la zona sólo si no hay opciones dentro, y con aviso', () => {
   Object.keys(ESC).forEach(k => SEMILLAS.forEach(sd => {
     const { app, plans, r } = corre(ESC[k], sd);
-    // Única excepción (4 nov 2026): "Comer rico" con presupuesto justo puede ser
-    // una cena sola, y la opción lo explica.
-    plans.forEach(p => assert(p.stops.length >= 2 || (p.unaParada && p.avisoUnaParada),
-      k + '/' + sd + ': plan de una sola parada sin explicación: ' + txt(p)));
+    // Excepción pedida por el usuario (4 nov 2026): si no sale un buen plan, la
+    // opción puede ser UN LUGAR suelto del tipo pedido (sin texto de más).
+    plans.forEach(p => assert(p.stops.length >= 2 || p.unaParada, k + '/' + sd + ': plan de una sola parada: ' + txt(p)));
     const fuera = plans.some(p => p.stops.some(v => !app.zoneList().includes(v.z)));
     if (fuera) assert(/ampliamos|zona/i.test(r.expandNote || ''), k + '/' + sd + ': salió de la zona sin avisar');
   }));
@@ -249,7 +248,7 @@ test('14 · "Comer rico" no propone bares, cantinas, antros ni taquerías', () =
     plans.forEach(p => {
       p.stops.forEach(v => assert(!NO.includes(v.cat), z + '/' + sd + ': comer rico propuso ' + v.n + ' (' + v.cat + '): ' + txt(p)));
       p.stops.forEach(v => assert(!app.esCadenaCasual(v), z + '/' + sd + ': comer rico propuso la cadena ' + v.n));
-      assert(p.stops.length >= 2 || (p.avisoUnaParada && p.avisoUnaParada.length > 20), z + '/' + sd + ': una parada sin explicar');
+      assert(p.stops.length >= 2 || p.unaParada, z + '/' + sd + ': una parada que no es lugar suelto');
       assert(p.stops.some(v => app.CATS_MESA().includes(v.cat)), z + '/' + sd + ': comer rico sin restaurante: ' + txt(p));
     });
   }));
@@ -263,6 +262,42 @@ test('14c · con "Comer rico" ninguna opción se anuncia "Para unos tragos"', ()
 test('14b · con "Comer rico" + "Noche y fiesta" sí puede haber bares', () => {
   const { plans } = corre({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], vibes:['foodie','nightlife'], when:'noche', budget:'b1000', planFrom:19, planTo:26 }, 3);
   assert(plans.some(p => p.stops.some(v => ['Bar','Bar de autor','Speakeasy','Mezcalería','Antro','Rooftop'].includes(v.cat))), 'comer + fiesta se quedó sin bares');
+});
+
+// 15 ─────────────────────────────────────────────────────────────
+// Reporte del usuario (4 nov 2026): "un restaurante a las 7 pm y otro a las
+// 9:20 pm, ¿cómo hace sentido?". Entre dos comidas completas, mínimo 4 horas.
+const COMIDA_COMPLETA = ['Restaurante', 'Fonda de autor', 'Izakaya', 'Taquería', 'Mercado'];
+test('15 · nunca dos comidas completas con menos de 4 horas entre ellas', () => {
+  const casos = [ESC.famSantaFe, ESC.famCoyoacan, ESC.foodieSantaFe, ESC.datePolanco,
+    { who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], vibes:['foodie'], when:'noche', budget:'b1000' },
+    { who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], vibes:['foodie'], when:'noche', budget:'b600' },
+    { who:'amigos', groupSize:4, zone:'juarez', zonesSel:['juarez'], vibes:['foodie','nightlife'], when:'noche', budget:'b1000' },
+    { who:'amigos', groupSize:4, zone:'condesa', zonesSel:['condesa'], vibes:[], when:'finde', budget:'b1000', planFrom:12, planTo:22 }];
+  casos.forEach((st, k) => SEMILLAS.forEach(sd => {
+    const { app, plans } = corre(st, sd);
+    plans.forEach(p => {
+      const ix = p.stops.map((v, i) => i).filter(i => app.esComidaCompleta(p.stops[i]));
+      for (let a = 0; a < ix.length; a++) for (let b = a + 1; b < ix.length; b++)
+        assert(Math.abs(p.times[ix[b]] - p.times[ix[a]]) >= 4 - 1e-6, 'caso ' + k + '/' + sd + ': dos comidas a ' +
+          app.time12(p.times[ix[a]]) + ' y ' + app.time12(p.times[ix[b]]) + ': ' + txt(p));
+    });
+  }));
+});
+// Si no sale un buen plan, sólo lugares sueltos según lo que se pidió, sin texto de más.
+test('15b · sin buen plan: lugares sueltos del tipo pedido y sin el aviso de "una sola parada"', () => {
+  const tipos = { foodie: ['Restaurante','Fonda de autor','Izakaya','Rooftop'], nightlife: ['Bar','Bar de autor','Speakeasy','Mezcalería','Rooftop','Antro','Salón de baile','Cantina'] };
+  [['santafe', ['foodie'], 'b600'], ['santafe', ['nightlife'], 'b600'], ['roma', ['foodie'], 'b600']].forEach(([z, vb, b]) => [3, 29].forEach(sd => {
+    const { app, plans, r } = corre({ who:'amigos', groupSize:4, zone:z, zonesSel:[z], vibes:vb, when:'noche', budget:b }, sd);
+    assert(plans.length >= 1, z + ' ' + vb + ': ninguna opción');
+    if (z !== 'santafe') assert(plans.length === 3, z + ' ' + vb + ': ' + plans.length + ' opciones');
+    plans.filter(p => p.stops.length === 1).forEach(p => {
+      assert(tipos[vb[0]].includes(p.stops[0].cat) || app.esBarDeNombre(p.stops[0]), z + ' ' + vb + ': lugar suelto fuera de contexto: ' + txt(p));
+      assert(p.stops[0].z === z || /zona vecina|ampliamos/.test(r.expandNote || ''), z + ': lugar suelto en otra zona sin avisar: ' + txt(p));
+    });
+    assert(!/una sola parada/i.test(JSON.stringify(plans.map(p => [p.avisoVentana, p.avisoComida, p.avisoPrecio, p.avisoUnaParada])) + (r.expandNote || '')),
+      z + ': sigue el texto de "una sola parada"');
+  }));
 });
 
 if (require.main === module) report();

@@ -165,8 +165,10 @@ test('el motor devuelve 3 planes distintos para comparar', () => {
   assert(new Set(r.plans.map(p => p.sig)).size === r.plans.length, 'hay planes repetidos entre sí');
 });
 
+// En la Roma: "comer + noche" en Santa Fe sólo tiene 9 lugares de comer/beber
+// abiertos de noche con $1,000 (desde el 4 nov 2026 no se rellena con cines).
 test('la primera tanda visible es de 12 lugares', () => {
-  const app = makeApp(BASE, { dseed: 9 });
+  const app = makeApp({ ...BASE, zone: 'roma', zonesSel: ['roma'] }, { dseed: 9 });
   app.runSearch();
   assert(app.state.visibleCount === 12, 'visibleCount = ' + app.state.visibleCount);
   assert(app.state.results.venues.length >= 12, 'sólo ' + app.state.results.venues.length + ' candidatos');
@@ -351,8 +353,10 @@ test('la etiqueta de zona y los resultados vienen del mismo dato', () => {
 // ───────────────────────── 6. Guardar y recuperar planes ─────────────────────────
 section('6 · Guardar y recuperar planes');
 
+// En la Roma (no en Santa Fe): desde el 4 nov 2026, si no sale un buen plan las
+// opciones son lugares sueltos, y aquí se necesita un plan de dos paradas.
 const planGuardable = (dseed = 1234) => {
-  const app = makeApp(BASE, { dseed });
+  const app = makeApp({ ...BASE, zone: 'roma', zonesSel: ['roma'] }, { dseed });
   app.runSearch(); app.state.planStops = 2;
   return app;
 };
@@ -858,7 +862,9 @@ test('avisa cuando pediste noche y no hay dónde tomar algo', () => {
   app.runSearch();
   const r = app.state.results;
   const hay = (r.plans || []).some(p => p.stops.some(v => app.sirveCopas(v) === 'si'));
-  if (!hay) assert(r.avisoCopas, 'no avisó que faltan copas');
+  // Sin ninguna opción, la pantalla de "no encontramos" ya nombra lo que limita.
+  if (!hay && (r.plans || []).length) assert(r.avisoCopas, 'no avisó que faltan copas');
+  if (!(r.plans || []).length) assert(r.limita, 'sin opciones y sin decir qué limita');
 });
 
 test('la hora de "ahora mismo" coincide en resumen y selectores', () => {
@@ -1130,7 +1136,9 @@ test('once tandas en Santa Fe descubren muchos más destinos que antes', () => {
   // Santa Fe de noche casi todo cierra en Cervecería de Barrio, así que muchas
   // tandas traen 2 opciones. El umbral baja de 25 a 20 hasta que la Fase 4
   // agregue bares en Santa Fe; los lugares distintos (arriba) siguen en 15.
-  assert(combos.size >= 20, 'sólo ' + combos.size + ' combinaciones distintas');
+  // 4 nov 2026: además, dos comidas completas necesitan 4 h entre sí, así que
+  // "cena + cervecería-restaurante" ya no cuenta; baja a 15.
+  assert(combos.size >= 15, 'sólo ' + combos.size + ' combinaciones distintas');
   // Santa Fe tiene UN solo lugar abierto a medianoche, así que el cierre puede
   // repetirse — pero entonces la app tiene que decirlo, no disimularlo.
   if (finales.size < 3) {
