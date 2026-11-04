@@ -112,4 +112,25 @@ test('29.4 · cada evento de GA4 lleva el número anónimo del usuario', () => {
   assert(evs[0] && evs[0].p.sobres_uid === 'S-ABCDEFGHJK', JSON.stringify(evs[0]));
 });
 
+test('29.5 · "Ver otras opciones" trae TIPOS de plan distintos, no sólo otros lugares', () => {
+  const a = makeApp({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], when: 'noche', vibes: ['nightlife'], budget: 'b1000', budgetCustom: null }, { dseed: 5, rseed: 36 });
+  a.runSearch({ nueva: true });
+  const tipos = new Set(); let previa = null; let nuevasPorTanda = [];
+  for (let i = 0; i < 4; i++) {
+    const t = new Set(a.state.results.plans.map(p => p.plantilla || 'suelto:' + p.stops[0].cat));
+    if (previa) nuevasPorTanda.push([...t].filter(x => !previa.has(x)).length);
+    t.forEach(x => tipos.add(x)); previa = t;
+    a.renderVals().resurprise();
+  }
+  assert(tipos.size >= 7, 'sólo ' + tipos.size + ' tipos de plan en 4 tandas: ' + [...tipos].join(', '));
+  assert(nuevasPorTanda.every(n => n >= 1), 'alguna tanda no trajo ningún tipo nuevo: ' + nuevasPorTanda.join(','));
+});
+
+test('29.6 · dos personas distintas no reciben exactamente las mismas tres opciones', () => {
+  const corre = uid => { const a = makeApp({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], when: 'noche', vibes: ['nightlife'], budget: 'b1000', budgetCustom: null }, { dseed: 5, rseed: 36 });
+    a._win.SOBRES_UID = uid; a.runSearch({ nueva: true }); return a.state.results.plans.map(p => a.comboSig(p.stops)).join('/'); };
+  const distintos = new Set(['S-AAAAAAAAAA', 'S-BBBBBBBBBB', 'S-CCCCCCCCCC', 'S-DDDDDDDDDD'].map(corre));
+  assert(distintos.size >= 2, 'las 4 personas vieron lo mismo');
+});
+
 if (require.main === module) report();

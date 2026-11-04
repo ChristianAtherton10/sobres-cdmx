@@ -2831,7 +2831,10 @@ class Component extends DCLogic {
     amb.forEach(a => franjas.forEach(f => (R.recetas[a][f] || []).forEach(t => {
       const mezcla = amb.filter(b => t.some(x => piezasDe[b].has(x))).length;
       if (!plantillas.some(p => p.t.join() === t.join())) plantillas.push({ t, a, f, peso: mezcla }); })));
-    let semilla = (dseed * 2654435761 + 97) >>> 0;
+    // El número anónimo de cada persona (GA4) también mueve el azar: dos personas
+    // que piden lo mismo no reciben exactamente las mismas tres opciones.
+    const uidH = (() => { const u = (typeof window !== 'undefined' && window.SOBRES_UID) || ''; let h = 0; for (let i = 0; i < u.length; i++) h = (h * 31 + u.charCodeAt(i)) >>> 0; return h; })();
+    let semilla = (dseed * 2654435761 + 97 + uidH) >>> 0;
     const azar = () => { semilla = (Math.imul(semilla ^ (semilla >>> 15), 2246822519) + 0x9e3779b9) >>> 0; return semilla / 4294967296; };
     const { exigeBaile, pideComida } = ctx;
     const puntaje = v => rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0) + (joya && (v.tags || []).indexOf('joyita') >= 0 ? 4 : 0);
@@ -2855,6 +2858,9 @@ class Component extends DCLogic {
           let t = this.horaPieza(p, prevFin == null ? null : prevFin + viaje / 60, desde0, to);
           if (t == null) continue;
           const conf0 = !!p.porConfirmar && this.funcionSinConfirmar(v);
+          // Aunque la función esté "por confirmar", no se agenda cuando el lugar ya cerró
+          // (p. ej. "cena en familia → cine" a las 11:30 pm).
+          if (conf0 && v.oh && t > v.oh[1] - 1) continue;
           // Un evento con hora fija entra a SU hora (el concierto empieza a las
           // 8, no a las 7), si no deja más de 1.5 h muertas.
           if (v.evento && !conf0 && !this.atHour(v, t) && v.oh && v.oh[0] > t && v.oh[0] < to - 0.5 && v.oh[0] - t <= 1.5) t = v.oh[0];
@@ -2893,7 +2899,10 @@ class Component extends DCLogic {
     // Un poco de azar (con la semilla de la búsqueda) en el orden: si no, las
     // plantillas con lugares de puntaje alto (restaurantes, bares) tapaban
     // siempre al karaoke, al billar o al salón de baile de la misma receta.
-    cands.forEach(c => { c.orden = c.puntaje + azar() * 6; });
+    // "Ver otras opciones": los TIPOS de plan que ya viste en esta búsqueda bajan
+    // (no sólo los mismos lugares), para que la siguiente tanda sea distinta.
+    const avoidP = ctx.avoidP || new Set();
+    cands.forEach(c => { c.orden = c.puntaje + azar() * 6 - (avoidP.has(c.plantilla) ? 9 : 0); });
     cands.sort((a, b) => b.orden - a.orden);
     // Las tres como CONJUNTO: sin lugares (ni marcas) repetidos, plantillas y
     // arranques distintos mientras se pueda.
@@ -3330,12 +3339,19 @@ class Component extends DCLogic {
     let poolReceta = null, recetaSuelto = null, recetaReserva = [], recetaSueltas = [];
     if (usarRecetas) {
       const fam = this.esFamiliar();
+      const ambR = this.ambientesReceta();
+      const sinCopas = !ambR.some(a => ['nightlife', 'romántico', 'social', '_libre', 'aventurero', 'joyita'].indexOf(a) >= 0)
+        && !((s.aiPide || []).some(x => x === 'copas' || x === 'baile'));
       poolReceta = this.cat().filter(v => !excl.has(v.id) && this.budgetOk(v) && this.timingOk(v) && this.esRecomendable(v) && !v.cursoCerrado
         && (cityWide || zones.includes(v.z)) && (cityWide || !v.lejos)
         && !(this.state.sinAlcohol && this.implicaAlcohol(v)) && !(fam && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'no')
         // "Comer rico" nunca es taquería ni cadena casual (reporte del 4 nov 2026).
-        && !((s.vibes || []).includes('foodie') && (v.cat === 'Taquería' || this.esCadenaCasual(v))));
-      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida });
+        && !((s.vibes || []).includes('foodie') && (v.cat === 'Taquería' || this.esCadenaCasual(v)))
+        // Sin un ambiente de copas (fiesta, romántico, amigos o "lo que sea"), ni bares ni
+        // rooftops ni antros: "Tranqui + Cultural" no termina en un rooftop.
+        && (sinCopas ? ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Antro', 'Salón de baile', 'Cantina'].indexOf(v.cat) < 0 : true));
+      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida,
+        avoidP: new Set(opts.avoidPlantillas || []) });
       // Con un horario ELEGIDO, el plan de la receta se completa hasta llenarlo
       // (o trae su explicación): una familia de 1 a 9 pm no se va a las 2:15.
       const ventanaElegida0 = s.planFrom != null || s.planTo != null;
@@ -4020,10 +4036,14 @@ class Component extends DCLogic {
     const prevV = mismo ? (s.seenVenues || []) : [];
     const regen = (mismo ? (s.regenN || 0) : 0) + 1;
     const sol = this.nuevaSolicitud(); const ho = this.histOpts();
-    const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV,
+    const prevP = mismo ? (s.seenPlantillas || []) : [];
+    const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP,
       bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId, reqSeed: sol.reqSeed });
     this.registrarVistos(r);
     const h = this.histOf(r, prevC, prevV);
+    const nuevasP = (r.plans || []).map(p => p.plantilla).filter(Boolean);
+    // Si ya se vieron todos los tipos, se vuelve a empezar (no se bloquea la búsqueda).
+    this.setState({ seenPlantillas: prevP.concat(nuevasP).slice(-12) });
     this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '',
       planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
     if (r.exhausted) this.toast('Ya viste todas las combinaciones con estos filtros — amplía zona, horario o presupuesto');
@@ -4044,7 +4064,9 @@ class Component extends DCLogic {
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
-    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
+    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, avoidPlantillas: (_mismo && _nuevo) ? (s.seenPlantillas || []) : [], bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); const _pp = (_mismo && _nuevo) ? (s.seenPlantillas || []) : [];
+      this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v,
+        seenPlantillas: _pp.concat(((this._lastR || {}).plans || []).map(p => p.plantilla).filter(Boolean)).slice(-12) }); }
     this.persist(); this.nav('results'); return this._lastR; }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
   time12(h) { const hh = Math.floor(h) % 24, m = Math.round((h % 1) * 60); const ap = hh >= 12 ? 'pm' : 'am'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return `${h12}:${m.toString().padStart(2,'0')} ${ap}`; }

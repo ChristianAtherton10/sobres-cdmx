@@ -81,30 +81,34 @@ window.SOBRES_RECETAS = {
     'romántico': {
       manana: [['paseo_romantico', 'desayuno_rico'], ['desayuno_rico', 'museo'], ['desayuno_rico', 'jardin']],
       tarde:  [['evento', 'postre'], ['taller', 'comida_rica'], ['paseo_romantico', 'postre'], ['museo', 'comida_rica'], ['comida_rica', 'paseo_romantico'], ['cata', 'comida_rica'], ['galeria', 'postre']],
-      noche:  [['evento', 'cena_rica'], ['cena_rica', 'bar_romantico'], ['taller', 'cena_rica'], ['cine', 'cena_rica'], ['teatro', 'cena_rica'], ['cata', 'cena_rica'], ['mirador', 'cena_rica'], ['cena_rica', 'postre']],
+      // Más plantillas de noche (4 nov 2026): para que "Ver otras opciones" traiga TIPOS de cita distintos.
+      noche:  [['evento', 'cena_rica'], ['cena_rica', 'bar_romantico'], ['taller', 'cena_rica'], ['cine', 'cena_rica'], ['teatro', 'cena_rica'], ['cata', 'cena_rica'], ['mirador', 'cena_rica'], ['cena_rica', 'postre'],
+               ['bar_romantico', 'cena_rica'], ['rooftop', 'cena_rica'], ['cena_rica', 'rooftop'], ['cine_arte', 'cena_rica'], ['cena_rica', 'salon_baile']],
       sueltos: ['cena_rica', 'taller', 'bar_romantico', 'cata', 'paseo_romantico']
     },
     'foodie': {
       manana: [['desayuno_rico'], ['desayuno_rico', 'mercado_gourmet']],
       tarde:  [['evento', 'comida_rica'], ['comida_rica', 'postre'], ['mercado_gourmet', 'postre'], ['comida_rica', 'cafe']],
-      noche:  [['cena_rica', 'postre'], ['cena_rica']],
+      noche:  [['cena_rica', 'postre'], ['cena_rica'], ['tacos', 'postre'], ['mercado_gourmet', 'postre'], ['cena_rica', 'cafe'], ['cena_rapida', 'postre']],
       sueltos: ['cena_rica', 'comida_rica', 'mercado_gourmet', 'desayuno_rico']
     },
     'nightlife': {
       tarde:  [['bar', 'bar'], ['cantina', 'bar']],
-      noche:  [['evento', 'bar'], ['cena_rapida', 'bar', 'antro'], ['bar', 'antro'], ['bar', 'bar'], ['cantina', 'salon_baile'], ['cena_rapida', 'bar'], ['rooftop', 'antro'], ['bar', 'karaoke'], ['karaoke']],
+      noche:  [['evento', 'bar'], ['cena_rapida', 'bar', 'antro'], ['bar', 'antro'], ['bar', 'bar'], ['cantina', 'salon_baile'], ['cena_rapida', 'bar'], ['rooftop', 'antro'], ['bar', 'karaoke'], ['karaoke'],
+               ['rooftop', 'bar'], ['cantina', 'bar'], ['bar', 'salon_baile'], ['tacos', 'antro'], ['billar', 'bar'], ['bar_romantico', 'antro']],
       sueltos: ['bar', 'antro', 'rooftop', 'cantina', 'karaoke', 'salon_baile']
     },
     'cultural': {
       manana: [['museo', 'galeria'], ['sitio_historico', 'museo'], ['museo', 'libreria']],
       tarde:  [['evento', 'comida_rica'], ['museo', 'comida_rica'], ['museo', 'galeria'], ['sitio_historico', 'museo'], ['centro_cultural', 'museo'], ['galeria', 'libreria'], ['comida_rica', 'museo']],
-      noche:  [['evento', 'cena_rica'], ['teatro'], ['cine_arte'], ['teatro', 'cena_rica'], ['cine', 'cena_rica'], ['cena_rica', 'teatro']],
+      noche:  [['evento', 'cena_rica'], ['teatro'], ['cine_arte'], ['teatro', 'cena_rica'], ['cine', 'cena_rica'], ['cena_rica', 'teatro'], ['cine_arte', 'cena_rica'], ['cena_rica', 'cine_arte'], ['teatro', 'postre']],
       sueltos: ['museo', 'teatro', 'cine_arte', 'galeria', 'centro_cultural', 'cine']
     },
     'familiar': {
       manana: [['evento', 'comida_familiar'], ['parque_familiar', 'comida_familiar'], ['museo_ninos', 'comida_familiar'], ['atraccion_familiar', 'comida_familiar']],
       tarde:  [['evento', 'comida_familiar'], ['parque_familiar', 'comida_familiar', 'postre'], ['museo_ninos', 'comida_familiar'], ['atraccion_familiar', 'comida_familiar'], ['trajineras', 'comida_familiar'], ['comida_familiar', 'cine'], ['boliche', 'comida_familiar'], ['comida_familiar', 'parque_familiar']],
-      noche:  [['cena_familiar', 'postre'], ['cine', 'cena_familiar'], ['boliche', 'cena_familiar']],
+      noche:  [['cena_familiar', 'postre'], ['cine', 'cena_familiar'], ['boliche', 'cena_familiar'], ['evento', 'cena_familiar'], ['boliche', 'postre'], ['cine', 'postre'],
+               ['karting', 'cena_familiar'], ['tacos', 'postre'], ['cena_familiar', 'cine']],
       sueltos: ['parque_familiar', 'museo_ninos', 'atraccion_familiar', 'comida_familiar', 'cine']
     },
     'social': {
@@ -129,7 +133,7 @@ window.SOBRES_RECETAS = {
       manana: [['cafe', 'libreria'], ['jardin', 'cafe'], ['desayuno_rico', 'parque']],
       tarde:  [['evento', 'cafe'], ['parque', 'cafe'], ['galeria', 'cafe'], ['libreria', 'postre'], ['jardin', 'postre'], ['museo', 'cafe']],
       // Sin bar: "Tranqui" no mete copas de relleno (prueba de chill + cultural).
-      noche:  [['cena_rica', 'postre'], ['cine', 'postre'], ['cine_arte', 'postre']],
+      noche:  [['cena_rica', 'postre'], ['cine', 'postre'], ['cine_arte', 'postre'], ['cena_rica', 'cafe'], ['tacos', 'postre'], ['cine', 'cena_rica']],
       sueltos: ['cafe', 'libreria', 'jardin', 'galeria', 'postre']
     },
     // Joyitas: las mismas ideas, prefiriendo lugares poco conocidos.
