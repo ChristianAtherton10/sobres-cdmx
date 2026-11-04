@@ -2279,5 +2279,7 @@ test('Hunan Polanco no existe', () => {
 
 // Fase 1 (3 nov 2026): errores del motor reportados con los anuncios.
 require('./fase1.test.js');
+// Catálogo: lugares nuevos del paquete del 3 nov 2026.
+require('./catalogo.test.js');
 
 report();

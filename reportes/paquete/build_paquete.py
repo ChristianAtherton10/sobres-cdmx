@@ -180,7 +180,10 @@ def precio_de(r):
     return {'min': int(lo), 'rep': rep, 'max': int(hi), 'unidad': 'persona', 'moneda': 'MXN', 'canasta': canasta}, estado
 
 # ------------------------------------------------------------ duplicados
-catalogo = json.load(open(os.path.join(AQUI, 'catalogo_actual.json')))
+# Catálogo de la app SIN los lugares del propio paquete (si no, al regenerar todo
+# "ya estaría" y data/paquete.js quedaría vacío). Se exporta con:
+#   node -e "const {makeApp}=require('./test/harness.js'); ..."  (ver CANDIDATOS-NUEVOS.md)
+catalogo = [c for c in json.load(open(os.path.join(AQUI, 'catalogo_actual.json'))) if not c['id'].startswith('pq-')]
 def clase(cat):
     if cat in FOOD_DRINK: return 'fd'
     if cat in ('Cine', 'Centro comercial'): return cat
