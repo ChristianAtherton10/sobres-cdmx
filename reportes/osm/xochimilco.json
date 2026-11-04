@@ -1,0 +1,1059 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-11-04T17:37:04Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 670030559,
+  "lat": 19.2663527,
+  "lon": -99.1255637,
+  "timestamp": "2010-03-19T22:50:14Z",
+  "version": 1,
+  "changeset": 4174556,
+  "user": "Ken Arroyo Ohori",
+  "uid": 105022,
+  "tags": {
+    "amenity": "theatre",
+    "name": "Carlos Pellicer"
+  }
+},
+{
+  "type": "node",
+  "id": 1862506615,
+  "lat": 19.2651633,
+  "lon": -99.1145699,
+  "timestamp": "2017-02-14T03:17:21Z",
+  "version": 2,
+  "changeset": 46067319,
+  "user": "cesar manriquez mendoza",
+  "uid": 5315065,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Sanborns",
+    "name:es": "Sanborns xochimilco"
+  }
+},
+{
+  "type": "node",
+  "id": 2426033191,
+  "lat": 19.2612802,
+  "lon": -99.1027277,
+  "timestamp": "2013-08-20T22:25:26Z",
+  "version": 1,
+  "changeset": 17433518,
+  "user": "Omar Aurelio Peña Ruiz",
+  "uid": 1720033,
+  "tags": {
+    "amenity": "bar",
+    "name": "Pulqueria Templo de Diana",
+    "wifi": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 2426033203,
+  "lat": 19.2591280,
+  "lon": -99.1053539,
+  "timestamp": "2013-08-20T22:25:51Z",
+  "version": 1,
+  "changeset": 17433518,
+  "user": "Omar Aurelio Peña Ruiz",
+  "uid": 1720033,
+  "tags": {
+    "amenity": "bar",
+    "name": "Pulqueria La Botijona"
+  }
+},
+{
+  "type": "node",
+  "id": 2426034682,
+  "lat": 19.2542257,
+  "lon": -99.1026743,
+  "timestamp": "2013-08-20T22:31:17Z",
+  "version": 1,
+  "changeset": 17433518,
+  "user": "Omar Aurelio Peña Ruiz",
+  "uid": 1720033,
+  "tags": {
+    "amenity": "cinema",
+    "name": "Cinema Xochimilco"
+  }
+},
+{
+  "type": "node",
+  "id": 2682125649,
+  "lat": 19.2512191,
+  "lon": -99.1000244,
+  "timestamp": "2014-02-20T15:45:48Z",
+  "version": 1,
+  "changeset": 20677594,
+  "user": "Tonatiuh4",
+  "uid": 1945476,
+  "tags": {
+    "amenity": "nightclub",
+    "name": "Rodeo Xochimilco"
+  }
+},
+{
+  "type": "node",
+  "id": 2692218353,
+  "lat": 19.2733517,
+  "lon": -99.1201000,
+  "timestamp": "2022-06-25T21:02:04Z",
+  "version": 3,
+  "changeset": 122850152,
+  "user": "Quixlian",
+  "uid": 16289897,
+  "tags": {
+    "addr:city": "México",
+    "addr:street": "Prolongación División del Norte",
+    "amenity": "fast_food",
+    "brand": "Burger King",
+    "brand:wikidata": "Q177054",
+    "brand:wikipedia": "en:Burger King",
+    "cuisine": "burger",
+    "name": "Burger King",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3779090398,
+  "lat": 19.2643709,
+  "lon": -99.1189532,
+  "timestamp": "2015-10-09T03:58:17Z",
+  "version": 1,
+  "changeset": 34522073,
+  "user": "Dani152",
+  "uid": 3296608,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Tacos \"Huichapan\""
+  }
+},
+{
+  "type": "node",
+  "id": 3779091557,
+  "lat": 19.2644912,
+  "lon": -99.1191019,
+  "timestamp": "2015-10-09T03:55:56Z",
+  "version": 1,
+  "changeset": 34522060,
+  "user": "Dani152",
+  "uid": 3296608,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Cafeteria"
+  }
+},
+{
+  "type": "node",
+  "id": 4172108592,
+  "lat": 19.2583554,
+  "lon": -99.1032840,
+  "timestamp": "2016-05-07T20:43:19Z",
+  "version": 1,
+  "changeset": 39170942,
+  "user": "wille",
+  "uid": 360183,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Soconus Coffee"
+  }
+},
+{
+  "type": "node",
+  "id": 4172136296,
+  "lat": 19.2590727,
+  "lon": -99.1066600,
+  "timestamp": "2016-05-07T20:43:14Z",
+  "version": 1,
+  "changeset": 39170942,
+  "user": "wille",
+  "uid": 360183,
+  "tags": {
+    "amenity": "cafe",
+    "name": "Don Juan"
+  }
+},
+{
+  "type": "node",
+  "id": 4316241893,
+  "lat": 19.2743392,
+  "lon": -99.1205067,
+  "timestamp": "2019-08-17T03:20:54Z",
+  "version": 4,
+  "changeset": 73434349,
+  "user": "Timothy Smith",
+  "uid": 115918,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Little Caesars",
+    "brand:wikidata": "Q1393809",
+    "brand:wikipedia": "en:Little Caesars",
+    "cuisine": "pizza",
+    "name": "Little Caesars",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4316263891,
+  "lat": 19.2735616,
+  "lon": -99.1201511,
+  "timestamp": "2016-11-16T19:23:26Z",
+  "version": 2,
+  "changeset": 43708252,
+  "user": "erickdeoliveiraleal",
+  "uid": 463504,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Tortas Los Güeros Baez"
+  }
+},
+{
+  "type": "node",
+  "id": 4407367333,
+  "lat": 19.2742038,
+  "lon": -99.1245244,
+  "timestamp": "2016-09-18T21:11:13Z",
+  "version": 1,
+  "changeset": 42256723,
+  "user": "Colgaara",
+  "uid": 4551573,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Taquería"
+  }
+},
+{
+  "type": "node",
+  "id": 4407367491,
+  "lat": 19.2669568,
+  "lon": -99.1156193,
+  "timestamp": "2016-09-18T21:11:14Z",
+  "version": 1,
+  "changeset": 42256723,
+  "user": "Colgaara",
+  "uid": 4551573,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Tortería 24 horas"
+  }
+},
+{
+  "type": "node",
+  "id": 4530742806,
+  "lat": 19.2950681,
+  "lon": -99.1084214,
+  "timestamp": "2019-07-30T17:44:53Z",
+  "version": 2,
+  "changeset": 72823618,
+  "user": "Sergio Fragoso",
+  "uid": 7425931,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Carl's Jr.",
+    "brand:wikidata": "Q1043486",
+    "brand:wikipedia": "en:Carl's Jr.",
+    "cuisine": "burger",
+    "name": "Carl's Jr.",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4530742807,
+  "lat": 19.2955858,
+  "lon": -99.1083383,
+  "timestamp": "2019-07-30T17:44:53Z",
+  "version": 2,
+  "changeset": 72823618,
+  "user": "Sergio Fragoso",
+  "uid": 7425931,
+  "tags": {
+    "amenity": "cafe",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "brand:wikipedia": "en:Starbucks",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks",
+    "official_name": "Starbucks Coffee",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4530742808,
+  "lat": 19.2956672,
+  "lon": -99.1090531,
+  "timestamp": "2016-11-30T20:30:56Z",
+  "version": 1,
+  "changeset": 44069291,
+  "user": "Xavi From Hell",
+  "uid": 3568199,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chinese",
+    "name": "Panda Express"
+  }
+},
+{
+  "type": "node",
+  "id": 4624386689,
+  "lat": 19.2630599,
+  "lon": -99.1162038,
+  "timestamp": "2023-07-11T13:40:44Z",
+  "version": 2,
+  "changeset": 138379977,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Iris",
+    "name:es": "Iris",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 4626384458,
+  "lat": 19.2820619,
+  "lon": -99.1252208,
+  "timestamp": "2024-01-16T18:18:50Z",
+  "version": 3,
+  "changeset": 146333987,
+  "user": "wheelmap_visitor",
+  "uid": 290680,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Vips",
+    "brand:wikidata": "Q48783378",
+    "brand:wikipedia": "es:Vips",
+    "cuisine": "mexican",
+    "name": "Vips",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4687866891,
+  "lat": 19.2957142,
+  "lon": -99.1093912,
+  "timestamp": "2022-07-11T14:51:07Z",
+  "version": 3,
+  "changeset": 123479213,
+  "user": "Chi Na",
+  "uid": 16482734,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Vips",
+    "brand:wikidata": "Q48783378",
+    "brand:wikipedia": "es:Vips",
+    "cuisine": "mexican",
+    "name": "Vips"
+  }
+},
+{
+  "type": "node",
+  "id": 7235811685,
+  "lat": 19.2612092,
+  "lon": -99.1032257,
+  "timestamp": "2020-02-22T20:58:22Z",
+  "version": 1,
+  "changeset": 81354513,
+  "user": "mapeadora",
+  "uid": 1437169,
+  "tags": {
+    "amenity": "bar",
+    "name": "Pulquerías Doña Cande"
+  }
+},
+{
+  "type": "node",
+  "id": 10717967540,
+  "lat": 19.2621944,
+  "lon": -99.1040139,
+  "timestamp": "2023-03-07T00:07:41Z",
+  "version": 1,
+  "changeset": 133383580,
+  "user": "vbertola",
+  "uid": 4347030,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Marisqueria La Güera"
+  }
+},
+{
+  "type": "node",
+  "id": 10832365642,
+  "lat": 19.2715698,
+  "lon": -99.1277925,
+  "timestamp": "2025-06-13T22:57:30Z",
+  "version": 2,
+  "changeset": 167594542,
+  "user": "Jiven95",
+  "uid": 13977604,
+  "tags": {
+    "leisure": "park",
+    "name": "PILARES San Juan Tepepan"
+  }
+},
+{
+  "type": "node",
+  "id": 13816442922,
+  "lat": 19.2740464,
+  "lon": -99.1241902,
+  "timestamp": "2026-05-11T02:59:22Z",
+  "version": 1,
+  "changeset": 182491077,
+  "user": "btronic",
+  "uid": 757704,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "mexican",
+    "name": "Pozolería Blanquita"
+  }
+},
+{
+  "type": "way",
+  "id": 52504276,
+  "timestamp": "2024-06-02T18:40:49Z",
+  "version": 3,
+  "changeset": 152172729,
+  "user": "Emilio Gaytán",
+  "uid": 21617878,
+  "center": {
+    "lat": 19.2904949,
+    "lon": -99.1168978
+  },
+  "nodes": [
+    8226545488,
+    8226545487,
+    8226545486,
+    8226545485,
+    8226545488
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Residencial Villa Coapa"
+  }
+},
+{
+  "type": "way",
+  "id": 52834012,
+  "timestamp": "2023-10-17T00:08:36Z",
+  "version": 6,
+  "changeset": 142687509,
+  "user": "Quixlian",
+  "uid": 16289897,
+  "center": {
+    "lat": 19.2639809,
+    "lon": -99.1039468
+  },
+  "nodes": [
+    8107241603,
+    8107241599,
+    8107241600,
+    8107241598,
+    8107241603
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Jardín Juárez"
+  }
+},
+{
+  "type": "way",
+  "id": 52835117,
+  "timestamp": "2023-10-19T17:07:54Z",
+  "version": 17,
+  "changeset": 142827036,
+  "user": "Quixlian",
+  "uid": 16289897,
+  "center": {
+    "lat": 19.2486518,
+    "lon": -99.0988891
+  },
+  "nodes": [
+    11252247408,
+    11254043205,
+    11129083361,
+    380919167,
+    11254043206,
+    4575740571,
+    380919179,
+    676279610,
+    286567508,
+    8326918922,
+    670018422,
+    670018427,
+    11252247434,
+    670018434,
+    670018438,
+    670018442,
+    4575724950,
+    3564913422,
+    11252247432,
+    11252247431,
+    670018445,
+    670018449,
+    670018453,
+    670018458,
+    670018461,
+    4575724951,
+    670018466,
+    4575724952,
+    11252247429,
+    11252247428,
+    11252247427,
+    11252247426,
+    11252247425,
+    11252247424,
+    670018468,
+    8522566271,
+    11254046969,
+    11252247435,
+    380898136,
+    11254046971,
+    380853680,
+    380893519,
+    8343946489,
+    8343946495,
+    11252247411,
+    11252247410,
+    11252247409,
+    11254046970,
+    11252247408
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Bosque de Nativitas",
+    "opening_hours": "Mo-Su 06:00-18:30"
+  }
+},
+{
+  "type": "way",
+  "id": 262581290,
+  "timestamp": "2024-09-09T03:35:30Z",
+  "version": 7,
+  "changeset": 156375237,
+  "user": "Chicxulub Kukulkan",
+  "uid": 9474120,
+  "center": {
+    "lat": 19.2764163,
+    "lon": -99.1177334
+  },
+  "nodes": [
+    6182174552,
+    2682371881,
+    9842702575,
+    9842702576,
+    9842702577,
+    9842702578,
+    9842702579,
+    9842702580,
+    9842702581,
+    2682371877,
+    671401006,
+    3439797566,
+    2682371893,
+    2682371892,
+    2682371889,
+    6182174553,
+    6182174552
+  ],
+  "tags": {
+    "access": "designated",
+    "addr:street": "Plan de Muyuguarda",
+    "amenity": "arts_centre",
+    "building": "yes",
+    "colour": "orange",
+    "leisure": "swimming_pool",
+    "name": "DIF",
+    "note": "sports_centre, clinic, pharmacy"
+  }
+},
+{
+  "type": "way",
+  "id": 361191169,
+  "timestamp": "2025-08-21T15:18:40Z",
+  "version": 10,
+  "changeset": 170785800,
+  "user": "aTarom",
+  "uid": 5127355,
+  "center": {
+    "lat": 19.2722252,
+    "lon": -99.0887799
+  },
+  "nodes": [
+    2287823057,
+    8212183001,
+    8212183000,
+    5460953349,
+    8212182999,
+    273236999,
+    3656979424,
+    8212183002,
+    8212182981,
+    3656981827,
+    8212182982,
+    8212182984,
+    8212182985,
+    3282510695,
+    8212182983,
+    8212182987,
+    8212182988,
+    670107099,
+    8212182986,
+    8212182989,
+    5465065466,
+    5465065465,
+    5465065467,
+    8212182990,
+    5465065464,
+    8212182991,
+    8212182992,
+    5465027105,
+    2287823060,
+    5465027106,
+    8212182993,
+    8212182994,
+    8212182996,
+    8212182995,
+    8212182998,
+    5460953353,
+    8212182997,
+    5460953352,
+    2287823057
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Isla de las muñecas",
+    "name:de": "Insel der Puppen",
+    "name:en": "Island of the Dolls",
+    "name:es": "Isla de las muñecas",
+    "place": "islet",
+    "wikidata": "Q15401946",
+    "wikimedia_commons": "Category:Isla de las Muñecas",
+    "wikipedia": "es:Isla de las muñecas"
+  }
+},
+{
+  "type": "way",
+  "id": 443100605,
+  "timestamp": "2023-10-16T22:53:18Z",
+  "version": 2,
+  "changeset": 142686238,
+  "user": "Quixlian",
+  "uid": 16289897,
+  "center": {
+    "lat": 19.2645425,
+    "lon": -99.1069384
+  },
+  "nodes": [
+    4407367371,
+    11268120028,
+    11268120031,
+    11268120029,
+    11268120030,
+    11268120027,
+    4407367372,
+    11268120026,
+    11268120025,
+    4407367373,
+    4407367374,
+    4407367375,
+    11268120024,
+    11268120032,
+    4407367371
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Rotonda de los Hombres Ilustres de Xochimilco"
+  }
+},
+{
+  "type": "way",
+  "id": 456841372,
+  "timestamp": "2024-05-17T03:00:47Z",
+  "version": 4,
+  "changeset": 151433247,
+  "user": "Quixlian",
+  "uid": 16289897,
+  "center": {
+    "lat": 19.2954065,
+    "lon": -99.1069216
+  },
+  "nodes": [
+    4530742795,
+    4530742790,
+    6621224459,
+    4530742796,
+    4530742797,
+    4530742795
+  ],
+  "tags": {
+    "amenity": "cinema",
+    "branch": "Pabellón Cuemanco",
+    "brand": "Cinépolis",
+    "brand:wikidata": "Q5686673",
+    "building": "yes",
+    "name": "Cinépolis Pabellón Cuemanco",
+    "screen": "8"
+  }
+},
+{
+  "type": "way",
+  "id": 466777822,
+  "timestamp": "2026-05-11T02:39:50Z",
+  "version": 5,
+  "changeset": 182490775,
+  "user": "btronic",
+  "uid": 757704,
+  "center": {
+    "lat": 19.2733901,
+    "lon": -99.1265679
+  },
+  "nodes": [
+    4615193669,
+    5120980808,
+    4615193670,
+    4615193671,
+    5315088984,
+    5315088985,
+    5315088991,
+    5315088990,
+    5315088989,
+    5315088988,
+    4615193672,
+    5315088987,
+    5315088986,
+    13816461909,
+    4615193669
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "El Área Verde"
+  }
+},
+{
+  "type": "way",
+  "id": 623489168,
+  "timestamp": "2025-03-16T14:42:15Z",
+  "version": 5,
+  "changeset": 163691991,
+  "user": "Eduardo Lemus Mendoza",
+  "uid": 20605641,
+  "center": {
+    "lat": 19.2546520,
+    "lon": -99.1094896
+  },
+  "nodes": [
+    12670246334,
+    667287795,
+    12670246335,
+    667287793,
+    7169984118,
+    667287794,
+    1130113582,
+    7169984140,
+    667282334,
+    12670246337,
+    667282332,
+    286567504,
+    667287792,
+    667287788,
+    12670246339,
+    12670246338,
+    12670246327,
+    8383634914,
+    8383660617,
+    12670246331,
+    12670246332,
+    12670246333,
+    12670246334
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Deportivo Xochimilco"
+  }
+},
+{
+  "type": "way",
+  "id": 704974385,
+  "timestamp": "2019-08-14T05:27:00Z",
+  "version": 4,
+  "changeset": 73331914,
+  "user": "gscholz",
+  "uid": 109705,
+  "center": {
+    "lat": 19.2971138,
+    "lon": -99.1034470
+  },
+  "nodes": [
+    6621224465,
+    6621224466,
+    6621224467,
+    6621224468,
+    6621224469,
+    6621224470,
+    6621224471,
+    6621224472,
+    6621224473,
+    6621224474,
+    6621224475,
+    6621224476,
+    6621224477,
+    6621224478,
+    6621224479,
+    6621224480,
+    6621282261,
+    6621224481,
+    6621224482,
+    6621224483,
+    6621224484,
+    6621228685,
+    6621228686,
+    6621228687,
+    6621228688,
+    6621228689,
+    6621228690,
+    6621228691,
+    6621228692,
+    6621228693,
+    6621228694,
+    6621228695,
+    6621228696,
+    6621228697,
+    6621228698,
+    6621228699,
+    6621228700,
+    6621228701,
+    6621228702,
+    6621228703,
+    6621228704,
+    6621228705,
+    6621228706,
+    6621228707,
+    6621228708,
+    6621228709,
+    6621228710,
+    6621228711,
+    6621289211,
+    6621289212,
+    6621228712,
+    6621228713,
+    6621228714,
+    6621228715,
+    6621228716,
+    6621228866,
+    6621228655,
+    6621282227,
+    6621228868,
+    6621228869,
+    6621228870,
+    6621228864,
+    6621228717,
+    6621289205,
+    6621228865,
+    6621228719,
+    6621228720,
+    6621228721,
+    6621228722,
+    6621228723,
+    6621228724,
+    6621282282,
+    6621282235,
+    6621228725,
+    6621228726,
+    6621228727,
+    6621228728,
+    6621228729,
+    6621228730,
+    6621282231,
+    6621228731,
+    6621228732,
+    6621282229,
+    6621228733,
+    6621228734,
+    6621228735,
+    6621228736,
+    6621228737,
+    6621228738,
+    6621228739,
+    6621228740,
+    6621289215,
+    6621289213,
+    6621289214,
+    6621289218,
+    6621289219,
+    6621289216,
+    6621289217,
+    6621228741,
+    6621228742,
+    6621224465
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Hueso Periférico"
+  }
+},
+{
+  "type": "way",
+  "id": 832339467,
+  "timestamp": "2023-09-23T10:59:56Z",
+  "version": 2,
+  "changeset": 141639013,
+  "user": "Mateusz Konieczny - bot account",
+  "uid": 3199858,
+  "center": {
+    "lat": 19.2837084,
+    "lon": -99.1246240
+  },
+  "nodes": [
+    7770851087,
+    7770851088,
+    7770851089,
+    7770851090,
+    7770851091,
+    7770851092,
+    7770851093,
+    7770851087
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque La Cebada",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "way",
+  "id": 862243332,
+  "timestamp": "2021-01-26T07:36:04Z",
+  "version": 2,
+  "changeset": 98155643,
+  "user": "Chicxulub Kukulkan",
+  "uid": 9474120,
+  "center": {
+    "lat": 19.2720609,
+    "lon": -99.1216735
+  },
+  "nodes": [
+    8363519518,
+    8033630345,
+    8033630346,
+    8033630347,
+    8033630348,
+    8033630349,
+    8033630350,
+    8033630351,
+    8033630352,
+    8033630353,
+    8033630354,
+    8363519519,
+    8363519517,
+    8363515115,
+    8363515114,
+    8363515116,
+    8363519518
+  ],
+  "tags": {
+    "amenity": "theatre",
+    "building": "school",
+    "name": "Auditorio \"Matilde Montoya Lafragua\""
+  }
+},
+{
+  "type": "way",
+  "id": 1304737473,
+  "timestamp": "2024-07-30T22:52:10Z",
+  "version": 1,
+  "changeset": 154626074,
+  "user": "Juan MAS",
+  "uid": 18570611,
+  "center": {
+    "lat": 19.2876227,
+    "lon": -99.1179423
+  },
+  "nodes": [
+    12084061323,
+    12084061324,
+    12084061325,
+    12084061326,
+    12084061327,
+    12084061328,
+    12084061323
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "Parque Lineal Río Sanbuenaventura"
+  }
+},
+{
+  "type": "way",
+  "id": 1511795451,
+  "timestamp": "2026-05-11T02:59:22Z",
+  "version": 1,
+  "changeset": 182491077,
+  "user": "btronic",
+  "uid": 757704,
+  "center": {
+    "lat": 19.2746181,
+    "lon": -99.1259328
+  },
+  "nodes": [
+    13816442914,
+    13816442915,
+    13816442916,
+    13816442917,
+    13816442918,
+    13816442919,
+    13816442920,
+    13816442914
+  ],
+  "tags": {
+    "leisure": "park",
+    "name": "La Salchiha",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "way",
+  "id": 1535023203,
+  "timestamp": "2026-07-03T18:32:32Z",
+  "version": 1,
+  "changeset": 185055955,
+  "user": "btronic",
+  "uid": 757704,
+  "center": {
+    "lat": 19.2758732,
+    "lon": -99.1217018
+  },
+  "nodes": [
+    13986580688,
+    13986580689,
+    13986580690,
+    8336806902,
+    13986580688
+  ],
+  "tags": {
+    "alt_name": "Kentucky Fried Chicken",
+    "amenity": "fast_food",
+    "brand": "KFC",
+    "brand:wikidata": "Q524757",
+    "building": "yes",
+    "cuisine": "chicken",
+    "drive_through": "yes",
+    "name": "KFC",
+    "takeaway": "yes"
+  }
+}
+
+  ]
+}

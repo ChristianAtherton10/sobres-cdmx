@@ -43,7 +43,7 @@ CADENAS = re.compile(r"\b(starbucks|vips|sanborns|mcdonald|burger king|kfc|domin
                      r"applebee|olive garden|p\.?f\.? chang|california pizza|hooters|la casa de to[nñ]o|fonda argentina|ihop|bisquets obregon|"
                      r"wing'?s star|mr\.? sushi|santa clara|boston'?s|sushi itto|la mansion|chilis|liverpool|sears|suburbia)\b")
 # No son salida: escuelas y academias, maquinitas de barrio.
-NO_SALIDA = re.compile(r"\b(escuela|academia|instituto|capacitacion|club de baile|dance|danza|ballet|estudio|taller(es)? de|maquin|videojueg|smartgame|gabo games|evolucion games)")
+NO_SALIDA = re.compile(r"\b(superama|fresko|corporativo|b store|escuela|academia|instituto|capacitacion|club de baile|dance|danza|ballet|estudio|taller(es)? de|maquin|videojueg|smartgame|gabo games|evolucion games)")
 def categoria(t):
     a, l, tu, sh = t.get('amenity'), t.get('leisure'), t.get('tourism'), t.get('shop')
     coc = norm(t.get('cuisine', ''))
@@ -107,7 +107,7 @@ for zona in PEDIDAS:
         vistos.add(key)
         cat = categoria(t)
         if not cat: desc['tipo que no es salida (comida rápida sin tacos, etc.)'] += 1; continue
-        if cat not in SALIDA_AUNQUE_CADENA and (t.get('brand') or t.get('brand:wikidata') or CADENAS.search(norm(n))): desc['cadena'] += 1; continue
+        if cat not in SALIDA_AUNQUE_CADENA and (t.get('brand') or t.get('brand:wikidata') or CADENAS.search(norm(n.replace("'", '').replace('’', '')))): desc['cadena'] += 1; continue
         if NO_SALIDA.search(norm(n)): desc['escuela, academia o maquinitas (no es salida)'] += 1; continue
         if cat == 'Atracción' and t.get('leisure') == 'amusement_arcade' and not (t.get('website') or t.get('brand')): desc['maquinitas sin ficha propia'] += 1; continue
         if cat == 'Parque' and not (t.get('wikidata') or t.get('website') or re.search(r'parque|bosque|jard[ií]n|alameda', norm(n))): desc['parque sin nombre propio'] += 1; continue
@@ -116,6 +116,7 @@ for zona in PEDIDAS:
         if r0: desc['ya en el catálogo'] += 1; continue
         if any(norm(c['n']) == norm(n) and km((c['lat'], c['lng']), (lat, lng)) < 0.3 for c in cands): desc['repetido en OSM'] += 1; continue
         z, dz = zona_de(lat, lng)
+        if z not in PEDIDAS: desc['fuera de las 6 zonas pedidas'] += 1; continue
         h = horario(t.get('opening_hours'))
         fecha = (e.get('timestamp') or '')[:10]
         url = 'https://www.openstreetmap.org/%s/%d' % (e['type'], e['id'])
@@ -144,6 +145,15 @@ for zona in PEDIDAS:
         if notas: rec['nota'] = ' '.join(notas)
         cands.append(rec)
 
+# Propuestas a mano que OSM no marca como centro comercial (con su propia fuente).
+MANUAL = [{'id': 'os-w220679375', 'n': 'Plaza Satélite', 'cat': 'Centro comercial', 'lat': 19.51026, 'lng': -99.23416, 'zone': 'satelite',
+  'col': 'Ciudad Satélite, Naucalpan', 'addr': 'Circuito Centro Comercial 2251, Cd. Satélite', 'oh': [11, 21], 'hrs': 'Horario por confirmar', 'horaEstimada': True,
+  'who': ['amigos', 'familia', 'date', 'compa'], 'tags': ['familiar'], 'act': ['compras'], 'tm': ['manana', 'tarde', 'noche'], 'web': 'https://plazasatelite.com.mx',
+  'fuente': 'Wikipedia — Plaza Satélite (tiendas, Cinépolis, Parque Plaza Satélite)', 'url': 'https://es.wikipedia.org/wiki/Plaza_Sat%C3%A9lite', 'fecha': 'sin fecha (consultada ' + HOY + ')',
+  'consultado': HOY, 'hrsFuente': '', 'precio': {'min': None, 'rep': None, 'max': None, 'unidad': 'persona', 'moneda': 'MXN', 'canasta': 'Entrada libre; lo que compres va aparte.'},
+  'estado': 'por_confirmar', 'falta': 'el precio', 'score': 70, 'tier': 'B', 'basis': 'Centro comercial en Ciudad Satélite (abrió en 1971)', 'aptoFamilia': 'sí', 'nota': 'Horario sin confirmar.'}]
+for m in MANUAL:
+    if not repetido(m['n'], m['lat'], m['lng']) and not any(c['id'] == m['id'] for c in cands): cands.append(m)
 json.dump(cands, open(os.path.join(AQUI, 'candidatos_osm.json'), 'w'), ensure_ascii=False, indent=0)
 if '--mezclar' in sys.argv:
     js = ('/* SOBRES — Lugares de OpenStreetMap aprobados para mezclar (generado por reportes/osm/build_osm.py --mezclar).\n'

@@ -47,7 +47,7 @@ const E = [
     f: 'silla', who: ['familia', 'amigos', 'date'], tags: ['cultural', 'familiar'] },
   { n: 'Festival de Piano En Blanco y Negro · Cenart', cat: 'Foro', sede: /^Centro Nacional de las Artes \(CENART\)$/, desde: '2026-11-07', hasta: '2026-11-29', oh: [17, 21], hrs: 'Auditorio Blas Galindo · funciones por confirmar', horaEstimada: true,
     f: 'silla', who: ['date', 'amigos'], tags: ['cultural', 'romántico'] },
-  { n: 'Titanic: An Immersive Voyage · Expo Reforma', cat: 'Atracción', sede: { addr: 'Expo Reforma, Morelos 67, Juárez', geo: 'Expo Reforma, Ciudad de México' },
+  { n: 'Titanic: An Immersive Voyage · Expo Reforma', cat: 'Atracción', sede: { addr: 'Expo Reforma, colonia Juárez', geo: 'Expo Reforma, Ciudad de México' },
     desde: '2026-10-21', hasta: '2026-12-20', oh: [10, 20], hrs: 'Horario por confirmar', horaEstimada: true, f: 'silla', who: ['familia', 'amigos', 'date'], tags: ['familiar', 'cultural'] },
   { n: 'Amor eterno: Por siempre Juan Gabriel · Palacio Postal', cat: 'Museo', sede: /^Palacio Postal$/, desde: null, hasta: '2027-01-24', oh: [10, 18], hrs: 'Horario por confirmar', horaEstimada: true,
     f: 'silla', who: ['familia', 'amigos', 'date'], tags: ['cultural'], nota: 'La nota sólo da la fecha de cierre (24 ene 2027).' },

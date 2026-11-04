@@ -1016,3 +1016,110 @@ Para las piezas de receta que tenían 1 o 2 lugares. Generado por `reportes/inve
 | Estadio | Estadio Alfredo Harp Helú | centro | Viaducto Río de la Piedad s/n, Granjas México, Iztacalco | Según calendario de los Diablos Rojos | por confirmar | [Expansión — quién es dueño del Estadio Alfredo Harp Helú, casa de los Diablos Rojos](https://expansion.mx/tendencias/2026/08/04/quien-es-dueno-estadio-alfredo-harp-helu-casa-diablos-rojos) (2026-08-04) | Sí |
 | Bici | Ecobici · Bosque de Chapultepec (estaciones Los Pinos) | chapultepec | Estaciones Ecobici de Los Pinos, entre la 1.ª y la 2.ª sección del Bosque de Chapultepec | Bicis en la 1.ª sección 5:00–21:00; 2.ª y 3.ª secciones 24 h | $123 (estimado) | [Sopitas — guía para andar en bici dentro del Bosque de Chapultepec (Ecobici Los Pinos)](https://www.sopitas.com/mientras-tanto/guia-andar-bicicleta-dentro-bosque-chapultepec-ecobici-cdmx/amp/) (2024-07-22) | Sí |
 | Vino | La Vinería | condesa | Fernando Montes de Oca 52, Condesa | Horario por confirmar | $400 (rango) | [OpenTable — La Vinería, Ciudad de México](https://opentable.ae/r/la-vineria-ciudad-de-mexico) (sin fecha (consultada 2026-11-04)) | Sí |
+
+---
+
+# Fase 4 · Cobertura, eventos y candidatos por zona (4 nov 2026)
+
+## Cobertura hoy (lo que el motor propone: recomendable y no "lejos")
+
+`node test/cobertura.js --tabla --md`. Meta mínima por zona: 40 de comer (8 vegetarianos), 15 bares, 5 para bailar, 10 de cultura, 8 experiencias, 10 aptos para familia.
+
+| Zona | Total | Comer | Vegetariano | Café/postres | Beber | Bailar | Cultura | Experiencias | Aptos familia | Abiertos >1 am | Debajo de la meta |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Xochimilco | 12 | 0 | 0 | 0 | 0 | 0 | 5 | 4 | 12 | 0 | comer 0/40, veg 0/8, beber 0/15, bailar 0/5, cultura 5/10, exper 4/8 |
+| Satélite · Naucalpan | 13 | 9 | 0 | 0 | 1 | 0 | 2 | 1 | 12 | 2 | comer 9/40, veg 0/8, beber 1/15, bailar 0/5, cultura 2/10, exper 1/8 |
+| Roma Sur | 14 | 6 | 1 | 3 | 0 | 0 | 4 | 1 | 4 | 1 | comer 6/40, veg 1/8, beber 0/15, bailar 0/5, cultura 4/10, exper 1/8, familia 4/10 |
+| Lomas · Tecamachalco | 22 | 20 | 0 | 0 | 0 | 1 | 0 | 1 | 19 | 1 | comer 20/40, veg 0/8, beber 0/15, bailar 1/5, cultura 0/10, exper 1/8 |
+| CU · Sur | 50 | 16 | 0 | 1 | 1 | 0 | 16 | 12 | 37 | 0 | comer 16/40, veg 0/8, beber 1/15, bailar 0/5 |
+| San Ángel | 58 | 35 | 0 | 1 | 0 | 0 | 16 | 2 | 47 | 1 | comer 35/40, veg 0/8, beber 0/15, bailar 0/5, exper 2/8 |
+| Chapultepec | 66 | 14 | 0 | 1 | 0 | 0 | 40 | 11 | 49 | 0 | comer 14/40, veg 0/8, beber 0/15, bailar 0/5 |
+| Del Valle · Nápoles | 79 | 29 | 0 | 2 | 0 | 1 | 36 | 9 | 57 | 2 | comer 29/40, veg 0/8, beber 0/15, bailar 1/5 |
+| Santa Fe · Poniente | 79 | 57 | 0 | 4 | 1 | 2 | 3 | 7 | 56 | 7 | veg 0/8, beber 1/15, bailar 2/5, cultura 3/10, exper 7/8 |
+| Coyoacán | 101 | 16 | 0 | 8 | 3 | 0 | 57 | 14 | 58 | 1 | comer 16/40, veg 0/8, beber 3/15, bailar 0/5 |
+| Condesa | 120 | 64 | 2 | 11 | 13 | 1 | 22 | 8 | 56 | 17 | veg 2/8, beber 13/15, bailar 1/5 |
+| Polanco | 174 | 89 | 0 | 7 | 6 | 9 | 50 | 9 | 90 | 20 | veg 0/8, beber 6/15 |
+| Centro | 185 | 24 | 0 | 2 | 7 | 4 | 126 | 16 | 137 | 9 | comer 24/40, veg 0/8, beber 7/15, bailar 4/5 |
+| Juárez | 187 | 74 | 0 | 9 | 18 | 2 | 68 | 12 | 108 | 16 | veg 0/8, bailar 2/5 |
+| Roma Norte | 252 | 123 | 6 | 21 | 44 | 7 | 44 | 12 | 114 | 59 | veg 6/8 |
+
+**Lo que más falta en toda la ciudad:** opción vegetariana (casi cero fuera de Roma Norte) y bares fuera de Roma Norte, Juárez y Condesa.
+
+## Si apruebas los candidatos de OpenStreetMap
+
+`node test/cobertura.js --tabla --md --con-osm`. Sólo cuentan los que se propondrían en planes. Las fichas de OSM que nadie edita desde antes de 2023 quedan para reverificar.
+
+| Zona | Total | Comer | Vegetariano | Café/postres | Beber | Bailar | Cultura | Experiencias | Aptos familia | Abiertos >1 am | Debajo de la meta |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Xochimilco | 21 | 2 | 0 | 0 | 0 | 0 | 6 | 10 | 20 | 0 | comer 2/40, veg 0/8, beber 0/15, bailar 0/5, cultura 6/10 |
+| Lomas · Tecamachalco | 29 | 21 | 0 | 2 | 0 | 1 | 0 | 5 | 24 | 1 | comer 21/40, veg 0/8, beber 0/15, bailar 1/5, cultura 0/10, exper 5/8 |
+| Satélite · Naucalpan | 41 | 25 | 0 | 4 | 5 | 0 | 2 | 5 | 33 | 7 | comer 25/40, veg 0/8, beber 5/15, bailar 0/5, cultura 2/10, exper 5/8 |
+| CU · Sur | 50 | 16 | 0 | 1 | 1 | 0 | 16 | 12 | 37 | 0 | comer 16/40, veg 0/8, beber 1/15, bailar 0/5 |
+| San Ángel | 58 | 35 | 0 | 1 | 0 | 0 | 16 | 2 | 47 | 1 | comer 35/40, veg 0/8, beber 0/15, bailar 0/5, exper 2/8 |
+| Chapultepec | 66 | 14 | 0 | 1 | 0 | 0 | 40 | 11 | 49 | 0 | comer 14/40, veg 0/8, beber 0/15, bailar 0/5 |
+| Roma Sur | 94 | 50 | 2 | 25 | 4 | 0 | 7 | 7 | 56 | 5 | veg 2/8, beber 4/15, bailar 0/5, cultura 7/10, exper 7/8 |
+| Santa Fe · Poniente | 100 | 60 | 0 | 6 | 1 | 2 | 7 | 18 | 71 | 7 | veg 0/8, beber 1/15, bailar 2/5, cultura 7/10 |
+| Coyoacán | 101 | 16 | 0 | 8 | 3 | 0 | 57 | 14 | 58 | 1 | comer 16/40, veg 0/8, beber 3/15, bailar 0/5 |
+| Condesa | 120 | 64 | 2 | 11 | 13 | 1 | 22 | 8 | 56 | 17 | veg 2/8, beber 13/15, bailar 1/5 |
+| Polanco | 174 | 89 | 0 | 7 | 6 | 9 | 50 | 9 | 90 | 20 | veg 0/8, beber 6/15 |
+| Centro | 185 | 24 | 0 | 2 | 7 | 4 | 126 | 16 | 137 | 9 | comer 24/40, veg 0/8, beber 7/15, bailar 4/5 |
+| Juárez | 187 | 74 | 0 | 9 | 18 | 2 | 68 | 12 | 108 | 16 | veg 0/8, bailar 2/5 |
+| Del Valle · Nápoles | 217 | 114 | 3 | 29 | 10 | 1 | 39 | 19 | 158 | 10 | veg 3/8, beber 10/15, bailar 1/5 |
+| Roma Norte | 252 | 123 | 6 | 21 | 44 | 7 | 44 | 12 | 114 | 59 | veg 6/8 |
+
+## Candidatos de OpenStreetMap (no están mezclados)
+
+`reportes/osm/build_osm.py` revisó las 6 zonas que pediste (Santa Fe, Satélite, Lomas, Xochimilco, Roma Sur y Del Valle). La lista completa por zona, con la dirección, el horario y el enlace a cada ficha, está en **`reportes/osm/REPORTE_OSM.md`**.
+
+
+Descartados: fuera de las 6 zonas pedidas 764, cadena 214, ya en el catálogo 161, tipo que no es salida (comida rápida sin tacos, etc.) 158, parque sin nombre propio 44, escuela, academia o maquinitas (no es salida) 28, repetido en OSM 14, maquinitas sin ficha propia 4, cerrado 2.
+
+| Zona | Candidatos | Comer | Vegetariano | Café/postres | Beber | Bailar | Cultura | Experiencias | Familia | Para reverificar |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Santa Fe · Poniente | 55 | 23 | 0 | 7 | 1 | 0 | 4 | 16 | 20 | 34 |
+| Satélite · Naucalpan | 110 | 67 | 0 | 7 | 11 | 0 | 3 | 20 | 25 | 82 |
+| Lomas · Tecamachalco | 21 | 10 | 0 | 2 | 0 | 0 | 1 | 6 | 8 | 14 |
+| Xochimilco | 22 | 4 | 0 | 3 | 3 | 1 | 3 | 8 | 8 | 13 |
+
+- **Filtros:** quité cadenas (Starbucks, Vips, IHOP, Bisquets Obregón, Santa Clara…), comida rápida que no es taquería, escuelas y academias de baile, maquinitas de barrio, supermercados y lo que ya estaba en el catálogo (mismo nombre a menos de 300 m, o misma primera palabra a menos de 150 m, como "MIAH Speakeasy Bar" = "Miah Bar").
+- **Precio:** OpenStreetMap no publica precios, así que todos quedan "por confirmar".
+- **Horario:** sólo se lee cuando la ficha lo trae en formato simple; si no, queda "por confirmar".
+- **Plaza Satélite** no está en OSM como centro comercial. La propongo aparte, con Wikipedia como fuente.
+- **Para mezclarlos:** dime "aprobado OSM" (o qué zonas o qué lugares quitas) y corro `build_osm.py --mezclar`.
+
+## Lo que no se alcanza ni con OSM
+
+- **Vegetariano (8 por zona):** OSM casi no marca la dieta. Faltaría investigarlo a mano, zona por zona.
+- **Beber y bailar en Santa Fe, Satélite, Lomas y Xochimilco:** casi no hay bares ni antros registrados. Hay que buscarlos con fuente (Time Out o Chilango) zona por zona.
+- **Xochimilco:** la zona es trajineras, embarcaderos y la reserva. 40 lugares de comer ahí no tiene sentido; propongo otra meta para esa zona.
+
+## Santa Fe y Satélite: familia, fiesta y date
+
+Ya dan 3 opciones distintas en los 3 casos, con el catálogo de hoy y con los candidatos.
+- **Satélite hoy:** familia y fiesta salen de Polanco o del Museo de Antropología, porque Satélite tiene pocos lugares propios. Con los candidatos salen de la misma zona (Parque Tezozómoc, Tacos Latosos, Cinemex Lomas Verdes, Viking Goes).
+- **Fiesta y date en Santa Fe y Satélite:** varias opciones son un solo lugar, porque no hay suficientes bares cerca para armar un plan de dos paradas.
+
+## Eventos con fecha (`data/eventos.js`)
+
+El motor los mete sólo si el plan cae en sus fechas, a su hora real cuando la nota la publica, y desaparecen cuando vencen.
+
+| Evento | Fechas | Hora | Sede / zona | Precio | Fuente |
+|---|---|---|---|---|---|
+| Mexicráneos 2026 · Paseo de la Reforma | 2026-10-17 → 2026-11-16 | Abierto 24 h (al aire libre) | Paseo de la Reforma, alrededor del Ángel de la Independencia (juarez) | gratis | [Crónica](https://www.cronica.com.mx/nacional/2026/10/27/mexicraneos-2026-en-reforma-hasta-cuando-estara-la-exposicion-por-dia-e-muertos/) (2026-10-27) |
+| Camino a la Luz · esculturas luminosas en Reforma | 2026-11-02 → 2026-11-08 | Horario por confirmar (de noche se ven las luces) | Paseo de la Reforma, del Ángel a la Puerta de los Leones (juarez) | por confirmar | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Concierto gratis: El Haragán y Compañía | 2026-11-06 → 2026-11-06 | Hora por confirmar | Monumento a la Revolución (juarez) | gratis | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Exhibición de piñatas mexicanas · Museo de Arte Popular | 2026-11-07 → 2026-12-13 | Horario del museo (por confirmar) | Revillagigedo 11 esq. Independencia (centro) | por confirmar | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Enjambre en el Zócalo (Vitae Fest) | 2026-11-08 → 2026-11-08 | Dom 8 nov · inicia 17:20; Enjambre 18:40 | Zócalo (Plaza de la Constitución) (centro) | gratis | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Original · encuentro de arte textil en Los Pinos | 2026-11-12 → 2026-11-15 | 10:30–20:00 | Parque Lira s/n, Bosque de Chapultepec 1a sección (chapultepec) | por confirmar | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| FILIJ 44 · Feria Internacional del Libro Infantil y Juvenil | 2026-11-13 → 2026-11-22 | 9:00–19:00 | Río Churubusco 79 esq. Calz. de Tlalpan (coyoacan) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Garbage en el Zócalo · concierto gratis | 2026-11-14 → 2026-11-14 | Sáb 14 nov · 20:00 | Zócalo (Plaza de la Constitución) (centro) | gratis | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Noche de las Estrellas · Las Islas de CU | 2026-11-14 → 2026-11-14 | Sáb 14 nov · de noche (hora por confirmar) | Las Islas, Ciudad Universitaria (cu) | gratis | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Noche de Museos · Palacio de Bellas Artes | 2026-11-25 → 2026-11-25 | Mié 25 nov · horario nocturno (por confirmar) | Av. Juárez s/n esq. Eje Central Lázaro Cárdenas (centro) | gratis | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Festival Francia en Los Pinos | 2026-11-28 → 2026-11-29 | 10:00–18:00 (festival gastronómico México-Francia) | Parque Lira s/n, Bosque de Chapultepec 1a sección (chapultepec) | gratis | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Festival artesanal de café y chocolate · edición navideña | 2026-11-28 → 2026-11-29 | Horario por confirmar | Jalapa 38, Roma Norte (roma) | gratis | [Chilango](https://www.chilango.com/que-hacer/eventos-de-noviembre-de-2026-en-cdmx-que-hace-sin-costo-conciertos-ferias-y-festivales/) (2026-11-02) |
+| Las Formas de la Energía · Palacio de Bellas Artes | 2026-11-12 → 2026-11-30 | Horario del museo (por confirmar) | Av. Juárez s/n esq. Eje Central Lázaro Cárdenas (centro) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Mes de Japón · Museo Nacional de Antropología | 2026-11-05, 2026-11-07, 2026-11-14, 2026-11-27 | 5, 7, 14 y 27 nov · 10:00–20:00 | Av. Paseo de la Reforma esq. Calz. Gandhi s/n (polanco) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Festival de Piano En Blanco y Negro · Cenart | 2026-11-07 → 2026-11-29 | Auditorio Blas Galindo · funciones por confirmar | Río Churubusco 79 esq. Calz. de Tlalpan (coyoacan) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Titanic: An Immersive Voyage · Expo Reforma | 2026-10-21 → 2026-12-20 | Horario por confirmar | Expo Reforma, colonia Juárez (juarez) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Amor eterno: Por siempre Juan Gabriel · Palacio Postal | ¿? → 2027-01-24 | Horario por confirmar | Palacio Postal (centro) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |
+| Concierto navideño · Orquesta Sinfónica de Minería | 2026-11-30, 2026-12-01 | 30 nov y 1 dic · 20:00 | Insurgentes Sur 3000 (coyoacan) | por confirmar | [La Silla Rota](https://lasillarota.com/yo-soi-tu/2026/10/31/que-hacer-en-cdmx-en-noviembre-2026-eventos-y-actividades-535426.html) (2026-10-31) |

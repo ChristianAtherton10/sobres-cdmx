@@ -87,8 +87,8 @@ const GRUPOS = {
 };
 const META = { comer: 40, veg: 8, beber: 15, bailar: 5, cultura: 10, exper: 8, familia: 10 };
 const VEG = /vegan|vegetari|veggie|plant.?based|basad[ao] en plantas/i;
-function tablaCobertura(md) {
-  const app = makeApp({});
+function tablaCobertura(md, extra) {
+  const app = makeApp({}, { extra: extra || [] });
   const todos = app.cat().filter(v => app.esRecomendable(v) && !v.lejos);
   const grupo = v => { if (/karaoke|cantabar/i.test(v.n)) return 'exper'; return Object.keys(GRUPOS).find(g => GRUPOS[g].includes(v.cat)) || 'otro'; };
   const filas = app.ZONES.map(z => {
@@ -110,7 +110,9 @@ function tablaCobertura(md) {
   } else filas.forEach(f => console.log(cols.map(k => String(f[k]).padEnd(k === 'zona' ? 22 : 6)).join(' ') + '  ' + f.faltan.join(', ')));
   return filas;
 }
-if (process.argv.includes('--tabla')) { tablaCobertura(process.argv.includes('--md')); process.exit(0); }
+// --con-osm: cómo quedaría si se aprueban los candidatos de reportes/osm/candidatos_osm.json.
+if (process.argv.includes('--tabla')) { tablaCobertura(process.argv.includes('--md'),
+  process.argv.includes('--con-osm') ? require('../reportes/osm/candidatos_osm.json') : []); process.exit(0); }
 module.exports = { tablaCobertura };
 
 console.log('\n════ EMBUDO POR ZONA (sin vibra, 11:00–23:00, tope $1,000+) ════');
