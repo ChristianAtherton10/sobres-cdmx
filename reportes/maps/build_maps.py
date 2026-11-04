@@ -51,6 +51,8 @@ def repetido(n, lat, lng):
 def categoria(gcat, n):
     g = norm(gcat); t = norm(n)
     if 'centro de eventos' in g: return None
+    if 'academia' in g or 'escuela' in g: return None
+    if 'discoteca' in g or 'club nocturno' in g: return 'Antro'
     if 'karaoke' in g: return 'Bar'
     if re.search(r'\bbar\b|pub|cocteleria|cerveceria', g): return 'Bar'
     if 'taqueria' in g: return 'Taquería'
@@ -87,17 +89,17 @@ for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
             RAICES.add(raiz(n) + '|' + z + '|' + cat)
             veg = re.search(r'vegan|vegetarian', norm(gcat)) or re.search(r'vegan|vegetari|plant based', norm(n))
             vegano = re.search(r'vegan', norm(gcat) + ' ' + norm(n))
-            ab = {'Bar': 17, 'Restaurante': 13, 'Taquería': 13, 'Café': 8}[cat]
-            ci = cierre(hr) or {'Bar': 25, 'Restaurante': 22, 'Taquería': 23, 'Café': 20}[cat]
+            ab = {'Bar': 17, 'Restaurante': 13, 'Taquería': 13, 'Café': 8, 'Antro': 22}[cat]
+            ci = cierre(hr) or {'Bar': 25, 'Restaurante': 22, 'Taquería': 23, 'Café': 20, 'Antro': 28}[cat]
             if ci <= ab: ab = max(7, ci - 6)
             url = 'https://www.google.com/maps/search/?' + urllib.parse.urlencode({'api': 1, 'query': n, 'query_place_id': pid})
-            act = {'Bar': ['copas'], 'Restaurante': ['comida', 'cena'], 'Taquería': ['comida', 'cena'], 'Café': ['cafe', 'desayuno']}[cat]
+            act = {'Bar': ['copas'], 'Restaurante': ['comida', 'cena'], 'Taquería': ['comida', 'cena'], 'Café': ['cafe', 'desayuno'], 'Antro': ['baile', 'copas']}[cat]
             if cat == 'Bar' and re.search(r'restaurante', norm(gcat)): act = ['copas', 'cena']
-            tags = {'Bar': ['nightlife', 'social'], 'Restaurante': ['foodie'], 'Taquería': ['foodie', 'social'], 'Café': ['chill']}[cat]
+            tags = {'Bar': ['nightlife', 'social'], 'Restaurante': ['foodie'], 'Taquería': ['foodie', 'social'], 'Café': ['chill'], 'Antro': ['nightlife']}[cat]
             rec = {'id': 'gm-' + hashlib.sha1(pid.encode()).hexdigest()[:10], 'n': n, 'cat': cat, 'lat': lat, 'lng': lng, 'zone': z,
                    'col': '', 'addr': addr.strip(' ·'), 'oh': [ab, ci],
                    'hrs': ('Ese día cerraba a las ' + hr.split('Cierra a las ')[-1].split('Cierra a la ')[-1] if 'Cierra' in hr else 'Horario por confirmar') + ' · horario completo por confirmar',
-                   'horaEstimada': True, 'who': ['amigos', 'date', 'compa'] + (['familia'] if cat != 'Bar' else []), 'tags': tags, 'act': act,
+                   'horaEstimada': True, 'who': ['amigos', 'date', 'compa'] + (['familia'] if cat not in ('Bar', 'Antro') else []), 'tags': tags, 'act': act,
                    'tm': [x for x, ok in (('manana', ab <= 11), ('tarde', ab <= 17 and ci >= 15), ('noche', ci >= 21)) if ok] or ['tarde'],
                    'fuente': 'Google Maps — búsqueda "%s" (%.1f★, %d reseñas)' % (q, rating, resenas), 'url': url, 'web': '',
                    'fecha': 'ficha vigente (consultada ' + HOY + ')', 'consultado': HOY, 'hrsFuente': 'Google Maps',
@@ -106,7 +108,7 @@ for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
                    'basis': gcat + ' (' + ('%.1f' % rating) + '★ en Google Maps, ' + str(resenas) + ' reseñas)',
                    'nota': 'Horario sin confirmar.' + (' Queda lejos del centro de su zona.' if dz > 5.5 else '')}
             if veg: rec['dieta'] = ['vegano', 'vegetariano'] if vegano else ['vegetariano']
-            if cat == 'Bar': rec['aptoFamilia'] = 'no'
+            if cat in ('Bar', 'Antro'): rec['aptoFamilia'] = 'no'
             if dz > 5.5: rec['lejos'] = True
             out.append(rec)
 
