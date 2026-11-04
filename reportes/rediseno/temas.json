@@ -1,6 +1,30 @@
 {
-  "hoy": { "nombre": "Actual (crema, café y terracota)", "bg": "#faf5ec", "card": "#ffffff", "surface": "#f2eadd", "text": "#2b211b", "ink": "#2b211b", "n600": "#80705c", "n700": "#615345", "accent": "#c8442c", "onAccent": "#ffffff", "fill": "#2b211b", "onFill": "#ffffff" },
-  "a": { "nombre": "A · Noche CDMX", "bg": "#111827", "card": "#1a2335", "surface": "#1f2937", "text": "#ffffff", "ink": "#ffffff", "n600": "#a7b0bf", "n700": "#cbd2dd", "accent": "#c6f432", "onAccent": "#111827", "fill": "#c6f432", "onFill": "#111827" },
-  "b": { "nombre": "B · Fiesta mexicana", "bg": "#ffffff", "card": "#ffffff", "surface": "#fff6dc", "text": "#1d1d1f", "ink": "#1d1d1f", "n600": "#5f5f66", "n700": "#46464c", "accent": "#d10073", "onAccent": "#ffffff", "fill": "#00777a", "onFill": "#ffffff" },
-  "c": { "nombre": "C · Limpio para adultos", "bg": "#ffffff", "card": "#ffffff", "surface": "#f3f5f9", "text": "#1b2a4a", "ink": "#1b2a4a", "n600": "#56627a", "n700": "#3f4a61", "accent": "#c63d31", "onAccent": "#ffffff", "fill": "#1b2a4a", "onFill": "#ffffff" }
+  "hoy": {
+    "nombre": "Diseño anterior (?tema=antes)",
+    "bg": "#faf5ec",
+    "card": "#ffffff",
+    "surface": "#f2eadd",
+    "text": "#2b211b",
+    "ink": "#2b211b",
+    "n600": "#80705c",
+    "n700": "#615345",
+    "accent": "#c8442c",
+    "onAccent": "#ffffff",
+    "fill": "#2b211b",
+    "onFill": "#ffffff"
+  },
+  "c": {
+    "nombre": "C · SOBRES MX (formato elegido)",
+    "bg": "#ffffff",
+    "card": "#ffffff",
+    "surface": "#f3f5f9",
+    "text": "#1b2a4a",
+    "ink": "#1b2a4a",
+    "n600": "#56627a",
+    "n700": "#3f4a61",
+    "accent": "#c63d31",
+    "onAccent": "#ffffff",
+    "fill": "#1b2a4a",
+    "onFill": "#ffffff"
+  }
 }

@@ -11,4 +11,4 @@ for (const [k, t] of Object.entries(TEMAS)) {
   for (const [a, b, q] of PARES) { const r = cr(t[a], t[b]); const ok = r >= 4.5; if (!ok && k !== 'hoy') mal++;
     console.log('  ' + (ok ? '✓' : '✗') + ' ' + r.toFixed(2).padStart(5) + ':1  ' + q + ' (' + t[a] + ' / ' + t[b] + ')'); }
 }
-console.log(mal ? '\n✗ ' + mal + ' pares de los temas nuevos no pasan' : '\n✓ los temas A, B y C pasan 4.5:1 en todos los pares ("hoy" es sólo referencia: no se cambia sin ?tema)'); process.exitCode = mal ? 1 : 0;
+console.log(mal ? '\n✗ ' + mal + ' pares del formato C no pasan' : '\n✓ el formato C pasa 4.5:1 en todos los pares ("hoy" = diseño anterior, sólo de referencia)'); process.exitCode = mal ? 1 : 0;

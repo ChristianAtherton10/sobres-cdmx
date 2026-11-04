@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-tema="c">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,7 @@
      teléfono o fecha. Por eso "Campos Elíseos 290/A" o una hora salían en azul
      subrayado dentro de las fichas. Aquí se apaga esa detección automática. -->
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-<meta name="theme-color" content="#faf5ec">
+<meta name="theme-color" content="#ffffff">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QP6QKRDJK"></script>
 <script>
@@ -21,21 +21,12 @@
   try { if (sobresQA) sessionStorage.setItem('sobres_qa', '1'); else if (sessionStorage.getItem('sobres_qa') === '1') sobresQA = true; } catch (e) {}
   if (!sobresQA) gtag('config', 'G-4QP6QKRDJK');
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap">
 <script>
-  /* Fase 5: ?tema=a|b|c activa un tema de prueba (se recuerda en la sesión);
-     ?tema=hoy vuelve al de siempre. Sin parámetro se ve como hoy. */
-  (function () { try {
-    var q = new URLSearchParams(location.search).get('tema'); var t = q;
-    if (q === 'hoy' || q === '0') { sessionStorage.removeItem('sobres_tema'); t = null; }
-    else if (!q) t = sessionStorage.getItem('sobres_tema');
-    if (!t || !/^[abc]$/.test(t)) return;
-    sessionStorage.setItem('sobres_tema', t); document.documentElement.setAttribute('data-tema', t);
-    var F = { a: 'Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800',
-              b: 'Archivo+Black&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800',
-              c: 'Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800' }[t];
-    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + F + '&display=swap'; document.head.appendChild(l);
-    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', { a: '#111827', b: '#ffffff', c: '#ffffff' }[t]);
-  } catch (e) {} })();
+  /* Formato C es el de siempre. ?tema=antes enseña el diseño anterior (sólo para comparar). */
+  (function () { try { if (new URLSearchParams(location.search).get('tema') === 'antes') document.documentElement.removeAttribute('data-tema'); } catch (e) {} })();
 </script>
 <script src="./support.js"></script>
 </head>
@@ -72,37 +63,10 @@
      títulos, relleno oscuro (chip elegido, barras), tarjeta y texto encima. */
   --ink:var(--noche); --fill:var(--noche); --fill-2:var(--noche-2); --on-fill:#fff; --on-accent:#fff; --card:#fff;
 }
-/* ═════════════ Temas de prueba (Fase 5, rama rediseno) ═════════════
-   Sólo con ?tema=a|b|c. Todos los colores y fuentes viven aquí.
+/* ═════════════ Formato C · "Limpio para adultos" (elegido el 4 nov 2026) ═════════════
+   Es el formato de SOBRES MX. <html data-tema="c"> lo activa; ?tema=antes muestra
+   el diseño anterior sólo para comparar. Todos los colores y fuentes viven aquí.
    Contraste revisado con reportes/rediseno/contraste.js (mínimo 4.5:1). */
-:root:root[data-tema="a"]{ /* A · Noche CDMX */
-  color-scheme:dark;
-  --color-bg:#111827; --color-surface:#1f2937; --card:#1a2335; --color-text:#ffffff; --ink:#ffffff;
-  --color-accent:#c6f432; --color-accent-600:#b3e01f; --color-accent-700:#9fcb12; --color-accent-100:#2b3a1a; --color-accent-200:#3a4f1c; --on-accent:#111827;
-  --color-accent-2:#7dd3fc; --color-accent-2-100:#16324a; --color-accent-2-700:#7dd3fc;
-  --fill:#c6f432; --fill-2:#b3e01f; --on-fill:#111827;
-  --color-neutral-100:#1a2335; --color-neutral-200:#253045; --color-neutral-300:#334058; --color-neutral-400:#4b5870; --color-neutral-500:#7c879a;
-  --color-neutral-600:#a7b0bf; --color-neutral-700:#cbd2dd; --color-neutral-800:#e2e7ee; --color-neutral-900:#f3f5f8;
-  --color-divider:rgba(255,255,255,.18); --glass-bg:rgba(17,24,39,.92); --glass-card:rgba(26,35,53,.96);
-  --noche:#ffffff; --noche-2:#e2e7ee; --lila:#1a2335; --lila-2:#253045; --electrico:#c6f432; --electrico-2:#b3e01f;
-  --font-heading:"Bricolage Grotesque", system-ui, sans-serif; --font-body:"Inter", system-ui, sans-serif;
-}
-:root[data-tema="a"] .leaflet-tile-pane{filter:invert(.92) hue-rotate(180deg) saturate(.5) brightness(.9)}
-:root:root[data-tema="b"]{ /* B · Fiesta mexicana */
-  --color-bg:#ffffff; --color-surface:#fff6dc; --card:#ffffff; --color-text:#1d1d1f; --ink:#1d1d1f;
-  --color-accent:#d10073; --color-accent-600:#b80065; --color-accent-700:#9e0057; --color-accent-100:#fde6f2; --color-accent-200:#fbc8e3; --on-accent:#ffffff;
-  --color-accent-2:#00a6a6; --color-accent-2-100:#d9f4f4; --color-accent-2-700:#00777a; --amarillo:#ffc72c;
-  --fill:#00777a; --fill-2:#006466; --on-fill:#ffffff;
-  --color-neutral-100:#fafafa; --color-neutral-200:#eeeeef; --color-neutral-300:#d9d9dc; --color-neutral-400:#b4b4b9; --color-neutral-500:#8b8b92;
-  --color-neutral-600:#5f5f66; --color-neutral-700:#46464c; --color-neutral-800:#2e2e33; --color-neutral-900:#1d1d1f;
-  --color-divider:rgba(29,29,31,.18); --glass-bg:rgba(255,255,255,.92); --glass-card:rgba(255,255,255,.96);
-  --noche:#1d1d1f; --noche-2:#2e2e33; --lila:#fff6dc; --lila-2:#ffeab0; --electrico:#d10073; --electrico-2:#b80065;
-  --font-heading:"Archivo Black", system-ui, sans-serif; --font-body:"DM Sans", system-ui, sans-serif;
-}
-/* Archivo Black sólo tiene un grueso: sin negritas falsas. */
-:root[data-tema="b"] .sb-h1,:root[data-tema="b"] .sb-h2,:root[data-tema="b"] .sb-h3{font-weight:400;letter-spacing:-.01em}
-:root[data-tema="b"] .sb-kicker{color:var(--color-accent-2-700)}
-:root[data-tema="b"] .sb-home::before{content:"";display:block;height:6px;margin:0 0 16px;border-radius:3px;background:linear-gradient(90deg,var(--color-accent) 0 33%,var(--amarillo) 33% 66%,var(--color-accent-2) 66%)}
 :root:root[data-tema="c"]{ /* C · Limpio para adultos */
   --color-bg:#ffffff; --color-surface:#f3f5f9; --card:#ffffff; --color-text:#1b2a4a; --ink:#1b2a4a;
   --color-accent:#c63d31; --color-accent-600:#ad3328; --color-accent-700:#932a21; --color-accent-100:#ffe9e6; --color-accent-200:#ffd0ca; --on-accent:#ffffff;
@@ -117,14 +81,43 @@
 /* Instrument Serif sólo tiene un grueso: se compensa con tamaño, no con negritas falsas. */
 :root[data-tema="c"] .sb-h1,:root[data-tema="c"] .sb-h2,:root[data-tema="c"] .sb-h3{font-weight:400;letter-spacing:-.005em}
 :root[data-tema="c"] .sb-h1{font-size:clamp(36px,9vw,60px)}
+/* ── Formato C, versión estética y simple (4 nov 2026) ──
+   Menos líneas, menos sombras, más aire. Sin quitar funciones. */
+:root:root[data-tema="c"]{ --radius-lg:20px; --radius-md:14px; --shadow-sm:none; --shadow-md:0 1px 2px rgba(27,42,74,.06); --shadow-lg:0 8px 28px rgba(27,42,74,.10) }
+:root[data-tema="c"] body{-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
+:root[data-tema="c"] .sb-marca{font-weight:400!important;letter-spacing:.01em!important}
+:root[data-tema="c"] .sb-mx{font-family:var(--font-body);font-weight:600;font-size:.56em;letter-spacing:.12em;color:var(--color-accent);margin-left:1px}
+@media (max-width:819px){:root[data-tema="c"] .sb-home .sb-sub{display:none}}
+:root[data-tema="c"] .sb-top{background:rgba(255,255,255,.88);border-bottom:1px solid var(--color-neutral-200)}
+:root[data-tema="c"] .sb-nav{border-top:1px solid var(--color-neutral-200)}
+:root[data-tema="c"] .sb-kicker{color:var(--color-neutral-600);font-weight:600;letter-spacing:.12em}
+:root[data-tema="c"] .sb-sub{color:var(--color-neutral-600);line-height:1.6}
+:root[data-tema="c"] .sb-card{border:1px solid var(--color-neutral-200);box-shadow:none}
+:root[data-tema="c"] .sb-col{padding:22px}
+:root[data-tema="c"] .sb-label{font-weight:600;color:var(--color-neutral-700)}
+/* Opciones del formulario: sólo el nombre, sin la explicación debajo. */
+:root[data-tema="c"] .sb-tile{border:1px solid var(--color-neutral-200);min-height:0;padding:14px 16px;justify-content:center}
+:root[data-tema="c"] .sb-tile .t1{font-weight:600}
+:root[data-tema="c"] .sb-tile .t2{display:none}
+:root[data-tema="c"] .sb-tile:hover{border-color:var(--color-neutral-400)}
+:root[data-tema="c"] .sb-tile[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
+:root[data-tema="c"] .sb-chip{border:1px solid var(--color-neutral-200);font-weight:500}
+:root[data-tema="c"] .sb-chip:hover{border-color:var(--color-neutral-400)}
+:root[data-tema="c"] .sb-btn{box-shadow:none;font-weight:600}
+:root[data-tema="c"] .sb-btn2{border-width:1px;font-weight:600}
+:root[data-tema="c"] .sb-cta-pegada,:root[data-tema="c"] .sb-cta-fija{box-shadow:0 -1px 0 var(--color-neutral-200)}
+/* Tarjetas de resultados: encabezado claro cuando no hay foto, datos sin cajas. */
+:root[data-tema="c"] .sb-opt .foto:not(:has(img)){background:var(--color-surface)!important;color:var(--ink);height:auto;min-height:0;padding:18px 18px 14px}
+:root[data-tema="c"] .sb-opt .foto:not(:has(img))::after{display:none}
+:root[data-tema="c"] .sb-opt .foto:not(:has(img)) .sb-tag{background:var(--card)!important;color:var(--color-neutral-700)!important;border:1px solid var(--color-neutral-200)}
+:root[data-tema="c"] .sb-opt .foto [style*="font-heading"]{font-weight:400!important;font-size:25px!important;letter-spacing:-.01em}
+:root[data-tema="c"] .sb-opt .foto::after{background:linear-gradient(180deg,rgba(27,42,74,0) 30%,rgba(27,42,74,.78) 100%)}
+:root[data-tema="c"] .sb-datos{background:none;gap:0;border-top:1px solid var(--color-neutral-200);border-bottom:1px solid var(--color-neutral-200);border-radius:0}
+:root[data-tema="c"] .sb-datos>div{background:none;padding:12px 0}
+:root[data-tema="c"] .sb-datos>div>b{font-weight:600}
+:root[data-tema="c"] .sb-datos>div>span{font-weight:600;letter-spacing:.08em}
+:root[data-tema="c"] .leaflet-tile-pane{filter:grayscale(.9) brightness(1.05) contrast(.9)}
 :root[data-tema="c"] .sb-h2{font-size:clamp(28px,7vw,40px)}:root[data-tema="c"] .sb-h3{font-size:22px}
-/* Espacio para la mascota (no es un sobre): sólo en los temas de prueba. */
-.sb-mascota{display:none}
-:root[data-tema] .sb-mascota{display:flex;align-items:center;justify-content:center;flex:none;width:88px;height:88px;border-radius:24px;background:var(--color-surface);border:1.5px dashed var(--color-neutral-400);margin:0 0 12px}
-:root[data-tema] .sb-mascota svg{width:64px;height:64px}
-:root[data-tema] .sb-mascota-res{width:64px;height:64px;border-radius:18px;margin:8px 0 0}
-:root[data-tema] .sb-mascota-res svg{width:46px;height:46px}
-@media (min-width:820px){:root[data-tema] .sb-mascota:not(.sb-mascota-res){width:120px;height:120px}:root[data-tema] .sb-mascota:not(.sb-mascota-res) svg{width:88px;height:88px}}
 /* Mosaicos de OSM atenuados para que combinen con el crema de Sobres. */
 .leaflet-tile-pane{filter:saturate(.42) sepia(.16) brightness(1.05) contrast(.94)}
 html{-webkit-text-size-adjust:100%}
@@ -495,9 +488,9 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <header class="sb-top">
 <div>
-<button onClick="{{ brandGo }}" aria-label="SOBRES, ir al inicio" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0;min-height:44px;flex:none">
+<button onClick="{{ brandGo }}" aria-label="SOBRES MX, ir al inicio" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0;min-height:44px;flex:none">
 <span style="width:20px;height:20px;background:var(--electrico);display:inline-block;border-radius:6px;flex:none"></span>
-<span style="font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--ink)">SOBRES</span>
+<span class="sb-marca" style="font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--ink)">SOBRES<span class="sb-mx"> MX</span></span>
 </button>
 <nav class="sb-topnav" aria-label="Secciones">
 <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3"><button aria-current="{{ n.current }}" onClick="{{ n.go }}">{{ n.label }}</button></sc-for>
@@ -521,9 +514,6 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" data-paso="{{ paso }}" style="padding:26px 0 32px">
 <div class="sb-home-top">
 <div class="sb-home-txt">
-<div class="sb-mascota" role="img" aria-label="Espacio para la mascota de SOBRES (imagen de relleno)">
-<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="36" rx="22" ry="20" fill="var(--color-accent)"/><ellipse cx="24" cy="32" rx="5" ry="6" fill="var(--card)"/><ellipse cx="40" cy="32" rx="5" ry="6" fill="var(--card)"/><circle cx="25" cy="33" r="2.6" fill="var(--ink)"/><circle cx="41" cy="33" r="2.6" fill="var(--ink)"/><path d="M26 44 q6 5 12 0" fill="none" stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round"/><path d="M20 18 q-4 -8 2 -10 M44 18 q4 -8 -2 -10" fill="none" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round"/></svg>
-</div>
 <div class="sb-kicker">{{ homeKicker }}</div>
 <h1 class="sb-h1">Arma tu salida en tres opciones.</h1>
 <p class="sb-sub">Dinos el ambiente, la zona y cuánto quieren gastar. Te damos tres planes completos para comparar: horario, trayectos y costo por persona.</p>
@@ -666,9 +656,6 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
 <section data-screen-label="Tus opciones" class="sb-wide" style="padding:12px 0 40px">
 <div class="sb-res-head">
-<div class="sb-mascota sb-mascota-res" role="img" aria-label="Espacio para la mascota de SOBRES (imagen de relleno)">
-<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="36" rx="22" ry="20" fill="var(--color-accent)"/><ellipse cx="24" cy="32" rx="5" ry="6" fill="var(--card)"/><ellipse cx="40" cy="32" rx="5" ry="6" fill="var(--card)"/><circle cx="25" cy="33" r="2.6" fill="var(--ink)"/><circle cx="41" cy="33" r="2.6" fill="var(--ink)"/><path d="M26 44 q6 5 12 0" fill="none" stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round"/><path d="M20 18 q-4 -8 2 -10 M44 18 q4 -8 -2 -10" fill="none" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round"/></svg>
-</div>
 <button class="sb-btn3" style="margin-left:-12px" onClick="{{ ajustar }}">← Ajustar</button>
 <sc-if value="{{ tandaDe }}" hint-placeholder-val="{{ '' }}">
 <div class="sb-tag dark sc-rise" style="margin:8px 0 4px">{{ tandaDeTxt }}</div>
