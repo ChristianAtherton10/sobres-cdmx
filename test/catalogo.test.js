@@ -83,6 +83,13 @@ test('ningún lugar investigado repite uno que ya estaba (La Casa del Cine ya ve
   assert(!dup.length, 'repetidos: ' + dup.join(' · '));
 });
 
+// Regresión (4 nov 2026): se escribió 'si' sin acento y la app sólo entiende 'sí'.
+test('la marca de familia de los investigados usa los valores de la app (sí / no / desconocido)', () => {
+  const L = require('vm').runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'data', 'investigados.js'), 'utf8') + ';window', { window: {} }).SOBRES_INVESTIGADOS.lugares;
+  L.filter(r => r.aptoFamilia).forEach(r => assert(['sí', 'no', 'desconocido'].includes(r.aptoFamilia), r.n + ': aptoFamilia "' + r.aptoFamilia + '"'));
+  assert(L.some(r => r.aptoFamilia === 'sí'), 'ningún investigado quedó apto para familia');
+});
+
 test('los ids investigados viajan en el enlace compartido', () => {
   const app = makeApp({});
   app.cat().filter(x => /^iv-/.test(x.id)).forEach(v =>
