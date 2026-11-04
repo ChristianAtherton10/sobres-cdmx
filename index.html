@@ -83,7 +83,7 @@
   --fill:#c6f432; --fill-2:#b3e01f; --on-fill:#111827;
   --color-neutral-100:#1a2335; --color-neutral-200:#253045; --color-neutral-300:#334058; --color-neutral-400:#4b5870; --color-neutral-500:#7c879a;
   --color-neutral-600:#a7b0bf; --color-neutral-700:#cbd2dd; --color-neutral-800:#e2e7ee; --color-neutral-900:#f3f5f8;
-  --color-divider:rgba(255,255,255,.18);
+  --color-divider:rgba(255,255,255,.18); --glass-bg:rgba(17,24,39,.92); --glass-card:rgba(26,35,53,.96);
   --noche:#ffffff; --noche-2:#e2e7ee; --lila:#1a2335; --lila-2:#253045; --electrico:#c6f432; --electrico-2:#b3e01f;
   --font-heading:"Bricolage Grotesque", system-ui, sans-serif; --font-body:"Inter", system-ui, sans-serif;
 }
@@ -95,7 +95,7 @@
   --fill:#00777a; --fill-2:#006466; --on-fill:#ffffff;
   --color-neutral-100:#fafafa; --color-neutral-200:#eeeeef; --color-neutral-300:#d9d9dc; --color-neutral-400:#b4b4b9; --color-neutral-500:#8b8b92;
   --color-neutral-600:#5f5f66; --color-neutral-700:#46464c; --color-neutral-800:#2e2e33; --color-neutral-900:#1d1d1f;
-  --color-divider:rgba(29,29,31,.18);
+  --color-divider:rgba(29,29,31,.18); --glass-bg:rgba(255,255,255,.92); --glass-card:rgba(255,255,255,.96);
   --noche:#1d1d1f; --noche-2:#2e2e33; --lila:#fff6dc; --lila-2:#ffeab0; --electrico:#d10073; --electrico-2:#b80065;
   --font-heading:"Archivo Black", system-ui, sans-serif; --font-body:"DM Sans", system-ui, sans-serif;
 }
@@ -110,13 +110,14 @@
   --fill:#1b2a4a; --fill-2:#2a3c63; --on-fill:#ffffff;
   --color-neutral-100:#f7f8fb; --color-neutral-200:#e9edf3; --color-neutral-300:#d3d9e3; --color-neutral-400:#a9b2c2; --color-neutral-500:#7b869a;
   --color-neutral-600:#56627a; --color-neutral-700:#3f4a61; --color-neutral-800:#2a3550; --color-neutral-900:#1b2a4a;
-  --color-divider:rgba(27,42,74,.16);
+  --color-divider:rgba(27,42,74,.16); --glass-bg:rgba(255,255,255,.92); --glass-card:rgba(255,255,255,.96);
   --noche:#1b2a4a; --noche-2:#2a3c63; --lila:#f3f5f9; --lila-2:#e9edf3; --electrico:#c63d31; --electrico-2:#ad3328;
   --font-heading:"Instrument Serif", Georgia, serif; --font-body:"Inter", system-ui, sans-serif;
 }
 /* Instrument Serif sólo tiene un grueso: se compensa con tamaño, no con negritas falsas. */
 :root[data-tema="c"] .sb-h1,:root[data-tema="c"] .sb-h2,:root[data-tema="c"] .sb-h3{font-weight:400;letter-spacing:-.005em}
 :root[data-tema="c"] .sb-h1{font-size:clamp(36px,9vw,60px)}
+:root[data-tema="c"] .sb-h2{font-size:clamp(28px,7vw,40px)}:root[data-tema="c"] .sb-h3{font-size:22px}
 /* Espacio para la mascota (no es un sobre): sólo en los temas de prueba. */
 .sb-mascota{display:none}
 :root[data-tema] .sb-mascota{display:flex;align-items:center;justify-content:center;flex:none;width:88px;height:88px;border-radius:24px;background:var(--color-surface);border:1.5px dashed var(--color-neutral-400);margin:0 0 12px}
@@ -215,13 +216,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .sb-sec{margin:0 0 28px}
 .sb-progress{height:6px;border-radius:99px;background:var(--color-neutral-200);overflow:hidden}
 .sb-progress>span{display:block;height:100%;background:var(--electrico);border-radius:99px;transition:width .35s cubic-bezier(.2,.8,.2,1)}
-.sb-bar{position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(250,245,236,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--color-divider);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.sb-bar{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--glass-bg,rgba(250,245,236,.94));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--color-divider);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
 .sb-bar>div{max-width:600px;margin:0 auto;display:flex;gap:10px;align-items:center}
-.sb-nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--color-divider);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.sb-nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--glass-card,rgba(255,255,255,.96));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--color-divider);display:flex;padding-bottom:env(safe-area-inset-bottom)}
 .sb-nav button{flex:1;min-height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;color:var(--color-neutral-600);font:700 11.5px var(--font-body);cursor:pointer}
 .sb-nav button[aria-current="page"]{color:var(--electrico)}
 .sb-nav svg{width:22px;height:22px}
-.sb-top{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--color-divider)}
+.sb-top{position:sticky;top:0;z-index:50;background:var(--glass-bg,rgba(250,245,236,.92));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--color-divider)}
 .sb-top>div{max-width:1120px;margin:0 auto;padding:0 16px;height:58px;display:flex;align-items:center;gap:14px}
 .sb-topnav{display:flex;gap:4px}
 .sb-topnav button{min-height:40px;padding:0 14px;border-radius:999px;border:none;background:none;color:var(--ink);font:600 14.5px var(--font-body);cursor:pointer}
@@ -234,7 +235,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .sb-tag.lila{background:var(--color-accent-2-100);color:var(--color-accent-2-700)}
 .sb-info{border-radius:var(--radius-md);background:var(--color-accent-2-100);color:var(--color-neutral-800);padding:12px 14px;font:500 13.5px/1.5 var(--font-body)}
 .sb-opt{display:flex;flex-direction:column;overflow:hidden}
-.sb-opt .foto{position:relative;height:150px;background:var(--fill);color:var(--on-fill);display:flex;align-items:flex-end;padding:12px 14px;overflow:hidden}
+.sb-opt .foto{position:relative;height:150px;background:#2b211b;color:#fff;display:flex;align-items:flex-end;padding:12px 14px;overflow:hidden}
 .sb-opt .foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .sb-opt .foto::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,33,27,0) 35%,rgba(43,33,27,.8) 100%)}
 .sb-opt .foto>*{position:relative;z-index:1}
