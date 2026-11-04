@@ -584,7 +584,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 <p class="sb-note" style="margin:6px 0 0;font-size:12.5px">{{ o.votantes }}</p>
 </sc-if>
-<div style="margin-top:auto;padding-top:14px"><button class="sb-btn sb-full" onClick="{{ o.elegir }}">Elegir este plan</button></div>
+<div style="margin-top:auto;padding-top:14px"><button class="sb-btn sb-full" onClick="{{ o.elegir }}">{{ o.elegirTxt }}</button></div>
 </div>
 </article>
 </sc-for>
@@ -1626,7 +1626,17 @@ class Component extends DCLogic {
   // ¿Se baila? Antro, salón de baile o un bar que de noche se vuelve pista.
   // Tipo de la primera parada para medir variedad entre opciones: tres
   // restaurantes de cocinas distintas SÍ son tres opciones distintas.
+  // Comida COMPLETA (no un café ni un postre): entre dos, mínimo 4 horas. Antes
+  // salían un restaurante a las 7 pm y otro a las 9:20 pm. Un rooftop con
+  // cocina cuenta como comida salvo que se haya pedido salir de noche.
+  esComidaCompleta(v) {
+    return !!v && (['Restaurante','Fonda de autor','Izakaya','Taquería','Mercado'].includes(v.cat)
+    || (v.cat === 'Rooftop' && !this.pideNoche() && this.sirveComida(v))); }
+  comidasSeparadas(stops, times) { const ix = (stops || []).map((v, i) => i).filter(i => this.esComidaCompleta(stops[i]));
+    for (let a = 0; a < ix.length; a++) for (let b = a + 1; b < ix.length; b++) if (Math.abs(times[ix[b]] - times[ix[a]]) < 4 - 1e-6) return false;
+    return true; }
   tipoInicio(v) { return v.cat === 'Restaurante' ? 'Restaurante:' + (v.cocina || v.n) : v.cat; }
+  esBarDeNombre(v) { return /cervecer|cantina|\bpub\b|\bbeer|brew|mezcaler|pulquer/i.test(v.n || ''); }
   esCadenaCasual(v) { return /chili'?s|olive garden|italianni|p\.? ?f\.? ?chang|shake shack|hard rock|\bvips\b|sanborns|\btoks\b|hello kitty|burger|wings|hooters|applebee|tgi|domino|little caesars|carl'?s jr|mcdonald|kfc|starbucks|potzolcalli|el portón|wings army/i.test(v.n || ''); }
   bailable(v) { return !!v && (this.esAntro(v) || this.actsDe(v).indexOf('baile') >= 0); }
   // Zonas vecinas por DISTANCIA REAL entre los centros de cada zona (lat/lng),
@@ -1664,12 +1674,21 @@ class Component extends DCLogic {
     // Romántico: una taquería, un mercado o una cantina no son una cita.
     if ((this.state.vibes || []).includes('romántico') && (['Taquería','Mercado','Churrería','Centro comercial','Cantina','Antro'].includes(v.cat)
         || /chili'?s|olive garden|italianni|p\.? ?f\.? chang|shake shack|hard rock|vips|sanborns|toks|hello kitty|burger|wings/i.test(v.n || ''))) return false;
-    if (this.soloNoche() && !this.CATS_NOCHE().includes(v.cat)) return false;
+    // Noche = bares y antros; una cervecería o cantina registrada como
+    // restaurante también es "unas cervezas" (Cervecería de Barrio en Santa Fe).
+    if (this.soloNoche() && !this.CATS_NOCHE().includes(v.cat) && !this.esBarDeNombre(v)) return false;
     // "Comer rico" SIN "Noche y fiesta" = restaurante o terraza (y si acaso un
     // café o postre). Ni bares, ni cantinas, ni antros, ni taquerías: el usuario
     // lo reportó el 4 nov 2026 ("si sólo quiero comer rico, ¿por qué pone bares?").
     if ((this.state.vibes || []).includes('foodie') && !this.pideNoche()
-        && ['Bar','Bar de autor','Speakeasy','Mezcalería','Cantina','Antro','Salón de baile','Taquería'].includes(v.cat)) return false;
+        && ['Bar','Bar de autor','Speakeasy','Mezcalería','Cantina','Antro','Salón de baile'].includes(v.cat)) return false;
+    if ((this.state.vibes || []).includes('foodie') && v.cat === 'Taquería') return false;
+    // Si sólo pidieron comer (y quizá tomar algo), las paradas son de comer o de
+    // beber: un centro comercial o un museo no son "comer rico".
+    { const vb = (this.state.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico' && x !== 'social');
+      if (vb.includes('foodie') && vb.every(x => x === 'foodie' || x === 'nightlife')
+          && !this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat) && !this.CATS_MESA().includes(v.cat)
+          && !['Cantina', 'Heladería', 'Café', 'Churrería'].includes(v.cat)) return false; }
     // ...ni cadenas casuales: "comer rico" no es un Chili's ni un Shake Shack.
     if ((this.state.vibes || []).includes('foodie') && this.esCadenaCasual(v)) return false;
     if (!this.actsUtiles(v, m).length) return false;
@@ -2492,7 +2511,9 @@ class Component extends DCLogic {
     let pool = cityWide ? all.slice() : all.filter(v => sel.includes(v.z) && !v.lejos);
     let expandNote = '';
     // "Noche y fiesta" que pasa de la 1 am: tiene que haber dónde bailar.
-    const exigeBaile = this.pideNoche() && this.range()[1] > 25;
+    // Sólo cuando ELIGIERON un horario que pasa de la 1 am: con el horario por
+    // defecto de "hoy en la noche" no se manda a nadie a bailar a otra zona.
+    const exigeBaile = this.pideNoche() && this.range()[1] > 25 && (s.planTo != null);
     // Vecinas por distancia real entre centros (no una lista a mano) y SIN
     // repetir: con dos zonas elegidas que comparten vecina, salía dos veces.
     const vecinasSel = n => { const adj = [];
@@ -2526,7 +2547,10 @@ class Component extends DCLogic {
 
     // Lista visible: antes 24 con tope 2–3 por categoría; ahora evaluamos todo el
     // catálogo filtrado y sólo limitamos lo que se MUESTRA (visibleCount + Ver más).
-    const top = []; const catCount = {}; const capPerCat = seed ? 4 : 5;
+    // Con pocas categorías posibles (p. ej. sólo restaurantes y bares para
+    // "comer rico") el tope por categoría crece para que la lista no quede corta.
+    const nCats = new Set(ranked.map(v => v.cat)).size;
+    const top = []; const catCount = {}; const capPerCat = Math.max(seed ? 4 : 5, Math.ceil(24 / Math.max(1, nCats)));
     for (const v of ranked) {
       const c = catCount[v.cat] || 0;
       if (c >= capPerCat) continue;
@@ -2589,7 +2613,7 @@ class Component extends DCLogic {
           const gk = groups[gi];
           // Comida/cena/desayuno comparten cupo: dos restaurantes seguidos no.
           const esComer = gk === 'comida' || gk === 'cena' || gk === 'desayuno';
-          if (esComer) { if (foodN >= maxFood) continue; if (lastFoodT != null && Math.abs(t - lastFoodT) < 2.5) continue; }
+          if (esComer) { if (foodN >= maxFood) continue; if (lastFoodT != null && Math.abs(t - lastFoodT) < 4) continue; }
           // No repetir la MISMA FUNCIÓN en el plan (dos visitas, dos cafés…).
           const fn = this.funcionAct(gk, t);
           // Excepción: en "noche y fiesta" ir de un bar a otro ES el plan (hasta dos).
@@ -2650,7 +2674,8 @@ class Component extends DCLogic {
           const capJusto = quedan > 0 ? Math.max(80, ((max - gastado) / (quedan + 1)) * 1.9) : null;
           const tope2 = [capParada, capJusto].filter(x => x != null);
           const capFinal = tope2.length ? Math.min.apply(null, tope2) : null;
-          const fit = cands.filter(v => !stops.includes(v) && antroOk(v) && this.atHour(v, horaDe(v)) && llega(v) && cabeEnLaVentana(v)
+          const lejosDeComer = v => !this.esComidaCompleta(v) || stops.every((x, i) => !this.esComidaCompleta(x) || Math.abs(horaDe(v) - stopT[i]) >= 4);
+          const fit = cands.filter(v => !stops.includes(v) && lejosDeComer(v) && antroOk(v) && this.atHour(v, horaDe(v)) && llega(v) && cabeEnLaVentana(v)
             && this.cabeEnTope(stops.concat([v]), max).ok && (capFinal == null || v.pp <= capFinal));
           let pick = null;
           if (fit.length) {
@@ -2696,7 +2721,7 @@ class Component extends DCLogic {
           // de la tanda y en todas las regeneraciones. De ahí que PANEM Club
           // cerrara los tres planes una y otra vez.
           if (!pick) {
-            const resp = cands.filter(v => !stops.includes(v) && antroOk(v) && this.atHour(v, horaDe(v)) && llega(v) && cabeEnLaVentana(v)
+            const resp = cands.filter(v => !stops.includes(v) && lejosDeComer(v) && antroOk(v) && this.atHour(v, horaDe(v)) && llega(v) && cabeEnLaVentana(v)
               && (v.pp === 0 || v.ppUnknown) && this.cabeEnTope(stops.concat([v]), max).ok);
             if (resp.length) {
               // Mismo criterio que arriba: primero lo que no se ha mostrado, y
@@ -2766,7 +2791,7 @@ class Component extends DCLogic {
               if (!this.alcanzaTramo(v, next, ts[i + 1] - t)) continue; }
             else if (!this.cabeEnVentana(v, t, to)) continue;
             const prueba = st.slice(); prueba[i] = v;
-            if (!this.cabeEnTope(prueba, max).ok) continue;
+            if (!this.cabeEnTope(prueba, max).ok || !this.comidasSeparadas(prueba, ts)) continue;
             const sc = rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0);
             if (sc > mejorSc) { mejorSc = sc; mejor = v; }
           }
@@ -2798,6 +2823,7 @@ class Component extends DCLogic {
             if (f === 'copas' && this.pideNoche()) return copasN < 2; return usadas.indexOf(f) < 0; });
           if (!ak) continue;
           if (sinComer && !falta && !this.sirveComida(v)) continue;
+          if (!this.comidasSeparadas(st.concat([v]), ts.concat([t]))) continue;
           if (!this.cabeEnTope(st.concat([v]), max).ok) continue;
           let sc = rk(v) - mm / 6 - nivel(v) * 6;
           if (sinComer && this.sirveComida(v)) sc += 12;
@@ -2880,7 +2906,7 @@ class Component extends DCLogic {
       if (!c.stops.length) continue;
       c = completar(c);
       if (!basta(c.stops)) continue;
-      if (!this.cabeEnTope(c.stops, max).ok) continue;
+      if (!this.cabeEnTope(c.stops, max).ok || !this.comidasSeparadas(c.stops, c.times)) continue;
       califica(c);
       const fs = firmasDe(c.stops); const sg = fs[0];
       if (fs.some(f => vistos.has(f))) continue;
@@ -2908,6 +2934,7 @@ class Component extends DCLogic {
       if (this.esAntro(a) || !this.atHour(a, t0) || !this.atHour(b, t1)) return null;
       if (c.stops[2] ? !this.alcanzaTramo(b, c.stops[2], c.times[2] - t1) : !this.cabeEnVentana(b, t1, to)) return null;
       const st = [a, b].concat(c.stops.slice(2)), ts = [t0, t1].concat(c.times.slice(2));
+      if (!this.comidasSeparadas(st, ts)) return null;
       const ac = c.acts ? [c.acts[1], c.acts[0]].concat(c.acts.slice(2)) : null;
       const n = califica(Object.assign({}, c, { stops: st, times: ts, acts: ac,
         label: ac ? ac.map(k => this.ACTLBL[k] || 'Plan').join(' + ') : c.label }));
@@ -2986,7 +3013,7 @@ class Component extends DCLogic {
             if (!this.alcanzaTramo(v, next, ts[i + 1] - ts[i])) continue; }
           else if (!this.cabeEnVentana(v, ts[i], to)) continue;
           const prueba = st.slice(); prueba[i] = v;
-          if (!this.cabeEnTope(prueba, max).ok) continue;
+          if (!this.cabeEnTope(prueba, max).ok || !this.comidasSeparadas(prueba, ts)) continue;
           const sc = rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0);
           if (sc > mejorSc) { mejorSc = sc; mejor = v; mejorAk = ak; }
         }
@@ -3101,36 +3128,55 @@ class Component extends DCLogic {
         }
       }
     }
-    // "COMER RICO" CON POCO PRESUPUESTO. Si en la zona no alcanzan tres planes de
-    // dos paradas (de noche casi no hay postres ni cafés abiertos y la cena se
-    // come el presupuesto), las opciones que faltan son RESTAURANTES de la zona,
-    // de una sola parada y con la explicación. Antes salían bares y taquerías, o
-    // nada (Santa Fe con $300–600).
-    const soloComer = (s.vibes || []).includes('foodie') && !this.pideNoche();
-    if (soloComer && plans.length < 3 && !opts.subBusqueda) {
-      const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
-      const solos = pool.filter(v => (cityWide || sel.includes(v.z)) && this.CATS_MESA().includes(v.cat) && this.sirveComida(v)
-          && !marcas.has(this.marcaDe(v)) && this.atHour(v, from) && this.cabeEnVentana(v, from, to) && this.cabeEnTope([v], max).ok
-          && !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)))
-        .sort((a, b) => (rk(b) - nivel(b) * 6 - (b.ppUnknown ? 3 : 0)) - (rk(a) - nivel(a) * 6 - (a.ppUnknown ? 3 : 0)));
-      for (const v of solos) { if (plans.length >= 3) break;
-        if (plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(v)))) continue;
-        if (v.cocina && plans.some(p => p.stops[0].cocina === v.cocina) && solos.some(w => w.cocina !== v.cocina && !plans.some(p => p.stops.some(x => x === w)))) continue;
-        const ak = this.actsUtiles(v, VM).find(k => k === 'cena' || k === 'comida') || comidaEn(from) || 'cena';
-        const sg = this.comboSig([v]);
-        plans.push({ stops: [v], times: [from], acts: [ak], spent: v.pp, label: this.ACTLBL[ak] || 'Cena', sig: sg, sigs: [sg], unaParada: true }); }
-    }
     // Red de seguridad de las reglas del 3 nov 2026: mínimo dos paradas (salvo
     // la cena sola de arriba, que lleva su explicación) y ningún lugar (ni
     // sucursal de la misma marca) en dos opciones.
     { const fin = [];
-      plans.forEach(p => { if (!p.stops || (p.stops.length < 2 && !p.unaParada)) return; if (fin.some(h => comparte(h, p))) return; fin.push(p); });
+      plans.forEach(p => { if (!p.stops || (p.stops.length < 2 && !p.unaParada)) return;
+        if (!this.comidasSeparadas(p.stops, p.times)) return; if (fin.some(h => comparte(h, p))) return; fin.push(p); });
       plans = fin; }
     // De noche, el postre o el café van DESPUÉS de cenar, no antes.
     plans = plans.map(p => { const POSTRE = ['Café', 'Heladería', 'Churrería'];
       if (p.stops.length >= 2 && POSTRE.includes(p.stops[0].cat) && this.CATS_MESA().includes(p.stops[1].cat) && p.times[0] >= 17) {
-        const n = invertir(p); if (n) { n.sig = p.sig; n.sigs = p.sigs; return n; } }
-      return p; });
+        const n = invertir(p); if (n) { n.sig = p.sig; n.sigs = p.sigs; return n; }
+        return null; }   // postre antes de cenar y no se puede voltear: fuera
+      return p; }).filter(Boolean);
+    // SIN BUEN PLAN, LUGARES SUELTOS. Quien sólo quiere ir a cenar en Santa Fe
+    // después de la chamba, o tomarse unas cervezas, no necesita que le armemos
+    // un recorrido. Si con lo pedido no alcanzan tres planes buenos, las opciones
+    // que faltan son LUGARES de la zona del tipo que se pidió: comer rico =
+    // restaurantes; noche = bares y antros; comer + noche = donde se cena y se
+    // toma algo. Sin texto de "una sola parada": es una opción, no un plan roto.
+    const vbs = (s.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico');
+    const quiereComer = vbs.includes('foodie'), quiereNoche = this.pideNoche();
+    const soloContexto = vbs.length > 0 && vbs.every(x => x === 'foodie' || x === 'nightlife' || x === 'social');
+    const tipoSuelto = !soloContexto ? null
+      // Comer + tomar algo: casi cualquier restaurante sirve cerveza o vino; se
+      // prefieren (abajo) los que además son bar.
+      : quiereComer && quiereNoche ? (v => this.sirveComida(v) && (this.CATS_MESA().includes(v.cat) || this.CATS_NOCHE().includes(v.cat) || this.esBarDeNombre(v) || this.actsDe(v).indexOf('copas') >= 0))
+      : quiereComer ? (v => this.CATS_MESA().includes(v.cat) && this.sirveComida(v))
+      : quiereNoche ? (v => this.CATS_NOCHE().includes(v.cat) || this.actsDe(v).indexOf('copas') >= 0) : null;
+    if (tipoSuelto && plans.length < 3 && !opts.subBusqueda) {
+      const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
+      const llegada = v => this.esAntro(v) ? Math.max(from, Math.min(this.ANTRO_IDEAL, to + this.MARGEN() / 60 - this.duracionAct(v))) : Math.max(from, v.oh[0]);
+      const base0 = pool.filter(v => (cityWide || sel.includes(v.z)) && tipoSuelto(v) && !marcas.has(this.marcaDe(v))
+          && this.atHour(v, llegada(v)) && this.cabeEnVentana(v, llegada(v), to) && this.cabeEnTope([v], max).ok);
+      let nuevos0 = base0.filter(v => !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)));
+      // Si ya se mostraron todos y no queda NADA que ofrecer, se repiten y se
+      // avisa ("ya viste todas"), en vez de dejar la pantalla vacía.
+      if (!nuevos0.length && !plans.length && base0.length) { nuevos0 = base0; exhausted = true; }
+      const sueltos = nuevos0
+        .sort((a, b) => { const bar = v => quiereComer && quiereNoche && (this.esBarDeNombre(v) || this.actsDe(v).indexOf('copas') >= 0 || this.CATS_NOCHE().includes(v.cat)) ? 2 : 0;
+          return (rk(b) + bar(b) - nivel(b) * 6 - (b.ppUnknown ? 3 : 0)) - (rk(a) + bar(a) - nivel(a) * 6 - (a.ppUnknown ? 3 : 0)); });
+      for (const v of sueltos) { if (plans.length >= 3) break;
+        if (plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(v)))) continue;
+        // Que las sueltas no sean tres del mismo tipo (tres italianos, tres antros).
+        if (plans.length === 2 && plans.every(p => this.tipoInicio(p.stops[0]) === this.tipoInicio(v))
+            && sueltos.some(w => this.tipoInicio(w) !== this.tipoInicio(v) && !plans.some(p => p.stops.some(x => this.marcaDe(x) === this.marcaDe(w))))) continue;
+        const ak = this.actsUtiles(v, VM)[0] || 'cena';
+        const sg = this.comboSig([v]);
+        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true }); }
+    }
     // Cada opción dice, si aplica, por qué no llena la ventana, por qué no trae
     // dónde comer o por qué cuesta menos que el rango elegido.
     plans.forEach(p => { califica(p);
@@ -3140,7 +3186,7 @@ class Component extends DCLogic {
       // plan incompleto. ¿Qué lo impide? Si hay algo abierto y cerca que sólo
       // no cabe en el presupuesto, es el presupuesto; si no, el horario.
       let motivo = '';
-      if (!p.cubre && ventanaElegida) {
+      if (!p.cubre && ventanaElegida && !p.unaParada) {
         const last = p.stops[n - 1], tt = Math.ceil(finP * 4) / 4 + 0.25;
         const abiertos = pool.filter(v => !p.stops.includes(v) && this.atHour(v, tt) && this.cabeEnVentana(v, tt, to)
           && (this.minutosTramo(this.legKm(last, v)) || 0) <= this.MAX_TRAMO());
@@ -3149,11 +3195,9 @@ class Component extends DCLogic {
           : 'después de esa hora no encontramos otro lugar abierto, para ' + (this.esFamiliar() ? 'ir en familia' : 'lo que pidieron') + ', a menos de ' + this.MAX_TRAMO() + ' min. Amplía la zona para llenar el resto.';
       }
       p.avisoVentana = motivo ? 'Termina a las ' + this.time12(finP) + ' y pediste hasta las ' + this.time12(to) + ': ' + motivo : '';
-      p.avisoComida = (!pideComida || p.comida) ? '' : ('Su horario cruza la hora de comer, pero en ' + this.zonesLabel()
+      p.avisoComida = (!pideComida || p.comida || p.unaParada) ? '' : ('Su horario cruza la hora de comer, pero en ' + this.zonesLabel()
         + ' no encontramos dónde comer que abra a esa hora y quepa en ' + this.budLabel() + '.');
-      p.avisoUnaParada = p.unaParada ? ('Una sola parada: con ' + this.budLabel() + ' en ' + this.zonesLabel()
-        + ' no cabe un postre o un café abierto después de comer. Si suben el presupuesto, le agregamos la sobremesa.') : '';
-      p.avisoPrecio = p.enRango ? '' : ('Cuesta ~$' + p.costoEst.toLocaleString('es-MX') + ' por persona, menos de lo que pensaban gastar ('
+      p.avisoPrecio = (p.enRango || p.unaParada) ? '' : ('Cuesta ~$' + p.costoEst.toLocaleString('es-MX') + ' por persona, menos de lo que pensaban gastar ('
         + this.budLabel() + '): en ' + this.zonesLabel() + ' no encontramos una opción en ese rango que cumpla lo demás.'); });
     // ¿Qué restricción está limitando de verdad? Se mide cuántos lugares de la
     // zona quedan fuera por cada causa, para nombrar la que más pesa.
@@ -3279,9 +3323,8 @@ class Component extends DCLogic {
     // Desde el 3 nov 2026 las opciones nunca comparten lugar: si no alcanza para
     // tres, se dice cuántas hay y qué ampliar.
     if (plans.length > 0 && plans.length < 3 && !exhausted && !(yaVistosAntes > 0)) {
-      const nota = 'Con estos filtros sólo encontramos ' + (plans.length === 1 ? 'una opción' : 'dos opciones')
-        + ' sin repetir lugares entre ellas. Lo que más limita: ' + (limita ? limita.txt : 'los filtros actuales') + '. Amplía '
-        + (limita ? limita.k : 'la zona, el horario o el presupuesto') + ' para ver más.';
+      const nota = 'Sólo encontramos ' + (plans.length === 1 ? 'una opción' : 'dos opciones') + ' con estos filtros en '
+        + this.zonesLabel() + '. Sube el presupuesto o amplía la zona o el horario para ver más.';
       expandNote = expandNote ? expandNote + ' ' + nota : nota;
     }
     // Si con la zona elegida no salió NINGÚN plan (p. ej. dos bares de la Condesa
@@ -3306,6 +3349,11 @@ class Component extends DCLogic {
         expandNote = (expandNote || '').replace(/Con estos filtros sólo encontramos [^.]*\.[^.]*\.[^.]*\./, '').trim();
         expandNote = expandNote ? expandNote + ' ' + nota : nota;
       }
+    }
+    // Si al final ninguna opción usa una zona vecina, no se dice que se amplió.
+    if (!cityWide && !plans.some(p => p.stops.some(v => !sel.includes(v.z)))) {
+      expandNote = (expandNote || '').replace(/Pocas opciones con esos filtros[^]*?\(marcado en cada lugar\)\.\s*/, '')
+        .replace(/En [^.]*? — ampliamos a la zona más cercana con pista:[^]*?\(marcado en cada lugar\)\.\s*/, '').trim();
     }
     return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
       reqSeed: opts.reqSeed || 0, reqId: opts.reqId || '', dseed,
@@ -3494,7 +3542,8 @@ class Component extends DCLogic {
       const tm = (p.times && p.times.length === stops.length) ? p.times : this.planTimes(stops.length);
       return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
     const r = this.state.results || this.engine(); const p = r.plans[this.state.planIdx] || r.plans[0]; if (!p) return null;
-    const stops = p.stops.length >= n ? p.stops.slice(0, n) : this.extendPlan(p.stops, n);
+    // Un lugar suelto es un lugar, no un plan a medias: no se le agregan paradas.
+    const stops = p.unaParada ? p.stops.slice() : p.stops.length >= n ? p.stops.slice(0, n) : this.extendPlan(p.stops, n);
     const tm = (p.times && p.times.length === stops.length) ? p.times : this.planTimes(stops.length);
     return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
   catTone(cat) { const T = {
@@ -4975,7 +5024,7 @@ class Component extends DCLogic {
     D.forEach((d, i) => { if (d.baile) pon(i, 'Para bailar'); });
     D.forEach((d, i) => { if (d.reto) pon(i, 'Con algo que hacer'); });
     D.forEach((d, i) => { if (d.cultura) pon(i, 'Con cultura'); });
-    D.forEach((d, i) => { if (d.n === 1) pon(i, 'Directo, una parada'); });
+    D.forEach((d, i) => { if (d.n === 1) pon(i, 'Un solo lugar'); });
     if (plans.length > 1) { const mx = Math.max.apply(null, D.map(d => d.n)); const cuantos = D.filter(d => d.n === mx).length;
       if (cuantos === 1) pon(D.findIndex(d => d.n === mx), 'Más completo'); }
     D.forEach((d, i) => { if (d.aire) pon(i, 'Al aire libre'); });
@@ -5102,8 +5151,9 @@ class Component extends DCLogic {
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
-        avisoOp: [p.avisoUnaParada, p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
-        hayAvisoOp: !!(p.avisoUnaParada || p.avisoVentana || p.avisoComida || p.avisoPrecio),
+        elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',
+        avisoOp: [p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
+        hayAvisoOp: !!(p.avisoVentana || p.avisoComida || p.avisoPrecio),
         ...(() => { if (!(r && r.compartida)) return { votoOn: false };
           const pid = this.planOptId(p); const sp = ((s.sync && s.sync.plans) || []).find(x => x.id === pid);
           const vv = (sp && sp.votes) || {}; const yo = s.userName; const mio = yo ? vv[yo] : null;
@@ -5213,7 +5263,10 @@ class Component extends DCLogic {
         .map((txt, i) => ({ txt, cls: (s.genFase || 0) > i ? 'ok' : (s.genFase || 0) === i ? 'on' : '' })),
       ajustar: () => this.irAFormulario('armar-ambiente'),
       resKicker: 'Tus opciones · ' + this.whenLabel(),
-      resTitulo: nOpc === 3 ? 'Tres planes para elegir' : nOpc === 2 ? 'Dos planes que sí cumplen' : nOpc === 1 ? 'Un plan que sí cumple' : 'Sin planes con estos filtros',
+      // Si todas son lugares sueltos, no se llaman "planes".
+      resTitulo: (() => { const sueltas = rp.length && rp.every(p => (p.stops || []).length === 1);
+        if (sueltas) return nOpc === 3 ? 'Tres lugares para elegir' : nOpc === 2 ? 'Dos lugares para elegir' : 'Un lugar para ti';
+        return nOpc === 3 ? 'Tres planes para elegir' : nOpc === 2 ? 'Dos planes que sí cumplen' : nOpc === 1 ? 'Un plan que sí cumple' : 'Sin planes con estos filtros'; })(),
       resFiltros, resAviso: avisoCorto, resAvisoMas: avisoMas, resAvisoHayMas: !!avisoMas, resAvisoAbierto: !!s.resAvisoAbierto,
       resAvisoBtn: s.resAvisoAbierto ? 'Ver menos' : 'Por qué', toggleAviso: () => this.setState({ resAvisoAbierto: !s.resAvisoAbierto }),
       opciones, hayOpciones: nOpc > 0, sinOpciones: view === 'results' && nOpc === 0,
@@ -5576,6 +5629,7 @@ class Component extends DCLogic {
         const cands = all.filter(v => !used[v.id] && this.actsUtiles(v, VM).indexOf(ak) >= 0
             && this.atHour(v, t) && this.inZone(v) && alcanza(v) && cabeEnLaVentana(v)
             && !this.repiteFuncion(out, times, v, t)
+            && this.comidasSeparadas(out.concat([v]), times.slice(0, out.length + 1))
             && this.cabeEnTope(out.concat([v]), max).ok)
           .sort((p, q) => Math.hypot(base.x - p.x, base.y - p.y) - Math.hypot(base.x - q.x, base.y - q.y));
         if (cands.length) { pick = cands[0]; break; }
