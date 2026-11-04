@@ -529,5 +529,41 @@
   "lat": 19.42993,
   "lng": -99.21079,
   "aprox": false
+ },
+ {
+  "id": "iv-3e6e3a9a66",
+  "n": "Bastian · Arcos Bosques",
+  "zone": "santafe",
+  "km": 2.6,
+  "lat": 19.38771,
+  "lng": -99.25101,
+  "aprox": false
+ },
+ {
+  "id": "iv-4a968a9d6f",
+  "n": "Terraza Karaoke Interlomas",
+  "zone": "santafe",
+  "km": 4.2,
+  "lat": 19.40242,
+  "lng": -99.27207,
+  "aprox": true
+ },
+ {
+  "id": "iv-d36075d9db",
+  "n": "Boca Nariz Interlomas",
+  "zone": "santafe",
+  "km": 4.2,
+  "lat": 19.40242,
+  "lng": -99.27207,
+  "aprox": true
+ },
+ {
+  "id": "iv-b3d5c3b1df",
+  "n": "Kamachos Hookah Interlomas",
+  "zone": "santafe",
+  "km": 4.2,
+  "lat": 19.40242,
+  "lng": -99.27207,
+  "aprox": true
  }
 ]

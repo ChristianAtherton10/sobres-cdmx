@@ -68,6 +68,10 @@ F = {
  'res_bilboa': ('Reservándonos — Bilboa Terraza Club Satélite (ficha vigente)', 'https://reservandonos.com/lugar/bilboa-terraza-club-satelite/', 'sin fecha (consultada ' + HOY + ')'),
  'res_cantaritos': ('Reservándonos — Cantaritos El Compa de Jalisco Satélite (ficha vigente)', 'https://reservandonos.com/lugar/cantaritos-el-compa-de-jalisco-satelite/', 'sin fecha (consultada ' + HOY + ')'),
  'intravel_fiera': ('Intravel — Fiera Rooftop, Lomas Virreyes (ficha vigente)', 'https://intravel.net/mexico-city/nightlife/fiera-rooftop', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_bastian': ('Reservándonos — Bastian, Arcos Bosques (ficha vigente)', 'https://reservandonos.com/lugar/bastian-arcos-bosques/', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_karaoke_il': ('Reservándonos — Terraza Karaoke Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/terraza-karaoke-interlomas', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_bocanariz': ('Reservándonos — Boca Nariz Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/restaurante-boca-nariz-interlomas', 'sin fecha (consultada ' + HOY + ')'),
+ 'res_kamachos': ('Reservándonos — Kamachos Hookah Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/kamachos-hookah-interlomas', 'sin fecha (consultada ' + HOY + ')'),
  'ot_vineria': ('OpenTable — La Vinería, Ciudad de México', 'https://opentable.ae/r/la-vineria-ciudad-de-mexico', 'sin fecha (consultada ' + HOY + ')'),
 }
 
@@ -76,7 +80,7 @@ def fuente(k, url=None):
     return n, url or u, f
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
-VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera'}
+VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera', 'res_bastian', 'res_karaoke_il', 'res_bocanariz', 'res_kamachos'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -298,6 +302,23 @@ L = [
  dict(n='Fiera Rooftop', zona='lomas', geo='Paseo de las Palmas 530, Ciudad de México', cat='Rooftop', col='Lomas de Chapultepec', addr='Paseo de las Palmas 530, Lomas Virreyes', f='intravel_fiera',
       h=(14, 25), hrs='Horario por confirmar · terraza con bar y restaurante', horaEstimada=True, act=['copas', 'cena', 'vista'],
       who=['amigos', 'date', 'compa'], tags=['nightlife', 'romántico']),
+ # Bosques de las Lomas e Interlomas -------------------------------------------
+ dict(n='Bastian · Arcos Bosques', cat='Antro', col='Bosques de las Lomas', addr='Paseo de los Tamarindos 90, sótano -1 (Paseo Arcos Bosques), Bosques de las Lomas',
+      geo='Arcos Bosques, Ciudad de México', f='res_bastian', h=(19, 26), hrs='Mié a sáb 19:00–2:00 · coctelería, tacos y DJ', dias=[3, 4, 5, 6],
+      act=['copas', 'baile'], who=['amigos', 'date', 'compa'], tags=['nightlife', 'social'],
+      precio=dict(min=1200, rep=1500, max=1800, unidad='persona', canasta='$1,200–1,800 por persona (consumo promedio ~$1,500) según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Terraza Karaoke Interlomas', cat='Bar', col='Hacienda de las Palmas, Huixquilucan', addr='Av. Jesús del Monte 41, Hacienda de las Palmas',
+      geo='Interlomas, Huixquilucan', geoAprox=True, f='res_karaoke_il', h=(17, 27), hrs='Mié a dom 17:00–3:00 · karaoke, terraza y música en vivo',
+      dias=[0, 3, 4, 5, 6], act=['copas', 'juego'], who=['amigos', 'compa'], tags=['nightlife', 'social'],
+      precio=dict(min=200, rep=350, max=500, unidad='persona', canasta='$200–500 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Boca Nariz Interlomas', cat='Restaurante', col='Bosque de las Palmas, Huixquilucan', addr='Vialidad de la Barranca 6, Bosque de las Palmas',
+      geo='Interlomas, Huixquilucan', geoAprox=True, f='res_bocanariz', h=(13, 23), hrs='Mar y mié 13:00–22:00 · jue a sáb 13:00–24:00 · dom 13:00–20:00 · cocina española y bar',
+      dias=[0, 2, 3, 4, 5, 6], act=['comida', 'cena', 'copas'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'nightlife'],
+      precio=dict(min=500, rep=650, max=800, unidad='persona', canasta='$500–800 por persona según su ficha de Reservándonos.'), estado='rango'),
+ dict(n='Kamachos Hookah Interlomas', cat='Bar', col='Interlomas, Huixquilucan', addr='Central Interlomas, Blvd. Palmas Hills 1',
+      geo='Interlomas, Huixquilucan', geoAprox=True, f='res_kamachos', h=(13, 23), hrs='Lun a vie 8:00–23:00 · sáb y dom 10:30–23:00 · hookah y snacks',
+      act=['copas'], who=['amigos', 'compa'], tags=['social', 'chill'], apto='no',
+      precio=dict(min=300, rep=400, max=500, unidad='persona', canasta='$300–500 por persona según su ficha de Reservándonos.'), estado='rango'),
 ]
 
 # ------------------------------------------------------------------ geocodificación
