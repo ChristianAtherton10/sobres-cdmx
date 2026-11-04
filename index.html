@@ -2274,7 +2274,7 @@ class Component extends DCLogic {
   // Una función (cine, teatro, foro, espectáculo) sin película/obra y hora
   // verificadas NO se agenda: no existe "Cinépolis a la 1:20" sin cartelera.
   // Un evento con hora publicada (Garbage, sáb 14 nov, 20:00) sí tiene horario.
-  funcionSinConfirmar(v) { if (v.evento) return !!v.horaEstimada; return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
+  funcionSinConfirmar(v) { if (v.evento) return !!v.horaEstimada && ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat); return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
   // Importar una ficha no la vuelve recomendable. Fondos, archivos, centros de
   // documentación, auditorios internos, tiendas de museo y bibliotecas
   // especializadas existen y se pueden buscar, pero no son una salida.
@@ -3787,8 +3787,10 @@ class Component extends DCLogic {
       return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
     const r = this.state.results || this.engine(); const p = r.plans[this.state.planIdx] || r.plans[0]; if (!p) return null;
     // Un lugar suelto es un lugar, no un plan a medias: no se le agregan paradas.
-    const stops = p.unaParada ? p.stops.slice() : p.stops.length >= n ? p.stops.slice(0, n) : this.extendPlan(p.stops, n);
-    const tm = (p.times && p.times.length === stops.length) ? p.times : this.planTimes(stops.length);
+    const stops = p.unaParada ? p.stops.slice() : p.stops.length >= n ? p.stops.slice(0, n) : this.extendPlan(p.stops, n, p.times);
+    // Las paradas que ya tenía el plan conservan su hora (recortar a 3 no las mueve).
+    const propias = p.times && p.times.length >= stops.length && stops.every((v, i) => p.stops[i] === v);
+    const tm = propias ? p.times.slice(0, stops.length) : (stops.times && stops.times.length >= stops.length) ? stops.times.slice(0, stops.length) : this.planTimes(stops.length);
     return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
   catTone(cat) { const T = {
       'Restaurante':['#8e2d18','#c8442c'], 'Taquería':['#a33a12','#d9702f'], 'Fonda de autor':['#8e2d18','#c05a2c'],
@@ -5859,12 +5861,19 @@ class Component extends DCLogic {
   // traslado y presupuesto con propina. Antes miraba sólo el consumo y
   // ordenaba por categoría física, así que subir de 1 a 3 paradas devolvía
   // $301 con tope de $300 y el pie seguía diciendo "≤ $300".
-  extendPlan(stops, targetN) { const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
+  // baseTimes (opcional): las horas reales del plan. Con ellas las paradas que ya
+  // estaban se quedan a su hora y las nuevas van DESPUÉS (antes se repartían
+  // todas de nuevo y una parada podía quedar a una hora en que ya cerró).
+  extendPlan(stops, targetN, baseTimes) { const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
     const max = this.budgetMax(); const VM = this.vibeModel();
     const all = this.cat().filter(v => this.vibeAdmite(v, VM) && !v.cursoCerrado && this.esRecomendable(v) && !this.funcionSinConfirmar(v));
     const used = {}; out.forEach(v => used[v.id] = 1);
-    const times = this.planTimes(targetN);
-    while (out.length < targetN) { const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
+    const seguidas = baseTimes && baseTimes.length === out.length && out.length > 0;
+    const times = seguidas ? baseTimes.slice() : this.planTimes(targetN);
+    while (out.length < targetN) {
+      if (seguidas) { const k = out.length - 1; const t1 = Math.ceil((times[k] + this.duracionAct(out[k]) + 0.25) * 4) / 4;
+        if (t1 >= this.range()[1] - 0.5) break; times[out.length] = t1; }
+      const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
       const aks = this.actOrder(seg, out.length, this.DSEED || 1, VM, out.length);
       const hueco = base ? (t - times[out.length - 1]) : null;
       const alcanza = v => this.alcanzaTramo(base, v, hueco);
@@ -5887,6 +5896,7 @@ class Component extends DCLogic {
     // Si no se alcanzó el objetivo, las horas finales se reparten entre MENOS
     // paradas, así que las añadidas se revisan contra la rejilla que de verdad
     // se va a usar. Antes un cine terminaba agendado después de su última función.
+    if (seguidas) { out.times = times.slice(0, out.length); return out; }
     if (out.length !== targetN && out.length > stops.length) {
       const reales = this.planTimes(out.length);
       for (let i = out.length - 1; i >= stops.length; i--) {

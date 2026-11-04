@@ -385,4 +385,21 @@ test('17e · "con amigos" de noche en la Roma puede proponer karaoke, billar o s
   assert(vistos.size >= 2, 'en 8 tandas sólo salió: ' + [...vistos].join(', '));
 });
 
+// Regresión (4 nov 2026): al recortar o alargar un plan, las paradas que ya
+// tenía se repartían a horas nuevas y una podía quedar a una hora en que cierra.
+test('17f · recortar o alargar un plan no mueve las paradas que ya tenía a horas en que cierran', () => {
+  const app = makeApp({ who: 'amigos', groupSize: 4, zone: 'all', zonesSel: [], when: 'noche', budget: 'b1k', budgetCustom: null,
+    vibes: ['chill', 'cultural'], planFrom: 17, planTo: 26 }, { dseed: 82 });
+  app.runSearch();
+  const base = app.state.results.plans[0];
+  [2, 3, 4, 5].forEach(n => {
+    app.setState({ planStops: n });
+    const p = app.getPlan();
+    p.stops.forEach((v, i) => {
+      assert(app.atHour(v, p.times[i]) || app.funcionSinConfirmar(v), n + ' paradas: ' + v.n + ' cerrado a las ' + p.times[i]);
+      if (base.stops[i] === v) assert(p.times[i] === base.times[i], n + ' paradas: ' + v.n + ' cambió de hora');
+    });
+  });
+});
+
 if (require.main === module) report();
