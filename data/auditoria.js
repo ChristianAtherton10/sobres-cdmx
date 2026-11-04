@@ -1236,6 +1236,25 @@ window.SOBRES_AUDITORIA = (function () {
     creativo:   ['taller']
   };
 
-  return { version: 2, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA,
+  /* ---------------------------------------------------------------- *
+   * Nombres corregidos (barrido de typos del 3 nov 2026, aprobado por  *
+   * el usuario). Aplica a cualquier origen: SIC, auditoría o Excel.    *
+   * ---------------------------------------------------------------- */
+  const NOMBRES = {
+    'cdmx-0231': 'Librería José Vasconcelos, Casa del Tiempo',
+    'cdmx-0471': 'Librería de Porrúa Hermanos y Compañía, Sucursal Centro Médico Siglo XXI',
+    'cdmx-0472': 'Librería de Porrúa Hermanos y Compañía, Sucursal Alameda',
+    'cdmx-0729': 'Centro Cultural Los Talleres · Miguel Ángel de Quevedo',
+    // Nombre oficial en cedef.itam.mx/es/ubicaciones/auditorio-raul-bailleres-rio-hondo
+    'cdmx-0985': 'Auditorio Raúl Baillères',
+    'xl-R0050': 'Blossom · Santa Fe',
+    'xl-R0402': 'Saks · Barranca',
+    'xl-R0441': 'Tagers CDMX · San Ángel',
+    'xl-R0453': 'Teppan Grill · Hyatt Regency',
+    'xl-R0462': 'TIGRE · Masaryk',
+    'xl-R0497': 'Yoshimi · Hyatt Regency'
+  };
+
+  return { version: 2, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA, NOMBRES,
            LUGARES, BAJA, NUEVOS, VIBRA_EXIGE_ACTIVIDAD };
 })();

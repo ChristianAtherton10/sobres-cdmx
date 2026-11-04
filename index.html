@@ -1438,6 +1438,7 @@ class Component extends DCLogic {
         if (!v.sesion) { v.sesion = true; v.sesionPorConfirmar = true;
           v.av = 'Confirma el horario de la sesión antes de ir'; }
       }
+      if (A.NOMBRES && A.NOMBRES[v.id]) v.n = A.NOMBRES[v.id];
       v.aptoFamilia = this.aptoFamiliaDe(v);
       out.push(v);
     }
@@ -1483,6 +1484,7 @@ class Component extends DCLogic {
         }
         this.ponPrecio(v, r);
         if (r.aptoFamilia) v.aptoFamilia = r.aptoFamilia;
+        if (A.NOMBRES && A.NOMBRES[v.id]) v.n = A.NOMBRES[v.id];
         v.aptoFamilia = this.aptoFamiliaDe(v);
         out.push(v);
       }
