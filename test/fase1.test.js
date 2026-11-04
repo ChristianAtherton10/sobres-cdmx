@@ -300,4 +300,28 @@ test('15b · sin buen plan: lugares sueltos del tipo pedido y sin el aviso de "u
   }));
 });
 
+// 16 ─────────────────────────────────────────────────────────────
+// Reporte del usuario (4 nov 2026): "puse cultural y me da opciones de comida,
+// tacos, heladerías". Con "Cultural" cada opción trae algo cultural y no hay
+// taquerías, cafés, heladerías ni bares de relleno.
+test('16 · "Cultural": cada opción es cultural; nada de tacos, cafés, heladerías ni bares', () => {
+  const NO = ['Taquería', 'Café', 'Heladería', 'Churrería', 'Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Cantina', 'Antro', 'Salón de baile', 'Rooftop'];
+  ['roma', 'centro', 'coyoacan', 'condesa'].forEach(z => ['noche', 'ahora', 'finde'].forEach(w => [3, 29].forEach(sd => {
+    const { app, plans } = corre({ who:'amigos', groupSize:4, zone:z, zonesSel:[z], vibes:['cultural'], when:w, budget:'b600', hour:16 }, sd);
+    plans.forEach(p => {
+      p.stops.forEach(v => assert(!NO.includes(v.cat), z + '/' + w + '/' + sd + ': cultural con ' + v.n + ' (' + v.cat + '): ' + txt(p)));
+      assert(p.stops.some(v => app.esCultural(v)), z + '/' + w + '/' + sd + ': opción sin nada cultural: ' + txt(p));
+    });
+  })));
+});
+test('16b · "Cultural" de noche en la Roma da lugares culturales (teatros con cartelera por confirmar), no comida', () => {
+  const { app, plans } = corre({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], vibes:['cultural'], when:'noche', budget:'b600' }, 3);
+  assert(plans.length >= 1, 'no dio ninguna opción');
+  plans.forEach(p => assert(p.stops.some(v => app.esCultural(v)), 'opción sin nada cultural: ' + txt(p)));
+  // Sin función confirmada no se inventa horario en la tarjeta.
+  app.setState({ results: app.state.results });
+  const ops = app.renderVals().opciones || [];
+  plans.forEach((p, i) => { if (p.cartelera) assert(ops[i] && ops[i].horario === 'Según cartelera', 'la tarjeta inventa horario: ' + (ops[i] && ops[i].horario)); });
+});
+
 if (require.main === module) report();
