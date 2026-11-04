@@ -2303,5 +2303,7 @@ require('./fase1.test.js');
 require('./catalogo.test.js');
 // Fase 2: perfil que aprende (feat/perfil, 4 nov 2026).
 require('./perfil.test.js');
+// Fase 3: llegada desde un anuncio (feat/landing, 4 nov 2026).
+require('./landing.test.js');
 
 report();

@@ -56,7 +56,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
   win.sessionStorage = sessionStorage;
   const sandbox = {
     DCLogic, window: win, localStorage, sessionStorage, document: doc,
-    location: { search: '' }, setTimeout: (fn) => { try { fn(); } catch(e) {} return 0; }, clearTimeout: () => {},
+    location: { search: opts.search || '', origin: 'https://sitio.test', pathname: '/' }, setTimeout: (fn) => { try { fn(); } catch(e) {} return 0; }, clearTimeout: () => {},
     setInterval: () => 0, clearInterval: () => {}, fetch: () => Promise.reject(new Error('sin red')),
     console, Math: MathS, Date, JSON, URLSearchParams, crypto: cryptoS
   };
@@ -102,8 +102,10 @@ function makeApp(stateOverrides = {}, opts = {}) {
   app.EXT = app.aplicarAuditoria(app.EXT);
   app.V = app.aplicarAuditoria(app.V);
 
+  app.state.catLoaded = app.EXT.length;   // como tras cargar el catálogo en el navegador
   Object.assign(app.state, stateOverrides);
   app._store = store;
+  app._win = win; app._sstore = sstore;
   return app;
 }
 

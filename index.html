@@ -16,7 +16,10 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-4QP6QKRDJK');
+  // Visitas de QA (utm_source=qa o qa_claude) no se miden (Fase 3).
+  var sobresQA = /[?&]utm_source=(qa|qa_claude)(&|$)/.test(location.search);
+  try { if (sobresQA) sessionStorage.setItem('sobres_qa', '1'); else if (sessionStorage.getItem('sobres_qa') === '1') sobresQA = true; } catch (e) {}
+  if (!sobresQA) gtag('config', 'G-4QP6QKRDJK');
 </script>
 <script src="./support.js"></script>
 </head>
@@ -28,16 +31,20 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="_ds/modernist-92642c23-7a6d-485a-85e1-6daea5b2d8e1/_ds_bundle.js"></script>
 <script src="image-slot.js"></script>
-<script src="data/lugares.js"></script>
-<script src="data/auditoria.js"></script>
-<script src="data/excel.js"></script>
-<script src="data/paquete.js"></script>
-<script src="data/investigados.js"></script>
-<script src="data/recetas.js"></script>
+<!-- Los catálogos (data/lugares.js, auditoria, excel, paquete, investigados,
+     recetas) se cargan DESPUÉS de pintar el inicio, en orden: ver cargaCatalogo(). -->
 <script src="data/fotos.js" defer></script>
 <style>
 /* El resumen de filtros nunca pasa de dos líneas (así su alto es fijo). */
 .sb-resumen-fijo{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* Fase 3: el botón principal siempre a la vista en celular. En el flujo normal
+   se queda pegado abajo (encima del menú); en ?v=rapido va fijo. */
+@media (max-width:819px){
+  .sb-cta-pegada{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:5;background:var(--color-bg);padding:10px 0 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
+  .sb-rapido{margin-bottom:96px}
+}
+.sb-cta-fija{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:6;background:var(--color-bg);padding:10px 16px 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
+@media (min-width:820px){.sb-cta-fija{position:sticky;bottom:0;padding:12px 0}}
 /* ═════════════════════ Tema SOBRES ═════════════════════
    Paleta original (crema, café y terracota) del sistema de diseño. */
 :root:root{
@@ -478,6 +485,21 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <span style="flex:1;min-width:0"><span class="sb-kicker" style="display:block;margin-bottom:4px">Retomar</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ retomarTxt }}</span></span><span style="font:700 18px var(--font-body);color:var(--electrico)">→</span></button>
 </sc-if>
 
+<sc-if value="{{ rapidoOn }}" hint-placeholder-val="{{ false }}">
+<div id="armar-rapido" class="sb-card sb-rapido" style="margin-top:18px;padding:16px">
+<h2 class="sb-h3" style="margin-bottom:4px">¿Qué plan?</h2>
+<div class="sb-grid2" role="group" aria-label="Qué plan"><sc-for list="{{ vibeTiles }}" as="o" hint-placeholder-count="10"><button class="sb-tile" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="t1">{{ o.label }}</span><span class="t2">{{ o.hint }}</span></button></sc-for></div>
+<span class="sb-label sb-mt">¿Dónde?</span>
+<div class="sb-chips" role="group" aria-label="Zona"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-label sb-mt">¿Cuánto por persona?</span>
+<div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<p class="sb-note" style="margin:12px 0 0">{{ rapidoNota }}</p>
+</div>
+<div class="sb-cta-fija">
+<button class="sb-btn sb-full {{ buscarFx }}" onClick="{{ armarGo }}"><span>¡Sobres, va!</span><span aria-hidden="true">→</span></button>
+</div>
+</sc-if>
+<sc-if value="{{ noRapido }}" hint-placeholder-val="{{ true }}">
 <div class="sb-pasos-movil solo-celular" aria-live="polite">
 <div class="sb-row" style="justify-content:space-between;width:100%"><span class="sb-kicker" style="margin:0">{{ pasoTxt }}</span><span class="sb-note" style="margin:0">{{ pasoResumen }}</span></div>
 <div class="sb-barra" aria-hidden="true"><span style="width:{{ pasoAncho }}"></span></div>
@@ -538,7 +560,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </div>
 
-<div class="solo-celular sb-pasos-nav" style="flex-direction:column;gap:10px;margin:22px 0 0">
+<div class="solo-celular sb-pasos-nav sb-cta-pegada" style="flex-direction:column;gap:10px;margin:22px 0 0">
 <sc-if value="{{ pasoNoFinal }}" hint-placeholder-val="{{ true }}">
 <button class="sb-btn sb-full" onClick="{{ pasoSiguiente }}"><span>Siguiente</span><span aria-hidden="true">→</span></button>
 </sc-if>
@@ -551,6 +573,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <button class="sb-btn3" style="align-self:center" onClick="{{ pasoAtras }}" aria-label="{{ pasoAtrasAria }}">← Atrás</button>
 </sc-if>
 </div>
+</sc-if>
 <p class="sb-note sb-pie-home"><span class="solo-compu">Costos por persona: te decimos cuáles están confirmados y cuáles son estimados. SOBRES no pide ni cobra viajes. · </span><button class="sb-btn3" style="padding:0;min-height:36px" onClick="{{ acercaAbrir }}">Acerca de SOBRES</button> · <button class="sb-btn3" style="padding:0;min-height:36px" onClick="{{ irPerfil }}">Tus datos y gustos</button></p>
 </section>
 </sc-if>
@@ -571,6 +594,9 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <button class="sb-btn3" style="margin-left:-12px" onClick="{{ ajustar }}">← Ajustar</button>
 <sc-if value="{{ tandaDe }}" hint-placeholder-val="{{ '' }}">
 <div class="sb-tag dark sc-rise" style="margin:8px 0 4px">{{ tandaDeTxt }}</div>
+</sc-if>
+<sc-if value="{{ armarMioOn }}" hint-placeholder-val="{{ false }}">
+<button class="sb-btn sb-armar-mio" style="margin:10px 0 4px;min-height:52px;font-size:17px" onClick="{{ armarMio }}"><span>Armar el mío</span><span aria-hidden="true">→</span></button>
 </sc-if>
 <div class="sb-kicker" style="margin-top:8px">{{ resKicker }}</div>
 <h1 class="sb-h2">{{ resTitulo }}</h1>
@@ -1366,11 +1392,16 @@ class Component extends DCLogic {
     st.perfil = this.perfilLee(); this._perfil = st.perfil;
     Object.assign(st, { sinGustos: false, fbComo: '', fbPrecio: '', fbCorreo: '', borrarArmado: false });
     if ((st.perfil.dieta || []).includes('sinalcohol')) st.sinAlcohol = true;
+    // Fase 3: la página respeta el anuncio (preset, utm_content, zona) y el
+    // modo rápido (?v=rapido, experimento E31).
+    Object.assign(st, this.desdeUrl(st));
     this.state = st;
   }
   componentDidMount() {
     const upd = () => this.setState({ isMobile: window.innerWidth < 820, hour: this.ahoraCDMX().hora });
     upd(); window.addEventListener('resize', upd);
+    this.cargaCatalogo();
+    this.vigilaPasos();
     { let ft = 0; const loadFotos = () => { if (window.SOBRES_FOTOS) { this.setState(st => ({ photos: Object.assign({}, window.SOBRES_FOTOS, st.photos) })); return; } if (ft++ < 40) setTimeout(loadFotos, 250); }; loadFotos(); }
 
     this._poll = () => { if (document.hidden && this.state.syncOn) return; fetch('/api/state' + (this.state.userName ? '?u=' + encodeURIComponent(this.state.userName) : ''), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => { if (st && st.rev !== undefined) { if (this.checkEpoch(st)) return; const first = !this.state.syncOn; this.setState({ sync: st, syncOn: true }); if (first && this.state.userName) this.mutate('join', { name: this.state.userName }, true); this.checkInbox(st); } }).catch(() => {}); };
@@ -1388,12 +1419,15 @@ class Component extends DCLogic {
       const corto = q.get('p'), largo = q.get('planes'); const tp = corto || largo;
       if (tp) { let n = 0; const abrirT = () => {
         if (this.state.catLoaded) { this.abrirTanda(tp, !!corto); return; }
-        if (n++ < 40) setTimeout(abrirT, 250); }; abrirT(); } } catch(e) {}
+        if (n++ < 200) setTimeout(abrirT, 250); }; abrirT(); } } catch(e) {}
     try { const lg = new URLSearchParams(location.search).get('lugar');
       if (lg) { let t = 0; const abrir = () => { const v = this.cat().find(x => x.id === lg);
         if (v) this.nav('detail', { detailId: lg, backView: 'home' });
-        else if (t++ < 25) setTimeout(abrir, 250); }; abrir(); } } catch(e) {}
-    let tries = 0; const load = () => { const D = window.SOBRES_LUGARES; if (!D) { if (tries++ < 25) setTimeout(load, 250); return; }
+        else if (t++ < 200) setTimeout(abrir, 250); }; abrir(); } } catch(e) {}
+    // Se espera a TODAS las capas del catálogo. Antes bastaba lugares.js y, como
+    // los scripts llegan en desorden, el paquete o los investigados podían
+    // quedarse fuera sin aviso. Tras 40 s se sigue con lo que haya llegado.
+    let tries = 0; const load = () => { const D = window.SOBRES_LUGARES; if (!D || (!this.catalogoListo() && tries < 160)) { if (tries++ < 200) setTimeout(load, 250); return; }
       const F = D.fields; this.EXT = D.rows.map(r => { const o = {}; F.forEach((f,i) => o[f] = r[i]); return { id:o.id, n:o.n, cat:o.cat, z:o.zone, col:o.col, addr:o.addr, web:o.web, pp:o.pp, oh:[o.oh0,o.oh1], hrs:o.hrs, tags:o.tags, who:o.who, tm:o.tm, x:o.x, y:o.y, lat:o.lat, lng:o.lng, score:o.score, tier:o.tier, d:o.basis, src:o.src, rt:null, av: o.tier === 'A' ? 'Alta demanda · reserva directa' : 'Verificar disponibilidad', ext:true }; });
       const M = D.matches || {}; this.V.forEach(v => { const m = M[v.id]; if (m) { v.addr = m.addr || v.addr; v.web = m.web || v.web; if (m.x) { v.x = m.x; v.y = m.y; } if (m.lat) { v.lat = m.lat; v.lng = m.lng; } } });
       this.ZGEO = {}; (D.zones || []).forEach(z => { this.ZGEO[z[0]] = [z[2], z[3]]; }); Object.keys(this.ZGEO_EXTRA || {}).forEach(k => { if (!this.ZGEO[k]) this.ZGEO[k] = this.ZGEO_EXTRA[k]; });
@@ -1924,7 +1958,17 @@ class Component extends DCLogic {
   toast(t) { this.setState({ toast: t }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2800); }
   // ── Analítica (Google Analytics 4). Solo datos anónimos: nunca nombres de
   // personas, reseñas ni texto que escriban los usuarios sobre sí mismos.
-  ev(name, params) { try { if (typeof window.gtag === 'function') window.gtag('event', name, params || {}); } catch(e) {} }
+  // Cada evento lleva los UTM de la visita y la variante (E31). Algunos
+  // eventos viejos además disparan el nombre nuevo de la Fase 3, sin
+  // cambiar los que ya se medían (armar_planes sigue igual).
+  ev(name, params) { try {
+    if (typeof window.gtag !== 'function' || this.esQA()) return;
+    const p = Object.assign({}, params || {}, this.UTM || {}, { variante: this.state && this.state.rapido ? 'rapido' : 'normal' });
+    window.gtag('event', name, p);
+    const alias = { elegir_plan: 'plan_elegido', compartir_whatsapp: 'plan_compartido', compartir_enlace: 'plan_compartido',
+      tanda_compartida: 'plan_compartido', plan_enviado: 'plan_compartido' }[name];
+    if (alias) window.gtag('event', alias, p);
+  } catch(e) {} }
 
   evSearch(q) { try { clearTimeout(this._evSq); } catch(e) {}
     const t = (q || '').trim(); if (t.length < 3) return;
@@ -2215,6 +2259,7 @@ class Component extends DCLogic {
     const cuerpo = (r.plans || []).slice(0, 3).map((pl, i) =>
       (i + 1) + '. ' + pl.stops.map(v => v.n.split(' ·')[0]).join(' → ')).join('\n');
     const txt = 'Les armé 3 planes en Sobres:\n' + cuerpo + '\n\n' + u;
+    this.ev('compartir_whatsapp', { tanda: true });
     try { window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank'); } catch(e) {}
   }
 
@@ -2268,6 +2313,7 @@ class Component extends DCLogic {
         planStops: Math.max(2, Math.min(5, planes[0].stops.length)) });
       this.nav('results');
       this.ev('tanda_abierta', { planes: planes.length });
+      this.ev('plan_visto', { opciones: planes.length, origen: 'enlace' });
       this.registrarParaVotar(planes, t.by);
     });
   }
@@ -2530,6 +2576,65 @@ class Component extends DCLogic {
 
   // Lugares que el usuario excluyó explícitamente (por lenguaje natural).
   exclSet() { return new Set(this.state.aiExcluded || []); }
+
+  // ============================================================
+  // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
+  // ============================================================
+  catalogoListo() { const w = typeof window !== 'undefined' ? window : {};
+    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_RECETAS'].every(k => !!w[k]); }
+  // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
+  // comprimidos) llegan después, en orden, sin pelearle la red al marco.
+  cargaCatalogo() {
+    if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
+    const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
+      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
+    lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
+  }
+  PRESETS() { return {
+    familia:  { who: 'familia', groupSize: 4, vibes: ['familiar'], when: 'finde' },
+    noche:    { who: 'amigos', groupSize: 4, vibes: ['nightlife'], when: 'noche' },
+    fiesta:   { who: 'amigos', groupSize: 4, vibes: ['nightlife'], when: 'noche' },
+    date:     { who: 'date', groupSize: 2, vibes: ['romántico'], when: 'noche' },
+    romantico:{ who: 'date', groupSize: 2, vibes: ['romántico'], when: 'noche' },
+    cultural: { vibes: ['cultural'], when: 'finde' },
+    comer:    { vibes: ['foodie'] },
+    amigos:   { who: 'amigos', groupSize: 4, vibes: ['social'], when: 'noche' } }; }
+  // Lee la URL de llegada: ?preset=familia | ?utm_content=familia_coyoacan |
+  // ?zona=coyoacan | ?v=rapido. También guarda los UTM de la visita.
+  desdeUrl(st) {
+    let q; try { q = new URLSearchParams((typeof location !== 'undefined' && location.search) || ''); } catch(e) { return {}; }
+    const out = {}; const P = this.PRESETS();
+    const utm = {}; ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => { const v = q.get(k); if (v) utm[k] = v.slice(0, 100); });
+    try { if (Object.keys(utm).length) sessionStorage.setItem('sobres_utm', JSON.stringify(utm));
+      else Object.assign(utm, JSON.parse(sessionStorage.getItem('sobres_utm') || '{}')); } catch(e) {}
+    this.UTM = utm;
+    const norm = x => this.strip(String(x || '')).replace(/[^a-z]/g, ' ');
+    let clave = norm(q.get('preset')).trim().split(' ')[0];
+    if (!P[clave]) { const uc = norm(q.get('utm_content')); clave = Object.keys(P).find(k => new RegExp('\\b' + k + '\\b').test(uc)) || ''; }
+    if (P[clave]) { Object.assign(out, P[clave]); out.preset = clave; }
+    const zn = this.strip(q.get('zona') || '').replace(/[^a-z]/g, '');
+    const z = (this.ZONES || []).find(x => x[0] === zn);
+    if (z) { out.zone = z[0]; out.zonesSel = [z[0]]; }
+    if (q.get('v') === 'rapido') out.rapido = true;
+    return out;
+  }
+  // Pasos vistos (GA4): un evento por tarjeta del formulario la primera vez
+  // que de verdad está en pantalla (en celular se ven de una en una).
+  vigilaPasos() {
+    if (this._pasosI || typeof window === 'undefined' || typeof document === 'undefined' || !document.getElementById) return;
+    this._pasosVistos = {};
+    const ids = [['armar-ambiente', 1], ['armar-donde', 2], ['armar-quien', 3], ['armar-rapido', 1]];
+    const mira = () => { ids.forEach(([id, n]) => { if (this._pasosVistos[n]) return; const el = document.getElementById(id); if (!el || !el.offsetParent) return;
+        const r = el.getBoundingClientRect(); if (r.width > 0 && r.top < window.innerHeight && r.bottom > 0) { this._pasosVistos[n] = true; this.ev('paso_' + n + '_visto', {}); } });
+      if (this._pasosVistos[1] && this._pasosVistos[2] && this._pasosVistos[3]) { clearInterval(this._pasosI); } };
+    this._pasosI = setInterval(mira, 700); setTimeout(mira, 50);
+  }
+  esQA() { const u = this.UTM || {}; if (/^(qa|qa_claude)$/.test(u.utm_source || '')) return true;
+    try { return sessionStorage.getItem('sobres_qa') === '1'; } catch(e) { return false; } }
+  // Prellenar el formulario con lo mismo del plan que llegó por enlace o anuncio.
+  armarElMio() { this.ev('armar_el_mio', { tanda: !!(this.state.results && this.state.results.compartida) });
+    this.setState({ paso: 1, pasoDir: 'back', tandaDe: '', rapido: false }); this.nav('home');
+    try { window.scrollTo(0, 0); } catch(e) {} }
 
   // ============================================================
   // MOTOR POR RECETAS (4 nov 2026). Cada ambiente tiene su receta
@@ -3804,7 +3909,7 @@ class Component extends DCLogic {
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
-    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
+    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v }); }
     this.persist(); this.nav('results'); return this._lastR; }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
   time12(h) { const hh = Math.floor(h) % 24, m = Math.round((h % 1) * 60); const ap = hh >= 12 ? 'pm' : 'am'; const h12 = hh % 12 === 0 ? 12 : hh % 12; return `${h12}:${m.toString().padStart(2,'0')} ${ap}`; }
@@ -5319,8 +5424,11 @@ class Component extends DCLogic {
     this.setState({ generando: true, genFase: 0 });
     setTimeout(() => this.setState({ genFase: 1 }), t[1]);
     setTimeout(() => this.setState({ genFase: 2 }), t[2]);
-    setTimeout(() => { try { fn(); } finally { this._genBusy = false; this.setState({ generando: false, genFase: 0, planEditando: false }); } },
-      corto ? 180 : 1050);
+    // Si el catálogo todavía no llega (celular lento), se espera hasta 20 s.
+    let espera = 0;
+    const correr = () => { if (!this.state.catLoaded && espera++ < 100) { setTimeout(correr, 200); return; }
+      try { fn(); } finally { this._genBusy = false; this.setState({ generando: false, genFase: 0, planEditando: false }); } };
+    setTimeout(correr, corto ? 180 : 1050);
   }
 
   // Cuenta opcional. Guardar y compartir NUNCA esperan a la cuenta: primero se
@@ -5530,6 +5638,9 @@ class Component extends DCLogic {
       retomarTxt: retomar ? ((s.results.plans.length === 1 ? 'Tu opción' : 'Tus ' + s.results.plans.length + ' opciones') + ' · ' + this.zonesLabel() + ', ' + this.whenLabel().toLowerCase()) : '',
       retomar: () => this.nav('results'),
       retomarLink: retomar ? ('o retoma ' + (s.results.plans.length === 1 ? 'tu opción' : 'tus ' + s.results.plans.length + ' opciones') + ' de hace rato →') : '',
+      rapidoOn: !!s.rapido && view === 'home', noRapido: !s.rapido,
+      rapidoNota: 'Lo demás va por defecto: ' + this.whoLabel().toLowerCase() + ', ' + this.whenLabel().toLowerCase() + '. Lo puedes cambiar después.',
+      armarMioOn: !!(r && r.compartida), armarMio: () => this.armarElMio(),
       ...this.perfilVals(), paso, paso1: paso === 1, paso2: paso === 2, paso3: paso === 3,
       pasoTxt: 'Paso ' + paso + ' de 3', pasoAncho: (paso / 3 * 100).toFixed(1) + '%',
       pasoFx: s.pasoDir === 'back' ? 'sb-back' : 'sb-in', pasoKey: 'p' + paso + '-' + (s.pasoN || 0),
