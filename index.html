@@ -6043,7 +6043,7 @@ class Component extends DCLogic {
     if (/vegetarian|veggie|plant based|basad[ao] en plantas/.test(t)) return ['vegetariano'];
     return []; }
   publicoDe(v) { if (v.publico) return v.publico;
-    if ((v.aptoFamilia || this.aptoFamiliaDe(v)) === 'si' && (v.who || []).includes('familia')) return 'familia';
+    if (this.aptoFamiliaDe(v) === 'sí' && (v.who || []).includes('familia')) return 'familia';
     const nm = this.strip(v.n || '');
     if (v.cat === 'Antro' && (!v.ppUnknown && v.pp > 0 && v.pp <= 450 || /universit|reggaet|perreo|cumbia rebajada/.test(nm))) return '20s';
     if (['Speakeasy', 'Bar de autor'].includes(v.cat) || v.cat === 'Salón de baile' && /los angeles|tenampa|caribe|candela|gran salon/.test(nm)
@@ -6060,7 +6060,7 @@ class Component extends DCLogic {
     sc += 1.5 * this.share(S.zona, v.z);
     const veg = (p.dieta || []).some(d => d === 'vegetariano' || d === 'vegano');
     if (veg && this.dietaDe(v).length && (this.FOOD.includes(v.cat) || v.cat === 'Café')) sc += 8;   // la dieta pesa más que el gusto
-    if (p.ninos === true && s.who === 'familia' && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'si') sc += 1.5;
+    if (p.ninos === true && s.who === 'familia' && this.aptoFamiliaDe(v) === 'sí') sc += 1.5;
     return sc + this.ajusteEdad(v);
   }
   // A alguien de 35 a 44 no se le recomiendan primero antros de universitarios.

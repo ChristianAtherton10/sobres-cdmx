@@ -75,6 +75,8 @@ test('27.5 · a alguien de 35–44 no se le proponen primero antros de universit
   const p = app.perfil(); p.edad = '35-44'; app.perfilGuarda(p);
   u.forEach(v => assert(app.afinidad(v) < 0, v.n + ' no baja para 35–44'));
   assert(app.cat().every(v => ['20s', '30s+', 'familia', 'todos'].includes(v.publico)), 'hay lugares sin marca de público');
+  // Regresión: la app escribe 'sí' con acento; con 'si' ningún lugar quedaba "familia".
+  assert(app.cat().filter(v => v.publico === 'familia').length > 50, 'casi ningún lugar quedó con público "familia"');
 });
 
 test('27.6 · las preguntas para afinar se hacen una sola vez y son opcionales', () => {
