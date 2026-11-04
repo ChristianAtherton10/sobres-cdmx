@@ -19,7 +19,24 @@
   // Visitas de QA (utm_source=qa o qa_claude) no se miden (Fase 3).
   var sobresQA = /[?&]utm_source=(qa|qa_claude)(&|$)/.test(location.search);
   try { if (sobresQA) sessionStorage.setItem('sobres_qa', '1'); else if (sessionStorage.getItem('sobres_qa') === '1') sobresQA = true; } catch (e) {}
-  if (!sobresQA) gtag('config', 'G-4QP6QKRDJK');
+  // Número anónimo por navegador (no es el nombre ni el correo): sirve para ver
+  // en GA4 cuántas veces regresa la misma persona. "Borrar mis datos" lo borra.
+  var sobresUid = '', sobresVisitas = 1;
+  try {
+    sobresUid = localStorage.getItem('sobres_uid') || '';
+    if (!/^S-[0-9A-Z]{10}$/.test(sobresUid)) {
+      var a = new Uint8Array(10); (window.crypto || window.msCrypto).getRandomValues(a);
+      sobresUid = 'S-' + Array.prototype.map.call(a, function (b) { return '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ'[b % 34]; }).join('').slice(0, 10);
+      localStorage.setItem('sobres_uid', sobresUid); localStorage.setItem('sobres_primera', new Date().toISOString().slice(0, 10));
+    }
+    sobresVisitas = parseInt(localStorage.getItem('sobres_visitas') || '0', 10) || 0;
+    if (!sessionStorage.getItem('sobres_visita_contada')) { sobresVisitas++; localStorage.setItem('sobres_visitas', String(sobresVisitas)); sessionStorage.setItem('sobres_visita_contada', '1'); }
+  } catch (e) {}
+  window.SOBRES_UID = sobresUid;
+  if (!sobresQA) {
+    if (sobresUid) gtag('set', 'user_properties', { sobres_uid: sobresUid, visitas: String(sobresVisitas), primera_visita: (function () { try { return localStorage.getItem('sobres_primera') || ''; } catch (e) { return ''; } })() });
+    gtag('config', 'G-4QP6QKRDJK', sobresUid ? { user_id: sobresUid } : {});
+  }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,6 +103,8 @@
 :root:root[data-tema="c"]{ --radius-lg:20px; --radius-md:14px; --shadow-sm:none; --shadow-md:0 1px 2px rgba(27,42,74,.06); --shadow-lg:0 8px 28px rgba(27,42,74,.10) }
 :root[data-tema="c"] body{-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
 :root[data-tema="c"] .sb-marca{font-weight:400!important;letter-spacing:.01em!important}
+.sb-home[data-paso="2"] .sb-busca-inicio,.sb-home[data-paso="3"] .sb-busca-inicio{display:none}
+@media (min-width:820px){.sb-home .sb-busca-inicio{display:block!important}}
 :root[data-tema="c"] .sb-mx{font-family:var(--font-body);font-weight:600;font-size:.56em;letter-spacing:.12em;color:var(--color-accent);margin-left:1px}
 @media (max-width:819px){:root[data-tema="c"] .sb-home .sb-sub{display:none}}
 :root[data-tema="c"] .sb-top{background:rgba(255,255,255,.88);border-bottom:1px solid var(--color-neutral-200)}
@@ -402,7 +421,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-grab"></div>
 <div class="sb-kicker">{{ compKicker }}</div>
 <h2 id="comp-titulo" class="sb-h2" style="margin:6px 0 14px;overflow-wrap:anywhere">{{ compTitulo }}</h2>
-<a class="sb-btn sb-full" style="background:#25D366;box-shadow:none" href="{{ compWaUrl }}" target="_blank" rel="noopener" onClick="{{ compWaLog }}">Mandar por WhatsApp</a>
+<a class="sb-btn sb-full" style="background:#0e7a54;color:#fff;box-shadow:none" href="{{ compWaUrl }}" target="_blank" rel="noopener" onClick="{{ compWaLog }}">Mandar por WhatsApp</a>
 <div class="sb-row" style="margin-top:8px;flex-wrap:nowrap">
 <input class="sb-input" readonly value="{{ compLink }}" aria-label="Enlace exacto a este plan" onClick="{{ tandaSelect }}" style="flex:1;min-width:0;font-size:13px!important;font-weight:500;background:var(--lila)">
 <button class="sb-btn2" style="flex:none;min-height:48px" onClick="{{ compCopiar }}">{{ compCopiarTxt }}</button>
@@ -526,6 +545,21 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <p class="sb-note sb-resumen-fijo" style="margin:8px 0 0;text-align:right">{{ armarResumen }}</p>
 <sc-if value="{{ hayRetomar }}" hint-placeholder-val="{{ false }}"><p style="margin:2px 0 0;text-align:right"><button class="sb-btn3" style="min-height:34px;margin-right:-12px" onClick="{{ retomar }}">{{ retomarLink }}</button></p></sc-if>
 </div>
+</div>
+<div class="sb-busca-inicio" style="position:relative;max-width:600px;margin:16px 0 0">
+<input class="sb-input" type="text" enterkeyhint="search" style="width:100%;padding-right:44px" aria-label="Busca un lugar por nombre" value="{{ homeQ }}" onInput="{{ setHomeQ }}" placeholder="Busca un lugar…">
+<sc-if value="{{ homeHasQ }}" hint-placeholder-val="{{ false }}"><button class="sb-x" style="position:absolute;right:4px;top:4px;width:40px;height:40px;background:none" aria-label="Borrar la búsqueda" onClick="{{ homeClear }}">✕</button></sc-if>
+<sc-if value="{{ homeOpen }}" hint-placeholder-val="{{ false }}">
+<div class="sb-card" style="position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:1100;max-height:340px;overflow-y:auto;box-shadow:var(--shadow-lg)">
+<sc-for list="{{ homeResults }}" as="r" hint-placeholder-count="4">
+<button onClick="{{ r.open }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 14px;background:none;border:none;border-bottom:1px solid var(--color-divider);cursor:pointer;min-height:52px">
+<span class="sb-pin" style="width:34px;height:34px;font-size:15px">{{ r.letter }}</span>
+<span style="min-width:0;flex:1"><span style="display:block;font:700 14px var(--font-body);color:var(--ink)">{{ r.name }}</span><span class="sb-note" style="display:block;font-size:12px">{{ r.meta }}</span></span>
+</button>
+</sc-for>
+<sc-if value="{{ homeEmpty }}" hint-placeholder-val="{{ false }}"><div class="sb-note" style="padding:12px 14px">Nada con ese nombre en el catálogo. Prueba otra palabra.</div></sc-if>
+</div>
+</sc-if>
 </div>
 <sc-if value="{{ hayFeedback }}" hint-placeholder-val="{{ false }}">
 <div class="sb-card sc-rise" role="group" aria-label="Cómo les fue en tu plan" style="margin-top:18px;padding:14px 16px">
@@ -1314,7 +1348,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 <div style="margin-bottom:26px;max-width:760px">
 <div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:8px">TUS DATOS</div>
-<p class="sb-note" style="margin:0 0 10px">Tus gustos, búsquedas, guardados y respuestas viven sólo en este navegador. Los planes que compartiste o votaste en un link siguen en ese link.</p>
+<p class="sb-note" style="margin:0 0 10px">Tus gustos, búsquedas, guardados y respuestas viven sólo en este navegador. Para saber si regresas, Google Analytics recibe un número al azar ({{ perfilUid }}), nunca tu nombre ni tu correo. Los planes que compartiste o votaste en un link siguen en ese link.</p>
 <button class="sb-btn2" onClick="{{ borrarGo }}">{{ borrarTxt }}</button>
 </div>
 <div style="border-top:2px solid var(--color-text);padding-top:14px;margin-bottom:50px;max-width:760px">
@@ -2033,7 +2067,8 @@ class Component extends DCLogic {
   // cambiar los que ya se medían (armar_planes sigue igual).
   ev(name, params) { try {
     if (typeof window.gtag !== 'function' || this.esQA()) return;
-    const p = Object.assign({}, params || {}, this.UTM || {}, { variante: this.state && this.state.rapido ? 'rapido' : 'normal' });
+    const p = Object.assign({}, params || {}, this.UTM || {}, { variante: this.state && this.state.rapido ? 'rapido' : 'normal' },
+      (typeof window !== 'undefined' && window.SOBRES_UID) ? { sobres_uid: window.SOBRES_UID } : {});
     window.gtag('event', name, p);
     const alias = { elegir_plan: 'plan_elegido', compartir_whatsapp: 'plan_compartido', compartir_enlace: 'plan_compartido',
       tanda_compartida: 'plan_compartido', plan_enviado: 'plan_compartido' }[name];
@@ -5773,7 +5808,7 @@ class Component extends DCLogic {
       opciones, hayOpciones: nOpc > 0, sinOpciones: view === 'results' && nOpc === 0,
       sinOpcionesTxt: aviso || 'Ningún lugar cumple a la vez la zona, el horario y el presupuesto. Amplía uno de los tres.',
       compartirTxt: nOpc === 1 ? 'Compartir el plan' : 'Compartir las ' + nOpc, guardarTxt: nOpc === 1 ? 'Guardar el plan' : 'Guardar las ' + nOpc,
-      explorarTxt: 'Ver lugares sueltos en ' + this.zonesLabel() + ' →', tandaDeTxt: s.tandaDe ? s.tandaDe + ' te compartió estos planes: vota el que te late' : 'Te compartieron estos planes: vota el que te late',
+      explorarTxt: 'Ver lugares sueltos en ' + this.zonesLabel() + ' →', tandaDeTxt: (() => { const uno = ((r && r.plans) || []).length === 1; const que = uno ? 'este plan: vota si te late' : 'estos planes: vota el que te late'; return s.tandaDe ? s.tandaDe + ' te compartió ' + que : 'Te compartieron ' + que; })(),
       otrasNota: nOpc < 3 && nOpc > 0 ? 'Con estos filtros no hay más planes que cumplan todo. Te mostramos los que sí; amplía zona, horario o presupuesto para ver más.'
         : 'Te armamos otras opciones sin repetir lo que ya viste.',
       resurprise: () => this.generar(() => this.regenerate()),
@@ -6212,7 +6247,15 @@ class Component extends DCLogic {
       fbAhoraNo: () => { const q = JSON.parse(JSON.stringify(this.perfil())); q.pendiente = null; this.perfilGuarda(q); },
       borrarTxt: s.borrarArmado ? 'Toca otra vez para borrar todo' : 'Borrar mis datos',
       borrarGo: () => { if (!s.borrarArmado) { this.setState({ borrarArmado: true }); return; } this.borrarMisDatos(); },
-      perfilCorreo: p.correo || '', irPerfil: () => this.nav('profile')
+      perfilCorreo: p.correo || '', irPerfil: () => this.nav('profile'),
+      // Búsqueda de lugares desde el inicio (además de Explorar).
+      homeQ: s.homeQ || '', homeHasQ: !!s.homeQ,
+      setHomeQ: e => { const q = e.target.value; this.setState({ homeQ: q }); this.evSearch(q); },
+      homeClear: () => this.setState({ homeQ: '' }),
+      homeOpen: (s.homeQ || '').trim().length >= 2, homeEmpty: (s.homeQ || '').trim().length >= 2 && !this.searchIn(s.homeQ, 1).length,
+      homeResults: this.searchIn(s.homeQ || '', 8).map(v => ({ letter: v.n[0], name: v.n,
+        meta: v.cat + ' · ' + (v.col || this.zLabel(v.z)) + ' · ' + this.precioTxt(v),
+        open: () => { this.track(v.id, 'v'); this.setState({ homeQ: '' }); this.nav('detail', { detailId: v.id, backView: 'home' }); } })), perfilUid: (typeof window !== 'undefined' && window.SOBRES_UID) || 'sin número',
     };
   }
   // ============================================================

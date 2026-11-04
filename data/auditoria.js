@@ -166,6 +166,13 @@ window.SOBRES_AUDITORIA = (function () {
     estado: 'estimado', fuente: 'Referencia de precio del fundador de SOBRES (19-oct-2026)', fecha: H19 }, extra || {});
 
   const LUGARES = {
+    /* ---- Días reales de salones de baile (Chilango, 24-jul-2026). Antes se
+       proponían cualquier día: Patrick Miller sólo abre los viernes. ---- */
+    // Mama Rumba es salón de salsa cubana con música en vivo, no un antro.
+    'cdmx-2023': { cat: 'Salón de baile', dias: [3, 4, 5, 6], oh: [21, 27], hrs: 'Mié a sáb 21:00–3:00 · salsa cubana en vivo · cover $150',
+      fuente: 'Chilango — 7 lugares para bailar en CDMX (24-jul-2026)', url: 'https://www.chilango.com/que-hacer/donde-bailar-en-cdmx-lugares-para-sacar-los-prohibidos/', fecha: '2026-07-24' },
+    'cdmx-2066': { dias: [0, 2], oh: [17, 22], hrs: 'Mar y dom 17:00–22:00 · orquestas en vivo',
+      fuente: 'Chilango — 7 lugares para bailar en CDMX (24-jul-2026)', url: 'https://www.chilango.com/que-hacer/donde-bailar-en-cdmx-lugares-para-sacar-los-prohibidos/', fecha: '2026-07-24' },
     /* ---- Mirador del Monumento a la Revolución (4-nov-2026) ---- */
     'cdmx-0103': {
       oh: [12, 20], hrs: 'Mirador: dom a jue 12:00–20:00 · vie y sáb 12:00–22:00',
@@ -392,6 +399,9 @@ window.SOBRES_AUDITORIA = (function () {
         oh: [12.5, 24], hrs: 'Dom y Lun 12:30–00:00 · Mar–Jue 12:30–01:00 · Vie y Sáb 12:30–02:00', web: 'https://costeno.com/ryoshi/',
         cocina: 'Japonesa', vestimenta: 'Informal y elegante' })
   };
+  // Días reales de Patrick Miller (Chilango, 24-jul-2026). Se suma a la corrección
+  // de precio que ya tenía: dos claves iguales en el objeto se pisaban.
+  LUGARES['cdmx-2022'] = Object.assign({}, LUGARES['cdmx-2022'], { dias: [5], oh: [21.5, 26.5], hrs: 'Sólo viernes 21:30–2:30 · cover $100 en efectivo' });
 
   /* ---------------------------------------------------------------- *
    * 6. Registros DADOS DE BAJA por identidad fabricada                *

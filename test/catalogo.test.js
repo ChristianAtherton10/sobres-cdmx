@@ -45,6 +45,16 @@ test('el importador es idempotente: correrlo otra vez no cambia nada', () => {
   assert(new Set(ids).size === ids.length, 'ids repetidos dentro de data/paquete.js');
 });
 
+// Regresión (4 nov 2026): dos correcciones con la misma clave en data/auditoria.js
+// se pisaban en silencio (los días de Patrick Miller se perdían).
+test('data/auditoria.js no repite claves de lugar (una pisaría a la otra)', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'data', 'auditoria.js'), 'utf8');
+  const i = src.indexOf('const LUGARES = {'), j = src.indexOf('\n  };\n', i);
+  const claves = (src.slice(i, j).match(/^    '([a-z]+-[^']+)':/gm) || []).map(x => x.trim());
+  const rep = claves.filter((k, n) => claves.indexOf(k) !== n);
+  assert(!rep.length, 'claves repetidas: ' + rep.join(', '));
+});
+
 section('26b · Catálogo: lugares investigados el 4 nov 2026 (data/investigados.js)');
 
 test('cada lugar investigado trae fuente (URL), fecha de la fuente y de consulta, y precio con su estado', () => {
@@ -57,7 +67,8 @@ test('cada lugar investigado trae fuente (URL), fecha de la fuente y de consulta
     assert(/^https?:\/\//.test(v.pUrl || ''), v.n + ' sin URL de fuente');
     assert(/^\d{4}-\d{2}-\d{2}$/.test(v.consultado || ''), v.n + ' sin fecha de consulta');
     assert(crudo[v.id] && crudo[v.id].fecha, v.n + ' sin fecha de la fuente');
-    assert(['estimado', 'rango', 'por_confirmar'].includes(v.pEstado), v.n + ' con precio "' + v.pEstado + '"');
+    // 'verificado' sólo con tarifa oficial (p. ej. la del INAH para el Castillo de Chapultepec).
+    assert(['estimado', 'rango', 'por_confirmar', 'verificado'].includes(v.pEstado), v.n + ' con precio "' + v.pEstado + '"');
     assert(v.horaEstimada || /\d/.test(v.hrs || ''), v.n + ' sin horario ni marca de "por confirmar"');
   });
 });
@@ -81,6 +92,16 @@ test('ningún lugar investigado repite uno que ya estaba (La Casa del Cine ya ve
     if (a.length > 3 && (a === b || (km(v, o) < 0.3 && v.cat === o.cat && (a.includes(b) && b.length > 5 || b.includes(a) && a.length > 5)))) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.join(' · '));
+});
+
+// Regresión: "Museo Nacional de Historia · Castillo de Chapultepec" ya estaba
+// como "Castillo de Chapultepec · Museo Nacional de Historia" (mismas palabras).
+test('ningún lugar investigado repite otro con las mismas palabras en otro orden', () => {
+  const app = makeApp({});
+  const raiz = s => app.strip(s).replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2).sort().join(' ');
+  const viejos = new Map(app.cat().filter(v => !/^iv-/.test(v.id)).map(v => [raiz(v.n), v.n]));
+  const dup = app.cat().filter(v => /^iv-/.test(v.id) && viejos.has(raiz(v.n))).map(v => v.n + ' = ' + viejos.get(raiz(v.n)));
+  assert(!dup.length, dup.join(' · '));
 });
 
 // Regresión (4 nov 2026): se escribió 'si' sin acento y la app sólo entiende 'sí'.

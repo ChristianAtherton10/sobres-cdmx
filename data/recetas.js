@@ -41,7 +41,8 @@ window.SOBRES_RECETAS = {
     rooftop:         { lbl: 'Rooftop', cats: ['Rooftop'], momento: 'noche' },
     cantina:         { lbl: 'Cantina', cats: ['Cantina'], nombreTambien: 'cantina|pulquer', momento: 'libre' },
     antro:           { lbl: 'Antro', cats: ['Antro'], momento: 'antro' },
-    salon_baile:     { lbl: 'A bailar', cats: ['Salón de baile'], nombreTambien: 'mama rumba', momento: 'noche' },
+    // Se llega como al antro (≈ 23:30, regla R08/R09): un salón de baile cierra la noche.
+    salon_baile:     { lbl: 'A bailar', cats: ['Salón de baile'], nombreTambien: 'mama rumba', momento: 'antro' },
     karaoke:         { lbl: 'Karaoke', nombre: 'karaoke|cantabar|canta coraz', momento: 'noche' },
     // ── cultura ──
     museo:           { lbl: 'Museo', cats: ['Museo'], sinNombre: 'del niño|kidzania', momento: 'dia' },

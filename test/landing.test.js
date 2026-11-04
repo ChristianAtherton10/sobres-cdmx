@@ -80,4 +80,36 @@ test('28.7 · el catálogo espera a TODAS sus capas (antes el paquete podía que
   a._win.SOBRES_PAQUETE = guardado;
 });
 
+section('29 · Revisión del 4 nov 2026 (QA en web y celular)');
+
+test('29.1 · Patrick Miller sólo se propone en viernes; Salón Los Ángeles martes y domingo', () => {
+  const dia = d => makeApp({ who: 'amigos', zone: 'roma', zonesSel: ['roma'], when: 'fecha', customDate: d, vibes: ['nightlife'] });
+  const pm = a => a.cat().find(v => v.id === 'cdmx-2022');
+  let a = dia('2026-11-04'); assert(!a.timingOk(pm(a)), 'Patrick Miller sale un miércoles');
+  a = dia('2026-11-06'); assert(a.timingOk(pm(a)), 'Patrick Miller no sale el viernes');
+  a = dia('2026-11-05'); assert(!a.timingOk(a.cat().find(v => v.id === 'cdmx-2066')), 'Salón Los Ángeles sale un jueves');
+});
+
+test('29.2 · un enlace con UN plan dice "este plan", no "estos planes"', () => {
+  const emisor = makeApp({ zone: 'roma', zonesSel: ['roma'] }); emisor.runSearch({ nueva: true });
+  const link = emisor.tandaLinkDe([emisor.state.results.plans[0]]);
+  const a = makeApp({}); a.abrirTanda(link.split('?p=')[1], true);
+  assert(/este plan/.test(a.renderVals().tandaDeTxt), a.renderVals().tandaDeTxt);
+});
+
+test('29.3 · la búsqueda del inicio encuentra lugares y abre su ficha', () => {
+  const a = makeApp({}); a.setState({ homeQ: 'contramar' });
+  const rv = a.renderVals();
+  assert(rv.homeOpen && rv.homeResults.length && /Contramar/.test(rv.homeResults[0].name), 'no encontró Contramar');
+  rv.homeResults[0].open();
+  assert(a.state.view === 'detail' && a.state.detailId === 'contramar', 'no abrió la ficha');
+  assert(!a.state.homeQ, 'la búsqueda no se limpió');
+});
+
+test('29.4 · cada evento de GA4 lleva el número anónimo del usuario', () => {
+  const a = makeApp({}); const evs = []; a._win.gtag = (k, n, p) => evs.push({ n, p }); a._win.SOBRES_UID = 'S-ABCDEFGHJK';
+  a.ev('plan_visto', {});
+  assert(evs[0] && evs[0].p.sobres_uid === 'S-ABCDEFGHJK', JSON.stringify(evs[0]));
+});
+
 if (require.main === module) report();

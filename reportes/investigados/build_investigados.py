@@ -46,6 +46,13 @@ F = {
  'exp_harp': ('Expansión — quién es dueño del Estadio Alfredo Harp Helú, casa de los Diablos Rojos', 'https://expansion.mx/tendencias/2026/08/04/quien-es-dueno-estadio-alfredo-harp-helu-casa-diablos-rojos', '2026-08-04'),
  'sopitas_bici': ('Sopitas — guía para andar en bici dentro del Bosque de Chapultepec (Ecobici Los Pinos)', 'https://www.sopitas.com/mientras-tanto/guia-andar-bicicleta-dentro-bosque-chapultepec-ecobici-cdmx/amp/', '2024-07-22'),
  'chil_ecobici': ('Chilango — Ecobici tendrá estación en Chapultepec (tarifas 2025)', 'https://www.chilango.com/noticias/transporte/ecobici-cdmx-estacion-chapultepec/', '2025'),
+ 'inah_mnh': ('INAH — Museo Nacional de Historia, Castillo de Chapultepec (ficha oficial)', 'https://lugares.inah.gob.mx/en/node/4961', 'sin fecha (consultada ' + HOY + ')'),
+ 'turismo_esc': ('Secretaría de Turismo CDMX — Espacio Escultórico UNAM (ficha oficial)', 'https://mexicocity.cdmx.gob.mx/venues/unam-sculpture-space/', 'sin fecha (consultada ' + HOY + ')'),
+ 'fp_huerto': ('Food & Pleasure — Huerto Roma Verde', 'https://foodandpleasure.com/huerto-roma-verde/', '2025-10-18'),
+ 'chil_tacos_roma': ('Chilango — mejores tacos de la colonia Roma', 'https://www.chilango.com/comida-y-tragos/mejores-tacos-colonia-roma/', '2024-03-27'),
+ 'chil_cantinas': ('Chilango — cantinas de la vieja escuela en el Centro Histórico', 'https://www.chilango.com/agenda/vida-nocturna/cantinas-de-la-vieja-escuela-en-el-centro-historico-ciudad-de-mexico/', '2023-07-13'),
+ 'md_jamaica': ('México Desconocido — Mercado de Jamaica: lo que tienes que saber', 'https://www.mexicodesconocido.com.mx/mercado-de-jamaica-cdmx-tips.html', 'sin fecha'),
+ 'md_vasconcelos': ('México Desconocido — Biblioteca Vasconcelos, la más grande de México', 'https://escapadas.mexicodesconocido.com.mx/atractivos/biblioteca-vasconcelos-la-mas-grande-de-mexico/', 'sin fecha'),
  'ot_vineria': ('OpenTable — La Vinería, Ciudad de México', 'https://opentable.ae/r/la-vineria-ciudad-de-mexico', 'sin fecha (consultada ' + HOY + ')'),
 }
 
@@ -54,7 +61,7 @@ def fuente(k, url=None):
     return n, url or u, f
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
-VIGENTES = {'turismo', 'filmoteca', 'ot_vineria'}
+VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -194,6 +201,26 @@ L = [
       who=['date', 'amigos'], tags=['romántico', 'foodie'],
       precio=dict(min=310, rep=400, max=500, unidad='persona', canasta='Banda de precio de OpenTable ($310–500 por persona).'),
       estado='rango'),
+ # Lugares conocidos que faltaban (revisión del 4 nov 2026) ---------------
+ # El Castillo de Chapultepec ya estaba ('Castillo de Chapultepec · Museo Nacional de Historia').
+ dict(n='Espacio Escultórico UNAM', cat='Atracción', col='Ciudad Universitaria', addr='Calle Mario de la Cueva, Ciudad Universitaria',
+      geo='Espacio Escultórico, Ciudad Universitaria, Ciudad de México', f='turismo_esc',
+      h=(7, 16), hrs='Lun a vie 7:00–16:00 (entrada libre)', dias=[1, 2, 3, 4, 5], act=['paseo', 'visita'],
+      who=['amigos', 'date', 'familia', 'compa'], tags=['cultural', 'chill', 'aventurero'],
+      precio=dict(min=0, rep=0, max=0, unidad='persona', canasta='Entrada libre.'), estado='rango', apto='sí'),
+ dict(n='Huerto Roma Verde', cat='Al aire libre', col='Roma Sur', addr='Jalapa 234, Roma Sur', f='fp_huerto',
+      h=(10, 19), hrs='Diario 10:00–19:00 · talleres, mercado y café (Floresta, Café del Huerto)', act=['paseo', 'cafe', 'taller'],
+      who=['amigos', 'date', 'familia', 'compa'], tags=['chill', 'creativo', 'familiar'], apto='sí'),
+ dict(n='Tizne Tacomotora', cat='Taquería', col='Roma Norte', addr='Guanajuato 27-B, Roma Norte', f='chil_tacos_roma',
+      h=(13, 21), hrs='Lun a sáb 13:00–21:00 · dom 12:00–18:00 (tacos ahumados)', act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa'], tags=['foodie', 'joyita']),
+ dict(n='Cantina La Mascota', cat='Cantina', col='Centro Histórico', addr='Mesones 20, Centro Histórico', f='chil_cantinas',
+      h=(13, 23), hrs='Dom a jue 13:00–23:00 · vie y sáb 13:00–2:00 (botana con la bebida)', act=['copas', 'comida'],
+      who=['amigos', 'compa'], tags=['social', 'clásico']),
+ dict(n='Mercado de Jamaica', cat='Mercado', col='Jamaica, Venustiano Carranza', addr='Guillermo Prieto 45, Jamaica', geo='Mercado de Jamaica, Ciudad de México',
+      f='md_jamaica', h=(8, 20), hrs='Abierto 24 h (flores); horario de la zona de comida por confirmar', horaEstimada=True, act=['comida', 'compras', 'paseo'],
+      who=['familia', 'amigos', 'date'], tags=['foodie', 'familiar'], apto='sí'),
+ # Biblioteca Vasconcelos ya estaba en el catálogo: no se repite.
 ]
 
 # ------------------------------------------------------------------ geocodificación

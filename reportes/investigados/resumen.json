@@ -304,5 +304,50 @@
   "lat": 19.41296,
   "lng": -99.17513,
   "aprox": false
+ },
+ {
+  "id": "iv-b9f7a9e3d1",
+  "n": "Espacio Escultórico UNAM",
+  "zone": "cu",
+  "km": 0.5,
+  "lat": 19.31855,
+  "lng": -99.18254,
+  "aprox": false
+ },
+ {
+  "id": "iv-7e207a62f6",
+  "n": "Huerto Roma Verde",
+  "zone": "roma",
+  "km": 0.8,
+  "lat": 19.41137,
+  "lng": -99.1595,
+  "aprox": false
+ },
+ {
+  "id": "iv-4a9c93083c",
+  "n": "Tizne Tacomotora",
+  "zone": "roma",
+  "km": 0.5,
+  "lat": 19.41764,
+  "lng": -99.15582,
+  "aprox": false
+ },
+ {
+  "id": "iv-dac60d36b7",
+  "n": "Cantina La Mascota",
+  "zone": "centro",
+  "km": 0.5,
+  "lat": 19.43299,
+  "lng": -99.13192,
+  "aprox": true
+ },
+ {
+  "id": "iv-93daed9fa0",
+  "n": "Mercado de Jamaica",
+  "zone": "centro",
+  "km": 3.2,
+  "lat": 19.40799,
+  "lng": -99.12291,
+  "aprox": false
  }
 ]
