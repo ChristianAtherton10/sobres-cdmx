@@ -1275,6 +1275,12 @@ window.SOBRES_AUDITORIA = (function () {
     'xl-R0497': 'Yoshimi · Hyatt Regency'
   };
 
+  // Parques de Santa Fe que el fundador pidió quitar (4 nov 2026): no son salida.
+  ['os-w453368240', 'os-w1113495081', 'os-n12542739684'].forEach(id => {
+    BAJA[id] = { era: 'Parque Prados de la Montaña / Parque Jalalpa (OpenStreetMap)',
+      motivo: 'Pedido del fundador el 4 nov 2026: no son lugares a los que la gente vaya de salida.', fuente: 'Revisión del fundador', fecha: HOY };
+  });
+
   return { version: 2, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA, NOMBRES,
            LUGARES, BAJA, NUEVOS, VIBRA_EXIGE_ACTIVIDAD };
 })();

@@ -1686,6 +1686,15 @@ class Component extends DCLogic {
     }
     // Público y dieta de cada lugar (Fase 2) y el precio corregido con lo que
     // esta persona contó después de ir (sólo en su navegador).
+    // Una ficha vigente de Google Maps confirma que un lugar con fuente vieja
+    // sigue abierto (data/maps.js → confirma). Sólo levanta ese motivo de baja.
+    const CONF = (window.SOBRES_MAPS && window.SOBRES_MAPS.confirma) || {};
+    out.forEach(v => { const c = CONF[v.id]; if (!c) return;
+      if (v.recomendable === false && /fuente es antigua/i.test(v.pNotaLugar || '')) {
+        v.recomendable = undefined;
+        v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según Google Maps (' + c.consultado + ').').trim();
+      }
+      v.confirmado = c; });
     out.forEach(v => { v.publico = this.publicoDe(v); const d = this.dietaDe(v); if (d.length) v.dieta = d; this.ajustaPrecio(v); });
     return out;
   }

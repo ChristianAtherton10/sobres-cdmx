@@ -70,19 +70,25 @@ def cierre(txt):
 def raiz(n):
     return ' '.join(sorted(re.sub(r'[·,.]', ' ', unicodedata.normalize('NFD', n.lower())).split()))
 RAICES = set(raiz(c['n']) + '|' + c['z'] + '|' + c['cat'] for c in catalogo)
-out, vistos, desc = [], set(), {}
+out, vistos, desc, CONFIRMA = [], set(), {}, {}
 def descarta(k): desc[k] = desc.get(k, 0) + 1
 for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
     for q, filas in json.load(open(f)).items():
-        for n, gcat, addr, rating, resenas, lat, lng, pid, hr in filas:
+        for n, gcat, addr, rating, resenas, lat, lng, pid, hr, *extra in filas:
             if pid in vistos: descarta('repetido en otra búsqueda'); continue
             vistos.add(pid)
             if rating is None or rating < 4.2 or resenas < 30: descarta('poca calificación o pocas reseñas'); continue
             if CADENAS.search(norm(n)): descarta('cadena'); continue
+            url = 'https://www.google.com/maps/search/?' + urllib.parse.urlencode({'api': 1, 'query': n, 'query_place_id': pid})
+            ya = repetido(n, lat, lng)
+            if ya:
+                # La ficha viva de Maps confirma que un lugar del catálogo sigue abierto
+                # (p. ej. un cine cuya única fuente era de 2022).
+                CONFIRMA[ya['id']] = {'fuente': 'Google Maps — ficha vigente (%.1f★, %d reseñas)' % (rating, resenas), 'url': url, 'consultado': HOY}
+                descarta('ya en el catálogo'); continue
             cat = categoria(gcat, n)
             if not cat: descarta('no es salida (centro de eventos, etc.)'); continue
             if 'karaoke' in norm(gcat) and 'karaoke' not in norm(n): n = n + ' · karaoke'
-            if repetido(n, lat, lng): descarta('ya en el catálogo'); continue
             z, dz = zona_de(lat, lng)
             # Mismo nombre en la misma zona y categoría = el mismo lugar (aunque el pin del catálogo esté lejos).
             if raiz(n) + '|' + z + '|' + cat in RAICES: descarta('ya en el catálogo'); continue
@@ -92,7 +98,6 @@ for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
             ab = {'Bar': 17, 'Restaurante': 13, 'Taquería': 13, 'Café': 8, 'Antro': 22}[cat]
             ci = cierre(hr) or {'Bar': 25, 'Restaurante': 22, 'Taquería': 23, 'Café': 20, 'Antro': 28}[cat]
             if ci <= ab: ab = max(7, ci - 6)
-            url = 'https://www.google.com/maps/search/?' + urllib.parse.urlencode({'api': 1, 'query': n, 'query_place_id': pid})
             act = {'Bar': ['copas'], 'Restaurante': ['comida', 'cena'], 'Taquería': ['comida', 'cena'], 'Café': ['cafe', 'desayuno'], 'Antro': ['baile', 'copas']}[cat]
             if cat == 'Bar' and re.search(r'restaurante', norm(gcat)): act = ['copas', 'cena']
             tags = {'Bar': ['nightlife', 'social'], 'Restaurante': ['foodie'], 'Taquería': ['foodie', 'social'], 'Café': ['chill'], 'Antro': ['nightlife']}[cat]
@@ -107,6 +112,14 @@ for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
                    'estado': 'por_confirmar', 'falta': 'el precio', 'score': int(min(86, 70 + (rating - 4.2) * 22)), 'tier': 'B',
                    'basis': gcat + ' (' + ('%.1f' % rating) + '★ en Google Maps, ' + str(resenas) + ' reseñas)',
                    'nota': 'Horario sin confirmar.' + (' Queda lejos del centro de su zona.' if dz > 5.5 else '')}
+            # Rango por persona que publica Maps ("$300–800", reportado por la gente):
+            # cuenta como precio ESTIMADO con su fuente, no verificado.
+            m = re.match(r'\$([\d,]+)\s*[–-]\s*([\d,]+)', (extra[0] if extra else '') or '')
+            if m:
+                lo, hi = int(m.group(1).replace(',', '')), int(m.group(2).replace(',', ''))
+                rec['precio'] = {'min': lo, 'rep': int(round((lo + hi) / 2 / 10) * 10), 'max': hi, 'unidad': 'persona', 'moneda': 'MXN',
+                                 'canasta': 'Rango por persona que reporta la gente en Google Maps (%s).' % extra[0]}
+                rec['estado'] = 'estimado'; rec['falta'] = 'confirmar el precio en el lugar'
             if veg: rec['dieta'] = ['vegano', 'vegetariano'] if vegano else ['vegetariano']
             if cat in ('Bar', 'Antro'): rec['aptoFamilia'] = 'no'
             if dz > 5.5: rec['lejos'] = True
@@ -114,7 +127,7 @@ for f in sorted(glob.glob(os.path.join(AQUI, 'resultados_*.json'))):
 
 js = ('/* SOBRES — Lugares de búsquedas simples en Google Maps (4 nov 2026), generado por reportes/maps/build_maps.py.\n'
       ' * Fuente = ficha de Maps (place_id) y fecha de consulta; precio y horario completo por confirmar. */\n'
-      'window.SOBRES_MAPS = ' + json.dumps({'version': 1, 'fecha': HOY, 'lugares': out}, ensure_ascii=False, separators=(',', ':')) + ';\n')
+      'window.SOBRES_MAPS = ' + json.dumps({'version': 1, 'fecha': HOY, 'lugares': out, 'confirma': CONFIRMA}, ensure_ascii=False, separators=(',', ':')) + ';\n')
 open(os.path.join(REPO, 'data', 'maps.js'), 'w').write(js)
 print(len(out), 'lugares nuevos;', desc)
 import collections
