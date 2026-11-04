@@ -96,4 +96,47 @@ test('los ids investigados viajan en el enlace compartido', () => {
     assert(app.largaId(app.cortaId(v)) === v.id, 'el id ' + v.id + ' no se codifica bien'));
 });
 
+section('26c · Eventos con fecha (data/eventos.js)');
+
+test('cada evento trae fuente (URL), fecha de la nota y fechas de inicio o fin', () => {
+  const app = makeApp({});
+  const ev = app.cat().filter(v => v.evento);
+  assert(ev.length >= 8, 'sólo ' + ev.length + ' eventos');
+  ev.forEach(v => {
+    assert(/^https?:\/\//.test(v.pUrl || ''), v.n + ' sin URL');
+    assert(v.fechas && v.fechas.hasta, v.n + ' sin fecha de fin');
+    assert(v.horaEstimada || /\d/.test(v.hrs), v.n + ' sin hora ni "por confirmar"');
+  });
+});
+
+test('un evento sólo se propone el día que pasa (y con su hora real)', () => {
+  const dia = d => makeApp({ who: 'amigos', zone: 'centro', zonesSel: ['centro'], when: 'fecha', customDate: d, vibes: ['nightlife'] }, { dseed: 1, rseed: 8 });
+  let a = dia('2026-11-14');
+  const g = a.cat().find(v => /^Garbage/.test(v.n));
+  assert(a.timingOk(g), 'Garbage no cuenta el 14 de noviembre');
+  a.runSearch({ nueva: true });
+  const pl = a.state.results.plans.find(p => p.stops.some(v => v.id === g.id));
+  assert(pl, 'el 14 de noviembre ningún plan de noche en el Centro trae el concierto');
+  assert(pl.times[pl.stops.findIndex(v => v.id === g.id)] === 20, 'el concierto no quedó a las 8 pm');
+  a = dia('2026-11-15');
+  assert(!a.timingOk(a.cat().find(v => v.id === g.id)), 'Garbage cuenta el 15 de noviembre');
+  a.runSearch({ nueva: true });
+  assert(!a.state.results.plans.some(p => p.stops.some(v => v.evento && !a.vigenteEn(v, '2026-11-15'))), 'un plan del 15 trae un evento de otro día');
+});
+
+test('un evento vencido ni se carga', () => {
+  const app = makeApp({});
+  app._win.SOBRES_EVENTOS.eventos.push({ id: 'ev-0000000000', n: 'Evento viejo de prueba', cat: 'Foro', evento: true, fechas: { desde: '2020-01-01', hasta: '2020-01-02' },
+    lat: 19.43, lng: -99.13, zone: 'centro', oh: [20, 22], hrs: '20:00', who: ['amigos'], tags: ['social'], tm: ['noche'], fuente: 'prueba', url: 'https://ejemplo.test', estado: 'por_confirmar', precio: {} });
+  const L = app.aplicarAuditoria(app.EXT.filter(v => !v.aud).slice(0, 5));
+  assert(!L.some(v => v.id === 'ev-0000000000'), 'cargó un evento que ya pasó');
+  app._win.SOBRES_EVENTOS.eventos.pop();
+});
+
+test('los ids de eventos viajan en el enlace compartido', () => {
+  const app = makeApp({});
+  const v = app.cat().find(x => x.evento);
+  assert(app.largaId(app.cortaId(v)) === v.id, v.id);
+});
+
 if (require.main === module) report();

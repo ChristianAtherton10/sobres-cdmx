@@ -76,6 +76,12 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Lugares investigados a mano el 4 nov 2026 (define window.SOBRES_INVESTIGADOS)
   const iv = path.join(ROOT, 'data', 'investigados.js');
   if (fs.existsSync(iv)) new Function('window', fs.readFileSync(iv, 'utf8'))(win);
+  // Lugares extra para simular un catálogo ampliado (p. ej. candidatos de OSM sin aprobar).
+  if (opts.extra && opts.extra.length) { win.SOBRES_INVESTIGADOS = win.SOBRES_INVESTIGADOS || { lugares: [] };
+    win.SOBRES_INVESTIGADOS = { version: 1, lugares: win.SOBRES_INVESTIGADOS.lugares.concat(opts.extra) }; }
+  // Eventos con fecha (define window.SOBRES_EVENTOS)
+  const evp = path.join(ROOT, 'data', 'eventos.js');
+  if (fs.existsSync(evp) && !opts.sinEventos) new Function('window', fs.readFileSync(evp, 'utf8'))(win);
   // Recetas por ambiente (define window.SOBRES_RECETAS)
   const rc = path.join(ROOT, 'data', 'recetas.js');
   if (fs.existsSync(rc) && !opts.sinRecetas) new Function('window', fs.readFileSync(rc, 'utf8'))(win);
@@ -104,6 +110,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
 
   Object.assign(app.state, stateOverrides);
   app._store = store;
+  app._win = win; app._sstore = sstore;
   return app;
 }
 
