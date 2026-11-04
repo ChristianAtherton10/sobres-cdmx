@@ -34,6 +34,7 @@
 <script src="data/paquete.js"></script>
 <script src="data/investigados.js"></script>
 <script src="data/eventos.js"></script>
+<script src="data/osm.js"></script>
 <script src="data/recetas.js"></script>
 <script src="data/fotos.js" defer></script>
 <style>
@@ -1503,6 +1504,8 @@ class Component extends DCLogic {
         // + los investigados a mano el 4 nov 2026 para las piezas de receta
         // con poca oferta (data/investigados.js, con fuente y fecha cada uno).
         .concat((window.SOBRES_INVESTIGADOS && window.SOBRES_INVESTIGADOS.lugares) || [])
+        // + lugares de OpenStreetMap aprobados el 4 nov 2026 (data/osm.js).
+        .concat((window.SOBRES_OSM && window.SOBRES_OSM.lugares) || [])
         // + eventos con fecha (data/eventos.js): los vencidos ni se cargan.
         .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
@@ -1524,7 +1527,7 @@ class Component extends DCLogic {
           recomendable: r.recomendable === false ? false : undefined, lejos: !!r.lejos, pNotaLugar: r.nota || '',
           otRt: r.otRt || null, otRc: r.otRc || null, vestimenta: r.vestimenta || '', tel: r.tel || '',
           consultado: r.consultado || '', hrsFuente: r.hrsFuente || '',
-          evento: !!r.evento, fechas: r.fechas || null, sede: r.sede || '',
+          evento: !!r.evento, fechas: r.fechas || null, sede: r.sede || '', dieta: r.dieta || null,
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -2101,6 +2104,8 @@ class Component extends DCLogic {
     if (/^pq-[0-9a-f]+$/.test(id)) return 'Q' + id.slice(3);
     // Lugares investigados el 4 nov 2026 ('iv-6f1a2b3c4d'): 'V' + resto.
     if (/^iv-[0-9a-f]+$/.test(id)) return 'V' + id.slice(3);
+    // Lugares de OpenStreetMap ('os-n123456', 'os-w…', 'os-r…'): 'O' + resto.
+    if (/^os-[nwr]\d+$/.test(id)) return 'O' + id.slice(3);
     // Eventos con fecha ('ev-1a2b3c4d5e'): 'E' + resto.
     if (/^ev-[0-9a-f]+$/.test(id)) return 'E' + id.slice(3);
     if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
@@ -2113,6 +2118,7 @@ class Component extends DCLogic {
     if (/^Q[0-9a-f]+$/.test(x)) return 'pq-' + x.slice(1);
     if (/^V[0-9a-f]+$/.test(x)) return 'iv-' + x.slice(1);
     if (/^E[0-9a-f]+$/.test(x)) return 'ev-' + x.slice(1);
+    if (/^O[nwr]\d+$/.test(x)) return 'os-' + x.slice(1);
     if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
     if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
     return x;
@@ -2323,7 +2329,7 @@ class Component extends DCLogic {
   // Una función (cine, teatro, foro, espectáculo) sin película/obra y hora
   // verificadas NO se agenda: no existe "Cinépolis a la 1:20" sin cartelera.
   // Un evento con hora publicada (Garbage, sáb 14 nov, 20:00) sí tiene horario.
-  funcionSinConfirmar(v) { if (v.evento) return !!v.horaEstimada; return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
+  funcionSinConfirmar(v) { if (v.evento) return !!v.horaEstimada && ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat); return ['Cine','Teatro','Foro','Espectáculo'].includes(v.cat) && !(v.sesiones && v.sesiones.length); }
   // Importar una ficha no la vuelve recomendable. Fondos, archivos, centros de
   // documentación, auditorios internos, tiendas de museo y bibliotecas
   // especializadas existen y se pueden buscar, pero no son una salida.
@@ -3848,8 +3854,10 @@ class Component extends DCLogic {
       return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
     const r = this.state.results || this.engine(); const p = r.plans[this.state.planIdx] || r.plans[0]; if (!p) return null;
     // Un lugar suelto es un lugar, no un plan a medias: no se le agregan paradas.
-    const stops = p.unaParada ? p.stops.slice() : p.stops.length >= n ? p.stops.slice(0, n) : this.extendPlan(p.stops, n);
-    const tm = (p.times && p.times.length === stops.length) ? p.times : this.planTimes(stops.length);
+    const stops = p.unaParada ? p.stops.slice() : p.stops.length >= n ? p.stops.slice(0, n) : this.extendPlan(p.stops, n, p.times);
+    // Las paradas que ya tenía el plan conservan su hora (recortar a 3 no las mueve).
+    const propias = p.times && p.times.length >= stops.length && stops.every((v, i) => p.stops[i] === v);
+    const tm = propias ? p.times.slice(0, stops.length) : (stops.times && stops.times.length >= stops.length) ? stops.times.slice(0, stops.length) : this.planTimes(stops.length);
     return { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: tm }; }
   catTone(cat) { const T = {
       'Restaurante':['#8e2d18','#c8442c'], 'Taquería':['#a33a12','#d9702f'], 'Fonda de autor':['#8e2d18','#c05a2c'],
@@ -4129,7 +4137,9 @@ class Component extends DCLogic {
     const GEN = ['museo','teatro','cine','parque','mercado','centro','plaza','galeria','cafe',
       'bar','restaurante','taqueria','cantina','salon','casa','club','hotel','foro','jardin',
       'biblioteca','libreria','mirador','terraza','bosque','palacio','templo','iglesia',
-      'caminar','somos','santa','maximo','quiero','comida','noche','ciudad','grande','nuevo'];
+      'caminar','somos','santa','maximo','quiero','comida','noche','ciudad','grande','nuevo',
+      // Comidas y bebidas genéricas: "cenar mariscos" no es pedir "Mariscos Margarito".
+      'mariscos','tacos','sushi','pizza','pizzas','ramen','tortas','pozole','birria','carnitas','helados','cerveza','cervezas','mezcal','vinos','postres','hamburguesas','alitas','pastes','tamales','churros'];
     // Prefijos válidos de una marca: la marca completa, y los prefijos que resultan
     // de quitarle palabras finales ('Cinépolis VIP' → 'cinepolis').
     // Un prefijo sólo vale si tiene 2+ palabras o 8+ letras, y no es palabra común;
@@ -4330,6 +4340,9 @@ class Component extends DCLogic {
         if (cc.cui) { const f = cands.filter(v => this.cuisine(v) === cc.cui); if (f.length) cands = f; }
         // "Cenar" o "comer" = restaurante o terraza, no una taquería (salvo tope de $300).
         if (cc.g === 'comida' && tope > 300) { const f = cands.filter(v => this.cumpleCat(v, { k: 'mesa', cats: this.CATS_MESA() })); if (f.length) cands = f; }
+        // Para algo pedido en concreto se prefieren lugares con horario y precio
+        // confirmados; uno "por confirmar" (p. ej. de OpenStreetMap) sólo si no hay otro.
+        { const seguros = cands.filter(v => !v.horaEstimada && !v.ppUnknown); if (seguros.length) cands = seguros; }
         cands.sort((a, b) => this.rank(b, this.DSEED) - this.rank(a, this.DSEED));
         // Respetar el tope del itinerario completo, no sólo el precio de cada lugar.
         const idx = seq.indexOf(item);
@@ -5925,12 +5938,19 @@ class Component extends DCLogic {
   // traslado y presupuesto con propina. Antes miraba sólo el consumo y
   // ordenaba por categoría física, así que subir de 1 a 3 paradas devolvía
   // $301 con tope de $300 y el pie seguía diciendo "≤ $300".
-  extendPlan(stops, targetN) { const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
+  // baseTimes (opcional): las horas reales del plan. Con ellas las paradas que ya
+  // estaban se quedan a su hora y las nuevas van DESPUÉS (antes se repartían
+  // todas de nuevo y una parada podía quedar a una hora en que ya cerró).
+  extendPlan(stops, targetN, baseTimes) { const out = stops.slice(0, targetN); if (out.length >= targetN) return out;
     const max = this.budgetMax(); const VM = this.vibeModel();
     const all = this.cat().filter(v => this.vibeAdmite(v, VM) && !v.cursoCerrado && this.esRecomendable(v) && !this.funcionSinConfirmar(v));
     const used = {}; out.forEach(v => used[v.id] = 1);
-    const times = this.planTimes(targetN);
-    while (out.length < targetN) { const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
+    const seguidas = baseTimes && baseTimes.length === out.length && out.length > 0;
+    const times = seguidas ? baseTimes.slice() : this.planTimes(targetN);
+    while (out.length < targetN) {
+      if (seguidas) { const k = out.length - 1; const t1 = Math.ceil((times[k] + this.duracionAct(out[k]) + 0.25) * 4) / 4;
+        if (t1 >= this.range()[1] - 0.5) break; times[out.length] = t1; }
+      const t = times[out.length]; const seg = this.segFor(t); const base = out[out.length - 1];
       const aks = this.actOrder(seg, out.length, this.DSEED || 1, VM, out.length);
       const hueco = base ? (t - times[out.length - 1]) : null;
       const alcanza = v => this.alcanzaTramo(base, v, hueco);
@@ -5953,6 +5973,7 @@ class Component extends DCLogic {
     // Si no se alcanzó el objetivo, las horas finales se reparten entre MENOS
     // paradas, así que las añadidas se revisan contra la rejilla que de verdad
     // se va a usar. Antes un cine terminaba agendado después de su última función.
+    if (seguidas) { out.times = times.slice(0, out.length); return out; }
     if (out.length !== targetN && out.length > stops.length) {
       const reales = this.planTimes(out.length);
       for (let i = out.length - 1; i >= stops.length; i--) {
