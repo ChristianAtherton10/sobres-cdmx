@@ -124,7 +124,8 @@ window.SOBRES_RECETAS = {
     'chill': {
       manana: [['cafe', 'libreria'], ['jardin', 'cafe'], ['desayuno_rico', 'parque']],
       tarde:  [['parque', 'cafe'], ['galeria', 'cafe'], ['libreria', 'postre'], ['jardin', 'postre'], ['museo', 'cafe']],
-      noche:  [['cena_rica', 'postre'], ['cine', 'postre'], ['bar_romantico']],
+      // Sin bar: "Tranqui" no mete copas de relleno (prueba de chill + cultural).
+      noche:  [['cena_rica', 'postre'], ['cine', 'postre'], ['cine_arte', 'postre']],
       sueltos: ['cafe', 'libreria', 'jardin', 'galeria', 'postre']
     },
     // Joyitas: las mismas ideas, prefiriendo lugares poco conocidos.

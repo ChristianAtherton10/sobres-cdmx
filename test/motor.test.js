@@ -2301,5 +2301,7 @@ test('Hunan Polanco no existe', () => {
 require('./fase1.test.js');
 // Catálogo: lugares nuevos del paquete del 3 nov 2026.
 require('./catalogo.test.js');
+// Fase 2: perfil que aprende (feat/perfil, 4 nov 2026).
+require('./perfil.test.js');
 
 report();

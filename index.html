@@ -455,6 +455,24 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ hayRetomar }}" hint-placeholder-val="{{ false }}"><p style="margin:2px 0 0;text-align:right"><button class="sb-btn3" style="min-height:34px;margin-right:-12px" onClick="{{ retomar }}">{{ retomarLink }}</button></p></sc-if>
 </div>
 </div>
+<sc-if value="{{ hayFeedback }}" hint-placeholder-val="{{ false }}">
+<div class="sb-card sc-rise" role="group" aria-label="Cómo les fue en tu plan" style="margin-top:18px;padding:14px 16px">
+<span class="sb-kicker" style="display:block;margin-bottom:6px">{{ fbTitulo }}</span>
+<span class="sb-label">¿Cómo les fue?</span>
+<div class="sb-chips" role="group" aria-label="Cómo les fue"><sc-for list="{{ fbComoOpts }}" as="o" hint-placeholder-count="3"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-label sb-mt">¿El precio coincidió?</span>
+<div class="sb-chips" role="group" aria-label="El precio coincidió"><sc-for list="{{ fbPrecioOpts }}" as="o" hint-placeholder-count="3"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<label style="display:block;margin-top:12px"><span class="sb-note" style="display:block;margin-bottom:5px">Tu correo, opcional. Por ahora se guarda sólo en este navegador.</span><input class="sb-input" type="email" autocomplete="email" aria-label="Tu correo (opcional)" value="{{ fbCorreo }}" onInput="{{ setFbCorreo }}" placeholder="tu@correo.com" style="width:100%;max-width:320px"></label>
+<div class="sb-row" style="margin-top:12px"><button class="sb-btn" onClick="{{ fbEnviar }}">Enviar</button><button class="sb-btn3" onClick="{{ fbAhoraNo }}">Ahora no</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ hayGustos }}" hint-placeholder-val="{{ false }}">
+<div class="sb-card sc-rise" style="margin-top:18px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<span style="flex:1;min-width:200px"><span class="sb-kicker" style="display:block;margin-bottom:4px">Lo que ya sabemos de ti</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ gustosResumen }}</span></span>
+<button class="sb-btn" onClick="{{ gustosGo }}"><span>Arma con mis gustos</span><span aria-hidden="true">→</span></button>
+<button class="sb-btn2" onClick="{{ diferenteGo }}">Quiero algo diferente</button>
+</div>
+</sc-if>
 <sc-if value="{{ hayRetomar }}" hint-placeholder-val="{{ false }}">
 <button onClick="{{ retomar }}" class="sb-card sc-rise solo-celular" style="width:100%;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;text-align:left;margin-top:18px">
 <span style="flex:1;min-width:0"><span class="sb-kicker" style="display:block;margin-bottom:4px">Retomar</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--noche)">{{ retomarTxt }}</span></span><span style="font:700 18px var(--font-body);color:var(--electrico)">→</span></button>
@@ -505,6 +523,18 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <span class="sb-label sb-mt">Cómo se mueven</span>
 <div class="sb-chips" role="group" aria-label="Cómo nos movemos"><sc-for list="{{ transportOpts }}" as="tp" hint-placeholder-count="4"><button class="sb-chip" aria-pressed="{{ tp.pressed }}" aria-label="{{ tp.aria }}" onClick="{{ tp.pick }}">{{ tp.label }}</button></sc-for></div>
 <p class="sb-note sb-nota-larga" style="margin:8px 0 0">Sirve para calcular los trayectos entre lugares. SOBRES no pide ni cobra viajes.</p>
+<sc-if value="{{ mostrarAfinar }}" hint-placeholder-val="{{ false }}">
+<div class="sb-afinar" style="margin-top:18px;padding-top:14px;border-top:1.5px solid var(--color-neutral-200,#e8e2d8)">
+<span class="sb-label">Para afinar · opcional, sólo te lo preguntamos una vez</span>
+<span class="sb-note" style="display:block;margin:10px 0 6px">Edad</span>
+<div class="sb-chips" role="group" aria-label="Rango de edad"><sc-for list="{{ afinarEdad }}" as="o" hint-placeholder-count="4"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-note" style="display:block;margin:10px 0 6px">Dieta</span>
+<div class="sb-chips" role="group" aria-label="Dieta"><sc-for list="{{ afinarDieta }}" as="o" hint-placeholder-count="4"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-note" style="display:block;margin:10px 0 6px">¿Van con niños?</span>
+<div class="sb-chips" role="group" aria-label="Con niños"><sc-for list="{{ afinarNinos }}" as="o" hint-placeholder-count="2"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<p class="sb-note sb-nota-larga" style="margin:8px 0 0">Se guarda sólo en este navegador. Lo puedes cambiar o borrar en tu perfil.</p>
+</div>
+</sc-if>
 </div>
 </div>
 
@@ -521,7 +551,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <button class="sb-btn3" style="align-self:center" onClick="{{ pasoAtras }}" aria-label="{{ pasoAtrasAria }}">← Atrás</button>
 </sc-if>
 </div>
-<p class="sb-note sb-pie-home"><span class="solo-compu">Costos por persona: te decimos cuáles están confirmados y cuáles son estimados. SOBRES no pide ni cobra viajes. · </span><button class="sb-btn3" style="padding:0;min-height:36px" onClick="{{ acercaAbrir }}">Acerca de SOBRES</button></p>
+<p class="sb-note sb-pie-home"><span class="solo-compu">Costos por persona: te decimos cuáles están confirmados y cuáles son estimados. SOBRES no pide ni cobra viajes. · </span><button class="sb-btn3" style="padding:0;min-height:36px" onClick="{{ acercaAbrir }}">Acerca de SOBRES</button> · <button class="sb-btn3" style="padding:0;min-height:36px" onClick="{{ irPerfil }}">Tus datos y gustos</button></p>
 </section>
 </sc-if>
 
@@ -577,6 +607,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 <p class="sb-note" style="margin:6px 0 0;font-size:12.5px">{{ o.costoNota }}</p>
 <sc-if value="{{ o.hayAvisoOp }}" hint-placeholder-val="{{ false }}"><p class="sb-note" role="note" style="margin:6px 0 0;font-size:12.5px">{{ o.avisoOp }}</p></sc-if>
+<sc-if value="{{ o.hayPorQue }}" hint-placeholder-val="{{ false }}"><p class="sb-note" style="margin:6px 0 0;font-size:12.5px;font-weight:600">{{ o.porQue }}</p></sc-if>
 <ol class="sb-ruta">
 <sc-for list="{{ o.stops }}" as="st" hint-placeholder-count="3"><li><span class="h">{{ st.time }}</span><span style="min-width:0"><span class="n" style="display:block">{{ st.name }}</span><span class="c" style="display:block">{{ st.sub }}</span></span></li></sc-for>
 </ol>
@@ -1182,8 +1213,18 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-for list="{{ pStats }}" as="s" hint-placeholder-count="4"><div style="padding:14px 16px;border:.75px solid var(--color-neutral-300)"><div style="font:800 26px var(--font-heading)">{{ s.v }}</div><div style="font:700 9.5px var(--font-body);letter-spacing:.12em;color:var(--color-neutral-600);margin-top:3px">{{ s.k }}</div></div></sc-for>
 </div>
 <div style="margin-bottom:26px">
-<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:10px">PREFERENCIAS DE DIETA Y ESTILO</div>
-<div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ dietOpts }}" as="o" hint-placeholder-count="5"><button style="{{ o.style }}" style-hover="border-color:var(--color-text)" onClick="{{ o.pick }}" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}">{{ o.label }}</button></sc-for></div>
+<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:10px">PARA AFINAR TUS PLANES · OPCIONAL</div>
+<span class="sb-note" style="display:block;margin:0 0 6px">Edad</span>
+<div class="sb-chips" role="group" aria-label="Rango de edad"><sc-for list="{{ afinarEdad }}" as="o" hint-placeholder-count="4"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-note" style="display:block;margin:12px 0 6px">Dieta</span>
+<div class="sb-chips" role="group" aria-label="Dieta"><sc-for list="{{ afinarDieta }}" as="o" hint-placeholder-count="4"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-note" style="display:block;margin:12px 0 6px">¿Sales con niños?</span>
+<div class="sb-chips" role="group" aria-label="Con niños"><sc-for list="{{ afinarNinos }}" as="o" hint-placeholder-count="2"><button class="sb-chip" aria-pressed="{{ o.pressed }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+</div>
+<div style="margin-bottom:26px;max-width:760px">
+<div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:8px">TUS DATOS</div>
+<p class="sb-note" style="margin:0 0 10px">Tus gustos, búsquedas, guardados y respuestas viven sólo en este navegador. Los planes que compartiste o votaste en un link siguen en ese link.</p>
+<button class="sb-btn2" onClick="{{ borrarGo }}">{{ borrarTxt }}</button>
 </div>
 <div style="border-top:2px solid var(--color-text);padding-top:14px;margin-bottom:50px;max-width:760px">
 <h2 style="font:800 20px var(--font-heading);margin:0 0 6px">Datos y fuentes</h2>
@@ -1321,6 +1362,10 @@ class Component extends DCLogic {
     const st = { view: 'home', paso: 1, pasoDir: 'in', pasoN: 0, generando: false, genFase: 0, misTab: 'planes', planEditando: false, desgloseAbierto: false, resAvisoAbierto: false, cuentaOpen: false, cuentaMotivo: 'general', cuentaHecho: '', acercaOpen: false, yaComimos: false, frasePlan: '', who:'amigos', groupSize:4, zone:'roma', when:'noche', customDate:'', budget:'b600', budgetCustom:null, vibes:['foodie'], results:null, visibleCount:0, detailId:null, backView:'home', planStops:3, planIdx:0, swapSeed:0, planCustom:null, seenCombos:[], seenVenues:[], seenCtx:'', regenN:0, aiN:0, planCustomFrom:null, aiExcluded:[], aiExclNames:[], planFrom:null, planTo:null, recSeed:0, userName:'', nameInput:'', myStars:0, myTxt:'', sync:null, syncOn:false, qf:{open:false,cheap:false,gems:false}, mapCat:'todo', mapZone:'all', openNow:false, pinId:null, saved:[], savedPlans:[], reserved:[], searchQ:'', gOpts:[], gPlans:[], friendQ:'', sendOpen:false, planQ:'', qrOpen:false, qrPlanUrl:'', resDate:'', resPeople:0, transporte:'servicio', zonesSel:['roma'], aiTxt:'', aiSummary:'', aiBusy:false, aiCtx:null, aiPide:[], sinAlcohol:false, filtrosOpen:false, extForm:{}, planCostoRecibido:null, navPila:[], planLocked:false, planListoFx:0, confirmados:[], aiOpen2:false, tandaDe:'', planDesdeTanda:false, tandaUrl:'', extTime:null, planNone:false, swapIdx:null, planView:'list', focusPlanId:null, sendSel:[], planDate:'', openedPlanId:null, openedPlanBy:'', planReadOnly:false, friendsOpen:false, sendQ:'', addVenueId:null, gVoters:['Tú'], gActive:'Tú', gVotes:{}, gQ:'', newVoter:'', toast:'', modal:null, modalSlot:null, venueTab:'resumen', promoT:'', promoD:'', fx:{cat:'Restaurante',nombre:'',desc:'',fecha:'',hora:'8:00 pm',lugar:'',zona:'roma',precio:'',cap:'',web:'',oh0:'12',oh1:'23'}, pubs:[], tmEvents:null, catLoaded:0, offers:[], photos:{}, counters:{searches:0,saves:0,zones:{},vibes:{},budN:0,budSum:0,who:{}}, dietSel:[], isMobile:false, hour:20 };
     try { const raw = localStorage.getItem('sobres_v2'); if (raw) { const s = JSON.parse(raw); ['saved','savedPlans','counters','dietSel','offers','pubs','gOpts','gVotes','gVoters'].forEach(k => { if (s[k]) st[k] = s[k]; }); } } catch(e) {}
     try { const un = localStorage.getItem('sobres_user'); if (un) st.userName = un; } catch(e) {}
+    // Perfil que aprende (Fase 2): sólo en este navegador.
+    st.perfil = this.perfilLee(); this._perfil = st.perfil;
+    Object.assign(st, { sinGustos: false, fbComo: '', fbPrecio: '', fbCorreo: '', borrarArmado: false });
+    if ((st.perfil.dieta || []).includes('sinalcohol')) st.sinAlcohol = true;
     this.state = st;
   }
   componentDidMount() {
@@ -1499,6 +1544,9 @@ class Component extends DCLogic {
         out.push(v);
       }
     }
+    // Público y dieta de cada lugar (Fase 2) y el precio corregido con lo que
+    // esta persona contó después de ir (sólo en su navegador).
+    out.forEach(v => { v.publico = this.publicoDe(v); const d = this.dietaDe(v); if (d.length) v.dieta = d; this.ajustaPrecio(v); });
     return out;
   }
 
@@ -2232,6 +2280,7 @@ class Component extends DCLogic {
     planes.forEach(p => this.ensureProposed(p, (by || '').trim() || 'Un amigo'));
   }
   votarOpcion(p, kind) {
+    if (kind === 'sobres') this.aprende('voto', p.stops || [], p.times);
     const go = () => { const yo = this.state.userName; if (!yo) return;
       const pid = this.planOptId(p); const ya = ((this.state.sync && this.state.sync.plans) || []).find(x => x.id === pid);
       const actual = ya && ya.votes ? ya.votes[yo] : null; const k2 = actual === kind ? null : kind;
@@ -2469,7 +2518,7 @@ class Component extends DCLogic {
     if (v.ppUnknown) return true;   // sin precio: entra, pero el total nunca se declara completo
     return v.pp <= max;
   }
-  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc; }
+  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } return sc + this.afinidad(v); }
   groupOrder(seg, pi, seed) { const s = this.state; const base = (this.SEGG[seg] || ['comida']).slice();
     const want = {}; (s.vibes || []).forEach(vb => (this.VIBEG[vb] || []).forEach(g => { want[g] = (want[g] || 0) + 1; }));
     const noFoodie = (s.vibes || []).length > 0 && !s.vibes.includes('foodie') && !s.vibes.includes('romántico');
@@ -2618,6 +2667,16 @@ class Component extends DCLogic {
     // Fiesta pasada la 1 am (horario elegido): primero dos que cierren bailando.
     if (exigeBaile) cands.forEach(c => { if (elegidos.filter(e => this.bailable(e.stops[e.stops.length - 1])).length < 2 && this.bailable(c.stops[c.stops.length - 1])
       && !elegidos.some(e => comparte(e, c))) elegidos.push(c); });   // aquí sí puede repetir plantilla con otros lugares
+    // Con dos o más ambientes (o "Arma con mis gustos"), cada uno pone al menos
+    // una opción con lo SUYO: con "Comer rico + Cultural" no salen tres comidas.
+    if (amb.length > 1) {
+      const propias = {}; amb.forEach(a => { propias[a] = [...piezasDe[a]].filter(k => !amb.some(b => b !== a && piezasDe[b].has(k))); });
+      const toca = (c, a) => c.plantilla.split('+').some(k => propias[a].indexOf(k) >= 0);
+      amb.map(a => ({ a, c: cands.find(c => toca(c, a)) })).filter(x => x.c).sort((x, y) => y.c.orden - x.c.orden).forEach(({ a }) => {
+        if (elegidos.length >= 3 || elegidos.some(e => toca(e, a))) return;
+        const c = cands.find(c => toca(c, a) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c)));
+        if (c) elegidos.push(c); });
+    }
     pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
     const reserva = cands.filter(c => elegidos.indexOf(c) < 0);
     // Lo que se ofrece suelto cuando no hay plan: las piezas "sueltos" de cada ambiente.
@@ -3738,6 +3797,8 @@ class Component extends DCLogic {
     // lo mostrado. "Ver otras opciones" sí es una solicitud nueva.
     if (extra && extra.reqId && this._ultSol && this._ultSol.reqId === extra.reqId) {
       this.setState({ results: this._ultSol.r }); if (this.state.view !== 'results') this.nav('results'); return this._ultSol.r; }
+    // Una búsqueda nueva también enseña (lo que menos pesa).
+    if (extra && (extra.nueva || extra.surprise)) this.aprende('busqueda');
     const _sol = (extra && extra.reqId) ? { reqId: extra.reqId, reqSeed: (() => { let h = 7; for (const ch of String(extra.reqId)) h = (h * 31 + ch.charCodeAt(0)) % 1000003; return h; })() } : this.nuevaSolicitud();
     const _ho = this.histOpts();
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
@@ -3781,7 +3842,7 @@ class Component extends DCLogic {
       'Tour':'🚶','Sitio histórico':'🏰' }; return I[cat] || '📍'; }
   tile(v, h) { const t = this.catTone(v.cat);
     return `position:relative;width:100%;height:${h}px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,${t[0]} 0%,${t[1]} 100%);color:#fff;border-bottom:2px solid var(--color-text);overflow:hidden;text-align:center;padding:10px`; }
-  cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { const u = this.linkLugar(v.id); this.copiarTexto(u, 'Link copiado: ' + u); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
+  cardActions(v) { const saved = this.state.saved.includes(v.id); return { open: () => { this.track(v.id, 'v'); this.nav('detail', { detailId: v.id, backView: this.state.view }); }, save: () => { const s = this.state.saved.slice(); const i = s.indexOf(v.id); if (i >= 0) s.splice(i,1); else { s.push(v.id); this.track(v.id, 's'); this.aprende('guardado', [v]); const c = JSON.parse(JSON.stringify(this.state.counters)); c.saves++; this.setState({counters:c}); } this.setState({ saved: s }, () => this.persist()); this.toast(i >= 0 ? 'Quitado de guardados' : `Guardado: ${v.n}`); }, saveLabel: saved ? '✓ Guardado' : 'Guardar', share: () => { const u = this.linkLugar(v.id); this.copiarTexto(u, 'Link copiado: ' + u); }, mapGo: () => this.nav('map', { pinId: v.id, mapZone: v.z }), reserve: () => this.goReserve(v) }; }
   slot24(t) { const m = /(\d+):(\d+)\s*(am|pm)/i.exec(t || ''); if (!m) return '20:00'; let h = (+m[1]) % 12; if (/pm/i.test(m[3])) h += 12; return String(h).padStart(2, '0') + ':' + m[2]; }
   otUrl(v, hhmm, covers, dateISO) { const d = dateISO || this.state.planDate || this.todayISO();
     const q = 'term=' + encodeURIComponent(v.n + (v.col ? ' ' + v.col : '')) + '&covers=' + (covers || this.state.groupSize || 2) + '&dateTime=' + encodeURIComponent(d + 'T' + (hhmm || '20:00'));
@@ -4706,7 +4767,7 @@ class Component extends DCLogic {
     else if (maxYes === 0) { gEstado = 'solo-contra'; gConsensus = 'Hay ' + enContra + ' voto' + (enContra === 1 ? '' : 's') + ' en contra y ninguno a favor — propongan otra cosa'; }
     else if (empatados.length > 1) { gEstado = 'empate'; gConsensus = 'Empate a ' + maxYes + ' entre ' + empatados.map(o => o.name).join(' y ') + '. ' + REGLA; }
     else { gEstado = 'lider'; gConsensus = 'Va ganando ' + best.name + ' — ' + best.yes + ' sobres' + (best.no ? ' y ' + best.no + ' no jalo' : '') + '. ' + REGLA; }
-    const insights = [ { k: 'PORQUE SUELES ELEGIR', v: this.insightZone() }, { k: 'TU VIBRA MÁS FRECUENTE', v: this.insightVibe() }, { k: 'CON QUIÉN SALES', v: this.insightWho() } ];
+    const insights = [ { k: 'DÓNDE SALES', v: this.insightZone() }, { k: 'QUÉ TE GUSTA', v: this.insightVibe() }, { k: 'CON QUIÉN SALES', v: this.insightWho() } ];
     const c = s.counters;
     const pStats = [{ v: String(c.searches), k: 'BÚSQUEDAS' }, { v: String(s.saved.length + c.saves), k: 'GUARDADOS' }, { v: '$' + Math.round(c.budSum / Math.max(1,c.budN)), k: 'PRESUPUESTO TÍPICO PP' }, { v: String(s.savedPlans.length + s.reserved.length), k: 'PLANES Y RESERVAS' }];
     const dietOpts = this.DIET.map(d => ({ label: d, style: this.chip(s.dietSel.includes(d)), pick: () => { const l = s.dietSel.slice(); const i = l.indexOf(d); if (i>=0) l.splice(i,1); else l.push(d); this.setState({ dietSel: l }, () => this.persist()); } }));
@@ -5134,7 +5195,7 @@ class Component extends DCLogic {
         if (!cand) { const r2 = this.engine(((s.surpriseN || 0) + Math.floor(Math.random() * 97) + 1)); cand = (r2.plans || []).find(p => !existing[this.planOptId(p)]) || (r2.plans || [])[0]; }
         if (!cand) { this.toast('No pude armar un plan con tus filtros — cambia zona u horario'); return; }
         this.proposePlan(cand); },
-      insights, pStats, dietOpts, providers,
+      insights, pStats, dietOpts, providers, ...this.perfilVals(),
       vTabs, vIsResumen: s.venueTab === 'resumen', vIsInv: s.venueTab === 'inv', vIsNew: s.venueTab === 'new', vIsAna: s.venueTab === 'ana',
       vHeadName: (myVenues[0] && myVenues[0].n) || 'Tu negocio en Sobres',
       vHeadSub: myVenues.length
@@ -5279,8 +5340,10 @@ class Component extends DCLogic {
   // enlace exacto, copiar enlace, crear cuenta (opcional) y mandárselo a alguien
   // que ya está en SOBRES. Sin pasos de por medio.
   compartirUnPlan() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
+    this.aprende('compartido', p.stops, p.times);
     this.setState({ sendOpen: true, compartirTanda: false, compCopiado: false, sendSel: [], sendQ: '' }); }
   compartirTanda() { const r = this.state.results; if (!r || !(r.plans || []).length) { this.toast('Primero arma tus opciones'); return; }
+    this.aprende('compartidoTanda', [].concat(...r.plans.slice(0, 3).map(x => x.stops || [])));
     this.setState({ sendOpen: true, compartirTanda: true, compCopiado: false, sendSel: [], sendQ: '' }); }
   textoCompartir(tanda) { const s = this.state; const fecha = this.fmtDate(s.planDate || this.todayISO());
     if (tanda) { const pls = (s.results && s.results.plans || []).slice(0, 3);
@@ -5369,6 +5432,7 @@ class Component extends DCLogic {
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
         elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',
+        porQue: this.porQue(st), hayPorQue: !!this.porQue(st),
         avisoOp: [p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
         hayAvisoOp: !!(p.avisoVentana || p.avisoComida || p.avisoPrecio),
         ...(() => { if (!(r && r.compartida)) return { votoOn: false };
@@ -5380,6 +5444,8 @@ class Component extends DCLogic {
             votarSi: () => this.votarOpcion(p, 'sobres'), votarNo: () => this.votarOpcion(p, 'nojalo'),
             votantes: quienes.length ? 'Votaron: ' + quienes.join(', ') : 'Nadie ha votado todavía' }; })(),
         elegir: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i] });
+          { const ts0 = (p.times && p.times.length === st.length) ? p.times : this.planTimes(st.length); const pf = this.aprende('elegido', st, ts0);
+            pf.pendiente = { fecha: s.planDate || this.todayISO(), ids: st.map(v => v.id), cats: st.map(v => v.cat), ts: Date.now() }; this.perfilGuarda(pf); }
           this.setState({ planIdx: i, planDesdeTanda: true, planStops: st.length, swapSeed: 0,
             planCustom: { stops: st, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null,
             planView: 'edit', openedPlanId: null, planReadOnly: false, planLocked: false, openedPlanBy: '',
@@ -5464,7 +5530,7 @@ class Component extends DCLogic {
       retomarTxt: retomar ? ((s.results.plans.length === 1 ? 'Tu opción' : 'Tus ' + s.results.plans.length + ' opciones') + ' · ' + this.zonesLabel() + ', ' + this.whenLabel().toLowerCase()) : '',
       retomar: () => this.nav('results'),
       retomarLink: retomar ? ('o retoma ' + (s.results.plans.length === 1 ? 'tu opción' : 'tus ' + s.results.plans.length + ' opciones') + ' de hace rato →') : '',
-      paso, paso1: paso === 1, paso2: paso === 2, paso3: paso === 3,
+      ...this.perfilVals(), paso, paso1: paso === 1, paso2: paso === 2, paso3: paso === 3,
       pasoTxt: 'Paso ' + paso + ' de 3', pasoAncho: (paso / 3 * 100).toFixed(1) + '%',
       pasoFx: s.pasoDir === 'back' ? 'sb-back' : 'sb-in', pasoKey: 'p' + paso + '-' + (s.pasoN || 0),
       pasoAtras: () => paso > 1 ? irPaso(paso - 1, 'back') : this.nav('home'),
@@ -5888,9 +5954,217 @@ class Component extends DCLogic {
       else { const g = (this.ZGEO || {})[s.mapZone]; if (g) this._map.flyTo(g, 14.4, { duration: 0.7 }); }
     }
   }
-  insightZone() { const z = this.state.counters.zones; const top = Object.keys(z).sort((a,b) => z[b]-z[a])[0]; const c = this.state.counters; return `Sueles buscar en ${this.zLabel(top || 'roma')} con presupuesto ~$${Math.round(c.budSum/Math.max(1,c.budN))} pp — priorizamos esa zona en tus resultados.`; }
-  insightVibe() { const v = this.state.counters.vibes; const top = Object.keys(v).sort((a,b) => v[b]-v[a]); return `${top[0] || 'foodie'}${top[1] ? ' + ' + top[1] : ''}. Por eso te enseñamos primero lugares con algo especial, no antros.`; }
-  insightWho() { const w = this.state.counters.who; const top = Object.keys(w).sort((a,b) => w[b]-w[a])[0] || 'amigos'; const lbl = { amigos:'con amigos', date:'en date', familia:'en familia', compa:'con compañeros', solo:'solo' }[top]; return `La mayoría de tus planes son ${lbl} — los planes armados priorizan mesas y actividades para grupo.`; }
+  // Valores de pantalla del perfil (Fase 2): preguntas para afinar, "Arma con
+  // mis gustos", feedback del día siguiente y "Borrar mis datos".
+  perfilVals() {
+    const s = this.state, p = this.perfil();
+    const set = (k, v) => { const q = JSON.parse(JSON.stringify(this.perfil())); q[k] = v; this.perfilGuarda(q); };
+    const chip = (on, label, pick) => ({ label, pressed: on ? 'true' : 'false', pick });
+    const afinarEdad = [['18-24', '18–24'], ['25-34', '25–34'], ['35-44', '35–44'], ['45+', '45+']]
+      .map(([k, l]) => chip(p.edad === k, l, () => set('edad', p.edad === k ? null : k)));
+    const afinarDieta = [['vegetariano', 'Vegetariano'], ['vegano', 'Vegano'], ['singluten', 'Sin gluten'], ['sinalcohol', 'Sin alcohol']]
+      .map(([k, l]) => { const on = (p.dieta || []).includes(k); return chip(on, l, () => {
+        const d = (this.perfil().dieta || []).slice(); const i = d.indexOf(k); if (i >= 0) d.splice(i, 1); else d.push(k); set('dieta', d);
+        if (k === 'sinalcohol') this.setState({ sinAlcohol: !on }); }); });
+    const afinarNinos = [[true, 'Sí'], [false, 'No']].map(([k, l]) => chip(p.ninos === k, l, () => set('ninos', p.ninos === k ? null : k)));
+    const fb = this.feedbackPendiente();
+    const fbTitulo = fb ? 'Tu plan del ' + this.fmtDate(fb.fecha) : '';
+    const fbComoOpts = [['bien', 'Bien'], ['regular', 'Regular'], ['mal', 'Mal']].map(([k, l]) => chip(s.fbComo === k, l, () => this.setState({ fbComo: s.fbComo === k ? '' : k })));
+    const fbPrecioOpts = [['si', 'Sí'], ['caro', 'Fue más caro'], ['barato', 'Fue más barato']].map(([k, l]) => chip(s.fbPrecio === k, l, () => this.setState({ fbPrecio: s.fbPrecio === k ? '' : k })));
+    return {
+      mostrarAfinar: !p.preguntado, afinarEdad, afinarDieta, afinarNinos,
+      afinarSaltar: () => set('preguntado', true),
+      hayGustos: this.perfilTiene() && !fb, gustosResumen: this.perfilTiene() ? this.resumenGustos() : '',
+      gustosGo: () => { const g = this.gustosForm(); this.ev('armar_con_mis_gustos', {});
+        this.setState(g, () => this.generar(() => this.runSearch({ nueva: true }))); },
+      diferenteGo: () => { this.setState({ sinGustos: true, vibes: [], paso: 1, pasoDir: 'in' }); this.toast('Empezamos de cero: esta vez no usamos tus gustos'); },
+      hayFeedback: !!fb, fbTitulo, fbComoOpts, fbPrecioOpts, fbCorreo: s.fbCorreo || p.correo || '',
+      setFbCorreo: e => this.setState({ fbCorreo: e.target.value }),
+      fbEnviar: () => { if (!s.fbComo && !s.fbPrecio) { this.toast('Toca una respuesta, o “Ahora no”'); return; }
+        this.enviaFeedback(s.fbComo, s.fbPrecio, s.fbCorreo); this.setState({ fbComo: '', fbPrecio: '', fbCorreo: '' });
+        this.toast(s.fbPrecio === 'caro' || s.fbPrecio === 'barato' ? 'Gracias: ajustamos el precio estimado de esos lugares' : '¡Gracias! Con esto afinamos tus planes'); },
+      fbAhoraNo: () => { const q = JSON.parse(JSON.stringify(this.perfil())); q.pendiente = null; this.perfilGuarda(q); },
+      borrarTxt: s.borrarArmado ? 'Toca otra vez para borrar todo' : 'Borrar mis datos',
+      borrarGo: () => { if (!s.borrarArmado) { this.setState({ borrarArmado: true }); return; } this.borrarMisDatos(); },
+      perfilCorreo: p.correo || '', irPerfil: () => this.nav('profile')
+    };
+  }
+  // ============================================================
+  // PERFIL QUE APRENDE (Fase 2, 4 nov 2026). Vive SÓLO en este navegador
+  // (localStorage 'sobres_perfil'); nada de esto se manda a Redis.
+  // Aprende de lo que la persona HACE, no sólo de lo que busca, con este peso:
+  // plan elegido o votado (4) > plan compartido (3) > lugar guardado (2) >
+  // búsqueda (1). Guarda categorías, cocinas, zonas, rango de precio, horario
+  // típico y con quién sale.
+  // ============================================================
+  PESO_PERFIL() { return { elegido: 4, voto: 4, compartido: 3, compartidoTanda: 1, guardado: 2, busqueda: 1 }; }
+  perfil0() { return { v: 1, edad: null, dieta: [], ninos: null, preguntado: false, acciones: 0, busquedas: 0,
+    sen: { cat: {}, cocina: {}, zona: {}, who: {}, franja: {}, vibe: {} }, precio: { n: 0, sum: 0 },
+    pendiente: null, feedback: [], correo: '', ajustes: {} }; }
+  perfilLee() {
+    let p = null; try { p = JSON.parse(localStorage.getItem('sobres_perfil') || 'null'); } catch(e) {}
+    const base = this.perfil0();
+    if (!p || p.v !== 1) {
+      // La dieta que ya existía en el perfil viejo se conserva.
+      let viejo = []; try { const s2 = JSON.parse(localStorage.getItem('sobres_v2') || '{}'); viejo = s2.dietSel || []; } catch(e) {}
+      const mapa = { 'Vegetariano': 'vegetariano', 'Vegano': 'vegano', 'Sin alcohol': 'sinalcohol' };
+      base.dieta = viejo.map(d => mapa[d]).filter(Boolean);
+      return base;
+    }
+    return Object.assign(base, p, { sen: Object.assign(base.sen, p.sen || {}) });
+  }
+  perfilGuarda(p, cb) { this._perfil = p; try { localStorage.setItem('sobres_perfil', JSON.stringify(p)); } catch(e) {} this.setState({ perfil: p }, cb); }
+  perfil() { return this._perfil || this.state.perfil || this.perfil0(); }
+  franjaDe(h) { return h < 12 ? 'manana' : h < 18 ? 'tarde' : 'noche'; }
+  // Suma una acción al perfil. `stops` son lugares; `extra` trae lo de la búsqueda.
+  aprende(tipo, stops, times, extra) {
+    const w = this.PESO_PERFIL()[tipo] || 1; const p = JSON.parse(JSON.stringify(this.perfil())); const S = p.sen; const s = this.state;
+    const suma = (o, k, n) => { if (k) o[k] = Math.round(((o[k] || 0) + n) * 100) / 100; };
+    (stops || []).forEach((v, i) => { if (!v || !v.id) return;
+      suma(S.cat, v.cat, w); if (v.cocina) suma(S.cocina, v.cocina, w); suma(S.zona, v.z, w);
+      if (times && times[i] != null) suma(S.franja, this.franjaDe(times[i]), w);
+      if (!v.ppUnknown && v.pp > 0 && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) { p.precio.n += w; p.precio.sum += v.pp * w; } });
+    if (tipo !== 'busqueda') { suma(S.who, s.who, w); p.acciones++; (s.vibes || []).forEach(vb => suma(S.vibe, vb, w / 2)); }
+    else { p.busquedas++; p.preguntado = true; (extra && extra.vibes || s.vibes || []).forEach(vb => suma(S.vibe, vb, w));
+      suma(S.who, s.who, w); if (s.zone !== 'all') (this.zoneList() || []).forEach(z => suma(S.zona, z, w)); }
+    this.perfilGuarda(p);
+    return p;
+  }
+  // ¿Hay algo aprendido de verdad? Una búsqueda sola no es un gusto.
+  perfilTiene() { const p = this.perfil(); return p.acciones >= 1 || p.busquedas >= 2; }
+  top(o, n) { return Object.keys(o || {}).sort((a, b) => o[b] - o[a]).slice(0, n || 1); }
+  share(o, k) { const t = Object.values(o || {}).reduce((a, b) => a + b, 0); return t ? (o[k] || 0) / t : 0; }
+
+  // Dieta y público de cada lugar. Se deducen del nombre, la cocina y el tipo
+  // (se declara así en la ficha); un dato explícito de la fuente siempre gana.
+  dietaDe(v) { if (v.dieta && v.dieta.length) return v.dieta;
+    const t = this.strip([v.n, v.cocina, v.d].join(' '));
+    if (/vegan/.test(t)) return ['vegano', 'vegetariano'];
+    if (/vegetarian|veggie|plant based|basad[ao] en plantas/.test(t)) return ['vegetariano'];
+    return []; }
+  publicoDe(v) { if (v.publico) return v.publico;
+    if ((v.aptoFamilia || this.aptoFamiliaDe(v)) === 'si' && (v.who || []).includes('familia')) return 'familia';
+    const nm = this.strip(v.n || '');
+    if (v.cat === 'Antro' && (!v.ppUnknown && v.pp > 0 && v.pp <= 450 || /universit|reggaet|perreo|cumbia rebajada/.test(nm))) return '20s';
+    if (['Speakeasy', 'Bar de autor'].includes(v.cat) || v.cat === 'Salón de baile' && /los angeles|tenampa|caribe|candela|gran salon/.test(nm)
+      || (this.FOOD.includes(v.cat) && !v.ppUnknown && v.pp >= 1200)) return '30s+';
+    return 'todos'; }
+
+  // Cuánto se parece un lugar a lo que esta persona ha elegido. 0 si no hay
+  // perfil o si pidió "Quiero algo diferente".
+  afinidad(v) {
+    const s = this.state; if (s.sinGustos || !this.perfilTiene()) return this.ajusteEdad(v);
+    const p = this.perfil(), S = p.sen; let sc = 0;
+    sc += 6 * this.share(S.cat, v.cat);
+    if (v.cocina) sc += 4 * this.share(S.cocina, v.cocina);
+    sc += 1.5 * this.share(S.zona, v.z);
+    const veg = (p.dieta || []).some(d => d === 'vegetariano' || d === 'vegano');
+    if (veg && this.dietaDe(v).length && (this.FOOD.includes(v.cat) || v.cat === 'Café')) sc += 8;   // la dieta pesa más que el gusto
+    if (p.ninos === true && s.who === 'familia' && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'si') sc += 1.5;
+    return sc + this.ajusteEdad(v);
+  }
+  // A alguien de 35 a 44 no se le recomiendan primero antros de universitarios.
+  ajusteEdad(v) { const e = this.perfil().edad; if (!e) return 0; const pu = this.publicoDe(v);
+    if ((e === '35-44' || e === '45+') && pu === '20s') return -7;
+    if (e === '18-24' && pu === '30s+') return -2;
+    return 0; }
+
+  // "Porque te gustaron los museos y comes vegetariano": una línea por opción.
+  CAT_PLURAL() { return { 'Museo': 'los museos', 'Galería': 'las galerías', 'Teatro': 'el teatro', 'Cine': 'el cine', 'Centro cultural': 'los centros culturales',
+    'Restaurante': 'los restaurantes', 'Heladería': 'los helados', 'Café': 'los cafés', 'Churrería': 'los churros', 'Bar': 'los bares', 'Bar de autor': 'los bares de autor',
+    'Speakeasy': 'los speakeasies', 'Rooftop': 'las terrazas', 'Cantina': 'las cantinas', 'Antro': 'los antros', 'Salón de baile': 'bailar', 'Mercado': 'los mercados',
+    'Taquería': 'los tacos', 'Taller': 'los talleres', 'Escape room': 'los escape rooms', 'Boliche': 'el boliche', 'Billar': 'el billar', 'Parque': 'los parques',
+    'Atracción': 'las atracciones', 'Librería': 'las librerías', 'Tour': 'los recorridos', 'Mezcalería': 'el mezcal', 'Izakaya': 'las izakayas' }; }
+  porQue(stops) {
+    const s = this.state; if (s.sinGustos || !this.perfilTiene() || !stops || !stops.length) return '';
+    const p = this.perfil(), S = p.sen, PL = this.CAT_PLURAL(); const partes = [];
+    const cats = []; stops.forEach(v => { if (this.share(S.cat, v.cat) >= 0.15 && PL[v.cat] && cats.indexOf(v.cat) < 0) cats.push(v.cat); });
+    if (cats.length) partes.push('te gustaron ' + cats.slice(0, 2).map(c => PL[c]).join(' y '));
+    const coc = stops.find(v => v.cocina && this.share(S.cocina, v.cocina) >= 0.2);
+    if (coc && !cats.includes(coc.cat)) partes.push('te gusta la comida ' + this.strip(coc.cocina).toLowerCase());
+    const veg = (p.dieta || []).find(d => d === 'vegano' || d === 'vegetariano');
+    if (veg && stops.some(v => this.dietaDe(v).length)) partes.push(veg === 'vegano' ? 'comes vegano' : 'comes vegetariano');
+    if ((p.dieta || []).includes('sinalcohol') && s.sinAlcohol) partes.push('prefieres sin alcohol');
+    if (!partes.length) return '';
+    return 'Porque ' + (partes.length > 1 ? partes.slice(0, -1).join(', ') + ' y ' + partes[partes.length - 1] : partes[0]) + '.';
+  }
+
+  // "Arma con mis gustos": el formulario con lo aprendido ya marcado.
+  CAT_VIBE() { return { 'Museo': 'cultural', 'Galería': 'cultural', 'Teatro': 'cultural', 'Cine': 'cultural', 'Centro cultural': 'cultural', 'Librería': 'chill',
+    'Restaurante': 'foodie', 'Heladería': 'foodie', 'Churrería': 'foodie', 'Mercado': 'foodie', 'Taquería': 'foodie', 'Café': 'chill',
+    'Bar': 'nightlife', 'Bar de autor': 'nightlife', 'Speakeasy': 'nightlife', 'Rooftop': 'nightlife', 'Antro': 'nightlife', 'Salón de baile': 'nightlife',
+    'Cantina': 'social', 'Escape room': 'social', 'Boliche': 'social', 'Billar': 'social', 'Taller': 'creativo', 'Parque': 'familiar', 'Tour': 'aventurero' }; }
+  gustosForm() {
+    const p = this.perfil(), S = p.sen, CV = this.CAT_VIBE(); const vb = {};
+    Object.keys(S.vibe).forEach(k => { vb[k] = (vb[k] || 0) + S.vibe[k]; });
+    Object.keys(S.cat).forEach(c => { const k = CV[c]; if (k) vb[k] = (vb[k] || 0) + S.cat[c]; });
+    const vibes = this.top(vb, 2); const zona = this.top(S.zona, 1)[0] || this.state.zone;
+    const who = this.top(S.who, 1)[0] || (p.ninos ? 'familia' : this.state.who);
+    const pp = p.precio.n ? p.precio.sum / p.precio.n : null;
+    const budget = pp == null ? this.state.budget : (this.BUD.find(b => b[2] >= pp * 1.15 && b[0] !== 'free') || this.BUD[this.BUD.length - 1])[0];
+    const fr = this.top(S.franja, 1)[0];
+    const when = fr === 'manana' || fr === 'tarde' ? 'finde' : this.state.when;
+    return { vibes: vibes.length ? vibes : this.state.vibes, zone: zona, zonesSel: [zona], who, budget, budgetCustom: null, when,
+      groupSize: who === 'date' ? 2 : who === 'solo' ? 1 : this.state.groupSize, sinAlcohol: (p.dieta || []).includes('sinalcohol') || this.state.sinAlcohol,
+      sinGustos: false, planFrom: null, planTo: null };
+  }
+  resumenGustos() { const g = this.gustosForm(); const p = this.perfil();
+    const VB = { foodie: 'Comer rico', cultural: 'Cultural', nightlife: 'Noche', romántico: 'Romántico', social: 'Con amigos', familiar: 'En familia',
+      creativo: 'Creativo', aventurero: 'Aventura', chill: 'Tranqui', joyita: 'Joyitas' };
+    const d = (p.dieta || []).map(x => ({ vegetariano: 'vegetariano', vegano: 'vegano', singluten: 'sin gluten', sinalcohol: 'sin alcohol' })[x]);
+    const b = this.BUD.find(x => x[0] === g.budget);
+    return [g.vibes.map(v => VB[v] || v).join(' + '), this.zLabel(g.zone), b ? b[1] : ''].concat(d).filter(Boolean).join(' · '); }
+
+  // Feedback del día siguiente: "¿Cómo les fue?" y "¿El precio coincidió?".
+  // Corrige, en este navegador, el precio ESTIMADO de cada lugar del plan.
+  feedbackPendiente() { const p = this.perfil(); const pe = p.pendiente; if (!pe || !pe.fecha) return null;
+    return pe.fecha < this.todayISO() ? pe : null; }
+  enviaFeedback(como, precio, correo) {
+    const p = JSON.parse(JSON.stringify(this.perfil())); const pe = p.pendiente; if (!pe) return;
+    p.feedback.push({ fecha: pe.fecha, ids: pe.ids, como: como || null, precio: precio || null, ts: Date.now() });
+    p.feedback = p.feedback.slice(-40);
+    if (correo && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) p.correo = correo.trim();
+    const f = precio === 'caro' ? 1.15 : precio === 'barato' ? 0.87 : null;
+    if (f) (pe.ids || []).forEach(id => { const a = (p.ajustes[id] || 1) * f; p.ajustes[id] = Math.round(Math.max(0.6, Math.min(1.6, a)) * 1000) / 1000; });
+    // Un plan que salió mal resta a sus categorías: no se repite lo que no gustó.
+    if (como === 'mal') (pe.cats || []).forEach(c => { p.sen.cat[c] = Math.max(0, (p.sen.cat[c] || 0) - 3); });
+    p.pendiente = null;
+    this.perfilGuarda(p, () => { if (f) { this.EXT = (this.EXT || []).map(v => this.ajustaPrecio(Object.assign({}, v))); this._catV = null; } });
+    this.ev('feedback_enviado', { como: como || '', precio: precio || '', correo: correo ? 'si' : 'no' });
+  }
+  // El precio corregido sólo toca cifras estimadas o inferidas, nunca una tarifa verificada.
+  ajustaPrecio(v) { const f = ((this.perfil().ajustes) || {})[v.id];
+    if (!f || v.pEstado === 'verificado' || v.ppUnknown || !(v.pp > 0)) return v;
+    const base = v.ppSinAjuste != null ? v.ppSinAjuste : v.pp; v.ppSinAjuste = base;
+    v.pp = Math.round(base * f / 10) * 10; v.pRep = v.pp; v.pAjusteLocal = f;
+    v.pNota = (v.pNota ? v.pNota + ' ' : '') + 'Ajustado con lo que nos contaste después de ir.';
+    return v; }
+
+  // "Borrar mis datos": todo lo que SOBRES guarda en este navegador.
+  borrarMisDatos() {
+    const llaves = st => { const out = []; try { for (let i = 0; i < st.length; i++) out.push(st.key(i)); } catch(e) {} return out; };
+    try { llaves(localStorage).filter(k => /^sobres_/.test(k || '')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
+    try { llaves(sessionStorage).filter(k => /^sobres_/.test(k || '')).forEach(k => sessionStorage.removeItem(k)); } catch(e) {}
+    this._perfil = null;
+    this._sesionVistos = [];
+    this.setState({ perfil: this.perfil0(), counters: { searches: 0, saves: 0, zones: {}, vibes: {}, budN: 0, budSum: 0, who: {} }, dietSel: [],
+      saved: [], savedPlans: [], userName: '', sinGustos: false, borrarArmado: false, seenCombos: [], seenVenues: [] });
+    this.EXT = (this.EXT || []).map(v => { if (v.ppSinAjuste != null) { v = Object.assign({}, v, { pp: v.ppSinAjuste, pRep: v.ppSinAjuste }); delete v.pAjusteLocal; delete v.ppSinAjuste; } return v; });
+    this._catV = null;
+    this.toast('Listo: borramos lo que SOBRES guardaba en este navegador');
+  }
+  insightZone() { const p = this.perfil(); const z = this.top(p.sen.zona, 1)[0];
+    if (!z) return 'Todavía no sabemos tu zona: arma o elige un plan y la aprendemos.';
+    const pp = p.precio.n ? Math.round(p.precio.sum / p.precio.n / 10) * 10 : null;
+    return 'Sales más por ' + this.zLabel(z) + (pp ? ', alrededor de $' + pp + ' por persona' : '') + '. Lo usamos para ordenar tus opciones.'; }
+  insightVibe() { const p = this.perfil(); const c = this.top(p.sen.cat, 3).filter(k => this.CAT_PLURAL()[k]);
+    if (!c.length) return 'Cuando elijas, guardes o compartas un plan, aquí verás qué tipo de lugares te gustan.';
+    return 'Te gustan ' + c.map(k => this.CAT_PLURAL()[k]).join(', ') + '. Esos salen primero en tus planes.'; }
+  insightWho() { const p = this.perfil(); const top = this.top(p.sen.who, 1)[0];
+    if (!top) return 'Todavía no sabemos con quién sales.';
+    const lbl = { amigos: 'con amigos', date: 'en date', familia: 'en familia', compa: 'con compañeros', solo: 'solo' }[top] || top;
+    const fr = this.top(p.sen.franja, 1)[0]; const frl = { manana: 'en la mañana', tarde: 'en la tarde', noche: 'en la noche' }[fr];
+    return 'Casi siempre sales ' + lbl + (frl ? ', ' + frl : '') + '.'; }
 }
 </script>
 </body>

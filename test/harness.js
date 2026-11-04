@@ -16,7 +16,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   const localStorage = {
     getItem: k => (k in store ? store[k] : null),
     setItem: (k, v) => { store[k] = String(v); },
-    removeItem: k => { delete store[k]; }
+    removeItem: k => { delete store[k]; },
+    key: i => Object.keys(store)[i] ?? null,
+    get length() { return Object.keys(store).length; }
   };
   if (opts.dseed != null) store['sobres_dseed'] = String(opts.dseed);
   // Permite simular una recarga de página: se arranca con lo que quedó guardado.
@@ -47,7 +49,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   const sessionStorage = {
     getItem: k => (k in sstore ? sstore[k] : null),
     setItem: (k, v) => { sstore[k] = String(v); },
-    removeItem: k => { delete sstore[k]; }
+    removeItem: k => { delete sstore[k]; },
+    key: i => Object.keys(sstore)[i] ?? null,
+    get length() { return Object.keys(sstore).length; }
   };
   win.sessionStorage = sessionStorage;
   const sandbox = {
