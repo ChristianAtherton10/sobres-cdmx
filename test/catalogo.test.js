@@ -139,4 +139,43 @@ test('los ids de eventos viajan en el enlace compartido', () => {
   assert(app.largaId(app.cortaId(v)) === v.id, v.id);
 });
 
+section('26d · Lugares de OpenStreetMap aprobados (data/osm.js)');
+
+test('cada lugar de OSM trae su ficha (URL), fecha de última edición y precio por confirmar', () => {
+  const app = makeApp({});
+  const L = app.cat().filter(v => /^os-/.test(v.id));
+  assert(L.length >= 600, 'sólo ' + L.length + ' lugares de OSM');
+  L.forEach(v => {
+    assert(/^https:\/\/(www\.openstreetmap\.org|es\.wikipedia\.org)\//.test(v.pUrl || ''), v.n + ' sin ficha');
+    assert(/^\d{4}-\d{2}-\d{2}$/.test(v.consultado || ''), v.n + ' sin fecha de consulta');
+    assert(v.pEstado === 'por_confirmar', v.n + ' con precio "' + v.pEstado + '" (OSM no publica precios)');
+    assert(v.horaEstimada || /\d/.test(v.hrs || ''), v.n + ' sin horario ni "por confirmar"');
+  });
+});
+
+test('ningún lugar de OSM repite uno que ya estaba (mismo nombre a menos de 300 m)', () => {
+  const app = makeApp({});
+  const n = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const km = (a, b) => Math.hypot((a.lat - b.lat) * 111, (a.lng - b.lng) * 105);
+  const viejos = app.cat().filter(v => !/^os-/.test(v.id) && v.lat != null);
+  const dup = [];
+  app.cat().filter(v => /^os-/.test(v.id)).forEach(v => viejos.forEach(o => {
+    const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
+    if (a.length > 3 && km(v, o) < 0.3 && (a === b || (a.includes(b) && b.length > 5) || (b.includes(a) && a.length > 5))) dup.push(v.n + ' = ' + o.n);
+  }));
+  assert(!dup.length, 'repetidos: ' + dup.slice(0, 8).join(' · '));
+});
+
+test('ninguna cadena de comida rápida entró desde OSM', () => {
+  const app = makeApp({});
+  const malos = app.cat().filter(v => /^os-/.test(v.id) && /starbucks|vips|mcdonald|burger king|kfc|domino|subway|ihop|bisquets obreg|boston'?s|santa clara/i.test(v.n));
+  assert(!malos.length, malos.map(v => v.n).join(', '));
+});
+
+test('los ids de OSM viajan en el enlace compartido', () => {
+  const app = makeApp({});
+  ['n', 'w'].forEach(t => { const v = app.cat().find(x => new RegExp('^os-' + t).test(x.id));
+    if (v) assert(app.largaId(app.cortaId(v)) === v.id, v.id); });
+});
+
 if (require.main === module) report();

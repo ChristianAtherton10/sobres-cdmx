@@ -324,61 +324,6 @@
 "nota": "Horario sin confirmar."
 },
 {
-"id": "os-n4013921239",
-"n": "moshi moshi",
-"cat": "Restaurante",
-"lat": 19.36892,
-"lng": -99.26382,
-"zone": "santafe",
-"col": "Santa Fe · Poniente",
-"addr": "Santa Fe · Poniente",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4013921239",
-"fecha": "2017-09-26",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Santa Fe · Poniente",
-"horaEstimada": true,
-"cocina": "Japanese",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2017-09-26: confirma que siga abierto."
-},
-{
 "id": "os-n4411644291",
 "n": "Italianni's",
 "cat": "Restaurante",
@@ -2356,112 +2301,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2018-04-17: confirma que siga abierto."
 },
 {
-"id": "os-w579366044",
-"n": "Samara Shops",
-"cat": "Centro comercial",
-"lat": 19.36814,
-"lng": -99.2589,
-"zone": "santafe",
-"col": "Santa Fe · Poniente",
-"addr": "Santa Fe · Poniente",
-"oh": [
-10,
-22
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"familiar"
-],
-"act": [
-"compras"
-],
-"tm": [
-"manana",
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/579366044",
-"fecha": "2021-03-25",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Centro comercial en Santa Fe · Poniente",
-"horaEstimada": true,
-"aptoFamilia": "sí",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2021-03-25: confirma que siga abierto."
-},
-{
-"id": "os-w607127540",
-"n": "Parque La Mexicana",
-"cat": "Parque",
-"lat": 19.35681,
-"lng": -99.27141,
-"zone": "santafe",
-"col": "Santa Fe · Poniente",
-"addr": "Avenida Luis Barragán 505",
-"oh": [
-5.0,
-22.0
-],
-"hrs": "Mo-Su 05:00-22:00",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"familiar",
-"chill"
-],
-"act": [
-"paseo"
-],
-"tm": [
-"manana",
-"tarde",
-"noche"
-],
-"web": "https://parquelamexicana.mx/",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/607127540",
-"fecha": "2026-03-08",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Parque en Santa Fe · Poniente",
-"aptoFamilia": "sí"
-},
-{
 "id": "os-w622115734",
 "n": "parque san francisco",
 "cat": "Parque",
@@ -3749,60 +3588,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-08-13: confirma que siga abierto."
 },
 {
-"id": "os-n4348990089",
-"n": "Fisher's",
-"cat": "Restaurante",
-"lat": 19.48739,
-"lng": -99.23826,
-"zone": "satelite",
-"col": "Satélite · Naucalpan",
-"addr": "Satélite · Naucalpan",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4348990089",
-"fecha": "2016-08-13",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Satélite · Naucalpan",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-08-13: confirma que siga abierto."
-},
-{
 "id": "os-n4348990090",
 "n": "La alborada",
 "cat": "Restaurante",
@@ -4183,60 +3968,6 @@
 "aptoFamilia": "no",
 "recomendable": false,
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-09-21: confirma que siga abierto."
-},
-{
-"id": "os-n4430079000",
-"n": "Tacos",
-"cat": "Taquería",
-"lat": 19.50251,
-"lng": -99.25982,
-"zone": "satelite",
-"col": "Satélite · Naucalpan",
-"addr": "Satélite · Naucalpan",
-"oh": [
-13,
-24
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"foodie",
-"social"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4430079000",
-"fecha": "2016-10-04",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Taquería en Satélite · Naucalpan",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-10-04: confirma que siga abierto."
 },
 {
 "id": "os-n4443092090",
@@ -4833,60 +4564,6 @@
 "horaEstimada": true,
 "recomendable": false,
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2017-01-30: confirma que siga abierto."
-},
-{
-"id": "os-n4936995324",
-"n": "GabyLu",
-"cat": "Restaurante",
-"lat": 19.49139,
-"lng": -99.24428,
-"zone": "satelite",
-"col": "Satélite · Naucalpan",
-"addr": "Satélite · Naucalpan",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4936995324",
-"fecha": "2017-09-15",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Satélite · Naucalpan",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2017-09-15: confirma que siga abierto."
 },
 {
 "id": "os-n4953276223",
@@ -6069,62 +5746,6 @@
 "basis": "Restaurante en Satélite · Naucalpan",
 "horaEstimada": true,
 "nota": "Horario sin confirmar."
-},
-{
-"id": "os-n6433451785",
-"n": "Cinépolis",
-"cat": "Cine",
-"lat": 19.50945,
-"lng": -99.2203,
-"zone": "satelite",
-"col": "Satélite · Naucalpan",
-"addr": "Satélite · Naucalpan",
-"oh": [
-12,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"chill",
-"cultural"
-],
-"act": [
-"funcion"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/6433451785",
-"fecha": "2019-04-28",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Cine en Satélite · Naucalpan",
-"horaEstimada": true,
-"aptoFamilia": "sí",
-"sesion": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2019-04-28: confirma que siga abierto."
 },
 {
 "id": "os-n7295768373",
@@ -8156,60 +7777,6 @@
 "nota": "Horario sin confirmar."
 },
 {
-"id": "os-w553213052",
-"n": "Parque del Circuito Centro Cívico",
-"cat": "Parque",
-"lat": 19.50996,
-"lng": -99.22481,
-"zone": "satelite",
-"col": "Satélite · Naucalpan",
-"addr": "Satélite · Naucalpan",
-"oh": [
-7,
-19
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"familiar",
-"chill"
-],
-"act": [
-"paseo"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/553213052",
-"fecha": "2020-11-25",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Parque en Satélite · Naucalpan",
-"horaEstimada": true,
-"aptoFamilia": "sí",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2020-11-25: confirma que siga abierto."
-},
-{
 "id": "os-w553213053",
 "n": "Parque Circuito Músicos",
 "cat": "Parque",
@@ -9609,7 +9176,7 @@
 },
 {
 "id": "os-n13482280101",
-"n": "Pancho Birria - Barbacoa",
+"n": "Pancho Birria-Barbacoa",
 "cat": "Restaurante",
 "lat": 19.42745,
 "lng": -99.21162,
@@ -9765,60 +9332,6 @@
 "horaEstimada": true,
 "aptoFamilia": "sí",
 "nota": "Horario sin confirmar."
-},
-{
-"id": "os-w742693349",
-"n": "TK Terraza Grill",
-"cat": "Restaurante",
-"lat": 19.42843,
-"lng": -99.22533,
-"zone": "lomas",
-"col": "Lomas · Tecamachalco",
-"addr": "Lomas · Tecamachalco",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/742693349",
-"fecha": "2021-04-20",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Lomas · Tecamachalco",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2021-04-20: confirma que siga abierto."
 },
 {
 "id": "os-w937416530",
@@ -10304,58 +9817,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2015-10-09: confirma que siga abierto."
 },
 {
-"id": "os-n3779091557",
-"n": "Cafeteria",
-"cat": "Café",
-"lat": 19.26449,
-"lng": -99.1191,
-"zone": "xochimilco",
-"col": "Xochimilco",
-"addr": "Xochimilco",
-"oh": [
-8,
-20
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date"
-],
-"tags": [
-"chill"
-],
-"act": [
-"cafe"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/3779091557",
-"fecha": "2015-10-09",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Café en Xochimilco",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2015-10-09: confirma que siga abierto."
-},
-{
 "id": "os-n4172108592",
 "n": "Soconus Coffee",
 "cat": "Café",
@@ -10458,60 +9919,6 @@
 "horaEstimada": true,
 "recomendable": false,
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-05-07: confirma que siga abierto."
-},
-{
-"id": "os-n4407367333",
-"n": "Taquería",
-"cat": "Restaurante",
-"lat": 19.2742,
-"lng": -99.12452,
-"zone": "xochimilco",
-"col": "Xochimilco",
-"addr": "Xochimilco",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4407367333",
-"fecha": "2016-09-18",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Xochimilco",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-09-18: confirma que siga abierto."
 },
 {
 "id": "os-n7235811685",
@@ -10779,57 +10186,6 @@
 "horaEstimada": true,
 "aptoFamilia": "sí",
 "nota": "Horario sin confirmar."
-},
-{
-"id": "os-w52835117",
-"n": "Bosque de Nativitas",
-"cat": "Parque",
-"lat": 19.24865,
-"lng": -99.09889,
-"zone": "xochimilco",
-"col": "Xochimilco",
-"addr": "Xochimilco",
-"oh": [
-6.0,
-18.5
-],
-"hrs": "Mo-Su 06:00-18:30",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"familiar",
-"chill"
-],
-"act": [
-"paseo"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/52835117",
-"fecha": "2023-10-19",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Parque en Xochimilco",
-"aptoFamilia": "sí"
 },
 {
 "id": "os-w262581290",
@@ -12390,58 +11746,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2021-08-19: confirma que siga abierto."
 },
 {
-"id": "os-n3262187768",
-"n": "Alma Negra Café",
-"cat": "Café",
-"lat": 19.38523,
-"lng": -99.15521,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Avenida Universidad 420A",
-"oh": [
-8,
-20
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date"
-],
-"tags": [
-"chill"
-],
-"act": [
-"cafe"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/3262187768",
-"fecha": "2014-12-31",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Café en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2014-12-31: confirma que siga abierto."
-},
-{
 "id": "os-n3443549664",
 "n": "El Afán",
 "cat": "Restaurante",
@@ -13997,60 +13301,6 @@
 "horaEstimada": true,
 "recomendable": false,
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2018-08-16: confirma que siga abierto."
-},
-{
-"id": "os-n3779151815",
-"n": "Heladería",
-"cat": "Restaurante",
-"lat": 19.39528,
-"lng": -99.17868,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/3779151815",
-"fecha": "2015-10-09",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2015-10-09: confirma que siga abierto."
 },
 {
 "id": "os-n3779151820",
@@ -16464,60 +15714,6 @@
 "cocina": "Regional"
 },
 {
-"id": "os-n4037023391",
-"n": "Gino's",
-"cat": "Restaurante",
-"lat": 19.39065,
-"lng": -99.17032,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4037023391",
-"fecha": "2016-03-02",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-03-02: confirma que siga abierto."
-},
-{
 "id": "os-n4037023392",
 "n": "La Posta",
 "cat": "Restaurante",
@@ -18026,60 +17222,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2017-03-24: confirma que siga abierto."
 },
 {
-"id": "os-n4753706631",
-"n": "Palomino's",
-"cat": "Restaurante",
-"lat": 19.39229,
-"lng": -99.17271,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4753706631",
-"fecha": "2017-03-24",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2017-03-24: confirma que siga abierto."
-},
-{
 "id": "os-n4909276764",
 "n": "The Cheesecake Factory",
 "cat": "Restaurante",
@@ -18185,61 +17327,6 @@
 "tier": "B",
 "basis": "Restaurante en Roma Sur",
 "cocina": "Regional"
-},
-{
-"id": "os-n5010308177",
-"n": "El Vilsito",
-"cat": "Taquería",
-"lat": 19.38931,
-"lng": -99.15276,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-24
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"foodie",
-"social"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/5010308177",
-"fecha": "2022-08-14",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Taquería en Del Valle · Nápoles",
-"horaEstimada": true,
-"cocina": "Mexican",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2022-08-14: confirma que siga abierto."
 },
 {
 "id": "os-n5017193182",
@@ -19844,7 +18931,7 @@
 },
 {
 "id": "os-n7122920746",
-"n": "BACAL - apericena",
+"n": "BACAL-apericena",
 "cat": "Bar",
 "lat": 19.406,
 "lng": -99.16433,
@@ -23713,59 +22800,8 @@
 "cocina": "Mexican"
 },
 {
-"id": "os-n12484754502",
-"n": "Alma Café",
-"cat": "Café",
-"lat": 19.40014,
-"lng": -99.15929,
-"zone": "romasur",
-"col": "Roma Sur",
-"addr": "Calle Heriberto Frías 205",
-"oh": [
-8,
-20
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date"
-],
-"tags": [
-"chill"
-],
-"act": [
-"cafe"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "https://www.almacafemx.com/",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/12484754502",
-"fecha": "2025-01-08",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Café en Roma Sur",
-"horaEstimada": true,
-"nota": "Horario sin confirmar."
-},
-{
 "id": "os-n12539631001",
-"n": "Pancita - local 43",
+"n": "Pancita-local 43",
 "cat": "Taquería",
 "lat": 19.41359,
 "lng": -99.14627,
@@ -25279,57 +24315,6 @@
 "nota": "Horario sin confirmar."
 },
 {
-"id": "os-n14133603795",
-"n": "Craving Crown",
-"cat": "Café",
-"lat": 19.40439,
-"lng": -99.16085,
-"zone": "romasur",
-"col": "Roma Sur",
-"addr": "Roma Sur",
-"oh": [
-8,
-20
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date"
-],
-"tags": [
-"chill"
-],
-"act": [
-"cafe"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/14133603795",
-"fecha": "2026-08-29",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Café en Roma Sur",
-"horaEstimada": true,
-"nota": "Horario sin confirmar."
-},
-{
 "id": "os-n14133611735",
 "n": "Stella",
 "cat": "Restaurante",
@@ -26749,7 +25734,7 @@
 },
 {
 "id": "os-w526466466",
-"n": "La Trigueña - Pan para todos",
+"n": "La Trigueña-Pan para todos",
 "cat": "Café",
 "lat": 19.39171,
 "lng": -99.16121,
@@ -26940,59 +25925,6 @@
 "web": "",
 "fuente": "OpenStreetMap (ficha del lugar)",
 "url": "https://www.openstreetmap.org/way/1316005299",
-"fecha": "2024-09-18",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Parque en Roma Sur",
-"horaEstimada": true,
-"aptoFamilia": "sí",
-"nota": "Horario sin confirmar."
-},
-{
-"id": "os-w1316005300",
-"n": "Parque Lineal Ecoducto Río de la Piedad",
-"cat": "Parque",
-"lat": 19.40271,
-"lng": -99.16132,
-"zone": "romasur",
-"col": "Roma Sur",
-"addr": "Roma Sur",
-"oh": [
-7,
-19
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"familiar",
-"chill"
-],
-"act": [
-"paseo"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/1316005300",
 "fecha": "2024-09-18",
 "consultado": "2026-11-04",
 "hrsFuente": "OpenStreetMap",
@@ -28674,7 +27606,7 @@
 },
 {
 "id": "os-n3443941003",
-"n": "Ramen -ya",
+"n": "Ramen-ya",
 "cat": "Restaurante",
 "lat": 19.3779,
 "lng": -99.17552,
@@ -29154,61 +28086,6 @@
 "horaEstimada": true,
 "recomendable": false,
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2015-05-28: confirma que siga abierto."
-},
-{
-"id": "os-n3681551991",
-"n": "Heladería",
-"cat": "Heladería",
-"lat": 19.39255,
-"lng": -99.1839,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-11,
-21
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"chill",
-"familiar"
-],
-"act": [
-"cafe"
-],
-"tm": [
-"manana",
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/3681551991",
-"fecha": "2015-09-23",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Heladería en Del Valle · Nápoles",
-"horaEstimada": true,
-"aptoFamilia": "sí",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2015-09-23: confirma que siga abierto."
 },
 {
 "id": "os-n3681551997",
@@ -29918,60 +28795,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-03-02: confirma que siga abierto."
 },
 {
-"id": "os-n4036969259",
-"n": "Sonora Grill",
-"cat": "Restaurante",
-"lat": 19.37817,
-"lng": -99.16793,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4036969259",
-"fecha": "2016-03-02",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-03-02: confirma que siga abierto."
-},
-{
 "id": "os-n4036969260",
 "n": "El Hostal de los Quesos",
 "cat": "Restaurante",
@@ -30455,63 +29278,8 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2018-08-15: confirma que siga abierto."
 },
 {
-"id": "os-n4066889784",
-"n": "El Naranjito",
-"cat": "Restaurante",
-"lat": 19.37535,
-"lng": -99.15534,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/4066889784",
-"fecha": "2016-03-18",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"cocina": "Mexican",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2016-03-18: confirma que siga abierto."
-},
-{
 "id": "os-n4067931786",
-"n": "Sonora Grill - Félix Cuevas",
+"n": "Sonora Grill-Félix Cuevas",
 "cat": "Restaurante",
 "lat": 19.37079,
 "lng": -99.16642,
@@ -31632,61 +30400,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2020-09-24: confirma que siga abierto."
 },
 {
-"id": "os-n5521302121",
-"n": "Sushiitto",
-"cat": "Restaurante",
-"lat": 19.37406,
-"lng": -99.1631,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/5521302121",
-"fecha": "2018-04-01",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"cocina": "Sushi",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2018-04-01: confirma que siga abierto."
-},
-{
 "id": "os-n5521302122",
 "n": "Moyo",
 "cat": "Heladería",
@@ -32166,60 +30879,6 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2020-01-11: confirma que siga abierto."
 },
 {
-"id": "os-n6625252870",
-"n": "Taquería",
-"cat": "Restaurante",
-"lat": 19.39207,
-"lng": -99.18394,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/6625252870",
-"fecha": "2019-07-18",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2019-07-18: confirma que siga abierto."
-},
-{
 "id": "os-n7123521612",
 "n": "Bokenka",
 "cat": "Restaurante",
@@ -32588,61 +31247,6 @@
 "horaEstimada": true,
 "cocina": "Mexican",
 "nota": "Horario sin confirmar."
-},
-{
-"id": "os-n8843484351",
-"n": "Los Arcos",
-"cat": "Restaurante",
-"lat": 19.37308,
-"lng": -99.18434,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "75 C",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/8843484351",
-"fecha": "2021-08-09",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"cocina": "Mexican",
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2021-08-09: confirma que siga abierto."
 },
 {
 "id": "os-n8843484358",
@@ -34604,57 +33208,6 @@
 "nota": "Horario sin confirmar."
 },
 {
-"id": "os-n12431932821",
-"n": "Tierra Garat",
-"cat": "Café",
-"lat": 19.37028,
-"lng": -99.17486,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-8,
-20
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date"
-],
-"tags": [
-"chill"
-],
-"act": [
-"cafe"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/node/12431932821",
-"fecha": "2025-02-11",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Café en Del Valle · Nápoles",
-"horaEstimada": true,
-"nota": "Horario sin confirmar."
-},
-{
 "id": "os-n12431958068",
 "n": "La puerca pecadora",
 "cat": "Restaurante",
@@ -35822,59 +34375,6 @@
 "aptoFamilia": "sí",
 "recomendable": false,
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2019-07-18: confirma que siga abierto."
-},
-{
-"id": "os-w26967313",
-"n": "Parque de los Venados",
-"cat": "Parque",
-"lat": 19.37202,
-"lng": -99.15607,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-7,
-19
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"familia"
-],
-"tags": [
-"familiar",
-"chill"
-],
-"act": [
-"paseo"
-],
-"tm": [
-"manana",
-"tarde"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/26967313",
-"fecha": "2023-08-19",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Parque en Del Valle · Nápoles",
-"horaEstimada": true,
-"aptoFamilia": "sí",
-"nota": "Horario sin confirmar."
 },
 {
 "id": "os-w30972031",
@@ -37213,62 +35713,8 @@
 "nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2020-06-21: confirma que siga abierto."
 },
 {
-"id": "os-w819143995",
-"n": "Debarbas",
-"cat": "Restaurante",
-"lat": 19.38798,
-"lng": -99.17732,
-"zone": "delvalle",
-"col": "Del Valle · Nápoles",
-"addr": "Del Valle · Nápoles",
-"oh": [
-13,
-23
-],
-"hrs": "Horario por confirmar",
-"who": [
-"amigos",
-"compa",
-"date",
-"familia"
-],
-"tags": [
-"foodie"
-],
-"act": [
-"comida",
-"cena"
-],
-"tm": [
-"tarde",
-"noche"
-],
-"web": "",
-"fuente": "OpenStreetMap (ficha del lugar)",
-"url": "https://www.openstreetmap.org/way/819143995",
-"fecha": "2021-09-04",
-"consultado": "2026-11-04",
-"hrsFuente": "OpenStreetMap",
-"precio": {
-"min": null,
-"rep": null,
-"max": null,
-"unidad": "persona",
-"moneda": "MXN",
-"canasta": "OpenStreetMap no publica precios."
-},
-"estado": "por_confirmar",
-"falta": "el precio",
-"score": 66,
-"tier": "B",
-"basis": "Restaurante en Del Valle · Nápoles",
-"horaEstimada": true,
-"recomendable": false,
-"nota": "Horario sin confirmar. La ficha de OSM no se edita desde 2021-09-04: confirma que siga abierto."
-},
-{
 "id": "os-w919752027",
-"n": "La Caravana - Juegos de Mesa",
+"n": "La Caravana-Juegos de Mesa",
 "cat": "Café",
 "lat": 19.37784,
 "lng": -99.1756,
