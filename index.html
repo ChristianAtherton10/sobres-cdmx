@@ -2549,9 +2549,10 @@ class Component extends DCLogic {
     const n = this.strip(v.n);
     // Un lugar cerrado (remodelación, cierre temporal) no se propone.
     if (v.cerradoTemporal || /\bcerrad[oa]\b|cierre temporal/.test(n)) return false;
-    if (/(^|\b)(tienda|libreria|cafeteria) del museo|centro de documentacion|archivo |archivo$|hemeroteca|fototeca|mapoteca|fonoteca|videoteca|^auditorio |sala de lectura|fondo (reservado|antiguo|historico)|casa de (la )?cultura|centro comunitario|cultural comunitario|^pilares|^faro |escuela |instituto |facultad |coordinacion |direccion general/.test(n)) return false;
+    // (Un restaurante o bar llamado "Archivo" sí es lugar para ir; el filtro es para acervos.)
+    if (!this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat) && /(^|\b)(tienda|libreria|cafeteria) del museo|centro de documentacion|archivo |archivo$|hemeroteca|fototeca|mapoteca|fonoteca|videoteca|^auditorio |sala de lectura|fondo (reservado|antiguo|historico)|casa de (la )?cultura|centro comunitario|cultural comunitario|^pilares|^faro |escuela |instituto |facultad |coordinacion |direccion general/.test(n)) return false;
     if (v.cat === 'Biblioteca') return /vasconcelos|biblioteca de mexico|la ciudadela|biblioteca central/.test(n);
-    if (v.cat === 'Librería') return /rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria/.test(n);
+    if (v.cat === 'Librería') return /rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria|99 records/.test(n);   // 99 Records: tienda de vinilos (The Happening / Time Out)
     return true;
   }
 
@@ -3144,6 +3145,14 @@ class Component extends DCLogic {
         if (elegidos.length >= 3 || elegidos.some(e => toca(e, a))) return;
         const c = cands.find(c => toca(c, a) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c)));
         if (c) elegidos.push(c); });
+    }
+    // "Con amigos" (social): una de las tres trae una ACTIVIDAD (karaoke, billar, boliche,
+    // salón, escape room) si la hay, no tres de "cena + bar". Con los hotspots y los
+    // conciertos, las de bar ganaban siempre (prueba 17e, 5 nov 2026).
+    if (amb.indexOf('social') >= 0 && elegidos.length < 3) {
+      const ACT = ['karaoke', 'billar', 'boliche', 'salon_baile', 'reto'];
+      const tieneAct = c => c.plantilla.split('+').some(k => ACT.indexOf(k) >= 0);
+      if (!elegidos.some(tieneAct)) { const c = cands.find(c => tieneAct(c) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c))); if (c) elegidos.push(c); }
     }
     pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
     const reserva = cands.filter(c => elegidos.indexOf(c) < 0);

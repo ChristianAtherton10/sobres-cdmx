@@ -109,6 +109,46 @@ def fuente(k, url=None):
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
 VIGENTES = {'res_no20', 'res_colmillo', 'res_terral', 'res_alaia', 'res_cantaritos_sa', 'res_coyote', 'res_caruso', 'res_bendito', 'tur_hobos', 'web_leon', 'web_cuevon', 'web_mixtas', 'web_mirador', 'web_intervallo', 'web_veggicano', 'web_moramora', 'web_ruffian', 'web_mitemaki', 'web_baltra', 'inf_bonvi', 'ot_carolo_carso', 'ot_carolo_il', 'ot_popular_sf', 'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera', 'res_bastian', 'res_karaoke_il', 'res_bocanariz', 'res_kamachos'}
+
+# ── Clásicos de las guías (consultados el 5 nov 2026) ────────────────────────
+# La guía (fechada) dice que el lugar sigue vigente; la dirección sale de su ficha
+# de reservas o de su sitio. "consultada" = fecha en que se revisó la ficha.
+HOY2 = '2026-11-05'
+_C = 'sin fecha (consultada ' + HOY2 + ')'
+_MG = ' · en la Guía México Gastronómico 2026 (Chilango, 4 feb 2026)'
+_MB = ' · en la Guía MB100 de Marco Beteta (Chilango, 19 nov 2024)'
+F.update({
+ 'cl_almara': ('OpenTable — Almara (Hamburgo 195, Juárez)' + _MG, 'https://www.opentable.ie/r/restaurante-almara-ciudad-de-mexico', _C),
+ 'cl_cachava': ('Time Out México — Cachava (ficha)' + _MG, 'https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/cachava', _C),
+ 'cl_chapulin': ('Grupo Presidente — Chapulín, Presidente InterContinental (26 jun 2026)' + _MG, 'https://grupopresidente.com.mx/2026/06/26/where-to-find-authentic-mexican-food-in-polanco-mexico-city/', '2026-06-26'),
+ 'cl_cuina': ('OpenTable — Çuina (Tabasco 46, Roma Norte)' + _MG, 'https://opentable.ie/r/cuina-ciudad-de-mexico', _C),
+ 'cl_dante': ('Food and Pleasure — Dante Brasa y Fuego (Edgar Allan Poe 41, Polanco)' + _MG, 'https://foodandpleasure.com/?p=247091', _C),
+ 'cl_ehden': ('Chilango — Ehden, el restaurante libanés más antiguo de CDMX' + _MG, 'https://www.chilango.com/comida-y-tragos/restaurantes/ehden-restaurante-libanes-mas-antiguo-centro-cdmx/', _C),
+ 'cl_ehden_roma': ('Food and Pleasure — Ehden Roma (Durango 195)' + _MG, 'https://foodandpleasure.com/comida-libanesa-restaurante-ehden-roma/', _C),
+ 'cl_gruta': ('Gruta Ehden — sitio oficial (sucursales y horarios)' + _MB, 'https://grutaehden.com.mx/', _C),
+ 'cl_grana': ('OpenTable — Grana Sabores de Origen (San Jerónimo 35, Centro)' + _MG, 'https://www.opentable.com/r/grana-sabores-de-origen-ciudad-de-mexico', _C),
+ 'cl_cabrera': ('OpenTable — La Cabrera (Av. Álvaro Obregón 21, Roma Norte)' + _MG, 'https://www.opentable.com.au/restaurant/profile/1466179', _C),
+ 'cl_bizco': ('OpenTable — La Cocina del Bizco (Ometusco 1, Hipódromo)' + _MG, 'https://www.opentable.com/r/la-cocina-del-bizco-ciudad-de-mexico', _C),
+ 'cl_marea': ('OpenTable — Marea Restaurante de Mar (Sinaloa 248, Roma Norte)' + _MG, 'https://www.opentable.com/r/marea-restaurante-de-mar-ciudad-de-mexico', _C),
+ 'cl_rocasal': ('Reservándonos — Rocasal Pedregal (Cráter 823)' + _MG, 'https://reservandonos.com/en/place/restaurante-rocasal-pedregal', _C),
+ 'cl_somsaa': ('OpenTable — Somsaa (Orizaba 219, Roma Norte)' + _MG, 'https://www.opentable.ae/r/restaurant-somsaa-ciudad-de-mexico', _C),
+ 'cl_lamb': ('OpenTable — The Lamb (Tabasco 156, Roma Norte)' + _MG, 'https://www.opentable.co.uk/r/the-lamb-ciudad-de-mexico', _C),
+ 'cl_tierra': ('Food and Pleasure — Tierra Adentro Cocina (Nevado 112, Portales Sur)' + _MG, 'https://foodandpleasure.com/tierra-adentro-cocina/', _C),
+ 'cl_torre': ('OpenTable — Torre de Castilla (Esopo 31, Polanco)' + _MG, 'https://opentable.co.uk/r/torre-de-castilla-ciudad-de-mexico', _C),
+ 'cl_vega': ('OpenTable — Restaurante Vega (Av. Revolución 1465, Campestre)' + _MG, 'https://opentable.co.uk/r/restaurante-vega-ciudad-de-mexico', _C),
+ 'cl_costa': ('OpenTable — Costa Guadiana (Paseo de los Tamarindos 90, Bosques de las Lomas)' + _MB, 'https://www.opentable.ie/costa-guadiana', _C),
+ 'cl_danubio': ('El Financiero — Danubio, Uruguay 3, Centro Histórico (17 abr 2026)' + _MB, 'https://www.elfinanciero.com.mx/food-and-drink/2026/04/17/quien-es-el-dueno-de-danubio-restaurante-donde-comio-carlos-slim-helu/', '2026-04-17'),
+ 'cl_bosque': ('OpenTable — Cantina del Bosque (13 de Septiembre 29, San Miguel Chapultepec)' + _MB, 'https://www.opentable.ie/r/cantina-del-bosque-ciudad-de-mexico', _C),
+})
+VIGENTES |= {k for k in F if k.startswith('cl_')}
+
+F.update({
+ 'hap_nov26': ('The Happening — nuevos hotspots para conocer en noviembre 2026', 'https://thehappening.com/nuevos-hotspots-para-conocer-en-noviembre-2026/', '2026-10-30'),
+ 'to_99': ('Time Out México — 99 Records: vinilos, bar y libros de música (ficha)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/shopping/99-records-vinilos-bar-y-libros-musica-cdmx', _C),
+ 'adn_99': ('ADN40 — 99 Records, el mejor lugar para comprar discos de vinilo en CDMX', 'https://www.adn40.mx/ciudad/2025-09-04/99-records-el-mejor-lugar-para-comprar-discos-vinilo-en-cdmx/', '2025-09-04'),
+ 'chil_sona': ('Chilango — Sona, un lugar para escuchar música (donde la gente sí se calla)', 'https://www.chilango.com/que-hacer/musica/sona-lugar-para-escuchar-musica-condesa/', _C),
+})
+VIGENTES |= {'to_99', 'chil_sona'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -471,6 +511,63 @@ L = [
       f='hs_to_ap26', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie'], cocina='Japonesa'),
  dict(n='Del Río', cat='Café', col='Condesa', addr='Yautepec 88, Condesa', geo='Yautepec 88, Condesa, Ciudad de México',
       f='hs_to_ap26', h=(8, 18), hrs='Horario por confirmar', horaEstimada=True, act=['cafe', 'desayuno'], who=['amigos', 'date', 'compa'], tags=['chill']),
+ # Clásicos de las guías que faltaban (5 nov 2026). Hora "por confirmar" salvo la que publica su ficha.
+ dict(n='Almara', zona='juarez', cat='Restaurante', col='Juárez', addr='Hamburgo 195 (Hotel Galería Plaza), Juárez', geo='Hamburgo 195, Juárez, Ciudad de México',
+      f='cl_almara', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Mediterránea'),
+ dict(n='Cachava', cat='Restaurante', col='Bosques de las Lomas', addr='Paseo de los Tamarindos 90 (Arcos Bosques), Bosques de las Lomas', geo='Paseo de los Tamarindos 90, Bosques de las Lomas, Ciudad de México',
+      f='cl_cachava', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Cortes y parrilla'),
+ dict(n='Chapulín', cat='Restaurante', col='Polanco', addr='Campos Elíseos 218 (Presidente InterContinental), Polanco', geo='Campos Elíseos 218, Polanco, Ciudad de México',
+      f='cl_chapulin', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'romántico'], cocina='Mexicana'),
+ dict(n='Çuina', cat='Restaurante', col='Roma Norte', addr='Tabasco 46, Roma Norte', geo='Tabasco 46, Roma Norte, Ciudad de México',
+      f='cl_cuina', h=(9, 22), hrs='Horario por confirmar', horaEstimada=True, act=['desayuno', 'comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Mexicana'),
+ dict(n='Dante Brasa y Fuego', lat=19.43106, lng=-99.19984,  # Edgar Allan Poe esq. Emilio Castelar (junto al 47) (OSM)
+      cat='Restaurante', col='Polanco', addr='Edgar Allan Poe 41, Polanco', geo='Edgar Allan Poe 41, Polanco, Ciudad de México',
+      f='cl_dante', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Cortes y parrilla'),
+ dict(n='Ehden · Centro Histórico', cat='Restaurante', col='Centro Histórico', addr='Venustiano Carranza 148, 1er piso, Centro', geo='Venustiano Carranza 148, Centro, Ciudad de México',
+      f='cl_ehden', h=(11.5, 18), hrs='Diario 11:30–18:00 (según Chilango)', act=['comida'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Libanesa'),
+ dict(n='Ehden · Roma Norte', cat='Restaurante', col='Roma Norte', addr='Durango 195, 1er piso, Roma Norte', geo='Durango 195, Roma Norte, Ciudad de México',
+      f='cl_ehden_roma', h=(13, 22), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Libanesa'),
+ dict(n='Gruta Ehden · Florida', lat=19.36285, lng=-99.1763,  # Pino entre Río Mixcoac y Moras (OSM)
+      cat='Restaurante', col='Florida', addr='Pino 69, Florida (entre Río Mixcoac y Moras)', geo='Pino 69, Florida, Álvaro Obregón, Ciudad de México',
+      f='cl_gruta', h=(8, 23), hrs='Dom y lun 8:00–19:00 · mar y mié 8:00–21:00 · jue a sáb 8:00–23:00', act=['desayuno', 'comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'romántico'], cocina='Libanesa'),
+ dict(n='Grana Sabores de Origen', cat='Restaurante', col='Centro Histórico', addr='San Jerónimo 35 (antiguo Molino San Jerónimo), Centro', geo='San Jerónimo 35, Centro, Ciudad de México',
+      f='cl_grana', h=(13, 22), hrs='Sólo con reservación · horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie', 'romántico'], cocina='Mexicana'),
+ dict(n='La Cabrera · Roma Norte', cat='Restaurante', col='Roma Norte', addr='Av. Álvaro Obregón 21, Roma Norte', geo='Avenida Álvaro Obregón 21, Roma Norte, Ciudad de México',
+      f='cl_cabrera', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Cortes y parrilla'),
+ dict(n='La Cocina del Bizco', cat='Restaurante', col='Hipódromo', addr='Ometusco 1 (esq. Nuevo León), Hipódromo', geo='Ometusco 1, Hipódromo, Ciudad de México',
+      f='cl_bizco', h=(13, 23), dias=[0, 2, 3, 4, 5, 6], hrs='Mar y mié 13:00–22:00 · jue a sáb 13:00–23:00 · dom 13:00–20:00', act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie'], cocina='Española'),
+ dict(n='Marea · Restaurante de Mar', lat=19.4189, lng=-99.17496,  # junto a Sinaloa 246 (OSM)
+      cat='Restaurante', col='Roma Norte', addr='Sinaloa 248 (esq. Tampico), Roma Norte', geo='Sinaloa 248, Roma Norte, Ciudad de México',
+      f='cl_marea', h=(13.5, 23), hrs='Lun y dom 13:30–20:00 · mar y mié 13:30–22:00 · jue a sáb 13:30–23:00', act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Mariscos'),
+ dict(n='Rocasal', cat='Restaurante', col='Jardines del Pedregal', addr='Cráter 823 (Cráter Pedregal), Jardines del Pedregal', geo='Cráter 823, Jardines del Pedregal, Ciudad de México',
+      f='cl_rocasal', h=(8, 23), hrs='Horario por confirmar', horaEstimada=True, act=['desayuno', 'comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'romántico'], cocina='Mediterránea'),
+ dict(n='Somsaa', lat=19.4122, lng=-99.15823,  # Orizaba esq. Coahuila (OSM)
+      cat='Restaurante', col='Roma Norte', addr='Orizaba 219, Roma Norte', geo='Orizaba 219, Roma Norte, Ciudad de México',
+      f='cl_somsaa', h=(13, 22.5), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie', 'romántico'], cocina='Tailandesa'),
+ dict(n='The Lamb', cat='Restaurante', col='Roma Norte', addr='Tabasco 156, Roma Norte', geo='Tabasco 156, Roma Norte, Ciudad de México',
+      f='cl_lamb', h=(14, 23), hrs='Lun a sáb 14:00–23:00 · dom 12:00–18:00', act=['comida', 'cena'], who=['amigos', 'date', 'compa'], tags=['foodie'], cocina='Británica'),
+ dict(n='Tierra Adentro Cocina', cat='Restaurante', col='Portales Sur', addr='Nevado 112 (glorieta de Canarias), Portales Sur', geo='Nevado 112, Portales Sur, Ciudad de México',
+      f='cl_tierra', h=(8.5, 17), dias=[0, 2, 3, 4, 5, 6], hrs='Mar a sáb 8:30–17:00 · dom 8:30–13:30 (por confirmar)', horaEstimada=True, act=['desayuno', 'comida'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Mexicana'),
+ dict(n='Torre de Castilla', cat='Restaurante', col='Polanco', addr='Esopo 31, Polanco', geo='Esopo 31, Polanco, Ciudad de México',
+      f='cl_torre', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Española'),
+ dict(n='Vega', lat=19.35386, lng=-99.19015,  # Av. Revolución esq. Tlacopac (OSM)
+      cat='Restaurante', col='Campestre (San Ángel)', addr='Av. Revolución 1465, Campestre', geo='Avenida Revolución 1465, Campestre, Álvaro Obregón, Ciudad de México',
+      f='cl_vega', h=(13, 23), hrs='Lun a sáb 13:00–23:00 · dom 13:00–20:00', act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'romántico'], cocina='Española'),
+ dict(n='Costa Guadiana', cat='Restaurante', col='Bosques de las Lomas', addr='Paseo de los Tamarindos 90 (Arcos Bosques), Bosques de las Lomas', geo='Paseo de los Tamarindos 90, Bosques de las Lomas, Ciudad de México',
+      f='cl_costa', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Mexicana'),
+ dict(n='Danubio', cat='Restaurante', col='Centro Histórico', addr='República de Uruguay 3, Centro', geo='República de Uruguay 3, Centro, Ciudad de México',
+      f='cl_danubio', h=(13, 19.5), hrs='Lun a vie 13:00–19:30 · sáb y dom 13:00–20:00 (Time Out y Chilango; confírmalo)', horaEstimada=True, act=['comida'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'clásico'], cocina='Mariscos'),
+ dict(n='Cantina del Bosque', lat=19.41822, lng=-99.17858,  # 13 de Septiembre esq. José Vasconcelos (OSM)
+      cat='Cantina', col='San Miguel Chapultepec', addr='13 de Septiembre 29, San Miguel Chapultepec', geo='13 de Septiembre 29, San Miguel Chapultepec, Ciudad de México',
+      f='cl_bosque', h=(13, 21), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'copas'], who=['amigos', 'compa'], tags=['foodie', 'social', 'clásico'], cocina='Mexicana'),
+ # Hotspots de noviembre 2026 (The Happening, 30 oct) y lugares para escuchar vinilos (5 nov 2026)
+ dict(n='99 Records · Roma Norte', cat='Librería', col='Roma Norte', addr='Av. Álvaro Obregón 273, Roma Norte', geo='Avenida Álvaro Obregón 273, Roma Norte, Ciudad de México',
+      f='to_99', h=(11, 20), hrs='Horario por confirmar · tienda de vinilos (dentro está el listening room Shhh Roma)', horaEstimada=True, act=['visita', 'lectura'], who=['amigos', 'date', 'compa', 'solo'], tags=['chill', 'cultural', 'creativo']),
+ dict(n='99 Records · Condesa', cat='Librería', col='Hipódromo Condesa', addr='Ámsterdam 62, Hipódromo Condesa', geo='Ámsterdam 62, Hipódromo Condesa, Ciudad de México',
+      f='adn_99', h=(10, 22), hrs='Lun y mar 11:00–20:00 · mié a sáb 10:00–23:00 · dom 10:00–22:00 (ADN40, sep 2025) · vinilos y el listening bar Shhh', act=['visita', 'lectura'], who=['amigos', 'date', 'compa', 'solo'], tags=['chill', 'cultural', 'creativo']),
+ dict(n='Sona · sala de escucha', cat='Atracción', col='Hipódromo Condesa', addr='Cuernavaca 134, Hipódromo Condesa', geo='Cuernavaca 134, Hipódromo Condesa, Ciudad de México',
+      f='chil_sona', h=(16.5, 22), dias=[0, 3, 4, 5, 6], hrs='Mié a vie 16:30–22:00 · sáb y dom 8:30–22:00 · sesiones para escuchar discos completos, sin celular', act=['visita'], who=['amigos', 'date', 'compa', 'solo'], tags=['chill', 'cultural'],
+      precio=dict(min=380, rep=380, max=380, unidad='persona', canasta='$380 por sesión según Chilango.'), estado='rango'),
 ]
 
 # ------------------------------------------------------------------ geocodificación
@@ -510,7 +607,7 @@ for x in L:
     if oh[1] >= 21: tm.append('noche')
     rec = dict(id=vid, n=x['n'], cat=x['cat'], lat=lat, lng=lng, col=x['col'], addr=x['addr'], zone=z,
                oh=oh, hrs=x['hrs'], who=x['who'], tags=x['tags'], tm=tm or ['tarde'],
-               fuente=nombre_f, url=url_f, web='', fecha=fecha_f, consultado=HOY, hrsFuente=nombre_f)
+               fuente=nombre_f, url=url_f, web='', fecha=fecha_f, consultado=(HOY2 if x['f'].startswith('cl_') or x['f'] in ('hap_nov26', 'to_99', 'adn_99', 'chil_sona') else HOY), hrsFuente=nombre_f)
     if x.get('act'): rec['act'] = x['act']
     if x.get('dias'): rec['dias'] = x['dias']
     if x.get('horaEstimada'): rec['horaEstimada'] = True

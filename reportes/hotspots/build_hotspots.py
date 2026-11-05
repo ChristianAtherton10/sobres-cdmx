@@ -14,7 +14,7 @@ con los nombres que todavía no están en el catálogo.
 """
 import json, os, re, unicodedata
 AQUI = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(os.path.dirname(AQUI))
-HOY = '2026-11-04'; MES = '2026-11'
+HOY = '2026-11-05'; MES = '2026-11'
 
 FUENTES = {
  'mich26':  ('Time Out México — restaurantes de la CDMX con estrella Michelin (Guía Michelin 2026)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/restaurantes-de-la-cdmx-que-tienen-estrella-michelin', '2026-05-20'),
@@ -28,6 +28,9 @@ FUENTES = {
  'mb_bares26': ('Marco Beteta — 20 bares de reciente apertura en CDMX', 'https://mbmarcobeteta.com/nuevos-bares-cdmx/', '2026-08-04'),
  'hap_oct26': ('The Happening — nuevos hotspots de octubre 2026 en CDMX', 'https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/', '2026-10-06'),
  'mb_nov26': ('Marco Beteta — restaurantes nuevos para visitar en noviembre en CDMX', 'https://mbmarcobeteta.com/restaurantes-nuevos-cdmx/', '2026-11-03'),
+ 'mb100_26': ('Marco Beteta — Los 100 mejores restaurantes de México, MB100 2026 (restaurantes de CDMX)', 'https://mbmarcobeteta.com/los-100-mejores-restaurantes-de-mexico-mb100/', '2025-11-19'),
+ 'quien_jul26': ('Quién — Los nuevos hotspots de CDMX que ya están en todos los planes', 'https://www.quien.com/estilo-de-vida/2026/07/01/los-nuevos-hotspots-de-cdmx-que-ya-estan-en-todos-los-planes', '2026-07-01'),
+ 'hap_nov26': ('The Happening — nuevos hotspots para conocer en noviembre 2026', 'https://thehappening.com/nuevos-hotspots-para-conocer-en-noviembre-2026/', '2026-10-30'),
  'museos24': ('Mexico News Daily (datos de Time Out México, INAH e INBAL) — museos más visitados de CDMX en 2024', 'https://mexiconewsdaily.com/culture/most-popular-mexico-city-museums-in-2024', '2025-01-20'),
  'museos26': ('Chilango — museos imprescindibles de CDMX (Mundial 2026)', 'https://www.chilango.com/que-hacer/arte-y-cultura/museos-imperdibles-cdmx-mundial-2026-direccion-costo/amp/', '2026-06-02'),
 }
@@ -41,18 +44,18 @@ LISTAS = [
  ('latam25', 3, False, ['Quintonil', 'Máximo|Máximo Bistrot', 'Rosetta']),
  ('mg26', 2, False, ['Ajoblanco', 'Al Andalus', 'Alfil', 'Almara', 'Arango', 'Au Pied de Cochon', 'Azul Histórico|Azul Condesa|Azul y Oro|Azulísimo', 'Balcón del Zócalo',
    'Baldío', 'Botánico', 'Bulla', 'Cachava', 'Cana', 'Carmela & Sal|Carmela y Sal', 'Cascabel', 'Centro Castellano', 'Chapulín', 'Contramar', 'Çuina|Cuina',
-   'Dante Brasa y Fuego', 'Gruta Ehden|Ehden', 'El Bajío', 'El Cardenal', 'El Mirador de Chapultepec|Cantina El Mirador', 'Eloise|Eloise Chic Cuisine', 'Em', 'Emilio',
-   'Er Rre|Er Rre un Bistró', 'Esquina Común', 'Fabia', 'Fierro', 'Fonda Margarita', 'Fónico', 'Gaba', 'Galea', 'Grana', 'Guzina Oaxaca', 'Havre 77', 'Kill Bill',
+   'Dante Brasa y Fuego', 'Ehden', 'El Bajío', 'El Cardenal', 'El Mirador de Chapultepec|Cantina El Mirador', 'Eloise|Eloise Chic Cuisine', 'Em', 'Emilio',
+   'Er Rre|Er Rre un Bistró', 'Esquina Común', 'Fabia', 'Fierro', 'Fonda Margarita', 'Fónico', 'Gaba', 'Galea', 'Grana|Grana Sabores de Origen', 'Guzina Oaxaca', 'Havre 77', 'Kill Bill',
    'La Cabrera', 'La Cocina del Bizco', 'Limosneros', 'Lina', 'Lorea', 'Los Danzantes', 'Los Panchos', 'Maizajo', 'Marea', 'Mattea', 'Máximo|Máximo Bistrot', 'Meroma',
    'Mi Compa Chava', 'Migrante', 'Momiji', 'Nicos', 'Pargot', 'Plonk', 'Prendes', 'Pujol', 'Raíz', 'Rocasal', 'Sarde', 'Sartoria', 'Sesame', 'Siembra Comedor|Siembra',
    'Somsaa', 'Taco Tasting Room', 'Tenampa|Salón Tenampa', 'The Lamb', 'The Palm', 'Tierra Adentro', 'Tori Tori', 'Torre de Castilla', 'Vega', 'Voraz', 'Xuva', 'Yoshimi',
    'Zagala', 'Zeru', 'La Once Mil', 'Brutal']),
- ('bib25', 2, False, ['Contramar', 'Voraz', 'Ultramarinos Demar', 'Tacos de Valle', 'La 89']),
+ ('bib25', 2, False, ['Contramar', 'Voraz', 'Ultramarinos Demar', 'Tacos de Valle|Tacos del Valle', 'La 89']),
  ('mb100', 2, False, ['Máximo|Máximo Bistrot', 'Havre 77', 'Quintonil', 'Sushi Iwashi', 'Er Rre|Er Rre un Bistró', 'Zeru', 'Makan', 'Martínez', 'Mi Compa Chava', 'Em', "Morton's",
    'Galanga|Galanga Thai House', 'Romina', 'Al Andalus', 'Limosneros', 'Sarde', 'Entremar', 'Cana', 'Costa Guadiana', 'Carmela y Sal', 'Pargot', "Arturo's", 'Raíz',
    'Zagala', 'La Barra de Fran', 'Yoshimi', 'Meroma', 'Eloise', 'Siembra', 'Galea', 'Masala y Maíz', 'Azul Histórico', 'Balcón del Zócalo', 'Loma Linda',
-   'Cantina El Mirador', 'The Palm', 'Deigo', 'Suntory', 'San Ángel Inn', 'Danubio', 'El Cardenal', 'Nicos', 'Bakea', 'Hunan', 'Contramar', 'La Taberna del León',
-   'Gruta Ehden', 'Bar El Bosque|Cantina El Bosque', 'Pujol']),
+   'Cantina El Mirador', 'The Palm', 'Deigo|Deigo Cocina Tradicional Japonesa', 'Suntory', 'San Ángel Inn', 'Danubio', 'El Cardenal', 'Nicos', 'Bakea', 'Hunan', 'Contramar', 'La Taberna del León',
+   'Gruta Ehden', 'Bar El Bosque|Cantina El Bosque|Cantina del Bosque', 'Pujol']),
  ('to_ap26', 2, True, ['Lindy', 'Viamonte', 'Lotti', 'El Mekong', 'Esca', 'Cobarde', 'Marne Café|Marne', 'Marisquería Julichi', "L'Enfant", 'Marta', 'Pistilo', 'Fritanguita',
    'Savvia', 'Étranger', 'OTTO', 'Varde', 'Crissis', 'Mantequilla Social Club', 'Burger Gang', 'Café Margarita', 'Alboroto', 'Lorenzo', 'Sente', 'Alegra', 'Bar Latosa',
    'Chalino Chino', 'Rosso|Rosso Speakeasy', 'Club El Desconocido', 'Grasso', 'Bartola', 'Faba', 'Franz|Franz 145', 'Ramen Ichi', 'Giorgio', 'Del Río']),
@@ -65,8 +68,15 @@ LISTAS = [
    'Palacio de Bellas Artes|Museo del Palacio de Bellas Artes', 'Museo Frida Kahlo|Casa Azul', 'Templo Mayor|Templo Mayor (museo y zona arqueológica)|Museo del Templo Mayor',
    'Museo Franz Mayer', 'Museo de Arte Moderno', 'Museo Nacional de las Culturas del Mundo', 'Museo Tamayo']),
  ('museos26', 3, False, ['Museo Nacional de Antropología|Museo Nacional de Antropología (MNA)', 'Museo Frida Kahlo', 'Palacio de Bellas Artes|Museo del Palacio de Bellas Artes',
-   'Museo Anahuacalli|Anahuacalli', 'Templo Mayor|Templo Mayor (museo y zona arqueológica)|Museo del Templo Mayor', 'Museo Franz Mayer', 'Mumedi|MUMEDI',
+   'Museo Anahuacalli|Anahuacalli', 'Templo Mayor|Templo Mayor (museo y zona arqueológica)|Museo del Templo Mayor', 'Museo Franz Mayer', 'Mumedi|MUMEDI|Museo Mexicano del Diseño',
    'Museo Numismático Nacional']),
+ # MB100 2026 (sólo CDMX). 'Siembra Comedor' no se alía a Siembra Tortillería/terraza (otros lugares).
+ ('mb100_26', 2, False, ['Al Andalus|Al Andalus · San Angel', 'Balcón del Zócalo', 'Cana', 'Carmela y Sal', 'Costa Guadiana', 'Em', 'Entremar', 'Er Rre|Er Rre un Bistró',
+   'Gaba', 'Galanga|Galanga Thai House', 'Havre 77', 'Hotaru', 'Issi', 'Jowong', 'Lorea', 'Makan', 'Martínez', 'Máximo Bistrot|Máximo', 'Mi Compa Chava', 'Momiji',
+   'Propio', 'Quintonil', 'Sartoria', 'Siembra Comedor', 'Sudestada', 'Supplì', 'Sushi Iwashi', 'Trillo', 'Ultramarinos Demar', 'Voraz', 'Yoshimi|Yoshimi · Hyatt Regency', 'Zeru']),
+ ('quien_jul26', 2, True, ['Lotti', 'La Bellezza|La Bellezza México', 'Faba', 'Marne Café|Marne', 'El Mekong|El Mékông', 'Varde', 'Katz', 'Sona|Sona · sala de escucha']),
+ ('hap_nov26', 2, True, ['El Silverio', 'Los Super Elegantes', 'Jocoque House Polanco', 'Yellow Cup Coffee', 'Ramen Oscuro|Oscuro Ramen', 'Mirta', 'Iwashi Lomas', 'Cassette',
+   'Taquería El Cuadrilátero|Taqueria El Cuadrilátero', 'Moré', 'Parla Juárez', "Chico's Café|Chico’s Cafe", 'Atlantis', 'Archivo', 'Grulla', 'Bar de Verano']),
 ]
 
 def k(s):

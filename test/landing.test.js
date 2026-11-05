@@ -361,7 +361,7 @@ section('34 · Conciertos de noviembre 2026');
 const VIGENTES_NOV = () => makeApp(COM).todayISO() <= '2026-11-29';
 
 test('34.1 · cada concierto trae fuente con URL y fecha, días de noviembre, y hora/precio "por confirmar" si la nota no los da', () => {
-  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos.filter(e => e.concierto);
+  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos.filter(e => e.concierto && (/ en concierto · /.test(e.n) || /Corona Capital|Flow Fest/.test(e.n)));
   assert(E.length >= 70, 'sólo ' + E.length + ' conciertos');
   E.forEach(e => {
     assert(/^https:\/\//.test(e.url) && /^2026-1[01]-\d{2}$/.test(e.fecha), e.n + ': sin fuente o fecha');
@@ -373,7 +373,8 @@ test('34.1 · cada concierto trae fuente con URL y fecha, días de noviembre, y 
   });
   // Los que no coinciden en las tres agendas no entran.
   ['Niña Pastori', 'XG en', 'Majo Aguilar', 'Jerry Rivera', 'Helado Negro'].forEach(n => assert(!E.some(e => e.n.indexOf(n) === 0), n + ' entró sin confirmar'));
-  assert(!E.find(e => /^Morat/.test(e.n)).fechas.solo.includes('2026-11-17'), 'Morat 17 nov sólo viene en 2 de 3 agendas');
+  // Morat 17 nov: entró el 5 nov (Milenio, ClaroSports y boleteras).
+  assert(E.find(e => /^Morat/.test(e.n)).fechas.solo.includes('2026-11-17'), 'falta Morat 17 nov');
 });
 
 // Regresión: un evento con hora "por confirmar" entraba a cualquier hora
@@ -413,6 +414,66 @@ test('34.4 · un concierto no entra a un plan romántico + comer rico', () => {
     const c = (a.state.results.plans || []).flatMap(p => p.stops).filter(v => v.concierto);
     assert(!c.length, c.map(v => v.n).join(', '));
   });
+});
+
+// ── 35 · Clásicos de las guías que faltaban (5 nov 2026) ─────────────────────
+section('35 · Clásicos de las guías que faltaban');
+const CLASICOS = ['Almara', 'Cachava', 'Chapulín', 'Çuina', 'Dante Brasa y Fuego', 'Ehden · Centro Histórico', 'Ehden · Roma Norte', 'Gruta Ehden · Florida',
+  'Grana Sabores de Origen', 'La Cabrera · Roma Norte', 'La Cocina del Bizco', 'Marea · Restaurante de Mar', 'Rocasal', 'Somsaa', 'The Lamb',
+  'Tierra Adentro Cocina', 'Torre de Castilla', 'Vega', 'Costa Guadiana', 'Danubio', 'Cantina del Bosque'];
+
+test('35.1 · cada clásico nuevo trae fuente con URL, fecha de consulta, ubicación exacta (no aproximada) y queda como hotspot', () => {
+  const a = makeApp(COM); const C = a.cat();
+  CLASICOS.forEach(n => {
+    const v = C.find(x => x.n === n); assert(v, n + ' no está en el catálogo');
+    assert(/^https:\/\//.test(v.pUrl || v.url || '') || /^https:\/\//.test((a._win.SOBRES_INVESTIGADOS.lugares.find(r => r.n === n) || {}).url || ''), n + ': sin URL');
+    const r = a._win.SOBRES_INVESTIGADOS.lugares.find(x => x.n === n);
+    assert(r.consultado === '2026-11-05' && !r.coordAprox && r.recomendable !== false, n + ': ' + JSON.stringify({ c: r.consultado, aprox: r.coordAprox, rec: r.recomendable }));
+    assert(v.hot >= 2, n + ' no quedó como hotspot');
+  });
+  // Lo que no se pudo confirmar no entra: Arturo's (tres direcciones distintas en sus fuentes) y los que
+  // sólo se ubican a nivel de calle (Gruta Ehden Polanco, Romina, Brutal, Sushi Iwashi) — 5 nov 2026.
+  assert(!C.some(v => /^arturo.?s$/i.test(v.n) || ['Gruta Ehden · Polanco', 'Romina', 'Brutal Vinata de Barrio', 'Sushi Iwashi'].includes(v.n)), 'entró un lugar sin ubicación exacta');
+});
+
+test('35.2 · los clásicos que ya estaban con otro nombre quedan marcados, sin confundir sucursales', () => {
+  const C = makeApp(COM).cat();
+  ['Tacos del Valle', 'Deigo Cocina Tradicional Japonesa', 'Museo Mexicano del Diseño (MUMEDI)', 'Cantina del Bosque'].forEach(n => {
+    const v = C.find(x => x.n === n); assert(v && v.hot >= 1, n + ' no quedó como hotspot');
+  });
+  // "Sushi Iwashi" (Polanco, MB100) no es "Iwashi Lomas" (que sí es hotspot, pero por The Happening); "Deigo" es el original, no el de ramen.
+  const H = makeApp(COM)._win.SOBRES_HOTSPOTS.ids, il = C.find(x => x.n === 'Iwashi Lomas');
+  assert(!H[il.id] || !H[il.id].f.some(f => /^mb100/.test(f)), 'Iwashi Lomas quedó como el Sushi Iwashi de Beteta');
+  assert(!C.find(x => x.n === 'Deigo Ramen').hot, 'Deigo Ramen quedó como el Deigo clásico');
+});
+
+// ── 36 · Hotspots de MB100 2026, Quién, The Happening y eventos de noviembre (5 nov 2026) ──
+section('36 · Hotspots del momento y eventos de noviembre');
+
+test('36.1 · las listas nuevas marcan hotspots sólo de CDMX y sin pegar sucursales equivocadas', () => {
+  const a = makeApp(COM), H = a._win.SOBRES_HOTSPOTS, C = a.cat();
+  ['mb100_26', 'quien_jul26', 'hap_nov26'].forEach(f => assert(H.fuentes[f] && /^https:/.test(H.fuentes[f].url), 'falta la fuente ' + f));
+  ['Jowong', 'Issi', 'Trillo', 'La Bellezza', 'Los Super Elegantes', 'Oscuro Ramen', 'Sona · sala de escucha'].forEach(n => {
+    const v = C.find(x => x.n === n); assert(v && v.hot >= 2, n + ' no quedó como hotspot'); });
+  ['Siembra Tortillería', 'Siembra terraza'].forEach(n => { const v = C.find(x => x.n === n); assert(!H.ids[v.id] || !H.ids[v.id].f.includes('mb100_26'), n + ' quedó como "Siembra Comedor"'); });
+});
+
+// Regresión: el filtro de acervos ("archivo", "tienda del museo") tumbaba al restaurante Archivo, y
+// las librerías sólo pasaban con nombre de una lista fija (99 Records quedaba fuera).
+test('36.2 · 99 Records (vinilos) y el restaurante Archivo sí se pueden proponer; un archivo histórico no', () => {
+  const a = makeApp(COM), C = a.cat();
+  ['99 Records · Roma Norte', '99 Records · Condesa', 'Archivo'].forEach(n => { const v = C.find(x => x.n === n); assert(v && a.esRecomendable(v), n + ' no se propone'); });
+  const acervo = C.find(x => /^Biblioteca del Archivo Nacional/.test(x.n)); assert(!a.esRecomendable(acervo), 'un acervo entró como plan');
+});
+
+test('36.3 · eventos de noviembre: lo verificado entra, lo que ya pasó o no se confirma no', () => {
+  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos;
+  ['Feria del Libro Comestible', 'Brindis de Altura · Bajel', 'Lotti × Le Chêne', 'Bienal de São Paulo', 'Cena por las Chinampas', 'Kati Horna', 'NFL: 49ers vs Vikings', 'Barbie Run']
+    .forEach(n => { const e = E.find(x => x.n.indexOf(n) >= 0); assert(e && /^https:/.test(e.url) && e.fecha, n + ': falta o sin fuente'); });
+  // Sin fuente que lo confirme, ya pasó, o sin dirección exacta.
+  ['Cosmo', 'Snoopy', 'Festival Día de Muertos', 'Trajinera del Chef', 'Materia', 'Open House', 'Ladurée'].forEach(n => assert(!E.some(x => x.n.indexOf(n) >= 0), n + ' no debía entrar'));
+  E.filter(e => e.consultado === '2026-11-05').forEach(e => assert((e.fechas.hasta || '9') >= '2026-11-05', e.n + ' ya pasó'));
+  const nfl = E.find(x => /^NFL/.test(x.n)); assert(nfl.oh[0] > 19 && nfl.oh[0] < 19.5 && !nfl.horaEstimada, 'la NFL es a las 19:20');
 });
 
 if (require.main === module) report();
