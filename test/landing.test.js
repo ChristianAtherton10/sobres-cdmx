@@ -476,4 +476,52 @@ test('36.3 · eventos de noviembre: lo verificado entra, lo que ya pasó o no se
   const nfl = E.find(x => /^NFL/.test(x.n)); assert(nfl.oh[0] > 19 && nfl.oh[0] < 19.5 && !nfl.horaEstimada, 'la NFL es a las 19:20');
 });
 
+// ── 37 · Más opciones (5 nov 2026): "me da sólo 3 restaurantes y luego repite" ──
+section('37 · Más opciones con tus filtros, sin presupuesto y cocinas asiáticas');
+const ASIA = { who: 'date', groupSize: 2, zone: 'roma', zonesSel: ['roma', 'romasur', 'condesa'], vibes: ['foodie'], when: 'fecha', customDate: '2026-11-07',
+  planFrom: 13, planTo: 17, budget: 'b1999', budgetCustom: null, cocinas: ['asiatica'], transport: 'coche' };
+
+test('37.1 · existe "Sin presupuesto": sin tope ni piso, y deja entrar lo de $2,000', () => {
+  const a = makeApp(Object.assign({}, ASIA, { budget: 'any' }));
+  assert(a.BUD.some(b => b[0] === 'any' && b[1] === 'Sin presupuesto'), 'falta la opción');
+  assert(a.budgetMax() >= 99999 && a.budgetMin() === 0 && /sin presupuesto/.test(a.budLabel()), a.budgetMax() + ' ' + a.budgetMin() + ' ' + a.budLabel());
+  const g = a.cat().find(v => v.n === 'Galanga Thai House'); assert(a.budgetOk(g), 'Galanga ($2,000) no entra sin presupuesto');
+  const b = makeApp(ASIA); assert(!b.budgetOk(b.cat().find(v => v.n === 'Galanga Thai House')), 'con $1,000–1,999 Galanga ($2,000) no debe entrar');
+});
+
+// Regresión: El Mékông, Makan, Warung Makan y Pin-tó Thai no contaban como "China y otras asiáticas".
+test('37.2 · "China y otras asiáticas" reconoce sudeste asiático, Indonesia, Singapur y nombres sin ficha de cocina', () => {
+  const a = makeApp(ASIA), C = a.cat();
+  ['El Mékông', 'Makan', 'Warung Makan', 'Pin-tó Thai', 'Somsaa', 'Biwon'].forEach(n => { const v = C.find(x => x.n === n); assert(v && a.tiposCocina(v).includes('asiatica'), n + ': ' + (v && a.tiposCocina(v))); });
+  ['Kaito Del Valle', 'Oscuro Ramen'].forEach(n => { const v = C.find(x => x.n === n); assert(!a.tiposCocina(v).includes('asiatica'), n + ' es japonés, no "otras asiáticas"'); });
+});
+
+// Regresión: Biwon (Florencia 20, Juárez) caía en la zona Roma por cercanía y salía al pedir Roma.
+test('37.3 · la colonia de la ficha manda entre Juárez, Roma y Condesa (sin tocar "Naucalpan de Juárez")', () => {
+  const C = makeApp(ASIA).cat();
+  ['Biwon', 'La Bellezza'].forEach(n => assert(C.find(v => v.n === n).z === 'juarez', n + ' no quedó en Juárez'));
+  const sat = C.find(v => v.id === 'xl-R0075'); assert(sat.z === 'satelite', 'Cantina La No. 20 Satélite se movió: ' + sat.z);
+});
+
+test('37.4 · debajo de las 3 opciones salen TODOS los que cumplen: zona, cocina, horario, sin repetir los del plan', () => {
+  const a = makeApp(ASIA, { dseed: 1, rseed: 5 }); a.runSearch({ nueva: true });
+  const L = a.listaFiltros(), enPlan = new Set(a.state.results.plans.flatMap(p => p.stops.map(v => v.id)));
+  assert(L.length >= 4, 'sólo ' + L.length + ' en la lista');
+  L.forEach(v => { assert(['roma', 'romasur', 'condesa'].includes(v.z), v.n + ' fuera de zona: ' + v.z); assert(a.tiposCocina(v).includes('asiatica'), v.n + ' no es asiático');
+    assert(!enPlan.has(v.id), v.n + ' ya está en un plan'); });
+  const b = makeApp(Object.assign({}, ASIA, { budget: 'any' }), { dseed: 1, rseed: 5 }); b.runSearch({ nueva: true });
+  assert(b.listaFiltros().length > L.length, 'sin presupuesto no amplía la lista');
+  assert(/listaTitulo/.test(require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8')), 'falta la lista en la plantilla');
+});
+
+test('37.5 · lo de Google en vivo entra a la lista sólo si está en tus zonas', () => {
+  const a = makeApp(ASIA, { dseed: 1 }); a.runSearch({ nueva: true });
+  const sab = [{ open: { day: 6, hour: 12, minute: 0 }, close: { day: 6, hour: 22, minute: 0 } }];
+  const g = (pid, n, lat, lng, tipo) => ({ pid, n, lat, lng, tipo, types: [tipo, 'restaurant'], precio: [200, 400], rating: 4.6, resenas: 800, periodos: sab, horario: [], addr: '', maps: '' });
+  a.sumaGoogle([g('P1', 'Pho Mama San', 19.4155, -99.1596, 'vietnamese_restaurant'), g('P2', 'Min Sok Chon', 19.4262, -99.1662, 'korean_restaurant')], { tipo: 'restaurante', cocina: 'asiatica' });
+  const n = a.listaFiltros().map(v => v.n);
+  assert(n.includes('Pho Mama San'), 'Pho Mama San (Roma Norte) no entró: ' + n.join(', '));
+  assert(!n.includes('Min Sok Chon'), 'Min Sok Chon (Juárez) entró pidiendo Roma/Condesa');
+});
+
 if (require.main === module) report();

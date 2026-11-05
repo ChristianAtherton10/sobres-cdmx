@@ -1451,7 +1451,7 @@ test('el presupuesto abierto se nombra $2,000+ y existe el rango $1,000–1,999'
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
     budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 89 });
   assert(/\$2,000\+/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
-  assert(app.BUD.map(b => b[1]).join('|') === 'Gratis|Hasta $300|$300–600|$600–1,000|$1,000–1,999|$2,000+', 'rangos: ' + app.BUD.map(b => b[1]));
+  assert(app.BUD.map(b => b[1]).join('|') === 'Gratis|Hasta $300|$300–600|$600–1,000|$1,000–1,999|$2,000+|Sin presupuesto', 'rangos: ' + app.BUD.map(b => b[1]));
   app.state.budget = 'b1999'; assert(app.budgetMax() === 1999 && /1,000–1,999/.test(app.budLabel()), 'rango 1,000–1,999');
   app.state.budget = 'b1k';
 

@@ -4,6 +4,7 @@
 # sólo tipos y cocinas de una lista fija (nada de texto libre: la llave no
 # sirve para buscar otra cosa) y nada se guarda.
 import json, os, re, sys
+from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
@@ -19,7 +20,7 @@ TIPOS = {'restaurante': ('restaurante', {'restaurant'}), 'bar': ('bar', {'bar', 
          'cafe': ('café', {'cafe', 'coffee_shop', 'bakery'}), 'antro': ('antro para bailar', {'night_club'}),
          'postre': ('postres helados', {'ice_cream_shop', 'dessert_shop', 'bakery', 'cafe'})}
 COCINAS = {'mexicana': 'restaurante mexicano', 'tacos': 'taquería', 'mariscos': 'mariscos', 'japonesa': 'restaurante japonés sushi',
-           'asiatica': 'restaurante asiático', 'italiana': 'restaurante italiano', 'cortes': 'restaurante de cortes', 'francesa': 'restaurante francés',
+           'asiatica': ['restaurante chino', 'restaurante tailandés vietnamita', 'restaurante coreano', 'restaurante asiático'], 'italiana': 'restaurante italiano', 'cortes': 'restaurante de cortes', 'francesa': 'restaurante francés',
            'mediterranea': 'restaurante español mediterráneo', 'latina': 'restaurante peruano', 'hamburguesas': 'hamburguesas',
            'vegetariana': 'restaurante vegetariano', 'internacional': 'restaurante de autor'}
 CAMPOS = ('places.id,places.displayName,places.location,places.primaryType,places.types,places.priceRange,places.rating,'
@@ -65,13 +66,24 @@ class handler(BaseHTTPRequestHandler):
         texto, tipos_ok = TIPOS[tipo]
         if cocina:
             texto = COCINAS[cocina]
-        r = P._pide('https://places.googleapis.com/v1/places:searchText', CAMPOS,
-                    {'textQuery': texto, 'languageCode': 'es', 'regionCode': 'MX', 'pageSize': 20,
-                     'locationRestriction': {'rectangle': rectangulo(zs)}})
-        if 'error' in r:
-            return self.responde(502, {'error': 'google', 'codigo': r.get('error')})
+        # Una cocina amplia ("China y otras asiáticas") se busca por partes: con una sola
+        # consulta Google devolvía casi puro japonés y salían siempre los mismos (5 nov 2026).
+        textos = texto if isinstance(texto, list) else [texto]
+        lugares, vistos = [], set()
+        pide = lambda t: P._pide('https://places.googleapis.com/v1/places:searchText', CAMPOS,
+                                 {'textQuery': t, 'languageCode': 'es', 'regionCode': 'MX', 'pageSize': 20,
+                                  'locationRestriction': {'rectangle': rectangulo(zs)}})
+        with ThreadPoolExecutor(max_workers=4) as ex:   # en paralelo: el plan espera ~3.5 s
+            respuestas = list(ex.map(pide, textos))
+        for r in respuestas:
+            if 'error' in r:
+                continue
+            for p in r.get('places', []):
+                if p.get('id') not in vistos: vistos.add(p.get('id')); lugares.append(p)
+        if not lugares and respuestas and all('error' in r for r in respuestas):
+            return self.responde(502, {'error': 'google', 'codigo': respuestas[0].get('error')})
         out = []
-        for p in r.get('places', []):
+        for p in lugares:
             loc = p.get('location') or {}
             if p.get('businessStatus', 'OPERATIONAL') != 'OPERATIONAL': continue
             if not P.en_cdmx(loc.get('latitude', 0), loc.get('longitude', 0)): continue
