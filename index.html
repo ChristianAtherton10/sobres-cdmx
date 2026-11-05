@@ -2838,12 +2838,16 @@ class Component extends DCLogic {
     const C = this.cat(), clave = n => this.strip(n || '').replace(/[^a-z0-9]/g, '').slice(0, 10), nuevos = [];
     (lista || []).forEach(p => { const id = 'gp-' + p.pid;
       if (!p.pid || gidCat.has(p.pid) || C.some(v => v.id === id) || nuevos.some(v => v.id === id)) return;
+      if (this.noProponer(p.n)) return;   // no verificados: el fundador pidió que no salgan (4 nov 2026)
       const v = this.gToVenue(p, b); if (!v) return;
       if (C.some(c => c.lat != null && clave(c.n) === clave(v.n) && Math.abs(c.lat - v.lat) < 0.004 && Math.abs(c.lng - v.lng) < 0.004)) return;
       nuevos.push(v); });
     if (nuevos.length) this.GLIVE = (this.GLIVE || []).concat(nuevos);
     return nuevos;
   }
+  // Lugares que Google sugiere pero que no se pudieron verificar fuera de Google.
+  noProponer(n) { const k = this.strip(n || '').replace(/[^a-z0-9]/g, '');
+    return ['lalosandlolas', 'casamurcielago', 'tabernaelholgazan', 'klandestinosaloon', 'mezcalero', 'buscapleitos'].some(x => k.indexOf(x) >= 0); }
   gToVenue(p, b) {
     if (!p || p.lat == null || p.lng == null) return null;
     const T = new Set([p.tipo].concat(p.types || [])), nm = this.strip(p.n || ''), tt = Array.from(T).join(' ');
