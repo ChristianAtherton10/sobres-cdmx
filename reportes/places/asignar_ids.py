@@ -60,7 +60,8 @@ for sid, n, lat, lng, cat in L:
         json.dump(prog, open(prog_p, 'w'), ensure_ascii=False); print(hechos, 'consultados', flush=True)
     time.sleep(0.05)
 json.dump(prog, open(prog_p, 'w'), ensure_ascii=False)
-ids = {k: v[0] for k, v in prog.items() if v}
+vivos = {r[0] for r in L}   # sólo lugares que siguen en el catálogo
+ids = {k: v[0] for k, v in prog.items() if v and k in vivos}
 open(os.path.join(REPO, 'data', 'google_ids.js'), 'w').write(
     '/* SOBRES — place_id de Google para cada lugar (reportes/places/asignar_ids.py). Sólo ids: horario,\n'
     ' * precio y calificación se piden en vivo a /api/lugar (términos de Google Maps Platform). */\n'

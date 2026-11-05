@@ -1656,8 +1656,6 @@ class Component extends DCLogic {
         .concat((window.SOBRES_INVESTIGADOS && window.SOBRES_INVESTIGADOS.lugares) || [])
         // + lugares de OpenStreetMap aprobados el 4 nov 2026 (data/osm.js).
         .concat((window.SOBRES_OSM && window.SOBRES_OSM.lugares) || [])
-        // + búsquedas simples en Google Maps (data/maps.js, 4 nov 2026).
-        .concat((window.SOBRES_MAPS && window.SOBRES_MAPS.lugares) || [])
         // + eventos con fecha (data/eventos.js): los vencidos ni se cargan.
         .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
@@ -1705,13 +1703,13 @@ class Component extends DCLogic {
     }
     // Público y dieta de cada lugar (Fase 2) y el precio corregido con lo que
     // esta persona contó después de ir (sólo en su navegador).
-    // Una ficha vigente de Google Maps confirma que un lugar con fuente vieja
-    // sigue abierto (data/maps.js → confirma). Sólo levanta ese motivo de baja.
-    const CONF = (window.SOBRES_MAPS && window.SOBRES_MAPS.confirma) || {};
+    // Una fuente VIGENTE confirma que un lugar con fuente vieja sigue abierto
+    // (auditoría → CONFIRMA). Sólo levanta ese motivo de baja.
+    const CONF = (A && A.CONFIRMA) || {};
     out.forEach(v => { const c = CONF[v.id]; if (!c) return;
       if (v.recomendable === false && /fuente es antigua/i.test(v.pNotaLugar || '')) {
         v.recomendable = undefined;
-        v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según Google Maps (' + c.consultado + ').').trim();
+        v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según ' + c.fuente.split(' —')[0] + ' (' + c.consultado + ').').trim();
       }
       v.confirmado = c; });
     out.forEach(v => { v.publico = this.publicoDe(v); const d = this.dietaDe(v); if (d.length) v.dieta = d; this.ajustaPrecio(v); });
@@ -2759,7 +2757,7 @@ class Component extends DCLogic {
   // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
   // ============================================================
   catalogoListo() { const w = typeof window !== 'undefined' ? window : {};
-    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_MAPS', 'SOBRES_RECETAS'].every(k => !!w[k]); }
+    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS'].every(k => !!w[k]); }
   // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
   // comprimidos) llegan después, en orden, sin pelearle la red al marco.
   // ── Google Places en vivo (4 nov 2026) ──
@@ -2898,7 +2896,7 @@ class Component extends DCLogic {
   cargaCatalogo() {
     if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
     const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
-      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_MAPS', 'data/maps.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
+      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
     lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
     if (!window.SOBRES_GID) { const el = document.createElement('script'); el.src = 'data/google_ids.js'; el.async = true; document.head.appendChild(el); }
   }

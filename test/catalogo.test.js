@@ -91,7 +91,9 @@ test('ningún lugar investigado repite uno que ya estaba (La Casa del Cine ya ve
     const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
     // Una sucursal con el mismo nombre en OTRA zona y a más de 1.5 km es válida
     // ("Forever Vegano · Polanco" vs. "Forever Vegano" en la Roma), como en el resto del catálogo.
-    const mismaSucursal = v.z === o.z || km(v, o) < 1.5;
+    // En la misma zona, dos sucursales con distinto apellido y a más de 1.5 km
+    // también valen ("La Popular · Santa Fe" vs. "La Popular · Arcos Bosques").
+    const mismaSucursal = km(v, o) < 1.5 || (v.z === o.z && n(v.n) === n(o.n));
     if (a.length > 3 && ((a === b && mismaSucursal) || (km(v, o) < 0.3 && v.cat === o.cat && (a.includes(b) && b.length > 5 || b.includes(a) && a.length > 5)))) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.join(' · '));
@@ -202,43 +204,29 @@ test('los ids de OSM viajan en el enlace compartido', () => {
     if (v) assert(app.largaId(app.cortaId(v)) === v.id, v.id); });
 });
 
-section('26e · Lugares de búsquedas en Google Maps (data/maps.js)');
+section('26e · Sin datos guardados de Google Maps (términos de Google, 4 nov 2026)');
 
-test('cada lugar de Maps trae su ficha, calificación >= 4.2 con >= 30 reseñas y horario por confirmar', () => {
+test('el catálogo no guarda lugares sacados de Google Maps: sólo place_id; lo demás se pide en vivo', () => {
+  const fs = require('fs'), path = require('path');
+  assert(!fs.existsSync(path.join(__dirname, '..', 'data', 'maps.js')), 'sigue data/maps.js');
   const app = makeApp({});
-  const L = app.cat().filter(v => /^gm-/.test(v.id));
-  assert(L.length >= 60, 'sólo ' + L.length);
-  L.forEach(v => {
-    assert(/^https:\/\/www\.google\.com\/maps\/search\/\?api=1/.test(v.pUrl || ''), v.n + ' sin ficha de Maps');
-    const m = (v.d || '').match(/\((\d\.\d)★ en Google Maps, (\d+) reseñas\)/);
-    assert(m && +m[1] >= 4.2 && +m[2] >= 30, v.n + ': ' + v.d);
-    // El rango por persona de Maps es ESTIMADO (lo reporta la gente); nunca verificado.
-    assert(v.horaEstimada && ['por_confirmar', 'estimado'].includes(v.pEstado), v.n + ' presenta horario o precio como confirmados');
-    if (v.pEstado === 'estimado') assert(/Google Maps/.test(v.pCanasta || ''), v.n + ' estimado sin decir de dónde');
-  });
+  const gm = app.cat().filter(v => /^gm-/.test(v.id) || /^Google Maps/.test(v.src || '') && !v.deGoogle);
+  assert(!gm.length, 'quedan lugares de Google Maps en el catálogo: ' + gm.slice(0, 5).map(v => v.n));
+  const gid = fs.readFileSync(path.join(__dirname, '..', 'data', 'google_ids.js'), 'utf8');
+  const j = JSON.parse(gid.slice(gid.indexOf('{'), gid.lastIndexOf('}') + 1));
+  assert(Object.keys(j).sort().join() === 'fecha,ids,version' && Object.values(j.ids).every(x => /^[\w-]+$/.test(x)), 'google_ids.js guarda algo más que ids');
 });
 
-test('Maps suma restaurantes vegetarianos fuera de la Roma (Polanco, Coyoacán, Condesa, Del Valle)', () => {
-  const app = makeApp({});
-  const veg = z => app.cat().filter(v => v.z === z && v.dieta && v.dieta.length && app.esRecomendable(v)).length;
-  ['polanco', 'coyoacan', 'condesa', 'delvalle'].forEach(z => assert(veg(z) >= 4, z + ' tiene ' + veg(z) + ' vegetarianos'));
-});
-
-test('los ids de Maps viajan en el enlace compartido', () => {
-  const app = makeApp({});
-  const v = app.cat().find(x => /^gm-/.test(x.id));
-  assert(app.largaId(app.cortaId(v)) === v.id, v.id);
-});
-
-test('26f · Santa Fe: sin Jalalpa ni Prados de la Montaña; Cinépolis Patio Santa Fe confirmado por Maps; La Bonvi en sus dos sucursales', () => {
+test('26f · Santa Fe: sin Jalalpa ni Prados de la Montaña; Cinépolis Patio Santa Fe confirmado por su cartelera; La Bonvi, Carolo y La Popular con fuente', () => {
   const app = makeApp({ who: 'amigos', zone: 'santafe', zonesSel: ['santafe'], vibes: ['foodie'] });
   const C = app.cat();
   assert(!C.some(v => /jalalpa|prados de la monta/i.test(v.n)), 'siguen los parques que se pidió quitar');
   const cine = C.find(v => v.id === 'pq-f6673bacff');
-  assert(cine && app.esRecomendable(cine) && /Sigue abierto según Google Maps/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));
+  assert(cine && app.esRecomendable(cine) && /Sigue abierto según SensaCine/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));
   const bonvi = C.filter(v => /La Bonvi/.test(v.n));
-  assert(bonvi.length === 2 && bonvi.every(v => v.pEstado === 'estimado' && v.pp > 0 && /Google Maps/.test(v.pCanasta)), 'La Bonvi: ' + bonvi.map(v => v.n + ' ' + v.pp + ' ' + v.pEstado));
-  assert(C.filter(v => /^Estoril$|Bistro Estoril/.test(v.n) && v.z === 'santafe').length === 1, 'Estoril quedó repetido en Santa Fe');
+  assert(bonvi.length === 2 && bonvi.every(v => /^iv-/.test(v.id) && v.pUrl && v.pEstado === 'por_confirmar'), 'La Bonvi: ' + bonvi.map(v => v.n + ' ' + v.pEstado));
+  ['Carolo · Carso', 'Carolo · Interlomas', 'La Popular · Santa Fe', 'Carolo · Santa Fe', 'La Popular · Arcos Bosques'].forEach(n =>
+    assert(C.some(v => v.n === n && v.pUrl), 'falta ' + n));
   app.setState({ homeQ: 'bonvi' });
   assert(app.renderVals().homeResults.length >= 2, 'el buscador no encuentra las dos La Bonvi');
 });
@@ -250,8 +238,6 @@ test('26g · con un rango de precio, SOBRES usa el más alto; en museos, la tari
   const MX = ['Museo', 'Sitio histórico', 'Zona arqueológica', 'Galería', 'Centro cultural'];
   const mal = con.filter(v => v.pp !== (MX.includes(v.cat) ? v.pRep : Math.max(v.pRep, v.pMax)));
   assert(!mal.length, 'no usan el alto: ' + mal.slice(0, 5).map(v => v.n + ' ' + v.pp + ' de ' + v.pMin + '–' + v.pMax));
-  const bonvi = app.cat().find(v => v.n === 'La Bonvi · Polanco');
-  assert(bonvi.pp === 800, 'La Bonvi Polanco ($300–800 en Maps) quedó en ' + bonvi.pp);
 });
 
 if (require.main === module) report();

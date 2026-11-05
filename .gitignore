@@ -12,3 +12,5 @@ uv.lock
 
 # Respaldos de producción (nombres de usuarios): nunca al repositorio
 respaldos/
+reportes/places/progreso.json
+reportes/precios/lista.json
