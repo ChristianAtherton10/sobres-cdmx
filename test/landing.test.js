@@ -209,4 +209,44 @@ test('30.7 · tipo que existe pero no cabe en horario o presupuesto: lo dice y a
   if (fuera) assert(/No encontré comida mariscos o japonesa y sushi/.test(r.expandNote || ''), 'cambió de cocina sin decirlo: ' + r.expandNote);
 });
 
+section('31 · Google Places en vivo (sólo CDMX)');
+
+// Horario de Google: lunes a sábado 13:00–01:00 (cruza medianoche); domingo cerrado.
+const PER = [1, 2, 3, 4, 5, 6].map(d => ({ open: { day: d, hour: 13, minute: 0 }, close: { day: (d + 1) % 7, hour: 1, minute: 0 } }));
+
+test('31.1 · lee el horario de Google, también cuando cierra después de medianoche', () => {
+  const a = makeApp(COM); const g = { periodos: PER };
+  // 2026-11-06 es viernes.
+  assert(a.googleAbierto(g, '2026-11-06', 20) === true, 'viernes 8 pm');
+  assert(a.googleAbierto(g, '2026-11-06', 24.5) === true, 'viernes 12:30 am (sábado temprano)');
+  assert(a.googleAbierto(g, '2026-11-06', 25.5) === false, 'viernes 1:30 am ya cerró');
+  assert(a.googleAbierto(g, '2026-11-06', 11) === false, 'viernes 11 am todavía no abre');
+  assert(a.googleAbierto(g, '2026-11-08', 15) === false, 'domingo está cerrado');
+  assert(a.googleAbierto(g, '2026-11-07', 24.5) === true, 'sábado 12:30 am (cierra domingo 1 am)');
+  assert(a.googleAbierto({ periodos: [{ open: { day: 0, hour: 0, minute: 0 } }] }, '2026-11-08', 3) === true, '24 horas');
+  assert(a.googleAbierto({}, '2026-11-06', 20) === null, 'sin horario no adivina');
+});
+
+test('31.2 · en el plan avisa si Google dice cerrado (a esa hora o para siempre); la ficha muestra "Según Google"', () => {
+  const a = makeApp(COM); const v = a.cat().find(x => x.n === 'La Bonvi · Polanco');
+  a._g = { [v.id]: { estado: 'OPERATIONAL', periodos: PER, horario: ['lunes: 13:00–1:00'], precio: [300, 800], rating: 4.9, resenas: 8415, maps: 'https://maps.google.com/?cid=1' } };
+  assert(a.googleAviso(v, '2026-11-06', 20) === '', 'avisa estando abierto');
+  assert(/a esa hora está cerrado/.test(a.googleAviso(v, '2026-11-08', 15)), 'no avisa en domingo');
+  a._g[v.id].estado = 'CLOSED_PERMANENTLY';
+  assert(/cerró de forma permanente/.test(a.googleAviso(v, '2026-11-06', 20)), 'no avisa del cierre');
+  a._g[v.id].estado = 'OPERATIONAL';
+  a.setState({ view: 'detail', detailId: v.id });
+  const d = a.renderVals().detail;
+  assert(d.g.gHay && d.g.gPrecio === '$300–$800 por persona' && /4\.9/.test(d.g.gRating), JSON.stringify(d.g));
+});
+
+test('31.3 · la llave y las búsquedas quedan cerradas a CDMX (lib/places.py y api/lugar.py)', () => {
+  const fs = require('fs'), path = require('path');
+  const lib = fs.readFileSync(path.join(__dirname, '..', 'lib', 'places.py'), 'utf8');
+  const api = fs.readFileSync(path.join(__dirname, '..', 'api', 'lugar.py'), 'utf8');
+  assert(/locationRestriction/.test(lib) && /def en_cdmx/.test(lib) && /fuera de CDMX/.test(lib), 'sin candado de CDMX');
+  assert(/G\.get\(i\)/.test(api) && /no es del catálogo/.test(api), 'la API consulta ids que no son del catálogo');
+  assert(!/AIza[0-9A-Za-z_-]{20,}/.test(lib + api + fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')), 'hay una llave escrita en el código');
+});
+
 if (require.main === module) report();

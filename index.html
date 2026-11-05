@@ -821,6 +821,16 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-hechos">
 <sc-for list="{{ detail.facts }}" as="f" hint-placeholder-count="6"><div><span>{{ f.k }}</span><b>{{ f.v }}</b></div></sc-for>
 </div>
+<sc-if value="{{ detail.g.gHay }}" hint-placeholder-val="{{ false }}">
+<div class="sb-soft" style="padding:12px 15px;margin-top:12px">
+<span class="sb-label" style="margin-bottom:6px">Según Google</span>
+<sc-if value="{{ detail.g.gEstado }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px;color:var(--ink);font-weight:700">{{ detail.g.gEstado }}</p></sc-if>
+<sc-if value="{{ detail.g.gHoy }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px">Hoy: {{ detail.g.gHoy }}</p></sc-if>
+<sc-if value="{{ detail.g.gPrecio }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px">{{ detail.g.gPrecio }} (lo reporta la gente)</p></sc-if>
+<sc-if value="{{ detail.g.gRating }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px">{{ detail.g.gRating }}</p></sc-if>
+<p class="sb-note" style="margin:6px 0 0;font-size:11.5px">Datos de Google Maps<sc-if value="{{ detail.g.gHayMaps }}" hint-placeholder-val="{{ false }}"> · <a href="{{ detail.g.gMaps }}" target="_blank" rel="noopener">ver en Google Maps</a></sc-if></p>
+</div>
+</sc-if>
 <sc-if value="{{ detail.hasSlots }}" hint-placeholder-val="{{ false }}">
 <div style="margin:14px 0 0">
 <span class="sb-label">Hora sugerida</span>
@@ -912,6 +922,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <button onClick="{{ st.open }}" style="background:none;border:none;padding:6px 0;margin:-6px 0;min-height:34px;font:700 15.5px/1.25 var(--font-body);cursor:pointer;text-align:left;color:var(--ink);overflow-wrap:anywhere">{{ st.name }}</button>
 <div class="sb-note" style="font-size:12.5px;margin-top:2px">{{ st.sub }}</div>
 <div style="font:700 13px var(--font-body);color:var(--color-neutral-700);margin-top:4px">{{ st.pp }}</div>
+<sc-if value="{{ st.gAviso }}" hint-placeholder-val="{{ '' }}"><div role="status" style="font:600 12.5px/1.35 var(--font-body);color:var(--color-danger, #b3261e);margin-top:4px">{{ st.gAviso }}</div></sc-if>
 <sc-if value="{{ st.editar }}" hint-placeholder-val="{{ false }}">
 <div class="sb-row" style="gap:6px;margin-top:8px"><button class="sb-btn2" style="min-height:38px;padding:0 14px;font-size:13.5px" onClick="{{ st.swap }}">Cambiar</button><button class="sb-btn3" style="min-height:38px;color:var(--color-neutral-700)" onClick="{{ st.quit }}">Quitar</button></div>
 </sc-if>
@@ -2738,11 +2749,60 @@ class Component extends DCLogic {
     return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_MAPS', 'SOBRES_RECETAS'].every(k => !!w[k]); }
   // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
   // comprimidos) llegan después, en orden, sin pelearle la red al marco.
+  // ── Google Places en vivo (4 nov 2026) ──
+  // Sólo para lugares con place_id (data/google_ids.js). Se pide a /api/lugar
+  // al abrir una ficha o un plan; queda en memoria de esta visita, nada más
+  // (términos de Google: no se guarda horario ni precio).
+  tieneGoogle(v) { return !!(v && typeof window !== 'undefined' && window.SOBRES_GID && window.SOBRES_GID.ids && window.SOBRES_GID.ids[v.id]); }
+  googleDe(v) { return v && this._g ? this._g[v.id] || null : null; }
+  pideGoogle(lista) {
+    if (typeof fetch === 'undefined') return;
+    this._g = this._g || {}; this._gPedidos = this._gPedidos || {};
+    const ids = (lista || []).filter(v => this.tieneGoogle(v) && !this._gPedidos[v.id]).map(v => v.id).slice(0, 8);
+    if (!ids.length) return;
+    ids.forEach(i => { this._gPedidos[i] = 1; });
+    setTimeout(() => fetch('/api/lugar?ids=' + encodeURIComponent(ids.join(',')))
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (!j || !j.lugares) return; Object.assign(this._g, j.lugares); this.setState({ gTick: (this.state.gTick || 0) + 1 }); })
+      .catch(() => {}), 0);
+  }
+  // ¿Abierto a esta hora según Google? h en horas (puede pasar de 24), fecha 'YYYY-MM-DD'.
+  // true / false, o null si Google no da horario.
+  googleAbierto(g, fecha, h) {
+    if (!g || !g.periodos || !g.periodos.length) return null;
+    const d0 = fecha ? new Date(fecha + 'T12:00:00') : new Date(); let dia = d0.getDay(); let hh = h;
+    if (hh >= 24) { hh -= 24; dia = (dia + 1) % 7; }
+    const t = dia * 1440 + Math.round(hh * 60), SEM = 7 * 1440;
+    return g.periodos.some(p => { if (!p.open) return false;
+      if (!p.close) return true;   // abierto 24 horas
+      const a = p.open.day * 1440 + p.open.hour * 60 + (p.open.minute || 0);
+      let c = p.close.day * 1440 + p.close.hour * 60 + (p.close.minute || 0); if (c <= a) c += SEM;
+      return (t >= a && t < c) || (t + SEM >= a && t + SEM < c); });
+  }
+  googleBloque(v) {
+    const g = this.googleDe(v); if (!g) return { gHay: false };
+    const hoyIdx = (new Date().getDay() + 6) % 7;   // weekdayDescriptions empieza en lunes
+    const cerrado = g.estado === 'CLOSED_PERMANENTLY' ? 'Cerró de forma permanente' : g.estado === 'CLOSED_TEMPORARILY' ? 'Cerrado temporalmente' : '';
+    const ahora = g.abiertoAhora === true ? 'Abierto ahora' : g.abiertoAhora === false ? 'Cerrado ahora' : '';
+    const pr = g.precio ? (g.precio[0] && g.precio[1] ? '$' + g.precio[0] + '–$' + g.precio[1] + ' por persona' : g.precio[0] ? 'Desde $' + g.precio[0] + ' por persona' : '') : '';
+    return { gHay: true, gEstado: cerrado || ahora, gCerrado: !!cerrado, gHoy: (g.horario || [])[hoyIdx] || '',
+      gPrecio: pr, gRating: g.rating ? '★ ' + g.rating + (g.resenas ? ' (' + g.resenas.toLocaleString('es-MX') + ' reseñas)' : '') : '',
+      gMaps: g.maps || '', gHayMaps: !!g.maps };
+  }
+  // Aviso para una parada del plan: cerrada para siempre o cerrada a esa hora.
+  googleAviso(v, fecha, h) {
+    const g = this.googleDe(v); if (!g) return '';
+    if (g.estado === 'CLOSED_PERMANENTLY') return 'Google dice que cerró de forma permanente. Cámbialo.';
+    if (g.estado === 'CLOSED_TEMPORARILY') return 'Google dice que está cerrado temporalmente. Cámbialo.';
+    const ab = this.googleAbierto(g, fecha, h);
+    return ab === false ? 'Según Google, a esa hora está cerrado. Cambia la hora o el lugar.' : '';
+  }
   cargaCatalogo() {
     if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
     const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
       ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_MAPS', 'data/maps.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
     lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
+    if (!window.SOBRES_GID) { const el = document.createElement('script'); el.src = 'data/google_ids.js'; el.async = true; document.head.appendChild(el); }
   }
   PRESETS() { return {
     familia:  { who: 'familia', groupSize: 4, vibes: ['familiar'], when: 'finde' },
@@ -4925,7 +4985,7 @@ class Component extends DCLogic {
       const combos = this.combinaBien(v).map(x => ({ letter: x.v.n[0], name: x.v.n, para: x.para,
         meta: `${x.v.col} · ${x.min ? '~' + x.min + ' min · ' : ''}${this.precioTxt(x.v)}`, open: () => openV(x.v.id) }));
       detail = Object.assign({ slotId: 'photo-' + v.id, hasSlots: slots.length > 0 && this.accionDe(v).modo === 'reservar',
-        queHacer: this.queHacer(v).map(t => ({ t })), hayCombos: combos.length > 0,
+        queHacer: this.queHacer(v).map(t => ({ t })), hayCombos: combos.length > 0, g: (this.pideGoogle([v]), this.googleBloque(v)),
         hasPhoto: !!(ph && ph.src), noPhoto: !(ph && ph.src),
         tileBg: 'linear-gradient(135deg,' + this.catTone(v.cat)[0] + ',' + this.catTone(v.cat)[1] + ')',
         icon: this.catIcon(v.cat),
@@ -5841,8 +5901,10 @@ class Component extends DCLogic {
       return Object.assign({}, st, { sep: i ? '1px solid var(--color-divider)' : 'none',
         editar: editando && st.canEdit, noEditar: !(editando && st.canEdit),
         horaAria: 'Hora de ' + st.name, hasPhoto: !!(ph && ph.src), photo: ph ? ph.src : '', noPhoto: !(ph && ph.src),
-        letter: (st.name || '?')[0], manualForm: !!st.esManual && editando });
+        letter: (st.name || '?')[0], manualForm: !!st.esManual && editando,
+        gAviso: v ? this.googleAviso(v, s.planDate, (plan.times || [])[i]) : '' });
     });
+    if (plan && plan.stops) this.pideGoogle(plan.stops);
     // Recién elegido de las opciones: dice cuál es y en qué se distingue. En
     // cualquier otro caso, el estado real (borrador, guardado, enviado…).
     const estado = (s.planDesdeTanda && !R.planLocked && !s.planCustomFrom && !s.planReadOnly)

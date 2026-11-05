@@ -3,7 +3,7 @@
   "framework": null,
   "functions": {
     "api/*.py": {
-      "includeFiles": "lib/**"
+      "includeFiles": "{lib/**,data/google_ids.js}"
     }
   },
   "headers": [
