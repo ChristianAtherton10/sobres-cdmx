@@ -356,4 +356,63 @@ test('33.5 · Grulla (Nápoles 76, Juárez) queda en Juárez, no en la colonia N
   assert(g.z === 'juarez' && !g.coordAprox && Math.abs(g.lat - 19.4253) < 0.002, g.z + ' ' + g.lat);
 });
 
+// ── 34 · Conciertos de noviembre 2026 (5 nov 2026) ──────────────────────────
+section('34 · Conciertos de noviembre 2026');
+const VIGENTES_NOV = () => makeApp(COM).todayISO() <= '2026-11-29';
+
+test('34.1 · cada concierto trae fuente con URL y fecha, días de noviembre, y hora/precio "por confirmar" si la nota no los da', () => {
+  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos.filter(e => e.concierto);
+  assert(E.length >= 70, 'sólo ' + E.length + ' conciertos');
+  E.forEach(e => {
+    assert(/^https:\/\//.test(e.url) && /^2026-1[01]-\d{2}$/.test(e.fecha), e.n + ': sin fuente o fecha');
+    const dias = e.fechas.solo || [e.fechas.desde, e.fechas.hasta];
+    dias.forEach(d => assert(/^2026-11-(0[5-9]|[12]\d|30)$/.test(d), e.n + ': fecha fuera de noviembre ' + d));
+    assert(e.horaEstimada && /por confirmar/.test(e.hrs), e.n + ': inventa la hora');
+    if (!/Corona Capital|Flow Fest/.test(e.n)) assert(e.estado === 'por_confirmar' && e.precio.max == null, e.n + ': inventa el precio');
+    assert(/boleto/i.test(e.nota || ''), e.n + ': no avisa que se necesita boleto');
+  });
+  // Los que no coinciden en las tres agendas no entran.
+  ['Niña Pastori', 'XG en', 'Majo Aguilar', 'Jerry Rivera', 'Helado Negro'].forEach(n => assert(!E.some(e => e.n.indexOf(n) === 0), n + ' entró sin confirmar'));
+  assert(!E.find(e => /^Morat/.test(e.n)).fechas.solo.includes('2026-11-17'), 'Morat 17 nov sólo viene en 2 de 3 agendas');
+});
+
+// Regresión: un evento con hora "por confirmar" entraba a cualquier hora
+// (Dillom, concierto de noche, salía a las 10 am).
+test('34.2 · un concierto con hora por confirmar nunca entra antes de su ventana (de noche)', () => {
+  const malos = [];
+  // Caso real (5 nov): solo, Roma, "mañana", Comer rico + Fiesta → Dillom a las 10 am.
+  ['roma', 'polanco', 'centro', 'delvalle'].forEach(z => ['manana', 'finde'].forEach(when => [1, 2, 4].forEach(g => [['foodie', 'nightlife'], ['social']].forEach(vb => {
+    const a = makeApp(Object.assign({}, COM, { who: 'solo', groupSize: g, zone: z, zonesSel: [z], when, vibes: vb }), { dseed: 77 });
+    a.runSearch({ nueva: true });
+    (a.engine(0).plans || []).forEach(p => p.stops.forEach((v, i) => { if (v.evento && v.oh && p.times[i] < v.oh[0]) malos.push(z + '/' + when + ': ' + v.n + ' a las ' + p.times[i]); }));
+  }))));
+  assert(!malos.length, malos.slice(0, 4).join(' | '));
+});
+
+test('34.3 · en su fecha los conciertos grandes sí salen, pero no se comen todas las opciones', () => {
+  if (!VIGENTES_NOV()) { console.log('    ⚠ Ya pasó noviembre 2026: los conciertos vencieron (reportes/eventos/build_eventos.js).'); return; }
+  let soda = 0;
+  [1, 2, 3, 4, 5, 6].forEach(sd => {
+    const a = makeApp(Object.assign({}, COM, { who: 'amigos', groupSize: 4, zone: 'centro', zonesSel: ['centro'], when: 'fecha', customDate: '2026-11-23', vibes: ['nightlife', 'social'] }), { dseed: sd, rseed: sd * 7 + 1 });
+    a.runSearch({ nueva: true });
+    const ps = a.state.results.plans || [];
+    if (ps.some(p => p.stops.some(v => /^Soda Stereo/.test(v.n)))) soda++;
+    assert(ps.filter(p => p.stops.some(v => v.concierto)).length <= 1, 'semilla ' + sd + ': más de una opción con concierto');
+  });
+  assert(soda >= 1, 'Soda Stereo (23 nov, Palacio de los Deportes) nunca salió en el Centro');
+  // Fuera de su fecha no aparece.
+  const a = makeApp(Object.assign({}, COM, { who: 'amigos', groupSize: 4, zone: 'centro', zonesSel: ['centro'], when: 'fecha', customDate: '2026-11-24', vibes: ['nightlife', 'social'] }), { dseed: 1 });
+  a.runSearch({ nueva: true });
+  assert(!(a.state.results.plans || []).some(p => p.stops.some(v => /^Soda Stereo|^Karol G/.test(v.n))), 'propuso un concierto fuera de su fecha');
+});
+
+test('34.4 · un concierto no entra a un plan romántico + comer rico', () => {
+  [1, 2, 3].forEach(sd => {
+    const a = makeApp(Object.assign({}, COM, { who: 'date', groupSize: 2, zone: 'polanco', zonesSel: ['polanco'], when: 'fecha', customDate: '2026-11-25', vibes: ['foodie', 'romántico'] }), { dseed: sd });
+    a.runSearch({ nueva: true });
+    const c = (a.state.results.plans || []).flatMap(p => p.stops).filter(v => v.concierto);
+    assert(!c.length, c.map(v => v.n).join(', '));
+  });
+});
+
 if (require.main === module) report();
