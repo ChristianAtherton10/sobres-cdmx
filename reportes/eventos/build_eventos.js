@@ -54,6 +54,60 @@ const E = [
   { n: 'Concierto navideño · Orquesta Sinfónica de Minería', cat: 'Foro', sede: /^Sala Nezahualcóyotl$/, solo: ['2026-11-30', '2026-12-01'], oh: [20, 22.5], hrs: '30 nov y 1 dic · 20:00',
     f: 'silla', who: ['date', 'familia', 'amigos'], tags: ['cultural', 'romántico'] }
 ];
+// ── Conciertos de noviembre 2026 (consultados el 5 nov 2026) ──────────────────
+// Sólo entran los que traen la MISMA fecha y sede en las tres agendas: Milenio
+// (2 nov), La Silla Rota (1 nov) y ClaroSports (3 nov). Fuera por no coincidir:
+// Morat 17 nov, Niña Pastori, XG, Helado Negro, Majo Aguilar y Jerry Rivera.
+// Ninguna nota da hora ni precio de boleto → "por confirmar" (salvo festivales).
+F.mil = ['Milenio — Conciertos en CdMx en noviembre 2026 (agenda completa)', 'https://www.milenio.com/espectaculos/musica/conciertos-cdmx-noviembre-2026-agenda-completa', '2026-11-02'];
+F.corona = ['Corona Capital — sitio oficial (fechas y sede); precios: ClaroSports, 3 nov 2026', 'https://www.coronacapital.com.mx/', '2026-11-05'];
+F.claro = ['ClaroSports — Todos los conciertos de noviembre 2026 en la CDMX', 'https://www.clarosports.com/tendencias/musica/corona-capital-flow-fest-karol-g-y-mas-todos-los-conciertos-de-noviembre-2026-en-la-cdmx/', '2026-11-03'];
+const SEDE = {
+  gnp: /^Estadio GNP Seguros$/, pdd: /^Palacio de los Deportes$/, an: /^Auditorio Nacional$/, pepsi: /^Pepsi Center WTC$/,
+  metro: /^Teatro Metropólitan$/, lunario: /^Lunario$/, bb: /^Auditorio BB$/, maraka: /^La Maraka$/, puebla: /^Foro Puebla 186$/,
+  // Fuera del catálogo: coordenadas de OpenStreetMap (Nominatim, 5 nov 2026).
+  arena: { lat: 19.4976072, lng: -99.1751954, addr: 'Arena Ciudad de México, Av. de las Granjas, Azcapotzalco', col: 'Azcapotzalco' },
+  autodromo: { lat: 19.4062448, lng: -99.094593, addr: 'Autódromo Hermanos Rodríguez, Av. Río Churubusco, Iztacalco', col: 'Iztacalco' },
+  plazamx: { lat: 19.3829715, lng: -99.1800979, addr: 'Plaza México, Augusto Rodin, Noche Buena, Benito Juárez', col: 'Noche Buena' }
+};
+const SEDE_N = { gnp: 'Estadio GNP Seguros', pdd: 'Palacio de los Deportes', an: 'Auditorio Nacional', pepsi: 'Pepsi Center WTC', metro: 'Teatro Metropólitan',
+  lunario: 'Lunario', bb: 'Auditorio BB', maraka: 'La Maraka', puebla: 'Foro Puebla', arena: 'Arena CDMX', autodromo: 'Autódromo Hermanos Rodríguez', plazamx: 'Plaza México' };
+const K = [ // [artista, sede, días de noviembre]
+  ['Aitana', 'an', [5, 6, 7]], ['Puma Blue', 'metro', [5]], ['Peces Raros', 'bb', [5]], ['Dillom', 'puebla', [5, 6, 7]], ['Erick Brian', 'maraka', [5]],
+  ['Morat', 'pdd', [6, 7, 8, 13, 14, 15]], ['Rubio', 'bb', [6]], ['Serbia', 'metro', [6]], ['Yahir y Charlie Zaa', 'maraka', [6]],
+  ['Los Panchos', 'metro', [8]], ['Ricardo Montaner', 'an', [10]], ['ZZ Top', 'an', [11]], ['Opeth', 'arena', [11]],
+  ['Elefante', 'an', [12]], ['María León', 'metro', [12]], ['Pancho Varona', 'lunario', [12]], ['Lifehouse', 'maraka', [12]], ['Ultraligera', 'puebla', [12]],
+  ['Karol G', 'gnp', [13, 14, 15]], ['Andrés Calamaro', 'pepsi', [13]], ['El Kanka', 'metro', [13]], ['Carlos Cuevas', 'lunario', [13]], ['DLD', 'maraka', [13, 14]],
+  ['Little Jesus', 'metro', [14]], ['Luis Ángel "El Flaco"', 'plazamx', [14]],
+  ['Mägo de Oz', 'arena', [15]], ['Daniel Boaventura', 'an', [15]], ['Rapaparty', 'pepsi', [15]], ['Yolanda del Río', 'metro', [15]],
+  ['Emmanuel y Mijares', 'an', [18]], ['Rainao', 'lunario', [18]], ['MARO', 'puebla', [18]],
+  ['Dimash Qudaibergen', 'pdd', [19, 20]], ['Los Cafres y Los Estrambóticos', 'an', [19]], ['Arde Bogotá', 'metro', [19]], ['God Save the Queen', 'arena', [19]], ['Kalimba', 'maraka', [19, 20, 21]],
+  ['Los Ángeles Azules', 'an', [20, 21]], ['CD9', 'arena', [20]], ['Francisca Valenzuela', 'puebla', [20]],
+  ['El Cuarteto de Nos', 'pdd', [21]], ['Benny', 'metro', [21]], ['Javier Corcobado', 'lunario', [21]], ['Bostich & Fussible, Kinky y Nortec Collective', 'arena', [21]],
+  ['LP', 'an', [22]], ['Taburete', 'metro', [22]], ['Los Calzones', 'lunario', [22]],
+  ['Soda Stereo', 'pdd', [23]], ['BOYNEXTDOOR', 'arena', [24]], ['Love of Lesbian', 'metro', [24]], ['Love of Lesbian', 'an', [25]],
+  ['Giant Rooks', 'metro', [25]], ['Babasónicos', 'pdd', [25]],
+  ['Hayley Williams', 'an', [26]], ['CocoRosie', 'bb', [26]], ['Nacho Vegas', 'metro', [26]], ['Beto Cuevas', 'maraka', [26]],
+  ['KATSEYE', 'pdd', [27, 28]], ['Los Auténticos Decadentes', 'gnp', [27]], ['Alejandra Guzmán', 'arena', [27]], ['Caloncho', 'an', [27]], ['Roz', 'pepsi', [27]],
+  ['Nasa Histories', 'metro', [27]], ['Kudai y Nikki Clan', 'maraka', [27]], ['Six Sex', 'puebla', [27]],
+  ['Gloria Trevi', 'an', [28]], ['Matute', 'arena', [28]], ['Menudo', 'metro', [28]], ['Gera MX', 'pepsi', [28]], ['Nicho Hinojosa', 'maraka', [28]], ['Disco Bahía', 'bb', [28]],
+  ['The Mars Volta', 'pepsi', [29]], ['Rodrigo de la Cadena', 'an', [29]], ['Los Daniels y Electrify', 'lunario', [29]]
+];
+const dd = d => '2026-11-' + String(d).padStart(2, '0');
+const diasTxt = ds => ds.length === 1 ? ds[0] + ' nov' : ds.slice(0, -1).join(', ') + ' y ' + ds[ds.length - 1] + ' nov';
+const NOTA_K = 'Necesitas boleto: revisa en la boletera si quedan. Fecha y sede según Milenio (2 nov), La Silla Rota (1 nov) y ClaroSports (3 nov).';
+K.forEach(([a, k, ds]) => E.push({ n: a + ' en concierto · ' + SEDE_N[k], cat: 'Foro', sede: SEDE[k], solo: ds.map(dd), oh: [20, 23], horaEstimada: true,
+  hrs: diasTxt(ds) + ' · hora por confirmar (viene en tu boleto)', f: 'mil', consultado: '2026-11-05', who: ['amigos', 'compa', 'date'], tags: ['nightlife', 'social'], nota: NOTA_K, concierto: true }));
+// Festivales: fechas y sede en su sitio oficial / agendas; precio General de un día según ClaroSports (antes de cargos).
+E.push({ n: 'Corona Capital 2026 · Autódromo Hermanos Rodríguez', cat: 'Foro', sede: SEDE.autodromo, desde: '2026-11-20', hasta: '2026-11-22', oh: [13, 23], horaEstimada: true,
+  hrs: '20, 21 y 22 nov · todo el día (horario por confirmar)', f: 'corona', consultado: '2026-11-05', who: ['amigos', 'compa', 'date'], tags: ['nightlife', 'social'], concierto: true,
+  precio: { min: 2200, rep: 3500, max: 3500, unidad: 'persona', moneda: 'MXN', canasta: 'Boleto General de un día: Fase 1 $2,200, Fase 2 $2,600, sábado Fase 3 $3,500 (antes de cargos, ClaroSports 3 nov 2026).' },
+  nota: 'Necesitas boleto: revisa en la boletera si quedan.' });
+E.push({ n: 'Coca-Cola Flow Fest 2026 · Autódromo Hermanos Rodríguez', cat: 'Foro', sede: SEDE.autodromo, desde: '2026-11-28', hasta: '2026-11-29', oh: [13, 23], horaEstimada: true,
+  hrs: '28 y 29 nov · todo el día (horario por confirmar)', f: 'claro', consultado: '2026-11-05', who: ['amigos', 'compa', 'date'], tags: ['nightlife', 'social'], concierto: true,
+  precio: { min: 1637, rep: 3100, max: 3100, unidad: 'persona', moneda: 'MXN', canasta: 'General de un día en Ticketmaster: de $1,636.75 a $3,100 (ClaroSports 3 nov 2026).' },
+  nota: 'Necesitas boleto: revisa en la boletera si quedan. Fechas también en Milenio (2 nov) y La Silla Rota (1 nov).' });
+
 const app = makeApp({});
 const C = app.cat();
 let geocache = {}; const GC = path.join(__dirname, 'geocache.json'); if (fs.existsSync(GC)) geocache = JSON.parse(fs.readFileSync(GC, 'utf8'));
@@ -62,7 +116,7 @@ const out = E.map(e => {
   let lat, lng, zone, addr, col = '', aprox = false;
   if (e.sede instanceof RegExp) { const v = C.find(x => e.sede.test(x.n)); if (!v) throw new Error('sede no encontrada: ' + e.sede);
     lat = v.lat; lng = v.lng; zone = v.z; addr = v.addr || v.n; col = v.col || ''; e.sedeId = v.id; e.sedeN = v.n; }
-  else { ({ lat, lng, zone, addr } = e.sede); aprox = !!e.sede.aprox;
+  else { ({ lat, lng, zone, addr } = e.sede); col = e.sede.col || ''; aprox = !!e.sede.aprox;
     if (lat == null) { const g = geocache[e.sede.geo]; if (!g) throw new Error('falta geocodificar: ' + e.sede.geo); lat = g[0]; lng = g[1]; } }
   if (!zone) { let best = null; app.ZONES.forEach(z => { const g = app.ZGEO[z[0]]; if (!g) return; const d = Math.hypot((g[0] - lat) * 111, (g[1] - lng) * 105); if (!best || d < best[1]) best = [z[0], d]; }); zone = best[0]; }
   const [fuente, url, fecha] = F[e.f];
@@ -70,13 +124,14 @@ const out = E.map(e => {
     fechas: e.solo ? { solo: e.solo, desde: e.solo[0], hasta: e.solo[e.solo.length - 1] } : { desde: e.desde, hasta: e.hasta },
     lat, lng, zone, col, addr, oh: e.oh, hrs: e.hrs, who: e.who, tags: e.tags, tm: [e.oh[0] <= 11 ? 'manana' : null, e.oh[0] <= 17 ? 'tarde' : null, e.oh[1] >= 20 ? 'noche' : null].filter(Boolean),
     act: { Museo: ['visita'], Foro: ['funcion'], 'Centro cultural': ['visita'], 'Atracción': ['visita', 'paseo'] }[e.cat],
-    fuente, url, fecha, consultado: HOY, hrsFuente: fuente, web: '', score: 80, tier: 'B', basis: 'Evento con fecha en ' + (e.sedeN || addr) };
+    fuente, url, fecha, consultado: e.consultado || HOY, hrsFuente: fuente, web: '', score: 80, tier: 'B', basis: 'Evento con fecha en ' + (e.sedeN || addr) };
   if (e.horaEstimada) r.horaEstimada = true;
   if (aprox) r.coordAprox = true;
   if (e.sedeId) r.sede = e.sedeId;
   if (e.precio) { r.precio = e.precio; r.estado = 'rango'; } else { r.precio = { min: null, rep: null, max: null, unidad: 'persona', moneda: 'MXN', canasta: 'La fuente no publica el precio.' }; r.estado = 'por_confirmar'; r.falta = 'el precio'; }
   if (e.cat === 'Foro') { r.sesion = true; }
   if (e.nota) r.nota = e.nota;
+  if (e.concierto) r.concierto = true;
   if (e.tags.includes('familiar')) r.aptoFamilia = 'sí';
   return r;
 });

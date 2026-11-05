@@ -1678,7 +1678,7 @@ class Component extends DCLogic {
           recomendable: r.recomendable === false ? false : undefined, lejos: !!r.lejos, pNotaLugar: r.nota || '',
           otRt: r.otRt || null, otRc: r.otRc || null, vestimenta: r.vestimenta || '', tel: r.tel || '',
           consultado: r.consultado || '', hrsFuente: r.hrsFuente || '',
-          evento: !!r.evento, fechas: r.fechas || null, sede: r.sede || '', dieta: r.dieta || null,
+          evento: !!r.evento, concierto: !!r.concierto, fechas: r.fechas || null, sede: r.sede || '', dieta: r.dieta || null,
           av: r.sesion ? 'Requiere reservar sesión' : 'Verificar disponibilidad' };
         // x/y viven en el espacio del mapa viejo; se derivan de la zona.
         v.x = z[2]; v.y = z[3];
@@ -2750,7 +2750,7 @@ class Component extends DCLogic {
     if (v.ppUnknown) return true;   // sin precio: entra, pero el total nunca se declara completo
     return v.pp <= max;
   }
-  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } if (v.evento) sc += 3;
+  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } if (v.evento) sc += v.concierto ? 1.5 : 3;   // concierto con boleto (puede estar agotado): empuje menor que un evento abierto
     // Hotspots primero (feedback del 4 nov 2026: "da cosas básicas"). El azar de la
     // semilla mueve hasta ~7 puntos; un hotspot de nivel 3 tiene que ganarle.
     sc += this.pesoHot(v);
@@ -3072,7 +3072,10 @@ class Component extends DCLogic {
           if (conf0 && v.oh && t > v.oh[1] - 1) continue;
           // Un evento con hora fija entra a SU hora (el concierto empieza a las
           // 8, no a las 7), si no deja más de 1.5 h muertas.
-          if (v.evento && !conf0 && !this.atHour(v, t) && v.oh && v.oh[0] > t && v.oh[0] < to - 0.5 && v.oh[0] - t <= 1.5) t = v.oh[0];
+          // Lo mismo si la hora está "por confirmar": el concierto es de noche aunque
+          // la nota no diga la hora, así que nunca entra a las 10 am (prueba 34.2).
+          if (v.evento && (conf0 || !this.atHour(v, t)) && v.oh && v.oh[0] > t && v.oh[0] < to - 0.5 && v.oh[0] - t <= 1.5) t = v.oh[0];
+          if (conf0 && v.evento && v.oh && t < v.oh[0]) continue;
           if (!conf0 && !this.atHour(v, t)) continue;
           if (!this.cabeEnVentana(v, t, to)) continue;
           if (prev && !this.alcanzaTramo(prev, v, t - ts[ts.length - 1])) continue;
@@ -3100,10 +3103,10 @@ class Component extends DCLogic {
         // Una función o sesión sin horario confirmado resta: se prefiere lo seguro.
         // El peso de hotspot elige CUÁL lugar dentro de cada pieza, no QUÉ tipo de
         // plan: si no, un bar famoso siempre le ganaba al karaoke o al salón de baile.
-        puntaje: st.reduce((a, v) => a + puntaje(v) - this.pesoHot(v), 0) / st.length + pl.peso * 3 + (st.length > 1 ? 2 : 0) - conf.filter(Boolean).length * 4
+        puntaje: st.reduce((a, v) => a + puntaje(v) - this.pesoHot(v), 0) / st.length + pl.peso * 3 + (st.length > 1 ? 2 : 0) - conf.filter((c, i) => c && !st[i].concierto).length * 4   // un concierto tiene fecha y sede confirmadas; la hora viene en el boleto
           + (exigeBaile && this.bailable(st[st.length - 1]) ? 8 : 0) + (pideComida && st.some(v => this.sirveComida(v)) ? 4 : 0)
           // Lo que sólo pasa ese día (un concierto, una feria) va primero.
-          + (st.some(v => v.evento) ? 5 : 0) };
+          + (st.some(v => v.evento && !v.concierto) ? 5 : 0) };   // concierto: sin bono extra (con bono salía el mismo en todas las tandas)
     };
     const cands = []; const usoCand = new Map();
     // 10 intentos por plantilla: si una elección temprana deja sin opciones a
