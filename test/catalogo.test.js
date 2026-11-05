@@ -212,7 +212,9 @@ test('cada lugar de Maps trae su ficha, calificación >= 4.2 con >= 30 reseñas 
     assert(/^https:\/\/www\.google\.com\/maps\/search\/\?api=1/.test(v.pUrl || ''), v.n + ' sin ficha de Maps');
     const m = (v.d || '').match(/\((\d\.\d)★ en Google Maps, (\d+) reseñas\)/);
     assert(m && +m[1] >= 4.2 && +m[2] >= 30, v.n + ': ' + v.d);
-    assert(v.horaEstimada && v.pEstado === 'por_confirmar', v.n + ' presenta horario o precio como confirmados');
+    // El rango por persona de Maps es ESTIMADO (lo reporta la gente); nunca verificado.
+    assert(v.horaEstimada && ['por_confirmar', 'estimado'].includes(v.pEstado), v.n + ' presenta horario o precio como confirmados');
+    if (v.pEstado === 'estimado') assert(/Google Maps/.test(v.pCanasta || ''), v.n + ' estimado sin decir de dónde');
   });
 });
 
@@ -226,6 +228,30 @@ test('los ids de Maps viajan en el enlace compartido', () => {
   const app = makeApp({});
   const v = app.cat().find(x => /^gm-/.test(x.id));
   assert(app.largaId(app.cortaId(v)) === v.id, v.id);
+});
+
+test('26f · Santa Fe: sin Jalalpa ni Prados de la Montaña; Cinépolis Patio Santa Fe confirmado por Maps; La Bonvi en sus dos sucursales', () => {
+  const app = makeApp({ who: 'amigos', zone: 'santafe', zonesSel: ['santafe'], vibes: ['foodie'] });
+  const C = app.cat();
+  assert(!C.some(v => /jalalpa|prados de la monta/i.test(v.n)), 'siguen los parques que se pidió quitar');
+  const cine = C.find(v => v.id === 'pq-f6673bacff');
+  assert(cine && app.esRecomendable(cine) && /Sigue abierto según Google Maps/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));
+  const bonvi = C.filter(v => /La Bonvi/.test(v.n));
+  assert(bonvi.length === 2 && bonvi.every(v => v.pEstado === 'estimado' && v.pp > 0 && /Google Maps/.test(v.pCanasta)), 'La Bonvi: ' + bonvi.map(v => v.n + ' ' + v.pp + ' ' + v.pEstado));
+  assert(C.filter(v => /^Estoril$|Bistro Estoril/.test(v.n) && v.z === 'santafe').length === 1, 'Estoril quedó repetido en Santa Fe');
+  app.setState({ homeQ: 'bonvi' });
+  assert(app.renderVals().homeResults.length >= 2, 'el buscador no encuentra las dos La Bonvi');
+});
+
+test('26g · con un rango de precio, SOBRES usa el más alto; en museos, la tarifa para mexicanos (fundador, 4 nov 2026)', () => {
+  const app = makeApp({ who: 'amigos', zone: 'roma', zonesSel: ['roma'], vibes: ['foodie'] });
+  const con = app.cat().filter(v => !v.ppUnknown && v.pMax != null && v.pRep != null && !v.pAjusteLocal && !v.pOtraUnidad && !v.cursoCerrado && v.pMoneda === 'MXN');
+  assert(con.length > 500, 'pocos lugares con rango: ' + con.length);
+  const MX = ['Museo', 'Sitio histórico', 'Zona arqueológica', 'Galería', 'Centro cultural'];
+  const mal = con.filter(v => v.pp !== (MX.includes(v.cat) ? v.pRep : Math.max(v.pRep, v.pMax)));
+  assert(!mal.length, 'no usan el alto: ' + mal.slice(0, 5).map(v => v.n + ' ' + v.pp + ' de ' + v.pMin + '–' + v.pMax));
+  const bonvi = app.cat().find(v => v.n === 'La Bonvi · Polanco');
+  assert(bonvi.pp === 800, 'La Bonvi Polanco ($300–800 en Maps) quedó en ' + bonvi.pp);
 });
 
 if (require.main === module) report();

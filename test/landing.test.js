@@ -133,4 +133,80 @@ test('29.6 · dos personas distintas no reciben exactamente las mismas tres opci
   assert(distintos.size >= 2, 'las 4 personas vieron lo mismo');
 });
 
+section('30 · Tipo de comida dentro de "Comer rico"');
+
+const COM = { who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], when: 'noche', budget: 'b1000', budgetCustom: null, vibes: ['foodie'] };
+const comidas = (a, pl) => pl.stops.filter(v => a.esComidaFiltrable(v));
+
+test('30.1 · con "Comer rico" aparece la sub-tabla; "Todo tipo" viene marcado y se puede elegir uno o varios', () => {
+  const a = makeApp(COM);
+  let rv = a.renderVals();
+  assert(rv.cocinaOn && rv.cocinaOpts.length >= 10, 'no aparece la sub-tabla');
+  assert(rv.cocinaOpts[0].label === 'Todo tipo' && rv.cocinaOpts[0].pressed === 'true', 'Todo tipo no viene marcado');
+  rv.cocinaOpts.find(o => o.label === 'Italiana y pizza').pick();
+  rv = a.renderVals(); rv.cocinaOpts.find(o => o.label === 'Japonesa y sushi').pick();
+  assert(JSON.stringify(a.state.cocinas) === '["italiana","japonesa"]', 'no guardó dos tipos: ' + a.state.cocinas);
+  rv = a.renderVals(); assert(rv.cocinaOpts[0].pressed === 'false', 'Todo tipo sigue marcado con dos elegidos');
+  rv.cocinaOpts[0].pick(); assert(!a.state.cocinas.length, '"Todo tipo" no limpia la selección');
+  const b = makeApp(Object.assign({}, COM, { vibes: ['cultural'] }));
+  assert(!b.renderVals().cocinaOn, 'aparece sin "Comer rico"');
+});
+
+test('30.2 · un tipo (mariscos): todas las paradas de comer de las 3 opciones son de mariscos', () => {
+  [1, 2, 3].forEach(sd => {
+    const a = makeApp(Object.assign({}, COM, { cocinas: ['mariscos'] }), { dseed: sd, rseed: sd * 5 + 2 });
+    a.runSearch({ nueva: true });
+    const pls = a.state.results.plans || [];
+    assert(pls.length >= 2, 'semilla ' + sd + ': ' + pls.length + ' opciones');
+    pls.forEach(pl => { const c = comidas(a, pl);
+      assert(c.length, 'una opción sin dónde comer: ' + pl.stops.map(v => v.n));
+      c.forEach(v => assert(a.tiposCocina(v).includes('mariscos'), v.n + ' no es de mariscos (' + a.tiposCocina(v) + ')')); });
+  });
+});
+
+test('30.3 · varios tipos (italiana o japonesa): sólo salen esos, y "Ver otras opciones" respeta el filtro', () => {
+  const a = makeApp(Object.assign({}, COM, { cocinas: ['italiana', 'japonesa'] }), { dseed: 4, rseed: 9 });
+  a.runSearch({ nueva: true });
+  const ver = () => (a.state.results.plans || []).forEach(pl => comidas(a, pl).forEach(v =>
+    assert(a.tiposCocina(v).some(k => k === 'italiana' || k === 'japonesa'), v.n + ' (' + a.tiposCocina(v) + ')')));
+  ver(); a.regenerate(); ver();
+});
+
+test('30.4 · "Tacos" en "Comer rico" sí deja entrar taquerías (sin tacos no)', () => {
+  const a = makeApp(Object.assign({}, COM, { budget: 'b600', cocinas: ['tacos'] }), { dseed: 2, rseed: 3 });
+  a.runSearch({ nueva: true });
+  const st = (a.state.results.plans || []).flatMap(pl => comidas(a, pl));
+  assert(st.length && st.every(v => a.tiposCocina(v).includes('tacos')), st.map(v => v.n).join(', '));
+  assert(st.some(v => v.cat === 'Taquería'), 'ninguna taquería con "Tacos" elegido');
+  const b = makeApp(COM, { dseed: 2, rseed: 3 }); b.runSearch({ nueva: true });
+  assert(!(b.state.results.plans || []).some(pl => pl.stops.some(v => v.cat === 'Taquería')), '"Comer rico" sin tacos trae taquerías');
+});
+
+test('30.5 · si no hay ese tipo en la zona, lo dice y muestra otras cocinas (no un plan vacío)', () => {
+  const a = makeApp(Object.assign({}, COM, { zone: 'xochimilco', zonesSel: ['xochimilco'], cocinas: ['francesa'] }), { dseed: 1, rseed: 1 });
+  const hay = a.cat().some(v => v.z === 'xochimilco' && a.esComidaFiltrable(v) && a.esRecomendable(v) && a.tiposCocina(v).includes('francesa'));
+  assert(!hay, 'la prueba supone que no hay francesa en Xochimilco');
+  a.runSearch({ nueva: true });
+  assert((a.state.results.plans || []).length > 0, 'plan vacío');
+  assert(/No encontré comida francesa en/.test(a.state.results.expandNote || ''), 'no lo dijo: ' + a.state.results.expandNote);
+});
+
+test('30.6 · cada restaurante sabe su tipo: la mayoría de los recomendables tiene al menos uno', () => {
+  const a = makeApp(COM);
+  const R = a.cat().filter(v => a.esRecomendable(v) && a.esComidaFiltrable(v));
+  const con = R.filter(v => a.tiposCocina(v).length);
+  assert(con.length / R.length > 0.6, con.length + ' de ' + R.length);
+  const bonvi = a.cat().find(v => v.n === 'La Bonvi · Polanco');
+  assert(a.tiposCocina(bonvi).includes('tacos'), 'La Bonvi sin tipo tacos');
+});
+
+test('30.7 · tipo que existe pero no cabe en horario o presupuesto: lo dice y arma con otras cocinas', () => {
+  const a = makeApp(Object.assign({}, COM, { budget: 'b600', cocinas: ['mariscos', 'japonesa'] }), { dseed: 1, rseed: 1 });
+  a.runSearch({ nueva: true });
+  const r = a.state.results;
+  assert((r.plans || []).length > 0, 'quedó "sin planes"');
+  const fuera = (r.plans || []).some(pl => pl.stops.some(v => a.esComidaFiltrable(v) && !a.tiposCocina(v).some(k => k === 'mariscos' || k === 'japonesa')));
+  if (fuera) assert(/No encontré comida mariscos o japonesa y sushi/.test(r.expandNote || ''), 'cambió de cocina sin decirlo: ' + r.expandNote);
+});
+
 if (require.main === module) report();
