@@ -700,5 +700,113 @@
   "lat": 19.40943,
   "lng": -99.16899,
   "aprox": false
+ },
+ {
+  "id": "iv-8a071fa241",
+  "n": "Terral Agrobar · San Ángel",
+  "zone": "sanangel",
+  "km": 0.3,
+  "lat": 19.3464,
+  "lng": -99.18935,
+  "aprox": false
+ },
+ {
+  "id": "iv-57618eb37b",
+  "n": "Cantaritos El Compa de Jalisco · San Ángel",
+  "zone": "sanangel",
+  "km": 0.2,
+  "lat": 19.34738,
+  "lng": -99.18758,
+  "aprox": false
+ },
+ {
+  "id": "iv-a13c987082",
+  "n": "Alaia Terraza · San Ángel",
+  "zone": "sanangel",
+  "km": 2.1,
+  "lat": 19.3337,
+  "lng": -99.20277,
+  "aprox": false
+ },
+ {
+  "id": "iv-e3ed701ad1",
+  "n": "Hobos · San Ángel",
+  "zone": "sanangel",
+  "km": 0.6,
+  "lat": 19.3445,
+  "lng": -99.19232,
+  "aprox": true
+ },
+ {
+  "id": "iv-2a124144ec",
+  "n": "El Gran León de Oro",
+  "zone": "sanangel",
+  "km": 2.1,
+  "lat": 19.3647,
+  "lng": -99.18293,
+  "aprox": false
+ },
+ {
+  "id": "iv-4133cf798e",
+  "n": "El Cuevón · comedia y bar",
+  "zone": "sanangel",
+  "km": 1.9,
+  "lat": 19.33488,
+  "lng": -99.20043,
+  "aprox": true
+ },
+ {
+  "id": "iv-9797965677",
+  "n": "Las Mixtas · San Ángel",
+  "zone": "sanangel",
+  "km": 0.4,
+  "lat": 19.34957,
+  "lng": -99.18864,
+  "aprox": false
+ },
+ {
+  "id": "iv-8cc05fea11",
+  "n": "Caruso Concert Hall · cantabar",
+  "zone": "coyoacan",
+  "km": 1.8,
+  "lat": 19.34321,
+  "lng": -99.14666,
+  "aprox": false
+ },
+ {
+  "id": "iv-663ac486b9",
+  "n": "Coyote Calavera · Coyoacán",
+  "zone": "coyoacan",
+  "km": 4.0,
+  "lat": 19.35799,
+  "lng": -99.12508,
+  "aprox": false
+ },
+ {
+  "id": "iv-172d360c7b",
+  "n": "Terraza Bendito · Coyoacán",
+  "zone": "coyoacan",
+  "km": 0.0,
+  "lat": 19.34986,
+  "lng": -99.16198,
+  "aprox": true
+ },
+ {
+  "id": "iv-34636982d7",
+  "n": "Cantina La No. 20 · Artz Pedregal",
+  "zone": "cu",
+  "km": 3.7,
+  "lat": 19.31374,
+  "lng": -99.21921,
+  "aprox": false
+ },
+ {
+  "id": "iv-32af0e6dce",
+  "n": "Colmillo · Artz Pedregal",
+  "zone": "cu",
+  "km": 3.7,
+  "lat": 19.31374,
+  "lng": -99.21921,
+  "aprox": false
  }
 ]

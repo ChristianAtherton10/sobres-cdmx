@@ -340,5 +340,46 @@
  "San Miguel Chapultepec, Ciudad de México": [
   19.411038,
   -99.1857782
+ ],
+ "Avenida de la Paz 57, San Ángel, Ciudad de México": [
+  19.3464043,
+  -99.1893478
+ ],
+ "Avenida de la Paz 47, San Ángel, Ciudad de México": [
+  19.3473766,
+  -99.1875816
+ ],
+ "Cerrada Canoa 80, Tizapán, Ciudad de México": [
+  19.3337008,
+  -99.2027728
+ ],
+ "Plaza San Jacinto, San Ángel, Ciudad de México": [
+  19.3445027,
+  -99.192318
+ ],
+ "Mercaderes 21, Ciudad de México": [
+  19.3646956,
+  -99.1829254
+ ],
+ "Tizapán San Ángel, Ciudad de México": [
+  19.3348794,
+  -99.2004274
+ ],
+ "Desierto de los Leones 52, San Ángel, Ciudad de México": [
+  19.3495711,
+  -99.1886356
+ ],
+ "Miguel Ángel de Quevedo 1144, Coyoacán, Ciudad de México": [
+  19.3432089,
+  -99.1466553
+ ],
+ "Ermita Iztapalapa 451, Coyoacán, Ciudad de México": [
+  19.3579904,
+  -99.1250793
+ ],
+ "Felipe Carrillo Puerto 46, Coyoacán, Ciudad de México": null,
+ "Artz Pedregal, Ciudad de México": [
+  19.3137363,
+  -99.2192061
  ]
 }

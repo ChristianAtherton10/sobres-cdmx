@@ -255,4 +255,20 @@ test('26h · huecos de cobertura (4 nov 2026): cada lugar nuevo trae fuente ofic
   assert(app.dietaDe(veg).includes('vegano') && veg.pp === 237, 'Veggicano: ' + app.dietaDe(veg) + ' $' + veg.pp);
 });
 
+test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es Google, zona correcta y precio de su ficha', () => {
+  const app = makeApp({});
+  const Z = { 'Terral Agrobar · San Ángel': 'sanangel', 'Cantaritos El Compa de Jalisco · San Ángel': 'sanangel', 'Alaia Terraza · San Ángel': 'sanangel',
+    'Hobos · San Ángel': 'sanangel', 'El Cuevón · comedia y bar': 'sanangel', 'Las Mixtas · San Ángel': 'sanangel', 'Caruso Concert Hall · cantabar': 'coyoacan',
+    'Coyote Calavera · Coyoacán': 'coyoacan', 'Terraza Bendito · Coyoacán': 'coyoacan', 'Cantina La No. 20 · Artz Pedregal': 'cu', 'Colmillo · Artz Pedregal': 'cu' };
+  Object.keys(Z).forEach(n => { const v = app.cat().find(x => x.n === n);
+    assert(v && v.z === Z[n], n + ' en ' + (v && v.z));
+    assert(/^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente o con fuente de Google');
+    assert(app.esRecomendable(v), n + ' no es recomendable'); });
+  const t = app.cat().find(x => x.n === 'Terral Agrobar · San Ángel');
+  assert(t.pp === 200 && t.pEstado === 'rango' && t.dias.indexOf(1) < 0, 'Terral: $' + t.pp + ' ' + t.pEstado + ' días ' + t.dias);
+  // En San Ángel ya hay dónde tomar algo de noche (antes: 0).
+  const bares = app.cat().filter(v => v.z === 'sanangel' && app.esRecomendable(v) && app.sirveCopas(v) === 'si');
+  assert(bares.length >= 5, 'San Ángel sólo tiene ' + bares.length + ' lugares para tomar algo');
+});
+
 if (require.main === module) report();
