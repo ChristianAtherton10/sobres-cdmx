@@ -5081,7 +5081,7 @@ class Component extends DCLogic {
       // un trago) y que quedan cerca. Antes salían bibliotecas especializadas y
       // fondos históricos sin explicar para qué.
       const combos = this.combinaBien(v).map(x => ({ letter: x.v.n[0], name: x.v.n, para: x.para,
-        meta: `${x.v.col} · ${x.min ? '~' + x.min + ' min · ' : ''}${this.precioTxt(x.v)}`, open: () => openV(x.v.id) }));
+        meta: `${x.v.col || this.zLabel(x.v.z)} · ${x.min ? '~' + x.min + ' min · ' : ''}${this.precioTxt(x.v)}`, open: () => openV(x.v.id) }));
       detail = Object.assign({ slotId: 'photo-' + v.id, hasSlots: slots.length > 0 && this.accionDe(v).modo === 'reservar',
         queHacer: this.queHacer(v).map(t => ({ t })), hayCombos: combos.length > 0, g: (this.pideGoogle([v]), this.googleBloque(v)),
         hasPhoto: !!(ph && ph.src), noPhoto: !(ph && ph.src),
@@ -5116,7 +5116,7 @@ class Component extends DCLogic {
     const plan0Exists = s.sendOpen ? this.getPlan() : null;
     let itinerary = [], planTotal = '', planMeta = '', planTitle = 'Tu plan', planWhy = '';
     const TOPT = []; for (let th = 7; th <= 28; th += 0.5) TOPT.push({ v: String(th), label: this.time12(th) });
-    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly || !!s.planLocked, canEdit: !s.planReadOnly && !s.planLocked, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~' + Math.round(this.duracionAct(v) * 60) + ' MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}` + (v.horaEstimada ? ' · Horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '') + (this.esHorarioDeLugar(v) ? ' · horario del lugar, no una función confirmada' : ''), pp: this.precioTxt(v), travel: i < plan.stops.length - 1 ? (() => { const mm = this.minutosTramo(this.legKm(v, plan.stops[i+1])); return mm == null ? 'falta la ubicación' : '+ ' + mm + ' min ' + this.provNombre(); })() : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
+    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly || !!s.planLocked, canEdit: !s.planReadOnly && !s.planLocked, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~' + Math.round(this.duracionAct(v) * 60) + ' MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col || this.zLabel(v.z)}` + (v.horaEstimada ? ' · Horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '') + (this.esHorarioDeLugar(v) ? ' · horario del lugar, no una función confirmada' : ''), pp: this.precioTxt(v), travel: i < plan.stops.length - 1 ? (() => { const mm = this.minutosTramo(this.legKm(v, plan.stops[i+1])); return mm == null ? 'falta la ubicación' : '+ ' + mm + ' min ' + this.provNombre(); })() : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
       hasLeg: i < plan.stops.length - 1,
       legLabel: i < plan.stops.length - 1 ? (() => { const nx = plan.stops[i+1]; const km = this.legKm(v, nx);
         if (km == null) return 'Falta la ubicación de una parada — no podemos calcular la ruta';
@@ -5957,7 +5957,7 @@ class Component extends DCLogic {
         photoFail: () => this.setState(st2 => { const q = Object.assign({}, st2.photos); delete q[a.id]; return { photos: q }; }),
         aria: 'Opción ' + (i + 1) + ', ' + frases[i] + ': ' + st.map(v => v.n).join(', '),
         stops: st.map((v, j) => ({ time: (p.cartelera || (p.porConfirmar && p.porConfirmar[j]))
-            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + v.col) + (v.horaEstimada ? ' · horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '')
+            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + (v.col || this.zLabel(v.z))) + (v.horaEstimada ? ' · horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '')
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
           + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
