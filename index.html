@@ -765,6 +765,17 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </sc-if>
 
+<sc-if value="{{ listaOn }}" hint-placeholder-val="{{ false }}">
+<section class="sb-card sb-wrap" style="padding:18px 16px;margin-top:22px" aria-label="Más lugares con tus filtros">
+<h2 class="sb-h3">{{ listaTitulo }}</h2>
+<p class="sb-note" style="margin:4px 0 10px">{{ listaNota }}</p>
+<ul style="list-style:none;margin:0;padding:0">
+<sc-for list="{{ lista }}" as="l" hint-placeholder-count="5"><li style="border-top:1px solid var(--color-divider)"><button class="sb-btn3" style="display:flex;width:100%;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:11px 0;min-height:52px" onClick="{{ l.open }}"><span style="min-width:0"><span style="display:block;font-weight:700;color:var(--ink)">{{ l.name }}</span><span class="sb-note" style="display:block;font-size:12.5px;margin:2px 0 0">{{ l.sub }}</span></span><sc-if value="{{ l.hayHot }}" hint-placeholder-val="{{ false }}"><span class="sb-tag" style="flex:none">{{ l.hot }}</span></sc-if></button></li></sc-for>
+</ul>
+<sc-if value="{{ listaMasOn }}" hint-placeholder-val="{{ false }}"><button class="sb-btn2" style="margin-top:12px" onClick="{{ listaMas }}">{{ listaMasTxt }}</button></sc-if>
+</section>
+</sc-if>
+
 <sc-if value="{{ hayOpciones }}" hint-placeholder-val="{{ true }}">
 <div class="sb-card sb-wrap" style="padding:18px 16px;margin-top:22px">
 <h2 class="sb-h3">¿Ninguno los convence?</h2>
@@ -1478,9 +1489,9 @@ class Component extends DCLogic {
     this.EXT = [];
     this.WHO = [['solo','Solo'],['date','Date'],['amigos','Amigos'],['familia','Familia'],['compa','Compañeros']];
     this.WHEN = [['ahora','Ahora mismo'],['noche','Hoy en la noche'],['manana','Mañana'],['finde','Este finde'],['fecha','Elegir fecha…']];
-    this.BUD = [['free','Gratis',0],['b300','Hasta $300',300],['b600','$300–600',600],['b1000','$600–1,000',1000],['b1999','$1,000–1,999',1999],['b1k','$2,000+',99999]];
+    this.BUD = [['free','Gratis',0],['b300','Hasta $300',300],['b600','$300–600',600],['b1000','$600–1,000',1000],['b1999','$1,000–1,999',1999],['b1k','$2,000+',99999],['any','Sin presupuesto',99999]];   // 'any': de todo tipo de precio (5 nov 2026)
     // Piso de cada rango: con $1,000–1,999 o $2,000+ no tiene sentido proponer sólo tacos de $150.
-    this.BUD_MIN = { free: 0, b300: 0, b600: 300, b1000: 600, b1999: 1000, b1k: 2000 };
+    this.BUD_MIN = { free: 0, b300: 0, b600: 300, b1000: 600, b1999: 1000, b1k: 2000, any: 0 };
     this.VIBES = ['romántico','chill','aventurero','foodie','nightlife','cultural','creativo','social','joyita','familiar'];
     this.DIET = ['Vegetariano','Vegano','Sin alcohol','Pet friendly','Terraza sí o sí','Accesible'];
     this.FOOD = ['Restaurante','Taquería','Fonda de autor','Café','Churrería','Izakaya','Mercado','Cantina'];
@@ -1718,6 +1729,9 @@ class Component extends DCLogic {
     const HS = (typeof window !== 'undefined' && window.SOBRES_HOTSPOTS && window.SOBRES_HOTSPOTS.ids) || {};
     const mesHoy = this.todayISO().slice(0, 7), mesesDesde = m => { const a = m.split('-').map(Number), b = mesHoy.split('-').map(Number); return (b[0] - a[0]) * 12 + b[1] - a[1]; };
     out.forEach(v => { const h = HS[v.id]; if (!h) return; v.hot = h.nivel; v.hotF = h.f; v.hotNuevo = !!h.nuevo && mesesDesde(h.mes) < 4; });
+    { const COLZ = { 'Juárez': 'juarez', 'Roma Norte': 'roma', 'Roma Sur': 'romasur', 'Condesa': 'condesa', 'Hipódromo': 'condesa', 'Hipódromo Condesa': 'condesa' };
+      const VEC = ['juarez', 'roma', 'romasur', 'condesa'];
+      out.forEach(v => { const z = COLZ[v.col]; if (z && z !== v.z && VEC.indexOf(v.z) >= 0 && !v.evento) v.z = z; }); }
     out.forEach(v => { v.publico = this.publicoDe(v); const d = this.dietaDe(v); if (d.length) v.dieta = d; this.ajustaPrecio(v); });
     return out;
   }
@@ -2849,7 +2863,7 @@ class Component extends DCLogic {
     const pend = this.googleBusquedas().filter(b => !this._gBus[b.tipo + '|' + b.cocina + '|' + b.zonas]);
     return Promise.all(pend.map(b => { this._gBus[b.tipo + '|' + b.cocina + '|' + b.zonas] = 1;
       return fetch('/api/buscar?tipo=' + b.tipo + (b.cocina ? '&cocina=' + b.cocina : '') + '&zonas=' + encodeURIComponent(b.zonas))
-        .then(r => r.ok ? r.json() : null).then(j => { if (j && j.lugares) this.sumaGoogle(j.lugares, b); }).catch(() => {}); }));
+        .then(r => r.ok ? r.json() : null).then(j => { if (j && j.lugares && this.sumaGoogle(j.lugares, b).length && this.state.view === 'results') this.setState({ gTick: (this.state.gTick || 0) + 1 }); }).catch(() => {}); }));   // si llega tarde, la lista de abajo se actualiza sola
   }
   // Agrega lo de Google que NO está ya en el catálogo (mismo place_id, o mismo
   // nombre a menos de ~400 m).
@@ -4158,7 +4172,7 @@ class Component extends DCLogic {
     if (s.budgetCustom === 0) return 'gratis ($0 pp)';
     if (s.budgetCustom != null) return `≤ $${s.budgetCustom} pp`;
     const b = this.BUD.find(x => x[0] === s.budget);
-    return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '$2,000+ pp' : b[0] === 'b1999' ? '$1,000–1,999 pp' : `≤ $${b[2]} pp`) : ''; }
+    return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '$2,000+ pp' : b[0] === 'any' ? 'sin presupuesto' : b[0] === 'b1999' ? '$1,000–1,999 pp' : `≤ $${b[2]} pp`) : ''; }
   budgetMin() { const s = this.state; if (s.budgetCustom != null) return 0; return (this.BUD_MIN || {})[s.budget] || 0; }
   whenLabel() { const s = this.state; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
   // ============================================================
@@ -4299,7 +4313,7 @@ class Component extends DCLogic {
     const nuevasP = (r.plans || []).map(p => p.plantilla).filter(Boolean);
     // Si ya se vieron todos los tipos, se vuelve a empezar (no se bloquea la búsqueda).
     this.setState({ seenPlantillas: prevP.concat(nuevasP).slice(-12) });
-    this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '',
+    this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '', listaN: 12,
       planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
     if (r.exhausted) this.toast('Ya viste todas las combinaciones con estos filtros — amplía zona, horario o presupuesto');
     this.persist();
@@ -4393,7 +4407,7 @@ class Component extends DCLogic {
     const c = this.strip(v.cocina || ''), out = new Set();
     const R = [['mexicana', /mexican|regional|oaxaq|yucat|poblan|fonda|antojit|cantina|veracruz|norten/], ['tacos', /\btaco|taquer/],
       ['mariscos', /marisc|pescad|seafood|ostra|ceviche|aguachile/], ['japonesa', /japon|japanese|sushi|ramen|izakaya|omakase|nikkei/],
-      ['asiatica', /chin|corea|korean|thai|tailand|vietnam|asiat|asian|hindu|india|dim sum|canton/], ['italiana', /italia|pizz|pasta|trattor/],
+      ['asiatica', /chin|corea|korean|thai|tailand|vietnam|asiat|asian|hindu|india|dim sum|canton|indones|singap|malas|filipin|sudeste|birman|nepal|pakist|taiwan|hong kong|laos|camboy/], ['italiana', /italia|pizz|pasta|trattor/],
       ['cortes', /corte|carne|parrill|argentin|brasil|barbecue|bbq|steak|asador/], ['francesa', /franc|french|bistro|brasser/],
       ['mediterranea', /espan|spanish|vasc|mediterr|grieg|greek|liban|lebanes|arabe|tapas|medio oriente|israel|turc/],
       ['latina', /peru|venezol|colombia|cuban|latin|nikkei/], ['hamburguesas', /hamburg|burger|american|alitas|wings/],
@@ -4404,6 +4418,8 @@ class Component extends DCLogic {
       'mexicana': 'mexicana', 'cantina mexicana': 'mexicana', 'antojitos de mercado': 'mexicana', 'hamburguesas': 'hamburguesas', 'saludable': 'vegetariana' };
     const pn = POR_NOMBRE[this.cuisine(v)]; if (pn) out.add(pn);
     if (v.cat === 'Taquería') out.add('tacos'); if (v.cat === 'Izakaya') out.add('japonesa');
+    // Sin cocina en la ficha: el nombre también dice (El Mékông, Pin-tó Thai, Makan…). 5 nov 2026.
+    if (!c && this.esComidaFiltrable(v) && /mekong|\bthai\b|\bwok\b|dim sum|\bpho\b|curry|tandoor|asian|asiatic|\bbao\b|banh mi|corean|korean|\bmakan\b|warung/.test(this.strip(v.n))) out.add('asiatica');
     if (this.dietaDe(v).length) out.add('vegetariana');
     return Array.from(out); }
   // Cocinas elegidas: sólo cuentan con "Comer rico" puesto.
@@ -6131,6 +6147,16 @@ class Component extends DCLogic {
       resFiltros, resAviso: avisoCorto, resAvisoMas: avisoMas, resAvisoHayMas: !!avisoMas, resAvisoAbierto: !!s.resAvisoAbierto,
       resAvisoBtn: s.resAvisoAbierto ? 'Ver menos' : 'Por qué', toggleAviso: () => this.setState({ resAvisoAbierto: !s.resAvisoAbierto }),
       opciones, hayOpciones: nOpc > 0, sinOpciones: view === 'results' && nOpc === 0,
+      ...(() => { const L = view === 'results' && nOpc > 0 ? this.listaFiltros() : [], n = s.listaN || 12;
+        const cs = this.cocinasSel(), zt = this.zonesLabel ? this.zonesLabel() : '';
+        return { listaOn: L.length > 0, listaTotal: L.length,
+          listaTitulo: (cs.length ? 'Más ' + this.cocinasTxt(cs) : 'Más lugares') + (zt ? ' en ' + zt : '') + ' · ' + L.length,
+          listaNota: 'Todo lo que cumple tus filtros a esa hora, empezando por los hotspots.',
+          lista: L.slice(0, n).map(v => { const a = this.cardActions(v); return { name: v.n, hot: v.hot ? '★ Hotspot' : '', hayHot: !!v.hot,
+            sub: [v.cocina || v.cat, v.col || this.zLabel(v.z), this.precioTxt(v)].filter(Boolean).join(' · ') + (v.horaEstimada ? ' · horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : ''),
+            open: a.open }; }),
+          listaMasOn: L.length > n, listaMasTxt: 'Ver ' + Math.min(12, L.length - n) + ' más',
+          listaMas: () => this.setState({ listaN: n + 12 }) }; })(),
       sinOpcionesTxt: aviso || 'Ningún lugar cumple a la vez la zona, el horario y el presupuesto. Amplía uno de los tres.',
       compartirTxt: nOpc === 1 ? 'Compartir el plan' : 'Compartir las ' + nOpc, guardarTxt: nOpc === 1 ? 'Guardar el plan' : 'Guardar las ' + nOpc,
       explorarTxt: 'Ver lugares sueltos en ' + this.zonesLabel() + ' →', tandaDeTxt: (() => { const uno = ((r && r.plans) || []).length === 1; const que = uno ? 'este plan: vota si te late' : 'estos planes: vota el que te late'; return s.tandaDe ? s.tandaDe + ' te compartió ' + que : 'Te compartieron ' + que; })(),
@@ -6272,6 +6298,20 @@ class Component extends DCLogic {
   // mayoría de los `pp` son el valor por defecto de la categoría (445 lugares
   // en $0, 120 museos en $85, 98 teatros en $350), así que presentarlos como
   // cifra firme era afirmar algo que no se verificó.
+  // "Más lugares con tus filtros" (debajo de las 3 opciones): TODO lo que cumple
+  // zona, tipo de comida, presupuesto, día y horario, ordenado por hotspot y gustos.
+  // Así 3 opciones nunca son el techo (5 nov 2026: "me da sólo 3 restaurantes").
+  listaFiltros() {
+    const s = this.state, r = s.results; if (!r || !(r.plans || []).length) return [];
+    const [from, to] = this.range(), enPlan = new Set((r.plans || []).flatMap(p => p.stops.map(v => v.id)));
+    const foodie = (s.vibes || []).indexOf('foodie') >= 0;
+    const VM = this.vibeModel();
+    const abre = v => { if (!v.oh) return false; for (let t = from; t <= to - 0.75; t += 0.5) if (this.atHour(v, t)) return true; return false; };
+    return this.cat().filter(v => !enPlan.has(v.id) && this.inZone(v) && this.esRecomendable(v) && this.budgetOk(v) && this.timingOk(v) && abre(v)
+      && (foodie ? (this.esComidaFiltrable(v) && this.cocinaOk(v) && (!this.cocinasSel().length || this.tiposCocina(v).some(k => this.cocinasSel().indexOf(k) >= 0)))
+                 : this.vibeAdmite(v, VM) && (v.tags || []).some(t => (s.vibes || []).indexOf(t) >= 0)))
+      .sort((a, b) => this.rank(b) - this.rank(a));
+  }
   precioTxt(v) {
     if (!v) return '';
     // Tarifa conocida pero en otra unidad: se dice la cifra Y la unidad, sin
