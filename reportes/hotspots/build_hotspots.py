@@ -14,7 +14,7 @@ con los nombres que todavía no están en el catálogo.
 """
 import json, os, re, unicodedata
 AQUI = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(os.path.dirname(AQUI))
-HOY = '2026-11-04'; MES = '2026-11'
+HOY = '2026-11-05'; MES = '2026-11'
 
 FUENTES = {
  'mich26':  ('Time Out México — restaurantes de la CDMX con estrella Michelin (Guía Michelin 2026)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/restaurantes-de-la-cdmx-que-tienen-estrella-michelin', '2026-05-20'),
@@ -28,6 +28,9 @@ FUENTES = {
  'mb_bares26': ('Marco Beteta — 20 bares de reciente apertura en CDMX', 'https://mbmarcobeteta.com/nuevos-bares-cdmx/', '2026-08-04'),
  'hap_oct26': ('The Happening — nuevos hotspots de octubre 2026 en CDMX', 'https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/', '2026-10-06'),
  'mb_nov26': ('Marco Beteta — restaurantes nuevos para visitar en noviembre en CDMX', 'https://mbmarcobeteta.com/restaurantes-nuevos-cdmx/', '2026-11-03'),
+ 'mb100_26': ('Marco Beteta — Los 100 mejores restaurantes de México, MB100 2026 (restaurantes de CDMX)', 'https://mbmarcobeteta.com/los-100-mejores-restaurantes-de-mexico-mb100/', '2025-11-19'),
+ 'quien_jul26': ('Quién — Los nuevos hotspots de CDMX que ya están en todos los planes', 'https://www.quien.com/estilo-de-vida/2026/07/01/los-nuevos-hotspots-de-cdmx-que-ya-estan-en-todos-los-planes', '2026-07-01'),
+ 'hap_nov26': ('The Happening — nuevos hotspots para conocer en noviembre 2026', 'https://thehappening.com/nuevos-hotspots-para-conocer-en-noviembre-2026/', '2026-10-30'),
  'museos24': ('Mexico News Daily (datos de Time Out México, INAH e INBAL) — museos más visitados de CDMX en 2024', 'https://mexiconewsdaily.com/culture/most-popular-mexico-city-museums-in-2024', '2025-01-20'),
  'museos26': ('Chilango — museos imprescindibles de CDMX (Mundial 2026)', 'https://www.chilango.com/que-hacer/arte-y-cultura/museos-imperdibles-cdmx-mundial-2026-direccion-costo/amp/', '2026-06-02'),
 }
@@ -67,6 +70,13 @@ LISTAS = [
  ('museos26', 3, False, ['Museo Nacional de Antropología|Museo Nacional de Antropología (MNA)', 'Museo Frida Kahlo', 'Palacio de Bellas Artes|Museo del Palacio de Bellas Artes',
    'Museo Anahuacalli|Anahuacalli', 'Templo Mayor|Templo Mayor (museo y zona arqueológica)|Museo del Templo Mayor', 'Museo Franz Mayer', 'Mumedi|MUMEDI|Museo Mexicano del Diseño',
    'Museo Numismático Nacional']),
+ # MB100 2026 (sólo CDMX). 'Siembra Comedor' no se alía a Siembra Tortillería/terraza (otros lugares).
+ ('mb100_26', 2, False, ['Al Andalus|Al Andalus · San Angel', 'Balcón del Zócalo', 'Cana', 'Carmela y Sal', 'Costa Guadiana', 'Em', 'Entremar', 'Er Rre|Er Rre un Bistró',
+   'Gaba', 'Galanga|Galanga Thai House', 'Havre 77', 'Hotaru', 'Issi', 'Jowong', 'Lorea', 'Makan', 'Martínez', 'Máximo Bistrot|Máximo', 'Mi Compa Chava', 'Momiji',
+   'Propio', 'Quintonil', 'Sartoria', 'Siembra Comedor', 'Sudestada', 'Supplì', 'Sushi Iwashi', 'Trillo', 'Ultramarinos Demar', 'Voraz', 'Yoshimi|Yoshimi · Hyatt Regency', 'Zeru']),
+ ('quien_jul26', 2, True, ['Lotti', 'La Bellezza|La Bellezza México', 'Faba', 'Marne Café|Marne', 'El Mekong|El Mékông', 'Varde', 'Katz', 'Sona|Sona · sala de escucha']),
+ ('hap_nov26', 2, True, ['El Silverio', 'Los Super Elegantes', 'Jocoque House Polanco', 'Yellow Cup Coffee', 'Ramen Oscuro|Oscuro Ramen', 'Mirta', 'Iwashi Lomas', 'Cassette',
+   'Taquería El Cuadrilátero|Taqueria El Cuadrilátero', 'Moré', 'Parla Juárez', "Chico's Café|Chico’s Cafe", 'Atlantis', 'Archivo', 'Grulla', 'Bar de Verano']),
 ]
 
 def k(s):

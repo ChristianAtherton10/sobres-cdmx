@@ -1141,5 +1141,32 @@
   "lat": 19.41822,
   "lng": -99.17858,
   "aprox": false
+ },
+ {
+  "id": "iv-e067a185a0",
+  "n": "99 Records · Roma Norte",
+  "zone": "roma",
+  "km": 0.9,
+  "lat": 19.41699,
+  "lng": -99.16787,
+  "aprox": false
+ },
+ {
+  "id": "iv-f365a5b28b",
+  "n": "99 Records · Condesa",
+  "zone": "condesa",
+  "km": 0.6,
+  "lat": 19.41455,
+  "lng": -99.16951,
+  "aprox": false
+ },
+ {
+  "id": "iv-25906b7927",
+  "n": "Sona · sala de escucha",
+  "zone": "condesa",
+  "km": 0.3,
+  "lat": 19.41074,
+  "lng": -99.17707,
+  "aprox": false
  }
 ]

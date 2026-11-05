@@ -33,7 +33,7 @@ const E = [
   { n: 'Garbage en el Zócalo · concierto gratis', cat: 'Foro', sede: /^Zócalo \(Plaza de la Constitución\)$/, desde: '2026-11-14', hasta: '2026-11-14', oh: [20, 23], hrs: 'Sáb 14 nov · 20:00',
     f: 'chil', precio: GRATIS, who: ['amigos', 'compa', 'date'], tags: ['nightlife', 'social'], nota: 'La nota dice "14 de septiembre" por error; el contexto es noviembre.' },
   { n: 'Noche de las Estrellas · Las Islas de CU', cat: 'Atracción', sede: { lat: 19.3326, lng: -99.1858, zone: 'cu', addr: 'Las Islas, Ciudad Universitaria', aprox: true },
-    desde: '2026-11-14', hasta: '2026-11-14', oh: [17, 23], hrs: 'Sáb 14 nov · de noche (hora por confirmar)', horaEstimada: true, f: 'chil', precio: GRATIS, who: ['familia', 'amigos', 'date'], tags: ['familiar', 'cultural', 'romántico'] },
+    desde: '2026-11-14', hasta: '2026-11-14', oh: [15, 22], hrs: 'Sáb 14 nov · 15:00–22:00 (horario según InStyle, 1 nov 2026)', f: 'chil', precio: GRATIS, who: ['familia', 'amigos', 'date'], tags: ['familiar', 'cultural', 'romántico'] },
   { n: 'Noche de Museos · Palacio de Bellas Artes', cat: 'Museo', sede: /^Palacio de Bellas Artes \(museo\)$/, desde: '2026-11-25', hasta: '2026-11-25', oh: [18, 22], hrs: 'Mié 25 nov · horario nocturno (por confirmar)', horaEstimada: true,
     f: 'chil', precio: GRATIS, who: ['amigos', 'date', 'familia'], tags: ['cultural', 'romántico'] },
   { n: 'Festival Francia en Los Pinos', cat: 'Centro cultural', sede: /^Complejo Cultural Los Pinos$/, desde: '2026-11-28', hasta: '2026-11-29', oh: [10, 18], hrs: '10:00–18:00 (festival gastronómico México-Francia)',
@@ -57,7 +57,8 @@ const E = [
 // ── Conciertos de noviembre 2026 (consultados el 5 nov 2026) ──────────────────
 // Sólo entran los que traen la MISMA fecha y sede en las tres agendas: Milenio
 // (2 nov), La Silla Rota (1 nov) y ClaroSports (3 nov). Fuera por no coincidir:
-// Morat 17 nov, Niña Pastori, XG, Helado Negro, Majo Aguilar y Jerry Rivera.
+// Niña Pastori, XG, Helado Negro, Majo Aguilar y Jerry Rivera. Morat 17 nov entró el 5 nov: lo
+// publican Milenio y ClaroSports y sigue a la venta en boleteras (La Silla Rota no lo lista).
 // Ninguna nota da hora ni precio de boleto → "por confirmar" (salvo festivales).
 F.mil = ['Milenio — Conciertos en CdMx en noviembre 2026 (agenda completa)', 'https://www.milenio.com/espectaculos/musica/conciertos-cdmx-noviembre-2026-agenda-completa', '2026-11-02'];
 F.corona = ['Corona Capital — sitio oficial (fechas y sede); precios: ClaroSports, 3 nov 2026', 'https://www.coronacapital.com.mx/', '2026-11-05'];
@@ -74,7 +75,7 @@ const SEDE_N = { gnp: 'Estadio GNP Seguros', pdd: 'Palacio de los Deportes', an:
   lunario: 'Lunario', bb: 'Auditorio BB', maraka: 'La Maraka', puebla: 'Foro Puebla', arena: 'Arena CDMX', autodromo: 'Autódromo Hermanos Rodríguez', plazamx: 'Plaza México' };
 const K = [ // [artista, sede, días de noviembre]
   ['Aitana', 'an', [5, 6, 7]], ['Puma Blue', 'metro', [5]], ['Peces Raros', 'bb', [5]], ['Dillom', 'puebla', [5, 6, 7]], ['Erick Brian', 'maraka', [5]],
-  ['Morat', 'pdd', [6, 7, 8, 13, 14, 15]], ['Rubio', 'bb', [6]], ['Serbia', 'metro', [6]], ['Yahir y Charlie Zaa', 'maraka', [6]],
+  ['Morat', 'pdd', [6, 7, 8, 13, 14, 15, 17]], ['Rubio', 'bb', [6]], ['Serbia', 'metro', [6]], ['Yahir y Charlie Zaa', 'maraka', [6]],
   ['Los Panchos', 'metro', [8]], ['Ricardo Montaner', 'an', [10]], ['ZZ Top', 'an', [11]], ['Opeth', 'arena', [11]],
   ['Elefante', 'an', [12]], ['María León', 'metro', [12]], ['Pancho Varona', 'lunario', [12]], ['Lifehouse', 'maraka', [12]], ['Ultraligera', 'puebla', [12]],
   ['Karol G', 'gnp', [13, 14, 15]], ['Andrés Calamaro', 'pepsi', [13]], ['El Kanka', 'metro', [13]], ['Carlos Cuevas', 'lunario', [13]], ['DLD', 'maraka', [13, 14]],
@@ -108,6 +109,38 @@ E.push({ n: 'Coca-Cola Flow Fest 2026 · Autódromo Hermanos Rodríguez', cat: '
   precio: { min: 1637, rep: 3100, max: 3100, unidad: 'persona', moneda: 'MXN', canasta: 'General de un día en Ticketmaster: de $1,636.75 a $3,100 (ClaroSports 3 nov 2026).' },
   nota: 'Necesitas boleto: revisa en la boletera si quedan. Fechas también en Milenio (2 nov) y La Silla Rota (1 nov).' });
 
+// ── Lo que viene en noviembre (InStyle 1 nov; @cdmx_oficial; consultado el 5 nov 2026) ──
+F.instyle = ['InStyle México — Qué hacer en CDMX en noviembre 2026', 'https://instyle.mx/estilo-de-vida/que-hacer-cdmx-noviembre-2026/', '2026-11-01'];
+F.horna = ['Crónica — Kati Horna en el Palacio de Bellas Artes', 'https://www.cronica.com.mx/cultura/2026/10/25/kati-horna-la-fotografa-documento-la-transformacion-de-la-vida-social-y-politica-mexicana-en-la-segunda-mitad-del-siglo-xx/', '2026-10-25'];
+F.nfl = ['Crónica — 49ers vs Vikings en CDMX: cuándo, dónde y a qué hora', 'https://www.cronica.com.mx/deportes/2026/05/13/san-francisco-49ers-vs-minnesota-vikings-en-cdmx-cuando-donde-y-a-que-hora-sera-el-juego-de-la-nfl-en-mexico/', '2026-05-13'];
+F.barbie = ['Los40 — Barbie Run 2026 llega a CDMX', 'https://los40.com.mx/2026/03/17/barbie-run-2026-la-carrera-inspirada-en-barbie-llegara-a-cdmx-y-estos-son-los-detalles/', '2026-03-17'];
+const NOV = { consultado: '2026-11-05' };
+const BOLETO = 'Necesitas boleto: revisa en la boletera si quedan.';
+E.push(Object.assign({ n: 'Feria del Libro Comestible · Jardín Gallina de Guinea', cat: 'Atracción', sede: { lat: 19.34538, lng: -99.1933, addr: 'General Aureliano Rivera 4, San Ángel', col: 'San Ángel' },
+  desde: '2026-11-06', hasta: '2026-11-08', oh: [11, 19], hrs: '6 al 8 nov · 11:00–19:00', f: 'instyle', precio: GRATIS, who: ['amigos', 'date', 'familia', 'compa'], tags: ['foodie', 'cultural', 'chill'] }, NOV));
+E.push(Object.assign({ n: 'Nota Tavern × Bar Chenin', cat: 'Bar', sede: /^Nota Tavern$/, desde: '2026-11-06', hasta: '2026-11-07', oh: [19, 24], horaEstimada: true,
+  hrs: '6 y 7 nov · hora por confirmar', f: 'instyle', who: ['amigos', 'date', 'compa'], tags: ['nightlife', 'foodie'] }, NOV));
+E.push(Object.assign({ n: 'Brindis de Altura · Bajel', cat: 'Bar', sede: /^Bajel$/, solo: ['2026-11-07'], oh: [20, 23], hrs: 'Sáb 7 nov · 20:00',
+  f: 'instyle', who: ['amigos', 'date', 'compa'], tags: ['nightlife', 'romántico', 'social'] }, NOV));
+E.push(Object.assign({ n: 'Brunch de Bistró 44', cat: 'Restaurante', sede: { lat: 19.42838, lng: -99.19427, addr: 'Av. Emilio Castelar 44, Polanco', col: 'Polanco' },
+  solo: ['2026-11-08'], oh: [11, 13], hrs: 'Dom 8 nov · 11:00–13:00', f: 'instyle', who: ['amigos', 'date', 'familia', 'compa'], tags: ['foodie', 'chill'] }, NOV));
+E.push(Object.assign({ n: 'Lotti × Le Chêne · primer aniversario de Lotti', cat: 'Restaurante', sede: /^Lotti$/, solo: ['2026-11-12'], oh: [14.5, 22.5],
+  hrs: 'Jue 12 nov · servicios a las 14:30 y 19:00 (reserva en OpenTable)', f: 'instyle', who: ['date', 'amigos', 'compa'], tags: ['foodie', 'romántico'] }, NOV));
+E.push(Object.assign({ n: 'Inauguración: la Bienal de São Paulo llega al Tamayo', cat: 'Museo', sede: /^Museo Tamayo$/, solo: ['2026-11-14'], oh: [19, 22],
+  hrs: 'Sáb 14 nov · 19:00 (inauguración)', f: 'instyle', precio: GRATIS, who: ['amigos', 'date', 'compa', 'solo'], tags: ['cultural', 'creativo'] }, NOV));
+E.push(Object.assign({ n: 'Cena por las Chinampas · Casa Pedregal', cat: 'Restaurante', sede: { lat: 19.3285, lng: -99.20478, addr: 'Av. de las Fuentes 180, Jardines del Pedregal', col: 'Jardines del Pedregal' },
+  solo: ['2026-11-19'], oh: [19, 23], hrs: 'Jue 19 nov · 19:00', f: 'instyle', who: ['date', 'amigos', 'compa'], tags: ['foodie', 'romántico'] }, NOV));
+E.push(Object.assign({ n: 'The Thanksgiving Table · Esca', cat: 'Restaurante', sede: /^ESCA$/, solo: ['2026-11-26'], oh: [19, 23], horaEstimada: true,
+  hrs: 'Jue 26 nov · hora por confirmar', f: 'instyle', who: ['amigos', 'date', 'familia', 'compa'], tags: ['foodie'] }, NOV));
+E.push(Object.assign({ n: 'Kati Horna: lo insólito es lo cotidiano · Palacio de Bellas Artes', cat: 'Museo', sede: /^Palacio de Bellas Artes \(museo\)$/, desde: null, hasta: '2026-11-30',
+  oh: [11, 17], hrs: 'Horario del museo (por confirmar)', horaEstimada: true, f: 'horna', who: ['amigos', 'date', 'solo', 'compa'], tags: ['cultural', 'creativo'],
+  nota: 'Abierta desde octubre; ninguna fuente publica la fecha de cierre (@cdmx_oficial la anuncia todo noviembre).' }, NOV));
+E.push(Object.assign({ n: 'NFL: 49ers vs Vikings · Estadio Banorte', cat: 'Foro', sede: /^Estadio Azteca$/, solo: ['2026-11-22'], oh: [19.33, 23], hrs: 'Dom 22 nov · 19:20 (Sunday Night Football)',
+  f: 'nfl', who: ['amigos', 'compa', 'familia', 'date'], tags: ['social', 'nightlife', 'aventurero'], concierto: true, nota: BOLETO }, NOV));
+E.push(Object.assign({ n: 'Barbie Run CDMX 2026 · Paseo de la Reforma', cat: 'Atracción', sede: { lat: 19.42435, lng: -99.1753, addr: 'Paseo de la Reforma, frente a Torre Mayor (salida y meta)', col: 'Juárez', zone: 'juarez' },
+  solo: ['2026-11-22'], oh: [6.5, 9.5], hrs: 'Dom 22 nov · 5 km 6:30 · 10 km 7:00 · caminata 3 km 7:30', f: 'barbie', who: ['amigos', 'familia', 'compa'], tags: ['aventurero', 'familiar', 'social'],
+  nota: 'Requiere inscripción previa (kit y número).', concierto: true }, NOV));
+
 const app = makeApp({});
 const C = app.cat();
 let geocache = {}; const GC = path.join(__dirname, 'geocache.json'); if (fs.existsSync(GC)) geocache = JSON.parse(fs.readFileSync(GC, 'utf8'));
@@ -123,7 +156,7 @@ const out = E.map(e => {
   const r = { id: 'ev-' + crypto.createHash('sha1').update(e.n).digest('hex').slice(0, 10), n: e.n, cat: e.cat, evento: true,
     fechas: e.solo ? { solo: e.solo, desde: e.solo[0], hasta: e.solo[e.solo.length - 1] } : { desde: e.desde, hasta: e.hasta },
     lat, lng, zone, col, addr, oh: e.oh, hrs: e.hrs, who: e.who, tags: e.tags, tm: [e.oh[0] <= 11 ? 'manana' : null, e.oh[0] <= 17 ? 'tarde' : null, e.oh[1] >= 20 ? 'noche' : null].filter(Boolean),
-    act: { Museo: ['visita'], Foro: ['funcion'], 'Centro cultural': ['visita'], 'Atracción': ['visita', 'paseo'] }[e.cat],
+    act: { Museo: ['visita'], Foro: ['funcion'], 'Centro cultural': ['visita'], 'Atracción': ['visita', 'paseo'], Restaurante: ['comida', 'cena'], Bar: ['copas'] }[e.cat],
     fuente, url, fecha, consultado: e.consultado || HOY, hrsFuente: fuente, web: '', score: 80, tier: 'B', basis: 'Evento con fecha en ' + (e.sedeN || addr) };
   if (e.horaEstimada) r.horaEstimada = true;
   if (aprox) r.coordAprox = true;

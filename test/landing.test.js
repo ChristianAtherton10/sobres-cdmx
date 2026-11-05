@@ -361,7 +361,7 @@ section('34 · Conciertos de noviembre 2026');
 const VIGENTES_NOV = () => makeApp(COM).todayISO() <= '2026-11-29';
 
 test('34.1 · cada concierto trae fuente con URL y fecha, días de noviembre, y hora/precio "por confirmar" si la nota no los da', () => {
-  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos.filter(e => e.concierto);
+  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos.filter(e => e.concierto && (/ en concierto · /.test(e.n) || /Corona Capital|Flow Fest/.test(e.n)));
   assert(E.length >= 70, 'sólo ' + E.length + ' conciertos');
   E.forEach(e => {
     assert(/^https:\/\//.test(e.url) && /^2026-1[01]-\d{2}$/.test(e.fecha), e.n + ': sin fuente o fecha');
@@ -373,7 +373,8 @@ test('34.1 · cada concierto trae fuente con URL y fecha, días de noviembre, y 
   });
   // Los que no coinciden en las tres agendas no entran.
   ['Niña Pastori', 'XG en', 'Majo Aguilar', 'Jerry Rivera', 'Helado Negro'].forEach(n => assert(!E.some(e => e.n.indexOf(n) === 0), n + ' entró sin confirmar'));
-  assert(!E.find(e => /^Morat/.test(e.n)).fechas.solo.includes('2026-11-17'), 'Morat 17 nov sólo viene en 2 de 3 agendas');
+  // Morat 17 nov: entró el 5 nov (Milenio, ClaroSports y boleteras).
+  assert(E.find(e => /^Morat/.test(e.n)).fechas.solo.includes('2026-11-17'), 'falta Morat 17 nov');
 });
 
 // Regresión: un evento con hora "por confirmar" entraba a cualquier hora
@@ -440,9 +441,39 @@ test('35.2 · los clásicos que ya estaban con otro nombre quedan marcados, sin 
   ['Tacos del Valle', 'Deigo Cocina Tradicional Japonesa', 'Museo Mexicano del Diseño (MUMEDI)', 'Cantina del Bosque'].forEach(n => {
     const v = C.find(x => x.n === n); assert(v && v.hot >= 1, n + ' no quedó como hotspot');
   });
-  // "Sushi Iwashi" (Polanco, MB100) no es "Iwashi Lomas"; "Deigo" es el original, no el de ramen.
-  assert(!C.find(x => x.n === 'Iwashi Lomas').hot, 'Iwashi Lomas quedó como el Sushi Iwashi de Beteta');
+  // "Sushi Iwashi" (Polanco, MB100) no es "Iwashi Lomas" (que sí es hotspot, pero por The Happening); "Deigo" es el original, no el de ramen.
+  const H = makeApp(COM)._win.SOBRES_HOTSPOTS.ids, il = C.find(x => x.n === 'Iwashi Lomas');
+  assert(!H[il.id] || !H[il.id].f.some(f => /^mb100/.test(f)), 'Iwashi Lomas quedó como el Sushi Iwashi de Beteta');
   assert(!C.find(x => x.n === 'Deigo Ramen').hot, 'Deigo Ramen quedó como el Deigo clásico');
+});
+
+// ── 36 · Hotspots de MB100 2026, Quién, The Happening y eventos de noviembre (5 nov 2026) ──
+section('36 · Hotspots del momento y eventos de noviembre');
+
+test('36.1 · las listas nuevas marcan hotspots sólo de CDMX y sin pegar sucursales equivocadas', () => {
+  const a = makeApp(COM), H = a._win.SOBRES_HOTSPOTS, C = a.cat();
+  ['mb100_26', 'quien_jul26', 'hap_nov26'].forEach(f => assert(H.fuentes[f] && /^https:/.test(H.fuentes[f].url), 'falta la fuente ' + f));
+  ['Jowong', 'Issi', 'Trillo', 'La Bellezza', 'Los Super Elegantes', 'Oscuro Ramen', 'Sona · sala de escucha'].forEach(n => {
+    const v = C.find(x => x.n === n); assert(v && v.hot >= 2, n + ' no quedó como hotspot'); });
+  ['Siembra Tortillería', 'Siembra terraza'].forEach(n => { const v = C.find(x => x.n === n); assert(!H.ids[v.id] || !H.ids[v.id].f.includes('mb100_26'), n + ' quedó como "Siembra Comedor"'); });
+});
+
+// Regresión: el filtro de acervos ("archivo", "tienda del museo") tumbaba al restaurante Archivo, y
+// las librerías sólo pasaban con nombre de una lista fija (99 Records quedaba fuera).
+test('36.2 · 99 Records (vinilos) y el restaurante Archivo sí se pueden proponer; un archivo histórico no', () => {
+  const a = makeApp(COM), C = a.cat();
+  ['99 Records · Roma Norte', '99 Records · Condesa', 'Archivo'].forEach(n => { const v = C.find(x => x.n === n); assert(v && a.esRecomendable(v), n + ' no se propone'); });
+  const acervo = C.find(x => /^Biblioteca del Archivo Nacional/.test(x.n)); assert(!a.esRecomendable(acervo), 'un acervo entró como plan');
+});
+
+test('36.3 · eventos de noviembre: lo verificado entra, lo que ya pasó o no se confirma no', () => {
+  const E = makeApp(COM)._win.SOBRES_EVENTOS.eventos;
+  ['Feria del Libro Comestible', 'Brindis de Altura · Bajel', 'Lotti × Le Chêne', 'Bienal de São Paulo', 'Cena por las Chinampas', 'Kati Horna', 'NFL: 49ers vs Vikings', 'Barbie Run']
+    .forEach(n => { const e = E.find(x => x.n.indexOf(n) >= 0); assert(e && /^https:/.test(e.url) && e.fecha, n + ': falta o sin fuente'); });
+  // Sin fuente que lo confirme, ya pasó, o sin dirección exacta.
+  ['Cosmo', 'Snoopy', 'Festival Día de Muertos', 'Trajinera del Chef', 'Materia', 'Open House', 'Ladurée'].forEach(n => assert(!E.some(x => x.n.indexOf(n) >= 0), n + ' no debía entrar'));
+  E.filter(e => e.consultado === '2026-11-05').forEach(e => assert((e.fechas.hasta || '9') >= '2026-11-05', e.n + ' ya pasó'));
+  const nfl = E.find(x => /^NFL/.test(x.n)); assert(nfl.oh[0] > 19 && nfl.oh[0] < 19.5 && !nfl.horaEstimada, 'la NFL es a las 19:20');
 });
 
 if (require.main === module) report();

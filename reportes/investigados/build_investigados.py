@@ -141,6 +141,14 @@ F.update({
  'cl_bosque': ('OpenTable — Cantina del Bosque (13 de Septiembre 29, San Miguel Chapultepec)' + _MB, 'https://www.opentable.ie/r/cantina-del-bosque-ciudad-de-mexico', _C),
 })
 VIGENTES |= {k for k in F if k.startswith('cl_')}
+
+F.update({
+ 'hap_nov26': ('The Happening — nuevos hotspots para conocer en noviembre 2026', 'https://thehappening.com/nuevos-hotspots-para-conocer-en-noviembre-2026/', '2026-10-30'),
+ 'to_99': ('Time Out México — 99 Records: vinilos, bar y libros de música (ficha)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/shopping/99-records-vinilos-bar-y-libros-musica-cdmx', _C),
+ 'adn_99': ('ADN40 — 99 Records, el mejor lugar para comprar discos de vinilo en CDMX', 'https://www.adn40.mx/ciudad/2025-09-04/99-records-el-mejor-lugar-para-comprar-discos-vinilo-en-cdmx/', '2025-09-04'),
+ 'chil_sona': ('Chilango — Sona, un lugar para escuchar música (donde la gente sí se calla)', 'https://www.chilango.com/que-hacer/musica/sona-lugar-para-escuchar-musica-condesa/', _C),
+})
+VIGENTES |= {'to_99', 'chil_sona'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -552,6 +560,14 @@ L = [
  dict(n='Cantina del Bosque', lat=19.41822, lng=-99.17858,  # 13 de Septiembre esq. José Vasconcelos (OSM)
       cat='Cantina', col='San Miguel Chapultepec', addr='13 de Septiembre 29, San Miguel Chapultepec', geo='13 de Septiembre 29, San Miguel Chapultepec, Ciudad de México',
       f='cl_bosque', h=(13, 21), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'copas'], who=['amigos', 'compa'], tags=['foodie', 'social', 'clásico'], cocina='Mexicana'),
+ # Hotspots de noviembre 2026 (The Happening, 30 oct) y lugares para escuchar vinilos (5 nov 2026)
+ dict(n='99 Records · Roma Norte', cat='Librería', col='Roma Norte', addr='Av. Álvaro Obregón 273, Roma Norte', geo='Avenida Álvaro Obregón 273, Roma Norte, Ciudad de México',
+      f='to_99', h=(11, 20), hrs='Horario por confirmar · tienda de vinilos (dentro está el listening room Shhh Roma)', horaEstimada=True, act=['visita', 'lectura'], who=['amigos', 'date', 'compa', 'solo'], tags=['chill', 'cultural', 'creativo']),
+ dict(n='99 Records · Condesa', cat='Librería', col='Hipódromo Condesa', addr='Ámsterdam 62, Hipódromo Condesa', geo='Ámsterdam 62, Hipódromo Condesa, Ciudad de México',
+      f='adn_99', h=(10, 22), hrs='Lun y mar 11:00–20:00 · mié a sáb 10:00–23:00 · dom 10:00–22:00 (ADN40, sep 2025) · vinilos y el listening bar Shhh', act=['visita', 'lectura'], who=['amigos', 'date', 'compa', 'solo'], tags=['chill', 'cultural', 'creativo']),
+ dict(n='Sona · sala de escucha', cat='Atracción', col='Hipódromo Condesa', addr='Cuernavaca 134, Hipódromo Condesa', geo='Cuernavaca 134, Hipódromo Condesa, Ciudad de México',
+      f='chil_sona', h=(16.5, 22), dias=[0, 3, 4, 5, 6], hrs='Mié a vie 16:30–22:00 · sáb y dom 8:30–22:00 · sesiones para escuchar discos completos, sin celular', act=['visita'], who=['amigos', 'date', 'compa', 'solo'], tags=['chill', 'cultural'],
+      precio=dict(min=380, rep=380, max=380, unidad='persona', canasta='$380 por sesión según Chilango.'), estado='rango'),
 ]
 
 # ------------------------------------------------------------------ geocodificación
@@ -591,7 +607,7 @@ for x in L:
     if oh[1] >= 21: tm.append('noche')
     rec = dict(id=vid, n=x['n'], cat=x['cat'], lat=lat, lng=lng, col=x['col'], addr=x['addr'], zone=z,
                oh=oh, hrs=x['hrs'], who=x['who'], tags=x['tags'], tm=tm or ['tarde'],
-               fuente=nombre_f, url=url_f, web='', fecha=fecha_f, consultado=(HOY2 if x['f'].startswith('cl_') else HOY), hrsFuente=nombre_f)
+               fuente=nombre_f, url=url_f, web='', fecha=fecha_f, consultado=(HOY2 if x['f'].startswith('cl_') or x['f'] in ('hap_nov26', 'to_99', 'adn_99', 'chil_sona') else HOY), hrsFuente=nombre_f)
     if x.get('act'): rec['act'] = x['act']
     if x.get('dias'): rec['dias'] = x['dias']
     if x.get('horaEstimada'): rec['horaEstimada'] = True
