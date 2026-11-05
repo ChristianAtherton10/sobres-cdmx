@@ -610,7 +610,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-tabla" data-paso="{{ paso }}">
 <div id="armar-ambiente" class="sb-card sb-col">
 <h2 class="sb-h3" style="margin-bottom:4px">¿Qué se les antoja?</h2>
-<p class="sb-note" style="margin:0 0 14px">Elige hasta tres.</p>
+<p class="sb-note" style="margin:0 0 14px">Elige uno o dos.</p>
 <div class="sb-grid2" role="group" aria-label="Ambiente">
 <sc-for list="{{ vibeTiles }}" as="o" hint-placeholder-count="10"><button class="sb-tile" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="t1">{{ o.label }}</span><span class="t2">{{ o.hint }}</span></button></sc-for>
 </div>
@@ -1661,7 +1661,8 @@ class Component extends DCLogic {
       const yaEsta = new Set(out.map(x => x.id));
       for (const r0 of A.NUEVOS.concat(XL)) {
         if (A.BAJA[r0.id]) continue;
-        const r = XLU[r0.id] ? Object.assign({}, r0, XLU[r0.id]) : r0;
+        let r = XLU[r0.id] ? Object.assign({}, r0, XLU[r0.id]) : r0;
+        if (A.UBICA && A.UBICA[r0.id]) r = Object.assign({}, r, A.UBICA[r0.id], { coordAprox: false });
         if (yaEsta.has(r.id)) continue; yaEsta.add(r.id);
         const z = Z[r.zone] || this.ZONES[0];
         const v = { id: r.id, n: r.n, cat: r.cat, z: r.zone, col: r.col, addr: r.addr, web: r.web || '',
@@ -1712,6 +1713,11 @@ class Component extends DCLogic {
         v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según ' + c.fuente.split(' —')[0] + ' (' + c.consultado + ').').trim();
       }
       v.confirmado = c; });
+    // Hotspots (data/hotspots.js): nivel 3 = Michelin / 50 Best / museos top;
+    // 2 = guías del año y aperturas del mes. Una apertura pesa como "nueva" 4 meses.
+    const HS = (typeof window !== 'undefined' && window.SOBRES_HOTSPOTS && window.SOBRES_HOTSPOTS.ids) || {};
+    const mesHoy = this.todayISO().slice(0, 7), mesesDesde = m => { const a = m.split('-').map(Number), b = mesHoy.split('-').map(Number); return (b[0] - a[0]) * 12 + b[1] - a[1]; };
+    out.forEach(v => { const h = HS[v.id]; if (!h) return; v.hot = h.nivel; v.hotF = h.f; v.hotNuevo = !!h.nuevo && mesesDesde(h.mes) < 4; });
     out.forEach(v => { v.publico = this.publicoDe(v); const d = this.dietaDe(v); if (d.length) v.dieta = d; this.ajustaPrecio(v); });
     return out;
   }
@@ -1873,7 +1879,12 @@ class Component extends DCLogic {
   soloCultural() { const vb = (this.state.vibes || []).filter(x => x !== 'joyita' && x !== 'clásico' && x !== 'social');
     return vb.length > 0 && vb.every(x => x === 'cultural'); }
   esBarDeNombre(v) { return /cervecer|cantina|\bpub\b|\bbeer|brew|mezcaler|pulquer/i.test(v.n || ''); }
-  esCadenaCasual(v) { return /chili'?s|olive garden|italianni|p\.? ?f\.? ?chang|shake shack|hard rock|\bvips\b|sanborns|\btoks\b|hello kitty|burger|wings|hooters|applebee|tgi|domino|little caesars|carl'?s jr|mcdonald|kfc|starbucks|potzolcalli|el portón|wings army/i.test(v.n || ''); }
+  // Lo que no va en una cita aunque sea bueno: cadenas, familiares, birria, tacos,
+  // fondas, pozolerías, tortas, pizzerías de cadena (feedback del 4 nov 2026).
+  noRomantico(v) { return this.esCadenaCasual(v) || ['Taquería', 'Mercado', 'Churrería', 'Centro comercial', 'Cantina', 'Antro'].includes(v.cat)
+    || /burger|hamburgues|el baj[ií]o|la polar|fishers|traficante|birri|pozol|torter|tortas|cocina econ|fonda|tacos|taquer|bisquet|buffet|wings|alitas|cervecer[ií]a de barrio|beer|sports|deportiv/i.test(v.n || ''); }
+  pesoHot(v) { return v && v.hot ? [0, 3.5, 6, 8.5][v.hot] + (v.hotNuevo ? 1.5 : 0) : 0; }
+  esCadenaCasual(v) { return /chili'?s|olive garden|italianni|p\.? ?f\.? ?chang|shake shack|hard rock|\bvips\b|sanborns|\btoks\b|hello kitty|burger king|wings|hooters|applebee|tgi|domino|little caesars|carl'?s jr|mcdonald|kfc|starbucks|potzoll?calli|el portón|wings army|casa de to[ñn]o|\bgarat\b|cielito querido|punta del cielo|italian coffee|bisquets|sushi itto|sushi roll|el globo|krispy|dunkin|juan valdez|panda express|pizza hut|papa john|subway|wingstop|beer factory|la parroquia de veracruz|tacos? (el )?caminero|el farolito|taco inn|benedetti|alitas|frutifelices|fishers|traficante de pizzas/i.test(v.n || ''); }
   bailable(v) { return !!v && (this.esAntro(v) || this.actsDe(v).indexOf('baile') >= 0); }
   // Zonas vecinas por DISTANCIA REAL entre los centros de cada zona (lat/lng),
   // sin repetir. Antes era una lista escrita a mano y Santa Fe "ampliaba" a
@@ -1909,8 +1920,7 @@ class Component extends DCLogic {
     // pulquería, speakeasy, mezcalería, karaoke): marca aptoFamilia del catálogo.
     if (this.esFamiliar() && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'no') return false;
     // Romántico: una taquería, un mercado o una cantina no son una cita.
-    if ((this.state.vibes || []).includes('romántico') && (['Taquería','Mercado','Churrería','Centro comercial','Cantina','Antro'].includes(v.cat)
-        || /chili'?s|olive garden|italianni|p\.? ?f\.? chang|shake shack|hard rock|vips|sanborns|toks|hello kitty|burger|wings/i.test(v.n || ''))) return false;
+    if ((this.state.vibes || []).includes('romántico') && this.noRomantico(v)) return false;
     // Noche = bares y antros; una cervecería o cantina registrada como
     // restaurante también es "unas cervezas" (Cervecería de Barrio en Santa Fe).
     if (this.soloNoche() && !this.CATS_NOCHE().includes(v.cat) && !this.esBarDeNombre(v)) return false;
@@ -2740,7 +2750,16 @@ class Component extends DCLogic {
     if (v.ppUnknown) return true;   // sin precio: entra, pero el total nunca se declara completo
     return v.pp <= max;
   }
-  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } if (v.evento) sc += 3; return sc + this.afinidad(v); }
+  rank(v, seed) { const s = this.state; let sc = (v.score || 60) / 10; const ov = v.tags.filter(t => s.vibes.includes(t)).length; sc += ov * 2.4; if (v.who.includes(s.who)) sc += 2; if (s.zone !== 'all') { if (this.zoneList().includes(v.z)) sc += 1.5; sc += Math.max(0, 30 - this.dist(v)) / 14; } if (this.openNow(v) && (s.when === 'ahora' || s.when === 'noche')) sc += 0.5; if (v.fic) sc -= 0.4; { const minB = this.budgetMin(); if (minB >= 1000 && !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) sc += Math.min(3, (v.pp || 0) / minB * 3); } if (seed) { let h = seed * 131; for (let i = 0; i < v.id.length; i++) h = (h * 31 + v.id.charCodeAt(i)) % 9973; sc += (h % 100) / 14 - (this._surpriseRun ? ov * 1.2 : 0); } if (v.evento) sc += 3;
+    // Hotspots primero (feedback del 4 nov 2026: "da cosas básicas"). El azar de la
+    // semilla mueve hasta ~7 puntos; un hotspot de nivel 3 tiene que ganarle.
+    sc += this.pesoHot(v);
+    // Lo básico (cadenas casuales) baja siempre; en un plan romántico, comer rico
+    // o noche, comer o tomar en un lugar sin nada especial también baja.
+    if (this.esCadenaCasual(v)) sc -= 6;
+    else if ((s.vibes || []).some(x => x === 'romántico' || x === 'foodie') && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))
+      && !v.hot && !(v.tags || []).includes('romántico') && !v.distincion) sc -= 3;
+    return sc + this.afinidad(v); }
   groupOrder(seg, pi, seed) { const s = this.state; const base = (this.SEGG[seg] || ['comida']).slice();
     const want = {}; (s.vibes || []).forEach(vb => (this.VIBEG[vb] || []).forEach(g => { want[g] = (want[g] || 0) + 1; }));
     const noFoodie = (s.vibes || []).length > 0 && !s.vibes.includes('foodie') && !s.vibes.includes('romántico');
@@ -2757,7 +2776,7 @@ class Component extends DCLogic {
   // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
   // ============================================================
   catalogoListo() { const w = typeof window !== 'undefined' ? window : {};
-    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS'].every(k => !!w[k]); }
+    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS', 'SOBRES_HOTSPOTS'].every(k => !!w[k]); }
   // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
   // comprimidos) llegan después, en orden, sin pelearle la red al marco.
   // ── Google Places en vivo (4 nov 2026) ──
@@ -2900,7 +2919,7 @@ class Component extends DCLogic {
   cargaCatalogo() {
     if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
     const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
-      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
+      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js'], ['SOBRES_HOTSPOTS', 'data/hotspots.js']];
     lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
     if (!window.SOBRES_GID) { const el = document.createElement('script'); el.src = 'data/google_ids.js'; el.async = true; document.head.appendChild(el); }
   }
@@ -3060,12 +3079,17 @@ class Component extends DCLogic {
           if (!this.cabeEnTope(st.concat([v]), max).ok) continue;
           if (!this.comidasSeparadas(st.concat([v]), ts.concat([t]))) continue;
           // Variedad entre intentos: un lugar que ya salió en otros candidatos baja.
-          opciones.push({ v, t, sc: puntaje(v) - viaje / 6 - (usoCand.get(v.id) || 0) * 3, conf: conf0 });
+          // (Suave y con tope: con -3 por uso, los hotspots, que se prueban más, quedaban
+          // enterrados bajo lugares cualquiera después de 2–3 intentos.)
+          opciones.push({ v, t, sc: puntaje(v) - viaje / 6 - Math.min(4, (usoCand.get(v.id) || 0) * 1.2), conf: conf0 });
           if (opciones.length >= 24) break;
         }
         if (!opciones.length) return null;
         opciones.sort((a, b) => b.sc - a.sc);
-        const o = opciones[Math.floor(azar() * Math.min(opciones.length, 6))];
+        // Azar sólo entre los que están cerca del mejor (≤ 4 puntos): antes era entre
+        // los 6 primeros, y con 2 hotspots abiertos salían 4 lugares cualquiera igual de seguido.
+        const cerca = opciones.filter(x => x.sc >= opciones[0].sc - 4).slice(0, 6);
+        const o = cerca[Math.floor(azar() * cerca.length)];
         st.push(o.v); ts.push(o.t); conf.push(o.conf);
         const acts = this.actsDe(o.v); ac.push(p.momento === 'cena' && acts.indexOf('cena') >= 0 ? 'cena' : p.momento === 'comida' && acts.indexOf('comida') >= 0 ? 'comida' : acts[0] || 'visita');
       }
@@ -3074,7 +3098,9 @@ class Component extends DCLogic {
         label: pl.t.map(k => R.piezas[k].lbl).join(' + '), plantilla: pl.t.join('+'), ambiente: pl.a, sig: sg, sigs: firmasDe(st),
         cartelera: st.length === 1 && conf[0], unaParada: st.length === 1,
         // Una función o sesión sin horario confirmado resta: se prefiere lo seguro.
-        puntaje: st.reduce((a, v) => a + puntaje(v), 0) / st.length + pl.peso * 3 + (st.length > 1 ? 2 : 0) - conf.filter(Boolean).length * 4
+        // El peso de hotspot elige CUÁL lugar dentro de cada pieza, no QUÉ tipo de
+        // plan: si no, un bar famoso siempre le ganaba al karaoke o al salón de baile.
+        puntaje: st.reduce((a, v) => a + puntaje(v) - this.pesoHot(v), 0) / st.length + pl.peso * 3 + (st.length > 1 ? 2 : 0) - conf.filter(Boolean).length * 4
           + (exigeBaile && this.bailable(st[st.length - 1]) ? 8 : 0) + (pideComida && st.some(v => this.sirveComida(v)) ? 4 : 0)
           // Lo que sólo pasa ese día (un concierto, una feria) va primero.
           + (st.some(v => v.evento) ? 5 : 0) };
@@ -3561,6 +3587,8 @@ class Component extends DCLogic {
         && !(this.state.sinAlcohol && this.implicaAlcohol(v)) && !(fam && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'no')
         // "Comer rico" nunca es taquería ni cadena casual (reporte del 4 nov 2026).
         && !((s.vibes || []).includes('foodie') && ((v.cat === 'Taquería' && this.cocinasSel().indexOf('tacos') < 0) || this.esCadenaCasual(v)))
+        // Romántico: nada casual ni de cadena (antes sólo lo filtraba el motor viejo).
+        && !((s.vibes || []).includes('romántico') && this.noRomantico(v))
         && this.cocinaOk(v)
         // Sin un ambiente de copas (fiesta, romántico, amigos o "lo que sea"), ni bares ni
         // rooftops ni antros: "Tranqui + Cultural" no termina en un rooftop.
@@ -4704,7 +4732,7 @@ class Component extends DCLogic {
     if (p.who) st.who = p.who;
     if (p.size) st.groupSize = p.size;
     if (p.zones.length) { st.zonesSel = p.zones; st.zone = p.zones[0]; }
-    if (p.vibes.length) st.vibes = p.vibes.slice(0, 3);
+    if (p.vibes.length) st.vibes = p.vibes.slice(0, 2);
     if (p.from != null) { st.planFrom = p.from; st.planTo = p.to; }
     if (p.date) { const d = p.date; st.planDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       const hoyISO = this.todayISO(); st.when = st.planDate === hoyISO ? 'noche' : 'fecha'; st.customDate = st.planDate; }
@@ -5033,7 +5061,7 @@ class Component extends DCLogic {
         pick: () => this.setState({ budget: id, budgetCustom: id === 'free' ? 0 : null }) }; });
     const vibeOpts = this.VIBES.map(vb => ({ label: vb, style: this.chip(s.vibes.includes(vb)),
       on: s.vibes.includes(vb), pressed: s.vibes.includes(vb) ? 'true' : 'false',
-      aria: 'Vibra ' + vb + (s.vibes.includes(vb) ? ' (seleccionada)' : ''), pick: () => { const v = s.vibes.slice(); const i = v.indexOf(vb); if (i >= 0) v.splice(i,1); else if (v.length < 3) v.push(vb); else { const fuera = v.shift(); v.push(vb); this.toast('Máximo 3 vibras — quité "' + fuera + '" para poner "' + vb + '"'); } this.setState({ vibes: v }); } }));
+      aria: 'Vibra ' + vb + (s.vibes.includes(vb) ? ' (seleccionada)' : ''), pick: () => { const v = s.vibes.slice(); const i = v.indexOf(vb); if (i >= 0) v.splice(i,1); else if (v.length < 2) v.push(vb); else { const fuera = v.shift(); v.push(vb); this.toast('Máximo 2 — quité "' + fuera + '" para poner "' + vb + '"'); } this.setState({ vibes: v }); } }));
     const openV = id => this.nav('detail', { detailId: id, backView: view });
     const photoFail = id => () => this.setState(st => { const p = Object.assign({}, st.photos); delete p[id]; return { photos: p }; });
     const miniCard = v => { const ph = s.photos[v.id]; const rtg = this.rating(v); return { letter: v.n[0], icon: this.catIcon(v.cat), hasPhoto: !!ph, noPhoto: !ph, photo: ph ? ph.src : '', photoFail: photoFail(v.id), name: v.n, cat: v.cat.toUpperCase(), meta: `${v.col} · ${this.dist(v)} min · ${this.precioTxt(v)}`, av: (rtg ? '★ ' + rtg.avg + ' · ' : '') + v.av, tileStyle: this.tile(v, 108), open: () => openV(v.id) }; };
@@ -5912,8 +5940,8 @@ class Component extends DCLogic {
     const vibeTiles = this.VIBES.map(vb => { const on = (s.vibes || []).indexOf(vb) >= 0; const t = VIBE_TXT[vb] || [vb, ''];
       return { label: t[0], hint: t[1], pressed: on ? 'true' : 'false', aria: t[0] + (on ? ' (seleccionado)' : ''),
         pick: () => { const v = (s.vibes || []).slice(); const i = v.indexOf(vb);
-          if (i >= 0) v.splice(i, 1); else if (v.length < 3) v.push(vb);
-          else { const fuera = v.shift(); v.push(vb); this.toast('Máximo tres — quité “' + ((VIBE_TXT[fuera] || [fuera])[0]) + '”'); }
+          if (i >= 0) v.splice(i, 1); else if (v.length < 2) v.push(vb);
+          else { const fuera = v.shift(); v.push(vb); this.toast('Máximo dos — quité “' + ((VIBE_TXT[fuera] || [fuera])[0]) + '”'); }
           this.setState({ vibes: v }); } }; });
     // Sub-tabla de "Comer rico": todo tipo de comida, uno o varios tipos.
     const cocinaOn = (s.vibes || []).indexOf('foodie') >= 0;
@@ -6614,6 +6642,9 @@ class Component extends DCLogic {
     sc += 1.5 * this.share(S.zona, v.z);
     const veg = (p.dieta || []).some(d => d === 'vegetariano' || d === 'vegano');
     if (veg && this.dietaDe(v).length && (this.FOOD.includes(v.cat) || v.cat === 'Café')) sc += 8;   // la dieta pesa más que el gusto
+    // …y más que la fama: a quien come vegetariano, un restaurante sin opción para él
+    // baja aunque sea hotspot (si no, ganaban los hotspots y no salía ni un vegetariano).
+    else if (veg && this.FOOD.includes(v.cat)) sc -= 6;
     if (p.ninos === true && s.who === 'familia' && this.aptoFamiliaDe(v) === 'sí') sc += 1.5;
     return sc + this.ajusteEdad(v);
   }

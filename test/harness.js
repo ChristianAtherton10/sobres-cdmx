@@ -85,6 +85,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Eventos con fecha (define window.SOBRES_EVENTOS)
   const evp = path.join(ROOT, 'data', 'eventos.js');
   if (fs.existsSync(evp) && !opts.sinEventos) new Function('window', fs.readFileSync(evp, 'utf8'))(win);
+  // Hotspots (define window.SOBRES_HOTSPOTS)
+  const hsp = path.join(ROOT, 'data', 'hotspots.js');
+  if (fs.existsSync(hsp) && !opts.sinHotspots) new Function('window', fs.readFileSync(hsp, 'utf8'))(win);
   // Recetas por ambiente (define window.SOBRES_RECETAS)
   const rc = path.join(ROOT, 'data', 'recetas.js');
   if (fs.existsSync(rc) && !opts.sinRecetas) new Function('window', fs.readFileSync(rc, 'utf8'))(win);

@@ -101,7 +101,7 @@ window.SOBRES_RECETAS = {
     'cultural': {
       manana: [['museo', 'galeria'], ['sitio_historico', 'museo'], ['museo', 'libreria']],
       tarde:  [['evento', 'comida_rica'], ['museo', 'comida_rica'], ['museo', 'galeria'], ['sitio_historico', 'museo'], ['centro_cultural', 'museo'], ['galeria', 'libreria'], ['comida_rica', 'museo']],
-      noche:  [['evento', 'cena_rica'], ['teatro'], ['cine_arte'], ['teatro', 'cena_rica'], ['cine', 'cena_rica'], ['cena_rica', 'teatro'], ['cine_arte', 'cena_rica'], ['cena_rica', 'cine_arte'], ['teatro', 'postre']],
+      noche:  [['evento', 'cena_rica'], ['teatro'], ['cine_arte'], ['teatro', 'cena_rica'], ['cine', 'cena_rica'], ['cena_rica', 'teatro'], ['cine_arte', 'cena_rica'], ['cena_rica', 'cine_arte']],   // sin 'teatro + postre': "Cultural" no lleva churrerías ni cafés (prueba 16)
       sueltos: ['museo', 'teatro', 'cine_arte', 'galeria', 'centro_cultural', 'cine']
     },
     'familiar': {

@@ -306,4 +306,54 @@ test('32.5 · un lugar de Google viaja en el enlace compartido (place_id con "_"
   assert(!/[~_.!]/.test(a.cortaId(id)), 'el id corto trae un separador: ' + a.cortaId(id));
 });
 
+section('33 · Hotspots y nada básico (feedback del 4 nov 2026)');
+
+test('33.1 · se eligen máximo 2 ambientes (con 3 "se vuelve loquito")', () => {
+  const a = makeApp(Object.assign({}, COM, { vibes: [] }));
+  const pick = l => a.renderVals().vibeTiles.find(t => t.label === l).pick();
+  pick('Comer rico'); pick('Romántico'); pick('Creativo');
+  assert(a.state.vibes.length === 2 && a.state.vibes.includes('creativo'), 'quedaron: ' + a.state.vibes);
+});
+
+test('33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y con presupuesto para ellos, al menos 40% son hotspots', () => {
+  // Con $600–1,000 se revisa que no haya nada básico; con $1,000–1,999 (donde caben
+  // los hotspots con su precio alto) además que la mayoría sean hotspots.
+  ['juarez', 'coyoacan', 'roma', 'polanco', 'condesa'].forEach(z => [1, 2, 3].forEach(sd => ['b1000', 'b1999'].forEach(bud => {
+    const a = makeApp(Object.assign({}, COM, { who: 'date', groupSize: 2, zone: z, zonesSel: [z], budget: bud, vibes: ['foodie', 'romántico'] }), { dseed: sd, rseed: sd * 3 + 1 });
+    a.runSearch({ nueva: true });
+    const st = (a.state.results.plans || []).flatMap(pl => pl.stops);
+    const mal = st.filter(v => a.esCadenaCasual(v) || /casa de to[ñn]o|garat/i.test(v.n));
+    assert(!mal.length, z + ' semilla ' + sd + ': ' + mal.map(v => v.n));
+    const com = st.filter(v => a.FOOD.includes(v.cat) || a.DRINK.includes(v.cat));
+    const hot = com.filter(v => v.hot);
+    if (bud === 'b1999' && ['roma', 'polanco', 'condesa'].includes(z)) assert(hot.length * 5 >= com.length * 2, z + ' semilla ' + sd + ': sólo ' + hot.length + ' de ' + com.length + ' son hotspots: ' + com.map(v => v.n));
+  })));
+});
+
+test('33.3 · "Creativo" no propone obras de teatro (ver una obra no es crear)', () => {
+  [1, 2, 3, 4].forEach(sd => {
+    const a = makeApp(Object.assign({}, COM, { zone: 'juarez', zonesSel: ['juarez'], vibes: ['foodie', 'creativo'] }), { dseed: sd, rseed: sd + 9 });
+    a.runSearch({ nueva: true });
+    const teatro = (a.state.results.plans || []).flatMap(pl => pl.stops).filter(v => v.cat === 'Teatro' || /milagro/i.test(v.n));
+    assert(!teatro.length, 'semilla ' + sd + ': ' + teatro.map(v => v.n));
+  });
+});
+
+test('33.4 · la lista de hotspots trae fuente y fecha, sólo ids del catálogo, y avisa cuando toca actualizarla', () => {
+  const a = makeApp(COM); const H = a._win.SOBRES_HOTSPOTS;
+  assert(H && Object.keys(H.ids).length > 120, 'pocos hotspots');
+  Object.values(H.fuentes).forEach(f => assert(/^https?:\/\//.test(f.url) && /^\d{4}-\d{2}-\d{2}$/.test(f.fecha), 'fuente sin url o fecha: ' + f.n));
+  const ids = new Set(a.cat().map(v => v.id));
+  Object.entries(H.ids).forEach(([id, h]) => { assert(ids.has(id), 'id que no existe: ' + id); h.f.forEach(f => assert(H.fuentes[f], 'fuente desconocida ' + f)); });
+  ['Quintonil', 'Pujol', 'Handshake Speakeasy', 'Bar Mauro', 'Contramar'].forEach(n => assert(a.cat().find(v => v.n === n).hot >= 2, n + ' no es hotspot'));
+  assert(!a.cat().find(v => v.id === 'os-n9965047017').hot, '"Hunan" de Satélite quedó como el Hunan de Marco Beteta');
+  const dias = (Date.parse(a.todayISO()) - Date.parse(H.actualizado)) / 864e5;
+  if (dias > 35) console.log('    ⚠ Los hotspots tienen ' + Math.round(dias) + ' días: toca actualizarlos (reportes/hotspots/build_hotspots.py).');
+});
+
+test('33.5 · Grulla (Nápoles 76, Juárez) queda en Juárez, no en la colonia Nápoles', () => {
+  const a = makeApp(COM); const g = a.cat().find(v => v.id === 'pq-60e50ecd9c');
+  assert(g.z === 'juarez' && !g.coordAprox && Math.abs(g.lat - 19.4253) < 0.002, g.z + ' ' + g.lat);
+});
+
 if (require.main === module) report();

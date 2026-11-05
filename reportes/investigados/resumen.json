@@ -781,5 +781,176 @@
   "lat": 19.31374,
   "lng": -99.21921,
   "aprox": false
+ },
+ {
+  "id": "iv-adff3c5e03",
+  "n": "Café Tormenta",
+  "zone": "chapultepec",
+  "km": 1.9,
+  "lat": 19.41264,
+  "lng": -99.20383,
+  "aprox": true
+ },
+ {
+  "id": "iv-357607f4bb",
+  "n": "Yuhu Izakaya Hi-Fi",
+  "zone": "juarez",
+  "km": 0.4,
+  "lat": 19.42666,
+  "lng": -99.16107,
+  "aprox": false
+ },
+ {
+  "id": "iv-50c9e9930a",
+  "n": "XOB",
+  "zone": "centro",
+  "km": 0.5,
+  "lat": 19.43299,
+  "lng": -99.13192,
+  "aprox": true
+ },
+ {
+  "id": "iv-6b96263aae",
+  "n": "Nico Pan y Café",
+  "zone": "condesa",
+  "km": 0.3,
+  "lat": 19.40797,
+  "lng": -99.17352,
+  "aprox": false
+ },
+ {
+  "id": "iv-ef30a108e2",
+  "n": "Enzu",
+  "zone": "juarez",
+  "km": 1.0,
+  "lat": 19.43477,
+  "lng": -99.15155,
+  "aprox": false
+ },
+ {
+  "id": "iv-fa7dcb6acf",
+  "n": "El Tenebroso",
+  "zone": "juarez",
+  "km": 1.5,
+  "lat": 19.4399,
+  "lng": -99.15301,
+  "aprox": false
+ },
+ {
+  "id": "iv-85fdc18477",
+  "n": "Tokyo Lomas",
+  "zone": "lomas",
+  "km": 1.6,
+  "lat": 19.42018,
+  "lng": -99.21145,
+  "aprox": false
+ },
+ {
+  "id": "iv-d564be1264",
+  "n": "Bar Ocaso",
+  "zone": "roma",
+  "km": 0.8,
+  "lat": 19.41677,
+  "lng": -99.16744,
+  "aprox": false
+ },
+ {
+  "id": "iv-a3115f5be2",
+  "n": "Procusto",
+  "zone": "juarez",
+  "km": 0.4,
+  "lat": 19.42318,
+  "lng": -99.15764,
+  "aprox": false
+ },
+ {
+  "id": "iv-940bc5b67c",
+  "n": "Katz",
+  "zone": "roma",
+  "km": 0.1,
+  "lat": 19.41851,
+  "lng": -99.15914,
+  "aprox": false
+ },
+ {
+  "id": "iv-60facc29e4",
+  "n": "Bar Básico",
+  "zone": "romasur",
+  "km": 0.8,
+  "lat": 19.40682,
+  "lng": -99.16389,
+  "aprox": false
+ },
+ {
+  "id": "iv-acba784306",
+  "n": "Petra",
+  "zone": "roma",
+  "km": 0.5,
+  "lat": 19.42307,
+  "lng": -99.15991,
+  "aprox": false
+ },
+ {
+  "id": "iv-7914698798",
+  "n": "Less is More",
+  "zone": "roma",
+  "km": 1.0,
+  "lat": 19.42131,
+  "lng": -99.1696,
+  "aprox": false
+ },
+ {
+  "id": "iv-e6315d5092",
+  "n": "Diamantina",
+  "zone": "roma",
+  "km": 0.5,
+  "lat": 19.41838,
+  "lng": -99.16436,
+  "aprox": false
+ },
+ {
+  "id": "iv-42c98e6af4",
+  "n": "RO Upstairs",
+  "zone": "polanco",
+  "km": 0.4,
+  "lat": 19.4361,
+  "lng": -99.19737,
+  "aprox": false
+ },
+ {
+  "id": "iv-9bb83227b5",
+  "n": "Giorgio",
+  "zone": "roma",
+  "km": 0.2,
+  "lat": 19.418,
+  "lng": -99.16176,
+  "aprox": false
+ },
+ {
+  "id": "iv-6cc742c4ab",
+  "n": "Faba",
+  "zone": "roma",
+  "km": 0.7,
+  "lat": 19.41333,
+  "lng": -99.15763,
+  "aprox": false
+ },
+ {
+  "id": "iv-51dba411e8",
+  "n": "Ramen Ichi",
+  "zone": "condesa",
+  "km": 0.7,
+  "lat": 19.41631,
+  "lng": -99.17111,
+  "aprox": false
+ },
+ {
+  "id": "iv-b98e214f4c",
+  "n": "Del Río",
+  "zone": "condesa",
+  "km": 0.5,
+  "lat": 19.41061,
+  "lng": -99.17844,
+  "aprox": false
  }
 ]

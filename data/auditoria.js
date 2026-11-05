@@ -74,7 +74,8 @@ window.SOBRES_AUDITORIA = (function () {
     chill:        { prot: ['paseo','cafe','visita','lectura'],       ok: ['comida','cena','desayuno','compras','taller','vista','funcion'], no: ['baile','copas','atraccion','reto'] },
     cultural:     { prot: ['visita','funcion','lectura'],            ok: ['cafe','comida','cena','desayuno','paseo','taller','vista','recorrido'], no: ['baile'] },
     aventurero:   { prot: ['reto','recorrido','atraccion'],          ok: ['juego','paseo','comida','cafe','vista','cena','desayuno'], no: [] },
-    creativo:     { prot: ['taller'],                                ok: ['visita','cafe','comida','cena','lectura','funcion'], no: ['baile'] },
+    // Creativo = HACER algo (taller). Ver una obra no es creativo ("Teatro El Milagro" en un plan creativo, 4 nov 2026).
+    creativo:     { prot: ['taller'],                                ok: ['visita','cafe','comida','cena','lectura'], no: ['baile', 'funcion'] },
     foodie:       { prot: ['comida','cena','desayuno'],              ok: ['cafe','copas','compras','visita','taller'], no: [] },
     // Noche y fiesta = bares y antros. Antes aceptaba billar, boliche y funciones.
     nightlife:    { prot: ['copas','baile'],                         ok: ['cena','vista'], no: [] },
@@ -1276,6 +1277,8 @@ window.SOBRES_AUDITORIA = (function () {
   };
 
   // Parques de Santa Fe que el fundador pidió quitar (4 nov 2026): no son salida.
+  // "Expendio de Maíz" del paquete repite a "Expendio de Maíz Sin Nombre" (mismo lugar, Roma Norte).
+  BAJA['pq-d6fefde8f4'] = { era: 'Expendio de Maíz (paquete del 3 nov)', motivo: 'Repetido: es el mismo Expendio de Maíz Sin Nombre que ya estaba (salía dos veces en un mismo plan).', fuente: 'Revisión del 4 nov 2026', fecha: HOY };
   ['os-w453368240', 'os-w1113495081', 'os-n12542739684'].forEach(id => {
     BAJA[id] = { era: 'Parque Prados de la Montaña / Parque Jalalpa (OpenStreetMap)',
       motivo: 'Pedido del fundador el 4 nov 2026: no son lugares a los que la gente vaya de salida.', fuente: 'Revisión del fundador', fecha: HOY };
@@ -1287,6 +1290,13 @@ window.SOBRES_AUDITORIA = (function () {
       url: 'https://www.sensacine.com.mx/cines/cine/X0TDB/', consultado: HOY }
   };
 
-  return { version: 2, CONFIRMA, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA, NOMBRES,
+  // Ubicación corregida de lugares de las capas importadas (paquete, Excel…),
+  // con su fuente. Grulla: "Nápoles 76, Juárez" es la CALLE Nápoles en la colonia
+  // Juárez; el pin aproximado lo había puesto en la colonia Nápoles (Del Valle).
+  const UBICA = {
+    'pq-60e50ecd9c': { lat: 19.42529, lng: -99.15877, zone: 'juarez', fuente: 'OpenStreetMap (Nominatim): 76, Calle Nápoles, Juárez — 4 nov 2026' }
+  };
+
+  return { version: 2, CONFIRMA, UBICA, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA, NOMBRES,
            LUGARES, BAJA, NUEVOS, VIBRA_EXIGE_ACTIVIDAD };
 })();
