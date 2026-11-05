@@ -72,6 +72,11 @@ F = {
  'res_karaoke_il': ('Reservándonos — Terraza Karaoke Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/terraza-karaoke-interlomas', 'sin fecha (consultada ' + HOY + ')'),
  'res_bocanariz': ('Reservándonos — Boca Nariz Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/restaurante-boca-nariz-interlomas', 'sin fecha (consultada ' + HOY + ')'),
  'res_kamachos': ('Reservándonos — Kamachos Hookah Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/kamachos-hookah-interlomas', 'sin fecha (consultada ' + HOY + ')'),
+ 'inf_bonvi': ('The Infatuation — La Bonvi (reseña y ficha)', 'https://www.theinfatuation.com/mexico-city/reviews/la-bonvi', 'sin fecha (consultada ' + HOY + ')'),
+ 'mdp_tacos': ('Mexico Daily Post — taquerías "nice" de la CDMX (La Bonvi, Pedregal 33)', 'https://mexicodailypost.news/2025/08/24/nice-taco-shops-in-mexico-city-that-you-have-to-experience-for-yourself-before-judging/', '2025-08-24'),
+ 'ot_carolo_carso': ('OpenTable — Carolo Carso', 'https://www.opentable.com/carolo-carso', 'sin fecha (consultada ' + HOY + ')'),
+ 'ot_carolo_il': ('OpenTable — Carolo Interlomas', 'https://www.opentable.ie/carolo-interlomas', 'sin fecha (consultada ' + HOY + ')'),
+ 'ot_popular_sf': ('OpenTable — La Popular Santa Fe', 'https://www.opentable.ie/r/la-popular-santa-fe-ciudad-de-mexico', 'sin fecha (consultada ' + HOY + ')'),
  'ot_vineria': ('OpenTable — La Vinería, Ciudad de México', 'https://opentable.ae/r/la-vineria-ciudad-de-mexico', 'sin fecha (consultada ' + HOY + ')'),
 }
 
@@ -80,7 +85,7 @@ def fuente(k, url=None):
     return n, url or u, f
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
-VIGENTES = {'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera', 'res_bastian', 'res_karaoke_il', 'res_bocanariz', 'res_kamachos'}
+VIGENTES = {'inf_bonvi', 'ot_carolo_carso', 'ot_carolo_il', 'ot_popular_sf', 'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera', 'res_bastian', 'res_karaoke_il', 'res_bocanariz', 'res_kamachos'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -315,9 +320,25 @@ L = [
       geo='Interlomas, Huixquilucan', geoAprox=True, f='res_bocanariz', h=(13, 23), hrs='Mar y mié 13:00–22:00 · jue a sáb 13:00–24:00 · dom 13:00–20:00 · cocina española y bar',
       dias=[0, 2, 3, 4, 5, 6], act=['comida', 'cena', 'copas'], who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'nightlife'],
       precio=dict(min=500, rep=650, max=800, unidad='persona', canasta='$500–800 por persona según su ficha de Reservándonos.'), estado='rango'),
- dict(n='Kamachos Hookah Interlomas', cat='Bar', col='Interlomas, Huixquilucan', addr='Pasaje Interlomas 10 (Google Maps)', lat=19.40158, lng=-99.27436, f='res_kamachos', h=(13, 23), hrs='Lun a vie 8:00–23:00 · sáb y dom 10:30–23:00 · hookah y snacks',
+ dict(n='Kamachos Hookah Interlomas', cat='Bar', col='Interlomas, Huixquilucan', addr='Pasaje Interlomas 10', geo='Interlomas, Huixquilucan', geoAprox=True, f='res_kamachos', h=(13, 23), hrs='Lun a vie 8:00–23:00 · sáb y dom 10:30–23:00 · hookah y snacks',
       act=['copas'], who=['amigos', 'compa'], tags=['social', 'chill'], apto='no',
       precio=dict(min=300, rep=400, max=500, unidad='persona', canasta='$300–500 por persona según su ficha de Reservándonos.'), estado='rango'),
+ # Pedidos por el fundador (4 nov 2026), con fuente que no es Google ----------
+ dict(n='La Bonvi · Polanco', cat='Taquería', col='Polanco', addr='Anatole France 139, Polanco', geo='Anatole France 139, Polanco, Ciudad de México',
+      zona='polanco', f='inf_bonvi', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'social'], cocina='Tacos'),
+ dict(n='La Bonvi · Lomas Virreyes', cat='Taquería', col='Lomas Virreyes', addr='Pedregal 33, Lomas Virreyes', geo='Pedregal 33, Lomas de Chapultepec, Ciudad de México',
+      zona='lomas', f='mdp_tacos', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'social'], cocina='Tacos'),
+ dict(n='Carolo · Carso', cat='Restaurante', col='Ampliación Granada', addr='Lago Zurich 245, Ampliación Granada (Plaza Carso)', geo='Lago Zurich 245, Ciudad de México',
+      zona='polanco', f='ot_carolo_carso', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Internacional'),
+ dict(n='Carolo · Interlomas', cat='Restaurante', col='Bosque de las Palmas, Huixquilucan', addr='Vialidad de la Barranca 6, Bosque de las Palmas',
+      geo='Interlomas, Huixquilucan', geoAprox=True, f='ot_carolo_il', h=(13, 23), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Internacional'),
+ dict(n='La Popular · Santa Fe', cat='Restaurante', col='Lomas de Santa Fe', addr='Juan Salvador Agraz 44, Lomas de Santa Fe', geo='Juan Salvador Agraz 44, Santa Fe, Ciudad de México',
+      zona='santafe', f='ot_popular_sf', h=(13, 24), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'social'], cocina='Mexicana'),
 ]
 
 # ------------------------------------------------------------------ geocodificación
@@ -366,6 +387,7 @@ for x in L:
     if dz > 5.5: rec['lejos'] = True
     if x.get('apto') == 'sí': rec['aptoFamilia'] = 'sí'
     if x.get('dieta'): rec['dieta'] = x['dieta']
+    if x.get('cocina'): rec['cocina'] = x['cocina']
     if 'precio' in x:
         p = dict(x['precio']); p['moneda'] = 'MXN'
         rec['precio'] = p; rec['estado'] = x['estado']

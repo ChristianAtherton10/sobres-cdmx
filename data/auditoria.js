@@ -1281,6 +1281,12 @@ window.SOBRES_AUDITORIA = (function () {
       motivo: 'Pedido del fundador el 4 nov 2026: no son lugares a los que la gente vaya de salida.', fuente: 'Revisión del fundador', fecha: HOY };
   });
 
-  return { version: 2, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA, NOMBRES,
+  // Lugares con fuente vieja que una fuente VIGENTE confirma abiertos (4 nov 2026).
+  const CONFIRMA = {
+    'pq-f6673bacff': { fuente: 'SensaCine México — cartelera vigente de Cinépolis Patio Santa Fe (funciones del 4 nov 2026)',
+      url: 'https://www.sensacine.com.mx/cines/cine/X0TDB/', consultado: HOY }
+  };
+
+  return { version: 2, CONFIRMA, fecha: HOY, ACTS, VIBEACT, ACT_POR_CAT, PROCEDENCIA, NOMBRES,
            LUGARES, BAJA, NUEVOS, VIBRA_EXIGE_ACTIVIDAD };
 })();

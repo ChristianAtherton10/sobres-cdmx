@@ -821,6 +821,16 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-hechos">
 <sc-for list="{{ detail.facts }}" as="f" hint-placeholder-count="6"><div><span>{{ f.k }}</span><b>{{ f.v }}</b></div></sc-for>
 </div>
+<sc-if value="{{ detail.g.gHay }}" hint-placeholder-val="{{ false }}">
+<div class="sb-soft" style="padding:12px 15px;margin-top:12px">
+<span class="sb-label" style="margin-bottom:6px">Según Google</span>
+<sc-if value="{{ detail.g.gEstado }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px;color:var(--ink);font-weight:700">{{ detail.g.gEstado }}</p></sc-if>
+<sc-if value="{{ detail.g.gHoy }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px">Hoy: {{ detail.g.gHoy }}</p></sc-if>
+<sc-if value="{{ detail.g.gPrecio }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px">{{ detail.g.gPrecio }} (lo reporta la gente)</p></sc-if>
+<sc-if value="{{ detail.g.gRating }}" hint-placeholder-val="{{ '' }}"><p class="sb-note" style="margin:0 0 4px">{{ detail.g.gRating }}</p></sc-if>
+<p class="sb-note" style="margin:6px 0 0;font-size:11.5px">Datos de Google Maps<sc-if value="{{ detail.g.gHayMaps }}" hint-placeholder-val="{{ false }}"> · <a href="{{ detail.g.gMaps }}" target="_blank" rel="noopener">ver en Google Maps</a></sc-if></p>
+</div>
+</sc-if>
 <sc-if value="{{ detail.hasSlots }}" hint-placeholder-val="{{ false }}">
 <div style="margin:14px 0 0">
 <span class="sb-label">Hora sugerida</span>
@@ -912,6 +922,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <button onClick="{{ st.open }}" style="background:none;border:none;padding:6px 0;margin:-6px 0;min-height:34px;font:700 15.5px/1.25 var(--font-body);cursor:pointer;text-align:left;color:var(--ink);overflow-wrap:anywhere">{{ st.name }}</button>
 <div class="sb-note" style="font-size:12.5px;margin-top:2px">{{ st.sub }}</div>
 <div style="font:700 13px var(--font-body);color:var(--color-neutral-700);margin-top:4px">{{ st.pp }}</div>
+<sc-if value="{{ st.gAviso }}" hint-placeholder-val="{{ '' }}"><div role="status" style="font:600 12.5px/1.35 var(--font-body);color:var(--color-danger, #b3261e);margin-top:4px">{{ st.gAviso }}</div></sc-if>
 <sc-if value="{{ st.editar }}" hint-placeholder-val="{{ false }}">
 <div class="sb-row" style="gap:6px;margin-top:8px"><button class="sb-btn2" style="min-height:38px;padding:0 14px;font-size:13.5px" onClick="{{ st.swap }}">Cambiar</button><button class="sb-btn3" style="min-height:38px;color:var(--color-neutral-700)" onClick="{{ st.quit }}">Quitar</button></div>
 </sc-if>
@@ -1645,8 +1656,6 @@ class Component extends DCLogic {
         .concat((window.SOBRES_INVESTIGADOS && window.SOBRES_INVESTIGADOS.lugares) || [])
         // + lugares de OpenStreetMap aprobados el 4 nov 2026 (data/osm.js).
         .concat((window.SOBRES_OSM && window.SOBRES_OSM.lugares) || [])
-        // + búsquedas simples en Google Maps (data/maps.js, 4 nov 2026).
-        .concat((window.SOBRES_MAPS && window.SOBRES_MAPS.lugares) || [])
         // + eventos con fecha (data/eventos.js): los vencidos ni se cargan.
         .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
@@ -1694,13 +1703,13 @@ class Component extends DCLogic {
     }
     // Público y dieta de cada lugar (Fase 2) y el precio corregido con lo que
     // esta persona contó después de ir (sólo en su navegador).
-    // Una ficha vigente de Google Maps confirma que un lugar con fuente vieja
-    // sigue abierto (data/maps.js → confirma). Sólo levanta ese motivo de baja.
-    const CONF = (window.SOBRES_MAPS && window.SOBRES_MAPS.confirma) || {};
+    // Una fuente VIGENTE confirma que un lugar con fuente vieja sigue abierto
+    // (auditoría → CONFIRMA). Sólo levanta ese motivo de baja.
+    const CONF = (A && A.CONFIRMA) || {};
     out.forEach(v => { const c = CONF[v.id]; if (!c) return;
       if (v.recomendable === false && /fuente es antigua/i.test(v.pNotaLugar || '')) {
         v.recomendable = undefined;
-        v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según Google Maps (' + c.consultado + ').').trim();
+        v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según ' + c.fuente.split(' —')[0] + ' (' + c.consultado + ').').trim();
       }
       v.confirmado = c; });
     out.forEach(v => { v.publico = this.publicoDe(v); const d = this.dietaDe(v); if (d.length) v.dieta = d; this.ajustaPrecio(v); });
@@ -2008,8 +2017,10 @@ class Component extends DCLogic {
   // Catálogo del consumidor. Fuera los perfiles de ejemplo (Barro Vivo, La
   // Distral, la ruta de tacos: eran fichas inventadas para la demo de venues) y
   // fuera lo publicado desde la sección de venues, que se retiró por ahora.
-  cat() { if (!this._catV || this._catV.src !== this.V || this._catV.ext !== this.EXT) {
-      this._catV = { src: this.V, ext: this.EXT, list: this.V.filter(v => !v.fic).concat(this.EXT) }; }
+  cat() { const gl = this.GLIVE || null;
+    if (!this._catV || this._catV.src !== this.V || this._catV.ext !== this.EXT || this._catV.gl !== gl) {
+      // + lugares que Google Places dio EN VIVO en esta visita (no se guardan).
+      this._catV = { src: this.V, ext: this.EXT, gl, list: this.V.filter(v => !v.fic).concat(this.EXT, gl || []) }; }
     return this._catV.list; }
   venueToPlace(v) { const Z = this.ZONES.find(z => z[0] === v.zone) || this.ZONES[0]; const g = (this.ZGEO || {})[v.zone];
     const jit = ((v.id || '').charCodeAt((v.id || 'x').length - 1) % 10) / 10;
@@ -2275,6 +2286,8 @@ class Component extends DCLogic {
     if (/^os-[nwr]\d+$/.test(id)) return 'O' + id.slice(3);
     // Lugares de Google Maps ('gm-1a2b3c4d5e'): 'G' + resto.
     if (/^gm-[0-9a-f]+$/.test(id)) return 'G' + id.slice(3);
+    // Lugares de Google en vivo ('gp-<place_id>'): 'P' + place_id, con '_' → '*'.
+    if (/^gp-[\w-]+$/.test(id)) return 'P' + id.slice(3).replace(/_/g, '*');
     // Eventos con fecha ('ev-1a2b3c4d5e'): 'E' + resto.
     if (/^ev-[0-9a-f]+$/.test(id)) return 'E' + id.slice(3);
     if (/^ext-/.test(id)) return 'x' + encodeURIComponent((typeof v === 'object' && v.n ? v.n : 'Parada').slice(0, 40));
@@ -2289,6 +2302,7 @@ class Component extends DCLogic {
     if (/^E[0-9a-f]+$/.test(x)) return 'ev-' + x.slice(1);
     if (/^O[nwr]\d+$/.test(x)) return 'os-' + x.slice(1);
     if (/^G[0-9a-f]+$/.test(x)) return 'gm-' + x.slice(1);
+    if (/^P[\w*-]+$/.test(x)) return 'gp-' + x.slice(1).replace(/\*/g, '_');
     if (x.charAt(0) === 'x' && x.length > 1) return { ext: decodeURIComponent(x.slice(1)) };
     if (x.charAt(0) === '%') return decodeURIComponent(x.slice(1));
     return x;
@@ -2430,6 +2444,14 @@ class Component extends DCLogic {
     st.aiCtx = null; st.aiSummary = ''; st.planCustom = null; st.planCustomFrom = null;
     st.planLocked = false; st.planReadOnly = false; st.openedPlanId = null; st.openedPlanBy = '';
     this.setState(st, () => {
+      const C0 = this.cat();
+      const faltaG = [].concat.apply([], t.p.map(pl => pl.s || [])).filter(id => typeof id === 'string' && /^gp-/.test(id) && !C0.some(x => x.id === id));
+      if (faltaG.length && !this._gpReintento && typeof fetch !== 'undefined') { this._gpReintento = true;
+        fetch('/api/lugar?ids=' + encodeURIComponent(faltaG.slice(0, 8).join(','))).then(r => r.ok ? r.json() : null)
+          .then(j => { const L = j && j.lugares ? Object.keys(j.lugares).map(k => j.lugares[k]).filter(x => x.pid) : []; if (L.length) this.sumaGoogle(L, null); })
+          .catch(() => {}).then(() => this.abrirTanda(txt, corto));
+        return; }
+      this._gpReintento = false;
       const C = this.cat();
       const faltan = [];
       const planes = t.p.map(pl => {
@@ -2735,14 +2757,148 @@ class Component extends DCLogic {
   // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
   // ============================================================
   catalogoListo() { const w = typeof window !== 'undefined' ? window : {};
-    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_MAPS', 'SOBRES_RECETAS'].every(k => !!w[k]); }
+    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS'].every(k => !!w[k]); }
   // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
   // comprimidos) llegan después, en orden, sin pelearle la red al marco.
+  // ── Google Places en vivo (4 nov 2026) ──
+  // Sólo para lugares con place_id (data/google_ids.js). Se pide a /api/lugar
+  // al abrir una ficha o un plan; queda en memoria de esta visita, nada más
+  // (términos de Google: no se guarda horario ni precio).
+  tieneGoogle(v) { return !!(v && typeof window !== 'undefined' && window.SOBRES_GID && window.SOBRES_GID.ids && window.SOBRES_GID.ids[v.id]); }
+  googleDe(v) { return v && this._g ? this._g[v.id] || null : null; }
+  pideGoogle(lista) {
+    if (typeof fetch === 'undefined') return;
+    this._g = this._g || {}; this._gPedidos = this._gPedidos || {};
+    const ids = (lista || []).filter(v => this.tieneGoogle(v) && !this._gPedidos[v.id]).map(v => v.id).slice(0, 8);
+    if (!ids.length) return;
+    ids.forEach(i => { this._gPedidos[i] = 1; });
+    setTimeout(() => fetch('/api/lugar?ids=' + encodeURIComponent(ids.join(',')))
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (!j || !j.lugares) return; Object.assign(this._g, j.lugares); this.setState({ gTick: (this.state.gTick || 0) + 1 }); })
+      .catch(() => {}), 0);
+  }
+  // ¿Abierto a esta hora según Google? h en horas (puede pasar de 24), fecha 'YYYY-MM-DD'.
+  // true / false, o null si Google no da horario.
+  googleAbierto(g, fecha, h) {
+    if (!g || !g.periodos || !g.periodos.length) return null;
+    const d0 = fecha ? new Date(fecha + 'T12:00:00') : new Date(); let dia = d0.getDay(); let hh = h;
+    if (hh >= 24) { hh -= 24; dia = (dia + 1) % 7; }
+    const t = dia * 1440 + Math.round(hh * 60), SEM = 7 * 1440;
+    return g.periodos.some(p => { if (!p.open) return false;
+      if (!p.close) return true;   // abierto 24 horas
+      const a = p.open.day * 1440 + p.open.hour * 60 + (p.open.minute || 0);
+      let c = p.close.day * 1440 + p.close.hour * 60 + (p.close.minute || 0); if (c <= a) c += SEM;
+      return (t >= a && t < c) || (t + SEM >= a && t + SEM < c); });
+  }
+  googleBloque(v) {
+    const g = this.googleDe(v); if (!g) return { gHay: false };
+    const hoyIdx = (new Date().getDay() + 6) % 7;   // weekdayDescriptions empieza en lunes
+    const cerrado = g.estado === 'CLOSED_PERMANENTLY' ? 'Cerró de forma permanente' : g.estado === 'CLOSED_TEMPORARILY' ? 'Cerrado temporalmente' : '';
+    const ahora = g.abiertoAhora === true ? 'Abierto ahora' : g.abiertoAhora === false ? 'Cerrado ahora' : '';
+    const pr = g.precio ? (g.precio[0] && g.precio[1] ? '$' + g.precio[0] + '–$' + g.precio[1] + ' por persona' : g.precio[0] ? 'Desde $' + g.precio[0] + ' por persona' : '') : '';
+    return { gHay: true, gEstado: cerrado || ahora, gCerrado: !!cerrado, gHoy: (g.horario || [])[hoyIdx] || '',
+      gPrecio: pr, gRating: g.rating ? '★ ' + g.rating + (g.resenas ? ' (' + g.resenas.toLocaleString('es-MX') + ' reseñas)' : '') : '',
+      gMaps: g.maps || '', gHayMaps: !!g.maps };
+  }
+  // Aviso para una parada del plan: cerrada para siempre o cerrada a esa hora.
+  googleAviso(v, fecha, h) {
+    const g = this.googleDe(v); if (!g) return '';
+    if (g.estado === 'CLOSED_PERMANENTLY') return 'Google dice que cerró de forma permanente. Cámbialo.';
+    if (g.estado === 'CLOSED_TEMPORARILY') return 'Google dice que está cerrado temporalmente. Cámbialo.';
+    const ab = this.googleAbierto(g, fecha, h);
+    return ab === false ? 'Según Google, a esa hora está cerrado. Cambia la hora o el lugar.' : '';
+  }
+  // ── Más lugares para armar el plan: Google Places EN VIVO (4 nov 2026) ──
+  // Según lo que pidió la persona (zona, ambiente, tipo de comida) se piden a
+  // /api/buscar hasta 3 listas; esos lugares entran al motor con las mismas
+  // reglas que el catálogo. Sólo CDMX; no se guardan (términos de Google).
+  googleBusquedas() {
+    const s = this.state, vb = s.vibes || [], out = [], cs = this.cocinasSel();
+    const zs = s.zone === 'all' ? [] : this.zoneList().slice(0, 4);
+    const add = (tipo, cocina) => { if (out.length < 3 && !out.some(o => o.tipo === tipo && o.cocina === (cocina || ''))) out.push({ tipo, cocina: cocina || '' }); };
+    const come = !vb.length || ['foodie', 'romántico', 'familiar', 'social'].some(x => vb.includes(x));
+    if (come && !s.yaComimos) { if (cs.length) cs.slice(0, 2).forEach(c => add('restaurante', c)); else add('restaurante'); }
+    if (!s.sinAlcohol && !this.esFamiliar() && ['nightlife', 'social', 'romántico'].some(x => vb.includes(x))) add('bar');
+    if (!s.sinAlcohol && vb.includes('nightlife') && this.range()[1] > 24.5) add('antro');
+    if (vb.includes('chill')) add('cafe');
+    return out.map(o => Object.assign(o, { zonas: zs.join(',') }));
+  }
+  traeGoogle() {
+    if (typeof fetch === 'undefined' || typeof window === 'undefined' || !window.location || !/^https?:/.test(window.location.protocol || '')) return Promise.resolve();
+    this._gBus = this._gBus || {};
+    const pend = this.googleBusquedas().filter(b => !this._gBus[b.tipo + '|' + b.cocina + '|' + b.zonas]);
+    return Promise.all(pend.map(b => { this._gBus[b.tipo + '|' + b.cocina + '|' + b.zonas] = 1;
+      return fetch('/api/buscar?tipo=' + b.tipo + (b.cocina ? '&cocina=' + b.cocina : '') + '&zonas=' + encodeURIComponent(b.zonas))
+        .then(r => r.ok ? r.json() : null).then(j => { if (j && j.lugares) this.sumaGoogle(j.lugares, b); }).catch(() => {}); }));
+  }
+  // Agrega lo de Google que NO está ya en el catálogo (mismo place_id, o mismo
+  // nombre a menos de ~400 m).
+  sumaGoogle(lista, b) {
+    const gidCat = new Set(Object.values((typeof window !== 'undefined' && window.SOBRES_GID && window.SOBRES_GID.ids) || {}));
+    const C = this.cat(), clave = n => this.strip(n || '').replace(/[^a-z0-9]/g, '').slice(0, 10), nuevos = [];
+    (lista || []).forEach(p => { const id = 'gp-' + p.pid;
+      if (!p.pid || gidCat.has(p.pid) || C.some(v => v.id === id) || nuevos.some(v => v.id === id)) return;
+      const v = this.gToVenue(p, b); if (!v) return;
+      if (C.some(c => c.lat != null && clave(c.n) === clave(v.n) && Math.abs(c.lat - v.lat) < 0.004 && Math.abs(c.lng - v.lng) < 0.004)) return;
+      nuevos.push(v); });
+    if (nuevos.length) this.GLIVE = (this.GLIVE || []).concat(nuevos);
+    return nuevos;
+  }
+  gToVenue(p, b) {
+    if (!p || p.lat == null || p.lng == null) return null;
+    const T = new Set([p.tipo].concat(p.types || [])), nm = this.strip(p.n || ''), tt = Array.from(T).join(' ');
+    const bar = ['bar', 'pub', 'wine_bar', 'cocktail_bar'].some(k => T.has(k)), rest = T.has('restaurant') || /_restaurant$/.test(p.tipo || '');
+    const cat = T.has('night_club') ? 'Antro' : (bar && !rest) ? 'Bar' : (T.has('ice_cream_shop') || T.has('dessert_shop')) && !rest ? 'Heladería'
+      : (T.has('cafe') || T.has('coffee_shop') || T.has('bakery')) && !rest ? 'Café' : /\btaco|taquer/.test(nm) ? 'Taquería' : rest ? 'Restaurante' : null;
+    if (!cat) return null;
+    const COC = [[/japanese|sushi|ramen/, 'Japonesa'], [/mexican/, 'Mexicana'], [/seafood/, 'Mariscos'], [/italian|pizza/, 'Italiana'],
+      [/steak|barbecue|brazilian|argentin/, 'Cortes y parrilla'], [/chinese|korean|thai|vietnam|indian|asian/, 'Asiática'], [/french/, 'Francesa'],
+      [/spanish|mediterranean|greek|lebanese|middle_eastern|turkish/, 'Mediterránea'], [/peruvian/, 'Peruana'], [/hamburger|american/, 'Hamburguesas'],
+      [/vegetarian|vegan/, 'Vegetariana']];
+    const BUSCADA = { mexicana: 'Mexicana', tacos: 'Tacos', mariscos: 'Mariscos', japonesa: 'Japonesa', asiatica: 'Asiática', italiana: 'Italiana',
+      cortes: 'Cortes y parrilla', francesa: 'Francesa', mediterranea: 'Mediterránea', latina: 'Peruana', hamburguesas: 'Hamburguesas', vegetariana: 'Vegetariana', internacional: 'Internacional' };
+    const cocina = cat === 'Restaurante' || cat === 'Taquería' ? ((COC.find(([re]) => re.test(tt)) || [null, ''])[1] || (b && b.cocina ? BUSCADA[b.cocina] || '' : '')) : '';
+    // Zona: la más cercana de las de SOBRES.
+    const G = this.ZGEO || {}; let z = (b && b.zonas && b.zonas.split(',')[0]) || 'roma', dz = 1e9;
+    Object.keys(G).forEach(k => { const d = Math.hypot((G[k][0] - p.lat) * 111, (G[k][1] - p.lng) * 105); if (d < dz && this.ZONES.some(zz => zz[0] === k)) { dz = d; z = k; } });
+    // Horario real del día del plan (periodos de Google: día 0 = domingo).
+    const per = p.periodos || [], fecha = this.fechaDelPlan(), dow = new Date(fecha + 'T12:00:00').getDay();
+    const dias = Array.from(new Set(per.filter(x => x.open).map(x => x.open.day)));
+    const delDia = per.find(x => x.open && x.open.day === dow) || per.find(x => x.open);
+    const DEF = { Bar: [17, 25], Restaurante: [13, 22], 'Taquería': [13, 23], 'Café': [8, 20], 'Heladería': [12, 21], Antro: [22, 28] }[cat];
+    let oh = DEF.slice();
+    if (delDia) { if (!delDia.close) oh = [0, 24]; else { const a = delDia.open.hour + (delDia.open.minute || 0) / 60; let c = delDia.close.hour + (delDia.close.minute || 0) / 60; if (c <= a) c += 24; oh = [a, c]; } }
+    const act = { Bar: ['copas'], Restaurante: ['comida', 'cena'], 'Taquería': ['comida', 'cena'], 'Café': ['cafe', 'desayuno'], 'Heladería': ['postre'], Antro: ['baile', 'copas'] }[cat];
+    const tags = { Bar: ['nightlife', 'social'], Restaurante: ['foodie'], 'Taquería': ['foodie', 'social'], 'Café': ['chill'], 'Heladería': ['chill', 'familiar'], Antro: ['nightlife'] }[cat];
+    const hoyTxt = (p.horario || [])[(dow + 6) % 7] || '';
+    const v = { id: 'gp-' + p.pid, n: p.n, cat, z, col: this.zLabel(z), addr: (p.addr || '').replace(/,?\s*\d{5}\s+Ciudad de M[ée]xico.*$/i, ''), web: '',
+      oh, hrs: hoyTxt ? hoyTxt.replace(/^\w+:\s*/, '') + ' (según Google, ese día)' : 'Horario por confirmar', tags, who: ['amigos', 'date', 'compa'].concat(cat === 'Bar' || cat === 'Antro' ? [] : ['familia']),
+      tm: [['manana', oh[0] <= 11], ['tarde', oh[0] <= 17 && oh[1] >= 15], ['noche', oh[1] >= 21]].filter(x => x[1]).map(x => x[0]),
+      lat: p.lat, lng: p.lng, score: Math.round(Math.min(84, 66 + ((p.rating || 4.2) - 4.2) * 25)), tier: 'B',
+      d: cat + (cocina ? ' de comida ' + cocina.toLowerCase() : '') + ' (' + (p.rating || '') + '★ en Google Maps, ' + (p.resenas || 0) + ' reseñas)',
+      src: 'Google Maps (en vivo)', rt: null, ext: true, aud: true, act, actVer: true, sesion: false, sesiones: null, duracionMin: null,
+      cursoCerrado: false, sedeVariable: false, dias: dias.length && dias.length < 7 ? dias : null, cerrado: null, coordAprox: false, grupoMin: null, grupoMax: null,
+      horaEstimada: !per.length, cocina, distincion: '', lejos: false, pNotaLugar: '', otRt: null, otRc: null, vestimenta: '', tel: '',
+      consultado: this.todayISO(), hrsFuente: per.length ? 'Google Maps' : '', evento: false, fechas: null, sede: '', dieta: /vegan/.test(tt) ? ['vegano', 'vegetariano'] : /vegetarian/.test(tt) ? ['vegetariano'] : null,
+      av: 'Verificar disponibilidad', deGoogle: true, gMaps: p.maps || '' };
+    if (!v.tm.length) v.tm = ['tarde'];
+    const zz = this.ZONES.find(x => x[0] === z) || this.ZONES[0]; v.x = zz[2]; v.y = zz[3];
+    if (G[z]) { v.x = zz[2] + (v.lng - G[z][1]) * 2.6; v.y = zz[3] + (v.lat - G[z][0]) * 2.6; }
+    const pr = p.precio || null, lo = pr && (pr[0] || pr[1]), hi = pr && (pr[1] || pr[0]);
+    this.ponPrecio(v, pr ? { precio: { min: lo, rep: hi, max: hi, unidad: 'persona', moneda: 'MXN', canasta: 'Rango por persona que reporta la gente en Google Maps ($' + lo + (hi !== lo ? '–$' + hi : '') + ').' },
+      estado: 'estimado', fuente: 'Google Maps (en vivo)', url: p.maps || '', fecha: this.todayISO() } : { estado: 'por_confirmar', fuente: 'Google Maps (en vivo)', url: p.maps || '' });
+    if (cat === 'Bar' || cat === 'Antro') v.aptoFamilia = 'no'; else v.aptoFamilia = this.aptoFamiliaDe(v);
+    v.publico = this.publicoDe(v);
+    // Para la ficha "Según Google" y los avisos de cerrado.
+    this._g = this._g || {}; this._g[v.id] = { estado: 'OPERATIONAL', periodos: per, horario: p.horario || [], precio: p.precio, rating: p.rating, resenas: p.resenas, maps: p.maps || '' };
+    return v;
+  }
   cargaCatalogo() {
     if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
     const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
-      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_MAPS', 'data/maps.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
+      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js']];
     lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
+    if (!window.SOBRES_GID) { const el = document.createElement('script'); el.src = 'data/google_ids.js'; el.async = true; document.head.appendChild(el); }
   }
   PRESETS() { return {
     familia:  { who: 'familia', groupSize: 4, vibes: ['familiar'], when: 'finde' },
@@ -4923,9 +5079,9 @@ class Component extends DCLogic {
       // un trago) y que quedan cerca. Antes salían bibliotecas especializadas y
       // fondos históricos sin explicar para qué.
       const combos = this.combinaBien(v).map(x => ({ letter: x.v.n[0], name: x.v.n, para: x.para,
-        meta: `${x.v.col} · ${x.min ? '~' + x.min + ' min · ' : ''}${this.precioTxt(x.v)}`, open: () => openV(x.v.id) }));
+        meta: `${x.v.col || this.zLabel(x.v.z)} · ${x.min ? '~' + x.min + ' min · ' : ''}${this.precioTxt(x.v)}`, open: () => openV(x.v.id) }));
       detail = Object.assign({ slotId: 'photo-' + v.id, hasSlots: slots.length > 0 && this.accionDe(v).modo === 'reservar',
-        queHacer: this.queHacer(v).map(t => ({ t })), hayCombos: combos.length > 0,
+        queHacer: this.queHacer(v).map(t => ({ t })), hayCombos: combos.length > 0, g: (this.pideGoogle([v]), this.googleBloque(v)),
         hasPhoto: !!(ph && ph.src), noPhoto: !(ph && ph.src),
         tileBg: 'linear-gradient(135deg,' + this.catTone(v.cat)[0] + ',' + this.catTone(v.cat)[1] + ')',
         icon: this.catIcon(v.cat),
@@ -4958,7 +5114,7 @@ class Component extends DCLogic {
     const plan0Exists = s.sendOpen ? this.getPlan() : null;
     let itinerary = [], planTotal = '', planMeta = '', planTitle = 'Tu plan', planWhy = '';
     const TOPT = []; for (let th = 7; th <= 28; th += 0.5) TOPT.push({ v: String(th), label: this.time12(th) });
-    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly || !!s.planLocked, canEdit: !s.planReadOnly && !s.planLocked, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~' + Math.round(this.duracionAct(v) * 60) + ' MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col}` + (v.horaEstimada ? ' · Horario por confirmar' : '') + (this.esHorarioDeLugar(v) ? ' · horario del lugar, no una función confirmada' : ''), pp: this.precioTxt(v), travel: i < plan.stops.length - 1 ? (() => { const mm = this.minutosTramo(this.legKm(v, plan.stops[i+1])); return mm == null ? 'falta la ubicación' : '+ ' + mm + ' min ' + this.provNombre(); })() : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
+    if (plan && plan.stops.length) { const ts = (plan.times && plan.times.length === plan.stops.length) ? plan.times : this.planTimes(plan.stops.length); itinerary = plan.stops.map((v, i) => ({ time: this.time12(ts[i]), ro: s.planReadOnly || !!s.planLocked, canEdit: !s.planReadOnly && !s.planLocked, timeVal: String(Math.min(28, Math.max(7, Math.round(ts[i] * 2) / 2))), timeOpts: TOPT, setTime: e => this.setStopTime(i, parseFloat(e.target.value)), dur: '~' + Math.round(this.duracionAct(v) * 60) + ' MIN', letter: v.n[0], name: v.n, sub: `${v.cat} · ${v.col || this.zLabel(v.z)}` + (v.horaEstimada ? ' · Horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '') + (this.esHorarioDeLugar(v) ? ' · horario del lugar, no una función confirmada' : ''), pp: this.precioTxt(v), travel: i < plan.stops.length - 1 ? (() => { const mm = this.minutosTramo(this.legKm(v, plan.stops[i+1])); return mm == null ? 'falta la ubicación' : '+ ' + mm + ' min ' + this.provNombre(); })() : 'fin del plan', open: () => openV(v.id), swap: () => this.swapStop(i), quit: () => this.removeStop(i),
       hasLeg: i < plan.stops.length - 1,
       legLabel: i < plan.stops.length - 1 ? (() => { const nx = plan.stops[i+1]; const km = this.legKm(v, nx);
         if (km == null) return 'Falta la ubicación de una parada — no podemos calcular la ruta';
@@ -5678,8 +5834,11 @@ class Component extends DCLogic {
     setTimeout(() => this.setState({ genFase: 1 }), t[1]);
     setTimeout(() => this.setState({ genFase: 2 }), t[2]);
     // Si el catálogo todavía no llega (celular lento), se espera hasta 20 s.
-    let espera = 0;
-    const correr = () => { if (!this.state.catLoaded && espera++ < 100) { setTimeout(correr, 200); return; }
+    let espera = 0, gListo = false;
+    // Lugares de Google en vivo para esta búsqueda; si tarda más de 3.5 s se arma sin ellos.
+    try { this.traeGoogle().then(() => { gListo = true; }, () => { gListo = true; }); } catch (e) { gListo = true; }
+    setTimeout(() => { gListo = true; }, 3500);
+    const correr = () => { if ((!this.state.catLoaded || !gListo) && espera++ < 100) { setTimeout(correr, 200); return; }
       try { fn(); } finally { this._genBusy = false; this.setState({ generando: false, genFase: 0, planEditando: false }); } };
     setTimeout(correr, corto ? 180 : 1050);
   }
@@ -5796,7 +5955,7 @@ class Component extends DCLogic {
         photoFail: () => this.setState(st2 => { const q = Object.assign({}, st2.photos); delete q[a.id]; return { photos: q }; }),
         aria: 'Opción ' + (i + 1) + ', ' + frases[i] + ': ' + st.map(v => v.n).join(', '),
         stops: st.map((v, j) => ({ time: (p.cartelera || (p.porConfirmar && p.porConfirmar[j]))
-            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + v.col) + (v.horaEstimada ? ' · horario por confirmar' : '')
+            ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + (v.col || this.zLabel(v.z))) + (v.horaEstimada ? ' · horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '')
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
           + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '') })),
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
@@ -5841,8 +6000,10 @@ class Component extends DCLogic {
       return Object.assign({}, st, { sep: i ? '1px solid var(--color-divider)' : 'none',
         editar: editando && st.canEdit, noEditar: !(editando && st.canEdit),
         horaAria: 'Hora de ' + st.name, hasPhoto: !!(ph && ph.src), photo: ph ? ph.src : '', noPhoto: !(ph && ph.src),
-        letter: (st.name || '?')[0], manualForm: !!st.esManual && editando });
+        letter: (st.name || '?')[0], manualForm: !!st.esManual && editando,
+        gAviso: v ? this.googleAviso(v, s.planDate, (plan.times || [])[i]) : '' });
     });
+    if (plan && plan.stops) this.pideGoogle(plan.stops);
     // Recién elegido de las opciones: dice cuál es y en qué se distingue. En
     // cualquier otro caso, el estado real (borrador, guardado, enviado…).
     const estado = (s.planDesdeTanda && !R.planLocked && !s.planCustomFrom && !s.planReadOnly)
