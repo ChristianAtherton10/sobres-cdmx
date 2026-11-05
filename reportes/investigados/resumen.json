@@ -729,15 +729,6 @@
   "aprox": false
  },
  {
-  "id": "iv-e3ed701ad1",
-  "n": "Hobos · San Ángel",
-  "zone": "sanangel",
-  "km": 0.6,
-  "lat": 19.3445,
-  "lng": -99.19232,
-  "aprox": true
- },
- {
   "id": "iv-2a124144ec",
   "n": "El Gran León de Oro",
   "zone": "sanangel",
@@ -745,15 +736,6 @@
   "lat": 19.3647,
   "lng": -99.18293,
   "aprox": false
- },
- {
-  "id": "iv-4133cf798e",
-  "n": "El Cuevón · comedia y bar",
-  "zone": "sanangel",
-  "km": 1.9,
-  "lat": 19.33488,
-  "lng": -99.20043,
-  "aprox": true
  },
  {
   "id": "iv-9797965677",
@@ -781,15 +763,6 @@
   "lat": 19.35799,
   "lng": -99.12508,
   "aprox": false
- },
- {
-  "id": "iv-172d360c7b",
-  "n": "Terraza Bendito · Coyoacán",
-  "zone": "coyoacan",
-  "km": 0.0,
-  "lat": 19.34986,
-  "lng": -99.16198,
-  "aprox": true
  },
  {
   "id": "iv-34636982d7",

@@ -258,8 +258,7 @@ test('26h · huecos de cobertura (4 nov 2026): cada lugar nuevo trae fuente ofic
 test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es Google, zona correcta y precio de su ficha', () => {
   const app = makeApp({});
   const Z = { 'Terral Agrobar · San Ángel': 'sanangel', 'Cantaritos El Compa de Jalisco · San Ángel': 'sanangel', 'Alaia Terraza · San Ángel': 'sanangel',
-    'Hobos · San Ángel': 'sanangel', 'El Cuevón · comedia y bar': 'sanangel', 'Las Mixtas · San Ángel': 'sanangel', 'Caruso Concert Hall · cantabar': 'coyoacan',
-    'Coyote Calavera · Coyoacán': 'coyoacan', 'Terraza Bendito · Coyoacán': 'coyoacan', 'Cantina La No. 20 · Artz Pedregal': 'cu', 'Colmillo · Artz Pedregal': 'cu' };
+    'Las Mixtas · San Ángel': 'sanangel', 'Caruso Concert Hall · cantabar': 'coyoacan', 'Coyote Calavera · Coyoacán': 'coyoacan', 'Cantina La No. 20 · Artz Pedregal': 'cu', 'Colmillo · Artz Pedregal': 'cu' };
   Object.keys(Z).forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && v.z === Z[n], n + ' en ' + (v && v.z));
     assert(/^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente o con fuente de Google');
@@ -268,7 +267,12 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
   assert(t.pp === 200 && t.pEstado === 'rango' && t.dias.indexOf(1) < 0, 'Terral: $' + t.pp + ' ' + t.pEstado + ' días ' + t.dias);
   // En San Ángel ya hay dónde tomar algo de noche (antes: 0).
   const bares = app.cat().filter(v => v.z === 'sanangel' && app.esRecomendable(v) && app.sirveCopas(v) === 'si');
-  assert(bares.length >= 5, 'San Ángel sólo tiene ' + bares.length + ' lugares para tomar algo');
+  assert(bares.length >= 3, 'San Ángel sólo tiene ' + bares.length + ' lugares para tomar algo');
+  // Pedido del fundador: lo no verificado o con ubicación aproximada de esta tanda no entra.
+  ['Hobos', 'El Cuevón', 'Terraza Bendito'].forEach(n => assert(!app.cat().some(v => v.n.indexOf(n) === 0), n + ' sigue en el catálogo'));
+  const g = (pid, n) => ({ pid, n, lat: 19.33, lng: -99.18, tipo: 'bar', types: ['bar'], rating: 4.6, resenas: 300, periodos: [] });
+  const n = app.sumaGoogle([g('ChIJa', 'Lalos and Lolas'), g('ChIJb', 'Casa Murciélago'), g('ChIJc', 'Taberna El Holgazan'), g('ChIJd', 'Klandestino Saloon'), g('ChIJe', 'Mezcalero Cantinero'), g('ChIJf', 'Bar Verificable')], { tipo: 'bar', zonas: 'cu' });
+  assert(n.length === 1 && n[0].n === 'Bar Verificable', 'Google propone los no verificados: ' + n.map(v => v.n));
 });
 
 if (require.main === module) report();
