@@ -952,5 +952,194 @@
   "lat": 19.41061,
   "lng": -99.17844,
   "aprox": false
+ },
+ {
+  "id": "iv-efc0913747",
+  "n": "Almara",
+  "zone": "juarez",
+  "km": 1.2,
+  "lat": 19.42491,
+  "lng": -99.16792,
+  "aprox": false
+ },
+ {
+  "id": "iv-7f18572e2e",
+  "n": "Cachava",
+  "zone": "santafe",
+  "km": 2.4,
+  "lat": 19.38637,
+  "lng": -99.2521,
+  "aprox": false
+ },
+ {
+  "id": "iv-8c464a284d",
+  "n": "Chapulín",
+  "zone": "polanco",
+  "km": 0.6,
+  "lat": 19.42741,
+  "lng": -99.1936,
+  "aprox": false
+ },
+ {
+  "id": "iv-decb9bb062",
+  "n": "Çuina",
+  "zone": "roma",
+  "km": 0.5,
+  "lat": 19.41986,
+  "lng": -99.15564,
+  "aprox": false
+ },
+ {
+  "id": "iv-42ab61966a",
+  "n": "Dante Brasa y Fuego",
+  "zone": "polanco",
+  "km": 0.6,
+  "lat": 19.43106,
+  "lng": -99.19984,
+  "aprox": false
+ },
+ {
+  "id": "iv-ec77f95f10",
+  "n": "Ehden · Centro Histórico",
+  "zone": "centro",
+  "km": 0.9,
+  "lat": 19.43058,
+  "lng": -99.12918,
+  "aprox": false
+ },
+ {
+  "id": "iv-e01a7476d5",
+  "n": "Ehden · Roma Norte",
+  "zone": "roma",
+  "km": 0.8,
+  "lat": 19.42022,
+  "lng": -99.16723,
+  "aprox": false
+ },
+ {
+  "id": "iv-b883f695ea",
+  "n": "Gruta Ehden · Florida",
+  "zone": "coyoacan",
+  "km": 2.1,
+  "lat": 19.36285,
+  "lng": -99.1763,
+  "aprox": false
+ },
+ {
+  "id": "iv-25ce140101",
+  "n": "Grana Sabores de Origen",
+  "zone": "centro",
+  "km": 0.8,
+  "lat": 19.42693,
+  "lng": -99.1376,
+  "aprox": false
+ },
+ {
+  "id": "iv-5d36ad3882",
+  "n": "La Cabrera · Roma Norte",
+  "zone": "roma",
+  "km": 0.5,
+  "lat": 19.41942,
+  "lng": -99.15554,
+  "aprox": false
+ },
+ {
+  "id": "iv-d99c0ee47a",
+  "n": "La Cocina del Bizco",
+  "zone": "condesa",
+  "km": 0.2,
+  "lat": 19.40923,
+  "lng": -99.17284,
+  "aprox": false
+ },
+ {
+  "id": "iv-ada353af3c",
+  "n": "Marea · Restaurante de Mar",
+  "zone": "condesa",
+  "km": 0.9,
+  "lat": 19.4189,
+  "lng": -99.17496,
+  "aprox": false
+ },
+ {
+  "id": "iv-5a6df611a9",
+  "n": "Rocasal",
+  "zone": "cu",
+  "km": 2.9,
+  "lat": 19.31598,
+  "lng": -99.21147,
+  "aprox": false
+ },
+ {
+  "id": "iv-7d9130fd5a",
+  "n": "Somsaa",
+  "zone": "roma",
+  "km": 0.8,
+  "lat": 19.4122,
+  "lng": -99.15823,
+  "aprox": false
+ },
+ {
+  "id": "iv-d7ca8242a0",
+  "n": "The Lamb",
+  "zone": "roma",
+  "km": 0.0,
+  "lat": 19.41906,
+  "lng": -99.15964,
+  "aprox": false
+ },
+ {
+  "id": "iv-69b2eb280d",
+  "n": "Tierra Adentro Cocina",
+  "zone": "coyoacan",
+  "km": 1.8,
+  "lat": 19.35973,
+  "lng": -99.14854,
+  "aprox": false
+ },
+ {
+  "id": "iv-61f28f8bce",
+  "n": "Torre de Castilla",
+  "zone": "polanco",
+  "km": 1.2,
+  "lat": 19.43336,
+  "lng": -99.20681,
+  "aprox": false
+ },
+ {
+  "id": "iv-f45c2c1a9f",
+  "n": "Vega",
+  "zone": "sanangel",
+  "km": 0.9,
+  "lat": 19.35386,
+  "lng": -99.19015,
+  "aprox": false
+ },
+ {
+  "id": "iv-217cfdc7ff",
+  "n": "Costa Guadiana",
+  "zone": "santafe",
+  "km": 2.4,
+  "lat": 19.38637,
+  "lng": -99.2521,
+  "aprox": false
+ },
+ {
+  "id": "iv-3b9983ef0a",
+  "n": "Danubio",
+  "zone": "centro",
+  "km": 0.5,
+  "lat": 19.43102,
+  "lng": -99.14102,
+  "aprox": false
+ },
+ {
+  "id": "iv-9fe82dac0b",
+  "n": "Cantina del Bosque",
+  "zone": "chapultepec",
+  "km": 0.8,
+  "lat": 19.41822,
+  "lng": -99.17858,
+  "aprox": false
  }
 ]

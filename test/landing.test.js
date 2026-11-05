@@ -415,4 +415,34 @@ test('34.4 · un concierto no entra a un plan romántico + comer rico', () => {
   });
 });
 
+// ── 35 · Clásicos de las guías que faltaban (5 nov 2026) ─────────────────────
+section('35 · Clásicos de las guías que faltaban');
+const CLASICOS = ['Almara', 'Cachava', 'Chapulín', 'Çuina', 'Dante Brasa y Fuego', 'Ehden · Centro Histórico', 'Ehden · Roma Norte', 'Gruta Ehden · Florida',
+  'Grana Sabores de Origen', 'La Cabrera · Roma Norte', 'La Cocina del Bizco', 'Marea · Restaurante de Mar', 'Rocasal', 'Somsaa', 'The Lamb',
+  'Tierra Adentro Cocina', 'Torre de Castilla', 'Vega', 'Costa Guadiana', 'Danubio', 'Cantina del Bosque'];
+
+test('35.1 · cada clásico nuevo trae fuente con URL, fecha de consulta, ubicación exacta (no aproximada) y queda como hotspot', () => {
+  const a = makeApp(COM); const C = a.cat();
+  CLASICOS.forEach(n => {
+    const v = C.find(x => x.n === n); assert(v, n + ' no está en el catálogo');
+    assert(/^https:\/\//.test(v.pUrl || v.url || '') || /^https:\/\//.test((a._win.SOBRES_INVESTIGADOS.lugares.find(r => r.n === n) || {}).url || ''), n + ': sin URL');
+    const r = a._win.SOBRES_INVESTIGADOS.lugares.find(x => x.n === n);
+    assert(r.consultado === '2026-11-05' && !r.coordAprox && r.recomendable !== false, n + ': ' + JSON.stringify({ c: r.consultado, aprox: r.coordAprox, rec: r.recomendable }));
+    assert(v.hot >= 2, n + ' no quedó como hotspot');
+  });
+  // Lo que no se pudo confirmar no entra: Arturo's (tres direcciones distintas en sus fuentes) y los que
+  // sólo se ubican a nivel de calle (Gruta Ehden Polanco, Romina, Brutal, Sushi Iwashi) — 5 nov 2026.
+  assert(!C.some(v => /^arturo.?s$/i.test(v.n) || ['Gruta Ehden · Polanco', 'Romina', 'Brutal Vinata de Barrio', 'Sushi Iwashi'].includes(v.n)), 'entró un lugar sin ubicación exacta');
+});
+
+test('35.2 · los clásicos que ya estaban con otro nombre quedan marcados, sin confundir sucursales', () => {
+  const C = makeApp(COM).cat();
+  ['Tacos del Valle', 'Deigo Cocina Tradicional Japonesa', 'Museo Mexicano del Diseño (MUMEDI)', 'Cantina del Bosque'].forEach(n => {
+    const v = C.find(x => x.n === n); assert(v && v.hot >= 1, n + ' no quedó como hotspot');
+  });
+  // "Sushi Iwashi" (Polanco, MB100) no es "Iwashi Lomas"; "Deigo" es el original, no el de ramen.
+  assert(!C.find(x => x.n === 'Iwashi Lomas').hot, 'Iwashi Lomas quedó como el Sushi Iwashi de Beteta');
+  assert(!C.find(x => x.n === 'Deigo Ramen').hot, 'Deigo Ramen quedó como el Deigo clásico');
+});
+
 if (require.main === module) report();

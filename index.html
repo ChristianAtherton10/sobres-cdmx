@@ -3145,6 +3145,14 @@ class Component extends DCLogic {
         const c = cands.find(c => toca(c, a) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c)));
         if (c) elegidos.push(c); });
     }
+    // "Con amigos" (social): una de las tres trae una ACTIVIDAD (karaoke, billar, boliche,
+    // salón, escape room) si la hay, no tres de "cena + bar". Con los hotspots y los
+    // conciertos, las de bar ganaban siempre (prueba 17e, 5 nov 2026).
+    if (amb.indexOf('social') >= 0 && elegidos.length < 3) {
+      const ACT = ['karaoke', 'billar', 'boliche', 'salon_baile', 'reto'];
+      const tieneAct = c => c.plantilla.split('+').some(k => ACT.indexOf(k) >= 0);
+      if (!elegidos.some(tieneAct)) { const c = cands.find(c => tieneAct(c) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c))); if (c) elegidos.push(c); }
+    }
     pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
     const reserva = cands.filter(c => elegidos.indexOf(c) < 0);
     // Lo que se ofrece suelto cuando no hay plan: las piezas "sueltos" de cada ambiente.
