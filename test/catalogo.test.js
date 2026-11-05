@@ -240,4 +240,19 @@ test('26g · con un rango de precio, SOBRES usa el más alto; en museos, la tari
   assert(!mal.length, 'no usan el alto: ' + mal.slice(0, 5).map(v => v.n + ' ' + v.pp + ' de ' + v.pMin + '–' + v.pMax));
 });
 
+test('26h · huecos de cobertura (4 nov 2026): cada lugar nuevo trae fuente oficial y queda en su colonia', () => {
+  const app = makeApp({});
+  const km = (v, z) => Math.hypot((v.lat - app.ZGEO[z][0]) * 111, (v.lng - app.ZGEO[z][1]) * 105);
+  const N = ['Cantina El Mirador', 'Ristorante Intervallo', 'Veggicano', 'Mora Mora · Santa Fe', 'Mora Mora · San Miguel Chapultepec', 'Mora Mora · Polanco',
+    'Ruffian Wine Bar', 'Mitemaki · Polanco', 'Mitemaki · Bosques', 'Baltra'];
+  N.forEach(n => { const v = app.cat().find(x => x.n === n);
+    assert(v && /^iv-/.test(v.id) && /^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente oficial');
+    assert(app.esRecomendable(v), n + ' no es recomendable'); });
+  // Regresión: OpenStreetMap ubicó "Av. Chapultepec 606" en la Roma; el sitio dice San Miguel Chapultepec.
+  const m = app.cat().find(x => x.n === 'Cantina El Mirador');
+  assert(m.z === 'chapultepec' && km(m, 'chapultepec') < 1.5, 'El Mirador quedó en ' + m.z + ' a ' + km(m, 'chapultepec').toFixed(1) + ' km');
+  const veg = app.cat().find(x => x.n === 'Veggicano');
+  assert(app.dietaDe(veg).includes('vegano') && veg.pp === 237, 'Veggicano: ' + app.dietaDe(veg) + ' $' + veg.pp);
+});
+
 if (require.main === module) report();

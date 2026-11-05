@@ -73,6 +73,13 @@ F = {
  'res_bocanariz': ('Reservándonos — Boca Nariz Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/restaurante-boca-nariz-interlomas', 'sin fecha (consultada ' + HOY + ')'),
  'res_kamachos': ('Reservándonos — Kamachos Hookah Interlomas (ficha vigente)', 'https://reservandonos.com/en/place/kamachos-hookah-interlomas', 'sin fecha (consultada ' + HOY + ')'),
  'inf_bonvi': ('The Infatuation — La Bonvi (reseña y ficha)', 'https://www.theinfatuation.com/mexico-city/reviews/la-bonvi', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_mirador': ('Cantina El Mirador — sitio oficial', 'https://www.cantinaelmirador.com/', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_intervallo': ('Ristorante Intervallo — sitio oficial', 'http://www.ristoranteintervallo.com/', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_veggicano': ('Veggicano — sitio oficial (menú y sucursal)', 'http://veggicano.com.mx/', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_moramora': ('Mora Mora — sitio oficial (sucursales y menú del mes)', 'https://moramora.mx/', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_ruffian': ('Ruffian Wine Bar — sitio oficial', 'http://www.ruffianwinebar.com/', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_mitemaki': ('Mitemaki Handroll Bar — sitio oficial (sucursales y horario)', 'http://www.mitemaki.com/', 'sin fecha (consultada ' + HOY + ')'),
+ 'web_baltra': ('Baltra — sitio oficial (horario) y Time Out México (dirección)', 'http://baltra.bar/', 'sin fecha (consultada ' + HOY + ')'),
  'mdp_tacos': ('Mexico Daily Post — taquerías "nice" de la CDMX (La Bonvi, Pedregal 33)', 'https://mexicodailypost.news/2025/08/24/nice-taco-shops-in-mexico-city-that-you-have-to-experience-for-yourself-before-judging/', '2025-08-24'),
  'ot_carolo_carso': ('OpenTable — Carolo Carso', 'https://www.opentable.com/carolo-carso', 'sin fecha (consultada ' + HOY + ')'),
  'ot_carolo_il': ('OpenTable — Carolo Interlomas', 'https://www.opentable.ie/carolo-interlomas', 'sin fecha (consultada ' + HOY + ')'),
@@ -85,7 +92,7 @@ def fuente(k, url=None):
     return n, url or u, f
 
 # Fichas vivas (oficiales o de reserva) consultadas hoy: no tienen fecha de nota, pero son vigentes.
-VIGENTES = {'inf_bonvi', 'ot_carolo_carso', 'ot_carolo_il', 'ot_popular_sf', 'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera', 'res_bastian', 'res_karaoke_il', 'res_bocanariz', 'res_kamachos'}
+VIGENTES = {'web_mirador', 'web_intervallo', 'web_veggicano', 'web_moramora', 'web_ruffian', 'web_mitemaki', 'web_baltra', 'inf_bonvi', 'ot_carolo_carso', 'ot_carolo_il', 'ot_popular_sf', 'turismo', 'filmoteca', 'ot_vineria', 'inah_mnh', 'turismo_esc', 'fever_bb', 'fever_gnp', 'res_bagheera', 'res_coralillo', 'res_doce', 'res_bilboa', 'res_cantaritos', 'intravel_fiera', 'res_bastian', 'res_karaoke_il', 'res_bocanariz', 'res_kamachos'}
 def antigua(k, fecha):
     if k in VIGENTES: return False
     return not fecha[:4].isdigit() or int(fecha[:4]) < 2024
@@ -339,6 +346,41 @@ L = [
  dict(n='La Popular · Santa Fe', cat='Restaurante', col='Lomas de Santa Fe', addr='Juan Salvador Agraz 44, Lomas de Santa Fe', geo='Juan Salvador Agraz 44, Santa Fe, Ciudad de México',
       zona='santafe', f='ot_popular_sf', h=(13, 24), hrs='Horario por confirmar', horaEstimada=True, act=['comida', 'cena'],
       who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'social'], cocina='Mexicana'),
+ # Huecos de cobertura (4 nov 2026): descubiertos con Google Places, verificados en su sitio oficial
+ dict(n='Cantina El Mirador', cat='Cantina', col='San Miguel Chapultepec', addr='Av. Chapultepec 606, San Miguel Chapultepec', geo='San Miguel Chapultepec, Ciudad de México', geoAprox=True,
+      zona='chapultepec', f='web_mirador', h=(13, 23), hrs='Lun a mié 13:00–22:00 · jue y vie 13:00–23:00 · sáb y dom 13:00–20:00', act=['comida', 'cena', 'copas'],
+      who=['amigos', 'compa'], tags=['social', 'foodie'], cocina='Mexicana'),
+ dict(n='Ristorante Intervallo', cat='Restaurante', col='San José Insurgentes', addr='Sagredo 162, San José Insurgentes', geo='Sagredo 162, Ciudad de México',
+      f='web_intervallo', h=(13.5, 23), hrs='Lun a sáb 13:30–23:00 · dom 13:30–18:00', act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'romántico'], cocina='Italiana'),
+ dict(n='Veggicano', cat='Restaurante', col='Del Carmen, Coyoacán', addr='Corina 117, local 1, Del Carmen', geo='Corina 117, Coyoacán, Ciudad de México',
+      zona='coyoacan', f='web_veggicano', h=(10, 19), hrs='Lun a sáb 10:00–19:00 · dom 9:30–18:00', act=['desayuno', 'comida'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie', 'chill'], dieta=['vegano', 'vegetariano'], cocina='Vegetariana',
+      precio=dict(min=157, rep=220, max=237, unidad='persona', canasta='Un platillo de su menú: chilaquiles $157, filete en bechamel $220, hamburguesa $237 (tacos artesanales $45). Bebida aparte.'), estado='rango'),
+ dict(n='Mora Mora · Santa Fe', cat='Café', col='Santa Fe', addr='Av. Santa Fe 483, Santa Fe', geo='Avenida Santa Fe 483, Ciudad de México',
+      zona='santafe', f='web_moramora', h=(8, 20), hrs='Horario por confirmar', horaEstimada=True, act=['cafe', 'desayuno'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['chill'],
+      precio=dict(min=99, rep=137, max=159, unidad='persona', canasta='Una bebida del menú del mes: latte $99, matcha $109, jugo $137, smoothie $159. Comida aparte.'), estado='rango'),
+ dict(n='Mora Mora · San Miguel Chapultepec', cat='Café', col='San Miguel Chapultepec', addr='Gral. Juan Cano 70, San Miguel Chapultepec', geo='General Juan Cano 70, Ciudad de México',
+      zona='chapultepec', f='web_moramora', h=(8, 20), hrs='Horario por confirmar', horaEstimada=True, act=['cafe', 'desayuno'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['chill'],
+      precio=dict(min=99, rep=137, max=159, unidad='persona', canasta='Una bebida del menú del mes: latte $99, matcha $109, jugo $137, smoothie $159. Comida aparte.'), estado='rango'),
+ dict(n='Mora Mora · Polanco', cat='Café', col='Polanco', addr='Edgar Allan Poe 94, Polanco', geo='Edgar Allan Poe 94, Ciudad de México',
+      zona='polanco', f='web_moramora', h=(8, 20), hrs='Horario por confirmar', horaEstimada=True, act=['cafe', 'desayuno'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['chill'],
+      precio=dict(min=99, rep=137, max=159, unidad='persona', canasta='Una bebida del menú del mes: latte $99, matcha $109, jugo $137, smoothie $159. Comida aparte.'), estado='rango'),
+ dict(n='Ruffian Wine Bar', cat='Bar', col='Lomas Virreyes', addr='Av. Prado Norte 314, piso 3, Lomas Virreyes', geo='Prado Norte 314, Ciudad de México',
+      zona='lomas', f='web_ruffian', h=(18, 25), hrs='Horario por confirmar', horaEstimada=True, act=['copas'],
+      who=['amigos', 'date', 'compa'], tags=['nightlife', 'romántico'], apto='no'),
+ dict(n='Mitemaki · Polanco', cat='Restaurante', col='Polanco', addr='Av. Emilio Castelar 44, Polanco IV Secc.', geo='Emilio Castelar 44, Ciudad de México',
+      zona='polanco', f='web_mitemaki', h=(13, 23), hrs='Lun a sáb 13:00–23:00 · dom 13:00–19:00', act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Japonesa'),
+ dict(n='Mitemaki · Bosques', cat='Restaurante', col='Bosques de las Lomas', addr='Bosque de Duraznos 39, Bosques de las Lomas', geo='Bosque de Duraznos 39, Ciudad de México',
+      f='web_mitemaki', h=(13, 23), hrs='Lun a sáb 13:00–23:00 · dom 13:00–19:00', act=['comida', 'cena'],
+      who=['amigos', 'date', 'compa', 'familia'], tags=['foodie'], cocina='Japonesa'),
+ dict(n='Baltra', cat='Bar de autor', col='Condesa', addr='Iztaccíhuatl 36D, Condesa', geo='Iztaccihuatl 36, Hipódromo, Ciudad de México',
+      zona='condesa', f='web_baltra', h=(18, 26), hrs='Dom a mié 18:00–24:00 · jue a sáb 18:00–2:00', act=['copas'],
+      who=['amigos', 'date', 'compa'], tags=['nightlife', 'romántico'], apto='no'),
 ]
 
 # ------------------------------------------------------------------ geocodificación
