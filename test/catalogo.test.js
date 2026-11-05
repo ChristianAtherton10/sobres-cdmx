@@ -243,11 +243,12 @@ test('26f · Santa Fe: sin Jalalpa ni Prados de la Montaña; Cinépolis Patio Sa
   assert(app.renderVals().homeResults.length >= 2, 'el buscador no encuentra las dos La Bonvi');
 });
 
-test('26g · con un rango de precio, SOBRES usa el más alto (regla del fundador, 4 nov 2026)', () => {
+test('26g · con un rango de precio, SOBRES usa el más alto; en museos, la tarifa para mexicanos (fundador, 4 nov 2026)', () => {
   const app = makeApp({ who: 'amigos', zone: 'roma', zonesSel: ['roma'], vibes: ['foodie'] });
   const con = app.cat().filter(v => !v.ppUnknown && v.pMax != null && v.pRep != null && !v.pAjusteLocal && !v.pOtraUnidad && !v.cursoCerrado && v.pMoneda === 'MXN');
   assert(con.length > 500, 'pocos lugares con rango: ' + con.length);
-  const mal = con.filter(v => v.pp !== Math.max(v.pRep, v.pMax));
+  const MX = ['Museo', 'Sitio histórico', 'Zona arqueológica', 'Galería', 'Centro cultural'];
+  const mal = con.filter(v => v.pp !== (MX.includes(v.cat) ? v.pRep : Math.max(v.pRep, v.pMax)));
   assert(!mal.length, 'no usan el alto: ' + mal.slice(0, 5).map(v => v.n + ' ' + v.pp + ' de ' + v.pMin + '–' + v.pMax));
   const bonvi = app.cat().find(v => v.n === 'La Bonvi · Polanco');
   assert(bonvi.pp === 800, 'La Bonvi Polanco ($300–800 en Maps) quedó en ' + bonvi.pp);

@@ -1722,7 +1722,10 @@ class Component extends DCLogic {
     else if (p.moneda && p.moneda !== 'MXN') { v.pp = p.mxnAprox != null ? p.mxnAprox : 0; v.ppAprox = true; v.ppUnknown = p.mxnAprox == null; }
     // Regla del fundador (4 nov 2026): con un rango, el precio por persona que
     // usa SOBRES (presupuesto, tarjetas, búsqueda) es el ALTO, no el típico.
-    else { v.pp = (p.max != null && p.max > p.rep) ? p.max : p.rep; v.ppUnknown = false; }
+    // Excepción (4 nov 2026): en museos, sitios y zonas arqueológicas manda la
+    // tarifa para mexicanos (la típica), no la de extranjeros.
+    else { const tarifaMx = ['Museo', 'Sitio histórico', 'Zona arqueológica', 'Galería', 'Centro cultural'].indexOf(v.cat) >= 0;
+      v.pp = (!tarifaMx && p.max != null && p.max > p.rep) ? p.max : p.rep; v.ppUnknown = false; }
     // Un CURSO de varias sesiones no es el gasto de una tarde: no se suma.
     if (p.unidad === 'curso') { v.cursoCerrado = true; v.ppUnknown = true; v.pp = 0; }
     // Una tarifa que NO es por persona (por trajinera, por mesa, por botella)

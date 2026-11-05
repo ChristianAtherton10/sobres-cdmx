@@ -469,11 +469,11 @@ test('los precios auditados sustituyen al valor por defecto de la categoría', (
   const app = makeApp(BASE, { dseed: 5 });
   const byId = id => app.cat().find(v => v.id === id);
   const frida = byId('cdmx-0200');
-  // Regla del fundador (4 nov 2026): con rango, SOBRES usa el precio ALTO.
-  assert(frida.pp === 320 && frida.pRep === 160 && frida.ppAnterior === 85, 'Frida Kahlo: ' + frida.pp + ' (antes ' + frida.ppAnterior + ')');
+  // Museos: tarifa para mexicanos (fundador, 4 nov 2026).
+  assert(frida.pp === 160 && frida.pRep === 160 && frida.ppAnterior === 85, 'Frida Kahlo: ' + frida.pp + ' (antes ' + frida.ppAnterior + ')');
   assert(frida.pEstado === 'verificado' && frida.pFuente && frida.pUrl, 'falta fuente verificable');
   const antro = byId('cdmx-0161');
-  assert(antro.pp === 210 && antro.pEstado === 'verificado', 'Antropología: ' + antro.pp);
+  assert(antro.pp === 105 && antro.pEstado === 'verificado', 'Antropología: ' + antro.pp);
   const sou = byId('cdmx-0151');
   assert(sou.pp === 0 && sou.pEstado === 'verificado', 'Soumaya es gratis y el defecto le cobraba $85');
   // El caso que reportó el usuario.
@@ -2207,7 +2207,7 @@ test('precios: Quintonil, PANEM, Casa San Juan, Ryoshi y museos con su cifra rea
   assert(v('cdmx-0001').pMin === 5610, 'Quintonil: el menú solo cuesta $5,610');
   assert(v('cdmx-3001').pp === 1800 && v('cdmx-2229').pp === 1800, 'PANEM y Casa San Juan ~$2,000 con propina');
   assert(v('cdmx-2001').pp === 1100, 'Ryoshi ~$1,200 con propina');
-  assert(v('tamayo').pp === 95 && v('cdmx-0005').pp === 210 && v('cdmx-0162').pp === 160, 'taquillas 2026 (el precio alto del rango)');
+  assert(v('tamayo').pp === 95 && v('cdmx-0005').pp === 105 && v('cdmx-0162').pp === 160, 'taquillas 2026 (tarifa para mexicanos)');
   // Ningún restaurante se queda con el $1,500 de relleno.
   const relleno = app.cat().filter(x => x.pEstado === 'inferido' && x.pp === 1500);
   assert(!relleno.length, 'siguen con $1,500 de relleno: ' + relleno.map(x => x.n).slice(0, 5));
