@@ -249,4 +249,61 @@ test('31.3 · la llave y las búsquedas quedan cerradas a CDMX (lib/places.py y 
   assert(!/AIza[0-9A-Za-z_-]{20,}/.test(lib + api + fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')), 'hay una llave escrita en el código');
 });
 
+section('32 · Lugares de Google en vivo para armar el plan');
+
+// Lunes a domingo 13:00–23:00 (Google: día 0 = domingo).
+const PER7 = [0, 1, 2, 3, 4, 5, 6].map(d => ({ open: { day: d, hour: 13, minute: 0 }, close: { day: d, hour: 23, minute: 0 } }));
+const gp = (pid, n, lat, lng, extra) => Object.assign({ pid, n, lat, lng, tipo: 'japanese_restaurant', types: ['japanese_restaurant', 'restaurant', 'food'],
+  precio: [300, 600], rating: 4.6, resenas: 900, periodos: PER7, horario: ['lunes: 13:00–23:00'], addr: 'Calle 1, Roma Nte., 06700 Ciudad de México, CDMX', maps: 'https://maps.google.com/?cid=9' }, extra || {});
+
+test('32.1 · un lugar de Google se vuelve lugar de SOBRES: zona, horario real, precio alto, cocina y "De Google Maps"', () => {
+  const a = makeApp(COM);
+  const v = a.gToVenue(gp('ChIJ_prueba-1', 'Sushi Prueba', 19.4185, -99.1605), { tipo: 'restaurante', cocina: 'japonesa', zonas: 'roma' });
+  assert(v.id === 'gp-ChIJ_prueba-1' && v.cat === 'Restaurante' && v.z === 'roma', JSON.stringify([v.id, v.cat, v.z]));
+  assert(v.oh[0] === 13 && v.oh[1] === 23 && !v.horaEstimada, 'horario: ' + v.oh);
+  assert(v.pp === 600 && v.pEstado === 'estimado' && /Google Maps/.test(v.pCanasta), 'precio: ' + v.pp + ' ' + v.pEstado);
+  assert(a.tiposCocina(v).includes('japonesa'), 'cocina: ' + v.cocina);
+  assert(v.deGoogle && v.src === 'Google Maps (en vivo)' && v.addr === 'Calle 1, Roma Nte.', v.addr);
+  assert(a.googleDe(v) && a.googleBloque(v).gHay, 'la ficha no tiene "Según Google"');
+  const bar = a.gToVenue(gp('ChIJbar', 'Bar Prueba', 19.4185, -99.1605, { tipo: 'bar', types: ['bar', 'point_of_interest'] }), { tipo: 'bar', zonas: 'roma' });
+  assert(bar.cat === 'Bar' && bar.aptoFamilia === 'no', bar.cat + ' ' + bar.aptoFamilia);
+  assert(a.gToVenue(gp('ChIJx', 'Hotel', 19.41, -99.16, { tipo: 'lodging', types: ['lodging'] }), null) === null, 'un hotel no es lugar');
+});
+
+test('32.2 · no se repite lo que ya está en el catálogo (mismo nombre a unos metros)', () => {
+  const a = makeApp(COM);
+  const c = a.cat().find(v => v.n === 'Contramar');
+  const n = a.sumaGoogle([gp('ChIJdup', 'Contramar', c.lat + 0.0005, c.lng), gp('ChIJnuevo', 'Sushi Nuevo', 19.4185, -99.1605)], { tipo: 'restaurante', zonas: 'roma' });
+  assert(n.length === 1 && n[0].n === 'Sushi Nuevo', n.map(v => v.n));
+  assert(a.cat().some(v => v.id === 'gp-ChIJnuevo'), 'no entró al catálogo de esta visita');
+  assert(a.sumaGoogle([gp('ChIJnuevo', 'Sushi Nuevo', 19.4185, -99.1605)], null).length === 0, 'se agregó dos veces');
+});
+
+test('32.3 · el motor arma con ellos: japonesa en Roma con $300–600 ya no se queda sin japonés', () => {
+  const st = Object.assign({}, COM, { budget: 'b600', cocinas: ['japonesa'] });
+  const a = makeApp(st, { dseed: 3, rseed: 5 });
+  a.sumaGoogle([1, 2, 3, 4, 5].map(i => gp('ChIJjp' + i, 'Sushi Barrio ' + i, 19.419 + i * 0.001, -99.161 + i * 0.001, { precio: [200, 400] })), { tipo: 'restaurante', cocina: 'japonesa', zonas: 'roma' });
+  a.runSearch({ nueva: true });
+  const pls = a.state.results.plans || [];
+  const com = pls.flatMap(pl => pl.stops.filter(v => a.esComidaFiltrable(v)));
+  assert(com.length && com.every(v => a.tiposCocina(v).includes('japonesa')), com.map(v => v.n).join(', '));
+  assert(com.some(v => v.deGoogle), 'no usó ninguno de Google: ' + com.map(v => v.n).join(', '));
+});
+
+test('32.4 · qué se le pide a Google según lo elegido (máximo 3 búsquedas, sólo tipos permitidos)', () => {
+  const a = makeApp(Object.assign({}, COM, { vibes: ['foodie', 'nightlife'], cocinas: ['japonesa', 'mariscos', 'italiana'], zonesSel: ['roma', 'condesa'] }));
+  const b = a.googleBusquedas();
+  assert(b.length === 3 && b[0].cocina === 'japonesa' && b[1].cocina === 'mariscos' && b[2].tipo === 'bar', JSON.stringify(b));
+  assert(b.every(x => x.zonas === 'roma,condesa'), 'zonas: ' + b[0].zonas);
+  const f = makeApp(Object.assign({}, COM, { who: 'familia', vibes: ['familiar'] }));
+  assert(!f.googleBusquedas().some(x => x.tipo === 'bar' || x.tipo === 'antro'), 'en familia pide bares');
+});
+
+test('32.5 · un lugar de Google viaja en el enlace compartido (place_id con "_" y "-")', () => {
+  const a = makeApp(COM);
+  const id = 'gp-ChIJ_ab-CD_ef12';
+  assert(a.largaId(a.cortaId(id)) === id, a.cortaId(id) + ' → ' + a.largaId(a.cortaId(id)));
+  assert(!/[~_.!]/.test(a.cortaId(id)), 'el id corto trae un separador: ' + a.cortaId(id));
+});
+
 if (require.main === module) report();

@@ -55,10 +55,11 @@ def buscar(texto, lat=None, lng=None, campos='places.id,places.displayName,place
 CAMPOS_DETALLE = ('id,location,businessStatus,currentOpeningHours.openNow,regularOpeningHours.periods,'
                   'regularOpeningHours.weekdayDescriptions,priceRange,priceLevel,rating,userRatingCount,googleMapsUri')
 
-def detalle(place_id):
+def detalle(place_id, extra=False):
     if not place_id or not place_id.replace('_', '').replace('-', '').isalnum():
         return {'error': 400}
-    r = _pide('https://places.googleapis.com/v1/places/' + place_id + '?languageCode=es&regionCode=MX', CAMPOS_DETALLE)
+    r = _pide('https://places.googleapis.com/v1/places/' + place_id + '?languageCode=es&regionCode=MX',
+              CAMPOS_DETALLE + (',displayName,primaryType,types,formattedAddress' if extra else ''))
     loc = r.get('location') or {}
     if 'error' not in r and not en_cdmx(loc.get('latitude', 0), loc.get('longitude', 0)):
         return {'error': 'fuera de CDMX'}

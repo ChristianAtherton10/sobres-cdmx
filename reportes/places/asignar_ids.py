@@ -36,6 +36,7 @@ prog = json.load(open(prog_p)) if os.path.exists(prog_p) else {}
 hechos = 0
 for sid, n, lat, lng, cat in L:
     if sid in prog or hechos >= MAX: continue
+    if not P.en_cdmx(lat, lng): prog[sid] = None; continue   # sin coordenada válida (0,0) o fuera de CDMX
     q = re.sub(r'\s*·\s*', ' ', n)
     r = P.buscar(q, lat, lng, campos='places.id,places.displayName,places.location,places.types')
     if isinstance(r, dict):

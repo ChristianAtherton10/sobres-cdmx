@@ -45,13 +45,21 @@ class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if not P.llave():
             return self.responde(503, {'error': 'sin llave'})
-        ids = [x for x in (parse_qs(urlparse(self.path).query).get('ids', [''])[0]).split(',') if re.match(r'^[\w-]{3,40}$', x)][:8]
+        ids = [x for x in (parse_qs(urlparse(self.path).query).get('ids', [''])[0]).split(',') if re.match(r'^[\w-]{3,80}$', x)][:8]
         G = gid(); out = {}
         for i in ids:
-            pid = G.get(i)
+            # 'gp-<place_id>' = lugar que SOBRES encontró en vivo en Google (viene
+            # en un enlace compartido): se pide con nombre y ubicación para
+            # reconstruirlo. Igual sólo responde si está dentro de CDMX.
+            vivo = i.startswith('gp-')
+            pid = i[3:] if vivo else G.get(i)
             if not pid:
                 continue                      # no es del catálogo: no se consulta
-            d = P.detalle(pid)
+            d = P.detalle(pid, extra=vivo)
             if 'error' not in d:
                 out[i] = resumen(d)
+                if vivo:
+                    loc = d.get('location') or {}
+                    out[i].update({'pid': pid, 'n': (d.get('displayName') or {}).get('text', ''), 'lat': loc.get('latitude'), 'lng': loc.get('longitude'),
+                                   'tipo': d.get('primaryType', ''), 'types': d.get('types', [])[:8], 'addr': d.get('formattedAddress', '')})
         self.responde(200, {'fuente': 'Datos de Google Maps', 'lugares': out})
