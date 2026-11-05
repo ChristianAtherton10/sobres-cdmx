@@ -610,5 +610,95 @@
   "lat": 19.3599,
   "lng": -99.2792,
   "aprox": false
+ },
+ {
+  "id": "iv-5d8b6e4e31",
+  "n": "Cantina El Mirador",
+  "zone": "chapultepec",
+  "km": 0.7,
+  "lat": 19.41104,
+  "lng": -99.18578,
+  "aprox": true
+ },
+ {
+  "id": "iv-97eea62b84",
+  "n": "Ristorante Intervallo",
+  "zone": "sanangel",
+  "km": 2.4,
+  "lat": 19.36763,
+  "lng": -99.18748,
+  "aprox": false
+ },
+ {
+  "id": "iv-dbf8a3903e",
+  "n": "Veggicano",
+  "zone": "coyoacan",
+  "km": 1.0,
+  "lat": 19.35614,
+  "lng": -99.15529,
+  "aprox": false
+ },
+ {
+  "id": "iv-c9cc1b6f70",
+  "n": "Mora Mora · Santa Fe",
+  "zone": "santafe",
+  "km": 1.9,
+  "lat": 19.35694,
+  "lng": -99.27503,
+  "aprox": false
+ },
+ {
+  "id": "iv-8f4f999d01",
+  "n": "Mora Mora · San Miguel Chapultepec",
+  "zone": "chapultepec",
+  "km": 1.0,
+  "lat": 19.40785,
+  "lng": -99.18602,
+  "aprox": false
+ },
+ {
+  "id": "iv-5fe4c963ea",
+  "n": "Mora Mora · Polanco",
+  "zone": "polanco",
+  "km": 0.6,
+  "lat": 19.43623,
+  "lng": -99.19964,
+  "aprox": false
+ },
+ {
+  "id": "iv-a7129afffb",
+  "n": "Ruffian Wine Bar",
+  "zone": "lomas",
+  "km": 1.1,
+  "lat": 19.42715,
+  "lng": -99.21692,
+  "aprox": false
+ },
+ {
+  "id": "iv-9bd9df3d2f",
+  "n": "Mitemaki · Polanco",
+  "zone": "polanco",
+  "km": 0.4,
+  "lat": 19.42927,
+  "lng": -99.19354,
+  "aprox": false
+ },
+ {
+  "id": "iv-0b99739edd",
+  "n": "Mitemaki · Bosques",
+  "zone": "lomas",
+  "km": 2.9,
+  "lat": 19.40258,
+  "lng": -99.24256,
+  "aprox": false
+ },
+ {
+  "id": "iv-f2b54ca0c5",
+  "n": "Baltra",
+  "zone": "condesa",
+  "km": 0.6,
+  "lat": 19.40943,
+  "lng": -99.16899,
+  "aprox": false
  }
 ]
