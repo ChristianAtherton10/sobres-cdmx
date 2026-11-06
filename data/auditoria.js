@@ -167,6 +167,9 @@ window.SOBRES_AUDITORIA = (function () {
     estado: 'estimado', fuente: 'Referencia de precio del fundador de SOBRES (19-oct-2026)', fecha: H19 }, extra || {});
 
   const LUGARES = {
+    /* ---- Fonda Fina (5-nov-2026): OpenTable publica $310–500 por persona; se usa el
+       precio más alto del rango (regla de SOBRES). Antes salía en ~$900 por una banda vieja. ---- */
+    'cdmx-2184': restaurante(310, 500, 500, 'Comida o cena para una persona según la banda de precio de su ficha de OpenTable.', 'OpenTable — Fonda Fina (banda de precio $310–500 por persona, consultada el 5-nov-2026)', 'https://www.opentable.com.mx/r/fonda-fina-ciudad-mexico', { fecha: '2026-11-05', ppAnterior: 900 }),
     /* ---- Días reales de salones de baile (Chilango, 24-jul-2026). Antes se
        proponían cualquier día: Patrick Miller sólo abre los viernes. ---- */
     // Mama Rumba es salón de salsa cubana con música en vivo, no un antro.

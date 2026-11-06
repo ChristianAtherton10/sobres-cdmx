@@ -275,4 +275,10 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
   assert(n.length === 1 && n[0].n === 'Bar Verificable', 'Google propone los no verificados: ' + n.map(v => v.n));
 });
 
+// Regresión (5 nov 2026): Fonda Fina salía en ~$900 pp; OpenTable publica $310–500 → $500 (precio más alto).
+test('Fonda Fina sale en $500 pp (tope de su banda de OpenTable), con fuente', () => {
+  const a = makeApp({}); const v = a.cat().find(x => x.id === 'cdmx-2184');
+  assert(v.pp === 500 && v.pEstado === 'rango' && /OpenTable/.test(v.pFuente), JSON.stringify({ pp: v.pp, e: v.pEstado, f: v.pFuente }));
+});
+
 if (require.main === module) report();
