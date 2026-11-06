@@ -167,6 +167,14 @@ window.SOBRES_AUDITORIA = (function () {
     estado: 'estimado', fuente: 'Referencia de precio del fundador de SOBRES (19-oct-2026)', fecha: H19 }, extra || {});
 
   const LUGARES = {
+    /* ---- Fonda Fina (5-nov-2026): OpenTable publica $310–500 por persona; se usa el
+       precio más alto del rango (regla de SOBRES). Antes salía en ~$900 por una banda vieja. ---- */
+    /* ---- Referencias del fundador CON propina incluida (5-nov-2026): el plan
+       "Fonda Fina → Hanky Panky" sale en $1,100 pp ($500 + $600), sin sumar otro 10%. ---- */
+    'cdmx-2184': fundador(500, '', { precio: { min: null, rep: 500, max: null, unidad: 'persona', moneda: 'MXN', canasta: 'Comida o cena para una persona, ya con propina.' },
+      fuente: 'Referencia de precio del fundador de SOBRES, propina incluida (5-nov-2026); OpenTable publica $310–500 sin propina', url: 'https://www.opentable.com.mx/r/fonda-fina-ciudad-mexico', fecha: '2026-11-05', ppAnterior: 900, propinaIncluida: true }),
+    'cdmx-0035': fundador(600, '', { precio: { min: null, rep: 600, max: null, unidad: 'persona', moneda: 'MXN', canasta: 'Cócteles para una persona, ya con propina (sin cover).' },
+      fuente: 'Referencia de precio del fundador de SOBRES, propina incluida (5-nov-2026); OpenTable publica "más de $500" por persona', url: 'https://opentable.com/r/hanky-panky-cocktail-bar-ciudad-de-mexico', fecha: '2026-11-05', ppAnterior: 550, propinaIncluida: true }),
     /* ---- Días reales de salones de baile (Chilango, 24-jul-2026). Antes se
        proponían cualquier día: Patrick Miller sólo abre los viernes. ---- */
     // Mama Rumba es salón de salsa cubana con música en vivo, no un antro.
