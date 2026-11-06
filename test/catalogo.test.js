@@ -279,6 +279,8 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
 test('Fonda Fina sale en $500 pp (tope de su banda de OpenTable), con fuente', () => {
   const a = makeApp({}); const v = a.cat().find(x => x.id === 'cdmx-2184');
   assert(v.pp === 500 && v.pEstado === 'rango' && /OpenTable/.test(v.pFuente), JSON.stringify({ pp: v.pp, e: v.pEstado, f: v.pFuente }));
+  const h = a.cat().find(x => x.id === 'cdmx-0035');   // Hanky Panky: referencia del fundador, ~$600 pp
+  assert(h.pp === 600 && h.pEstado === 'estimado' && /fundador/.test(h.pFuente), JSON.stringify({ pp: h.pp, e: h.pEstado, f: h.pFuente }));
 });
 
 if (require.main === module) report();
