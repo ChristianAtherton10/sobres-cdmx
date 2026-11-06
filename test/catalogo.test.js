@@ -275,12 +275,15 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
   assert(n.length === 1 && n[0].n === 'Bar Verificable', 'Google propone los no verificados: ' + n.map(v => v.n));
 });
 
-// Regresión (5 nov 2026): Fonda Fina salía en ~$900 pp; OpenTable publica $310–500 → $500 (precio más alto).
-test('Fonda Fina sale en $500 pp (tope de su banda de OpenTable), con fuente', () => {
-  const a = makeApp({}); const v = a.cat().find(x => x.id === 'cdmx-2184');
-  assert(v.pp === 500 && v.pEstado === 'rango' && /OpenTable/.test(v.pFuente), JSON.stringify({ pp: v.pp, e: v.pEstado, f: v.pFuente }));
-  const h = a.cat().find(x => x.id === 'cdmx-0035');   // Hanky Panky: referencia del fundador, ~$600 pp
-  assert(h.pp === 600 && h.pEstado === 'estimado' && /fundador/.test(h.pFuente), JSON.stringify({ pp: h.pp, e: h.pEstado, f: h.pFuente }));
+// Regresión (5 nov 2026): Fonda Fina salía en ~$900 pp. El fundador fija Fonda Fina $500 y Hanky Panky $600
+// CON propina: el plan juntos cuesta $1,100 pp, sin sumar otro 10%.
+test('Fonda Fina ($500) + Hanky Panky ($600) con propina incluida = $1,100 pp', () => {
+  const a = makeApp({ transporte: 'propio' }); const C = a.cat();
+  const f = C.find(x => x.id === 'cdmx-2184'), h = C.find(x => x.id === 'cdmx-0035');
+  assert(f.pp === 500 && h.pp === 600 && f.propinaIncluida && h.propinaIncluida && /fundador/.test(f.pFuente) && /fundador/.test(h.pFuente), JSON.stringify([f.pp, h.pp, f.pFuente]));
+  const c = a.costoPlan([f, h]); assert(c.propina === 0 && c.consumo + c.propina === 1100, JSON.stringify(c));
+  // Otro restaurante sí paga su 10%.
+  const o = C.find(x => x.n === 'Contramar'); assert(a.costoPlan([o]).propina > 0, 'la propina dejó de sumarse a los demás');
 });
 
 if (require.main === module) report();

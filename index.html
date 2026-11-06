@@ -1624,6 +1624,7 @@ class Component extends DCLogic {
         if (a.dias) v.dias = a.dias.slice();
         if (a.basis) v.d = a.basis;
         if (a.horaEstimada) v.horaEstimada = true;
+        if (a.propinaIncluida) v.propinaIncluida = true;   // precio del fundador que ya trae la propina (5 nov 2026)
         ['cocina','distincion','otRt','otRc','vestimenta','tel','grupoMax'].forEach(k => { if (a[k] != null && a[k] !== '') v[k] = a[k]; });
         if (a.cerradoTemporal) v.cerradoTemporal = true;
         if (a.aptoFamilia) v.aptoFamilia = a.aptoFamilia;
@@ -2645,10 +2646,12 @@ class Component extends DCLogic {
     const consumo = stops.reduce((a, v) => a + (v.ppUnknown ? 0 : (v.pp || 0)), 0);
     const sinPrecio = stops.filter(v => v.ppUnknown);
     if (sinPrecio.length) faltan.push(sinPrecio.length + (sinPrecio.length === 1 ? ' parada sin precio' : ' paradas sin precio'));
-    const baseProp = stops.filter(v => !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat)))
+    // Un precio que YA incluye la propina (referencia del fundador) no se cobra dos veces.
+    const baseProp = stops.filter(v => !v.ppUnknown && !v.propinaIncluida && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat)))
       .reduce((a, v) => a + (v.pp || 0), 0);
     const propina = Math.round(baseProp * 0.10);
     if (propina) estimados.push('propina ~$' + propina + ' (10%)');
+    if (stops.some(v => v.propinaIncluida && !v.ppUnknown)) estimados.push('propina ya incluida en ' + stops.filter(v => v.propinaIncluida).map(v => v.n.split(' ·')[0]).join(' y '));
     const conCover = stops.filter(v => ['Antro','Salón de baile','Espectáculo'].includes(v.cat));
     if (conCover.length) faltan.push('cover de ' + conCover.map(v => v.n.split(' ·')[0]).join(', '));
     let transporte = 0;
@@ -2665,7 +2668,7 @@ class Component extends DCLogic {
     // Techo del rango: lo máximo que podría costar con la evidencia que hay.
     const techo = stops.reduce((a, v) => a + (v.ppUnknown ? 0 : (v.pMax != null ? v.pMax : (v.pp || 0))), 0);
     const total = consumo + propina + transporte;
-    const techoProp = Math.round(stops.filter(v => !v.ppUnknown && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat)))
+    const techoProp = Math.round(stops.filter(v => !v.ppUnknown && !v.propinaIncluida && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat)))
       .reduce((a, v) => a + (v.pMax != null ? v.pMax : (v.pp || 0)), 0) * 0.10);
     return { consumo, propina, transporte, total, faltan, estimados,
       completo: faltan.length === 0,
