@@ -525,7 +525,7 @@ test('37.5 · lo de Google en vivo entra a la lista sólo si está en tus zonas'
 });
 
 // ── 38 · A/B "paso 1 fácil" (?v=facil, 8 nov 2026) ───────────────────────────
-section('38 · ?v=facil: paso 1 de un toque y "Confirma y listo"');
+section('38 · ?v=facil: 3 pasos (paso 1 de un toque, ← Atrás en 2 y 3)');
 const conEv = a => { const L = []; a.ev = (n, p) => L.push([n, Object.assign({ version: a.versionAB() }, p || {})]); return L; };
 
 test('38.1 · sin parámetro la versión actual no cambia', () => {
@@ -545,16 +545,31 @@ test('38.2 · ?v=facil se activa, preselecciona Roma Norte · Condesa · Juárez
   const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan', 'pisó la zona del anuncio');
 });
 
-test('38.3 · un toque: 6 opciones, avanza sola a "Confirma y listo" y manda paso_1_elegido una vez', () => {
+test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Cenar rico" pide el tipo de comida y ése avanza', () => {
   const a = makeApp({}, { search: '?v=facil' }); const L = conEv(a);
   const u = a.facilVals('home', () => {}); assert(u.facilP1 && u.facilOpts.length === 6, 'opciones: ' + u.facilOpts.length);
-  assert(u.facilOpts.map(o => o.label).join('|') === 'Cenar rico|Noche y fiesta|Tranqui|Cultural|Aventura|En familia', u.facilOpts.map(o => o.label));
-  a.state.cocinas = ['tacos']; u.facilOpts[5].pick();
-  assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'familiar' && a.state.who === 'familia' && !a.state.cocinas.length, JSON.stringify([a.state.facilPaso, a.state.vibes, a.state.who, a.state.cocinas]));
-  a.facilVals('home', () => {}).facilCambiarPlan(); a.facilVals('home', () => {}).facilOpts[0].pick();
-  assert(a.state.vibes.join() === 'foodie' && a.state.who === 'amigos', 'al cambiar de En familia a Cenar rico se quedó "familia"');
-  const e = L.filter(x => x[0] === 'paso_1_elegido'); assert(e.length === 1 && e[0][1].opcion === 'familia' && e[0][1].version === 'facil', JSON.stringify(e));
-  const v = a.facilVals('home', () => {}); assert(v.facilP2 && /Roma Norte/.test(v.fZona.valor) && v.fPresu.valor && v.fDia.valor, 'faltan valores por defecto');
+  assert(u.facilOpts.map(o => o.label).join('|') === 'Cenar rico|Noche y fiesta|Tranqui|Cultural|Romántico|En familia', u.facilOpts.map(o => o.label));
+  u.facilOpts[4].pick();   // Romántico: avanza solo y van en pareja
+  assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'romántico' && a.state.who === 'date', JSON.stringify([a.state.facilPaso, a.state.vibes, a.state.who]));
+  a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 1, 'el paso 2 no regresa al 1');
+  a.facilVals('home', () => {}).facilOpts[0].pick();   // Cenar rico: NO avanza, sale el tipo de comida
+  let v = a.facilVals('home', () => {});
+  assert(a.state.facilPaso === 1 && v.facilCocinaOn && v.facilCocinaOpts[0].label === 'Todo tipo' && a.state.who === 'amigos', 'Cenar rico no mostró el tipo de comida');
+  v.facilCocinaOpts.find(o => o.label === 'China y otras asiáticas').pick();
+  assert(a.state.facilPaso === 2 && a.state.cocinas.join() === 'asiatica', 'el tipo de comida no avanzó: ' + JSON.stringify([a.state.facilPaso, a.state.cocinas]));
+  const e = L.filter(x => x[0] === 'paso_1_elegido'); assert(e.length === 1 && e[0][1].opcion === 'romantico' && e[0][1].version === 'facil', JSON.stringify(e));
+});
+
+test('38.3b · pasos 2 y 3: Siguiente, ← Atrás y "Ver mis 3 planes" arma los planes', () => {
+  const a = makeApp({}, { search: '?v=facil' }); a.ev = () => {};
+  a.facilVals('home', () => {}).facilOpts[1].pick(); assert(a.facilVals('home', () => {}).facilP2, 'no llegó al paso 2');
+  a.facilVals('home', () => {}).facilSiguiente(); assert(a.state.facilPaso === 3 && a.facilVals('home', () => {}).facilP3, 'no llegó al paso 3');
+  a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 2, 'el paso 3 no regresa al 2');
+  a.facilVals('home', () => {}).facilSiguiente(); let lanzo = false; a.facilVals('home', () => { lanzo = true; }).facilGo();
+  assert(lanzo, '"Ver mis 3 planes" no armó los planes');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  ['Arma tu próxima salida en 3 pasos', 'id="armar-facil-donde"', 'id="armar-facil-quien"', 'Ver mis 3 planes', 'Regresar al paso 1', 'Regresar al paso 2']
+    .forEach(t => assert(html.indexOf(t) >= 0, 'falta en la plantilla: ' + t));
 });
 
 test('38.4 · en la actual, paso_1_elegido sale con el primer chip o "Siguiente", y todos los eventos llevan version', () => {
@@ -569,9 +584,10 @@ test('38.4 · en la actual, paso_1_elegido sale con el primer chip o "Siguiente"
 
 test('38.5 · con los valores por defecto salen 3 planes completos (sin planes de 1 parada) en casi todas las opciones', () => {
   let malos = 0, tot = 0;
-  [1, 2, 3, 4].forEach(d => ['cenar', 'fiesta', 'tranqui', 'cultural', 'aventura', 'familia'].forEach(k => { tot++;
+  [1, 2, 3, 4].forEach(d => ['cenar', 'fiesta', 'tranqui', 'cultural', 'romantico', 'familia'].forEach(k => { tot++;
     const a = makeApp({}, { search: '?v=facil', dseed: d }); a.ev = () => {};
     const i = a.FACIL().findIndex(f => f[0] === k); a.facilVals('home', () => {}).facilOpts[i].pick();
+    if (k === 'cenar') a.facilVals('home', () => {}).facilCocinaOpts[0].pick();   // "Todo tipo"
     const r = a.runSearch({ nueva: true }), ps = (r && r.plans) || [];
     if (ps.length < 3 || ps.some(p => p.stops.length === 1)) malos++; }));
   assert(malos <= 1, malos + ' de ' + tot + ' búsquedas con menos de 3 planes o planes de 1 parada');

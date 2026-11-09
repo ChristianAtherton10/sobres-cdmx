@@ -72,14 +72,10 @@
 .sb-facil-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .sb-facil-op{display:flex;align-items:center;gap:10px;min-height:64px;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);font:700 16px/1.2 var(--font-body);text-align:left;cursor:pointer}
 .sb-facil-op .e{font-size:24px;line-height:1}
+.sb-facil-op[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
+.sb-facil-paso{font:700 12px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--electrico,#b8432f);margin-top:4px}
 .sb-facil-op:active,.sb-facil-op:hover{border-color:var(--ink)}
 .sb-facil-conf{padding-bottom:100px}
-.sb-facil-linea{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--color-divider)}
-.sb-facil-linea .t{flex:none;width:84px;font:600 13px var(--font-body);color:var(--muted,#6b6b6b)}
-.sb-facil-linea .sb-chip{flex:1;min-width:0;min-height:36px;height:auto;padding:7px 12px;justify-content:flex-start;white-space:normal;line-height:1.3;font-size:14px;border-radius:14px;pointer-events:none}
-.sb-facil-linea .sb-btn3{flex:none;min-height:36px;margin-right:-12px}
-.sb-facil-mas{padding:4px 0 12px}
-.sb-chip-sel{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
 .sb-cta-fija{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:6;background:var(--color-bg);padding:10px 16px 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
 @media (min-width:820px){.sb-cta-fija{position:sticky;bottom:0;padding:12px 0}}
 /* ═════════════════════ Tema SOBRES ═════════════════════
@@ -546,35 +542,50 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" data-paso="{{ paso }}" style="padding:26px 0 32px">
 <sc-if value="{{ facilP1 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-facil" class="sb-facil">
-<h1 class="sb-h2" style="margin:0">¿Qué se les antoja?</h1>
-<p class="sb-facil-sub" style="margin:6px 0 16px">Toca uno y en segundos tienes 3 planes para votar.</p>
+<h1 class="sb-h2" style="margin:0">Arma tu próxima salida en 3 pasos.</h1>
+<p class="sb-facil-sub" style="margin:6px 0 16px">Te damos 3 planes completos para votar con tu grupo.</p>
+<div class="sb-facil-paso">Paso 1 de 3</div>
+<h2 class="sb-h3" style="margin:4px 0 10px">¿Qué se les antoja?</h2>
 <div class="sb-facil-grid" role="group" aria-label="Qué se les antoja">
-<sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="e" aria-hidden="true">{{ o.emoji }}</span><span>{{ o.label }}</span></button></sc-for>
+<sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="e" aria-hidden="true">{{ o.emoji }}</span><span>{{ o.label }}</span></button></sc-for>
 </div>
+<sc-if value="{{ facilCocinaOn }}" hint-placeholder-val="{{ false }}">
+<div class="sc-rise" style="margin-top:14px">
+<span class="sb-label">¿Qué tipo de comida?</span>
+<div class="sb-chips" role="group" aria-label="Tipo de comida"><sc-for list="{{ facilCocinaOpts }}" as="o" hint-placeholder-count="14"><button class="sb-chip" style="min-height:40px;padding:0 13px;font-size:14px" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+</div>
+</sc-if>
 </div>
 </sc-if>
 <sc-if value="{{ facilP2 }}" hint-placeholder-val="{{ false }}">
-<div id="armar-confirma" class="sb-facil sb-facil-conf">
-<h1 class="sb-h2" style="margin:0">Confirma y listo</h1>
-<p class="sb-facil-sub" style="margin:6px 0 12px">Ya lo llenamos por ti. Cambia lo que quieras.</p>
-<div class="sb-facil-linea"><span class="t">Plan</span><span class="sb-chip sb-chip-sel">{{ facilPlan }}</span><button class="sb-btn3" onClick="{{ facilCambiarPlan }}" aria-label="Cambiar el plan">Cambiar</button></div>
-<div class="sb-facil-linea"><span class="t">{{ fDia.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fDia.valor }}</span><button class="sb-btn3" onClick="{{ fDia.toggle }}" aria-label="{{ fDia.aria }}" aria-expanded="{{ fDia.abierto }}">{{ fDia.btn }}</button></div>
-<sc-if value="{{ fDia.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas">
-<div class="sb-chips" role="group" aria-label="Cuándo"><sc-for list="{{ whenOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<div id="armar-facil-donde" class="sb-facil sb-facil-conf">
+<button class="sb-btn3" style="margin-left:-12px" onClick="{{ facilAtras }}" aria-label="Regresar al paso 1">← Atrás</button>
+<div class="sb-facil-paso">Paso 2 de 3</div>
+<h2 class="sb-h2" style="margin:2px 0 12px">¿Dónde y cuándo?</h2>
+<span class="sb-label">Zona · puedes elegir varias</span>
+<div class="sb-chips" role="group" aria-label="Zona"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button class="sb-chip" style="min-height:38px;padding:0 13px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span class="sb-label sb-mt">Día</span>
+<div class="sb-chips" role="group" aria-label="Cuándo"><sc-for list="{{ whenOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:38px;padding:0 13px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
 <sc-if value="{{ showDateInput }}" hint-placeholder-val="{{ false }}"><input class="sb-input" aria-label="Fecha del plan" type="date" value="{{ customDate }}" onChange="{{ setDate }}" style="margin-top:10px;width:100%;max-width:260px"></sc-if>
-<div class="sb-row" style="flex-wrap:nowrap;margin-top:10px">
+<span class="sb-label sb-mt">Horario</span>
+<div class="sb-row" style="flex-wrap:nowrap">
 <label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Desde</span><select class="sb-sel" style="width:100%" aria-label="Desde qué hora" value="{{ planFromVal }}" onChange="{{ setPlanFrom }}"><sc-for list="{{ fromOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
 <label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Hasta</span><select class="sb-sel" style="width:100%" aria-label="Hasta qué hora" value="{{ planToVal }}" onChange="{{ setPlanTo }}"><sc-for list="{{ toOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
-</div></div></sc-if>
-<div class="sb-facil-linea"><span class="t">{{ fZona.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fZona.valor }}</span><button class="sb-btn3" onClick="{{ fZona.toggle }}" aria-label="{{ fZona.aria }}" aria-expanded="{{ fZona.abierto }}">{{ fZona.btn }}</button></div>
-<sc-if value="{{ fZona.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas"><div class="sb-chips" role="group" aria-label="Zona"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div></div></sc-if>
-<div class="sb-facil-linea"><span class="t">{{ fQuien.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fQuien.valor }}</span><button class="sb-btn3" onClick="{{ fQuien.toggle }}" aria-label="{{ fQuien.aria }}" aria-expanded="{{ fQuien.abierto }}">{{ fQuien.btn }}</button></div>
-<sc-if value="{{ fQuien.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas">
-<div class="sb-chips" role="group" aria-label="Con quién"><sc-for list="{{ whoOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+</div>
+<div class="sb-cta-fija"><button class="sb-btn sb-full" style="min-height:56px;font-size:17px" onClick="{{ facilSiguiente }}"><span>Siguiente</span><span aria-hidden="true">→</span></button></div>
+</div>
+</sc-if>
+<sc-if value="{{ facilP3 }}" hint-placeholder-val="{{ false }}">
+<div id="armar-facil-quien" class="sb-facil sb-facil-conf">
+<button class="sb-btn3" style="margin-left:-12px" onClick="{{ facilAtras }}" aria-label="Regresar al paso 2">← Atrás</button>
+<div class="sb-facil-paso">Paso 3 de 3</div>
+<h2 class="sb-h2" style="margin:2px 0 12px">¿Con quién y cuánto?</h2>
+<span class="sb-label">Van</span>
+<div class="sb-chips" role="group" aria-label="Con quién"><sc-for list="{{ whoOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:40px;padding:0 14px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
 <sc-if value="{{ showSize }}" hint-placeholder-val="{{ true }}"><div class="sb-row sb-cuantos" style="margin-top:8px"><span class="sb-note" style="font-weight:600">Cuántos</span><button class="sb-x" aria-label="Quitar una persona" onClick="{{ sizeDown }}">−</button><span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--ink)" aria-live="polite">{{ groupSizeN }}</span><button class="sb-x" aria-label="Agregar una persona" onClick="{{ sizeUp }}">+</button></div></sc-if>
-</div></sc-if>
-<div class="sb-facil-linea"><span class="t">{{ fPresu.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fPresu.valor }}</span><button class="sb-btn3" onClick="{{ fPresu.toggle }}" aria-label="{{ fPresu.aria }}" aria-expanded="{{ fPresu.abierto }}">{{ fPresu.btn }}</button></div>
-<sc-if value="{{ fPresu.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas"><div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div></div></sc-if>
+<span class="sb-label sb-mt">Presupuesto por persona</span>
+<div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:40px;padding:0 14px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<p class="sb-note" style="margin:8px 0 0">Incluye comida, bebidas y una propina estimada.</p>
 <div class="sb-cta-fija"><button class="sb-btn sb-full {{ buscarFx }}" style="min-height:56px;font-size:17px" onClick="{{ facilGo }}"><span>Ver mis 3 planes</span><span aria-hidden="true">→</span></button></div>
 </div>
 </sc-if>
@@ -3036,17 +3047,17 @@ class Component extends DCLogic {
   vigilaPasos() {
     if (this._pasosI || typeof window === 'undefined' || typeof document === 'undefined' || !document.getElementById) return;
     this._pasosVistos = {};
-    const ids = [['armar-ambiente', 1], ['armar-donde', 2], ['armar-quien', 3], ['armar-rapido', 1], ['armar-facil', 1], ['armar-confirma', 2]];
+    const ids = [['armar-ambiente', 1], ['armar-donde', 2], ['armar-quien', 3], ['armar-rapido', 1], ['armar-facil', 1], ['armar-facil-donde', 2], ['armar-facil-quien', 3]];
     const mira = () => { ids.forEach(([id, n]) => { if (this._pasosVistos[n]) return; const el = document.getElementById(id); if (!el || !el.offsetParent) return;
         const r = el.getBoundingClientRect(); if (r.width > 0 && r.top < window.innerHeight && r.bottom > 0) { this._pasosVistos[n] = true; this.ev('paso_' + n + '_visto', {}); } });
-      if (this._pasosVistos[1] && this._pasosVistos[2] && (this._pasosVistos[3] || (this.state && this.state.facil))) { clearInterval(this._pasosI); } };
+      if (this._pasosVistos[1] && this._pasosVistos[2] && this._pasosVistos[3]) { clearInterval(this._pasosI); } };
     this._pasosI = setInterval(mira, 700); setTimeout(mira, 50);
   }
   esQA() { const u = this.UTM || {}; if (/^(qa|qa_claude)$/.test(u.utm_source || '')) return true;
     try { return sessionStorage.getItem('sobres_qa') === '1'; } catch(e) { return false; } }
   // Prellenar el formulario con lo mismo del plan que llegó por enlace o anuncio.
   armarElMio() { this.ev('armar_el_mio', { tanda: !!(this.state.results && this.state.results.compartida) });
-    this.setState({ paso: 1, pasoDir: 'back', tandaDe: '', rapido: false, facilPaso: 1, facilAbierto: null }); this.nav('home');
+    this.setState({ paso: 1, pasoDir: 'back', tandaDe: '', rapido: false, facilPaso: 1 }); this.nav('home');
     try { window.scrollTo(0, 0); } catch(e) {} }
 
   // ============================================================
@@ -6027,32 +6038,35 @@ class Component extends DCLogic {
   // ── ?v=facil: paso 1 de un toque + "Confirma y listo" (8 nov 2026) ──
   FACIL() { return [['cenar', '🍽️', 'Cenar rico', { vibes: ['foodie'] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'] }],
     ['tranqui', '☕', 'Tranqui', { vibes: ['chill'] }], ['cultural', '🎭', 'Cultural', { vibes: ['cultural'] }],
-    ['aventura', '🧗', 'Aventura', { vibes: ['aventurero'] }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia' }]]; }
+    ['romantico', '💘', 'Romántico', { vibes: ['romántico'], who: 'date', groupSize: 2 }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia', groupSize: 4 }]]; }
+  // ?v=facil en 3 pasos (8 nov 2026, 2ª versión): 1) qué se les antoja (avanza solo; con
+  // "Cenar rico" sale el tipo de comida y ése avanza), 2) dónde y cuándo, 3) con quién y
+  // cuánto → "Ver mis 3 planes". Pasos 2 y 3 con "← Atrás".
   facilVals(view, lanzar) {
-    const s = this.state; if (!s.facil) return { facilP1: false, facilP2: false };
-    const enHome = view === 'home' && !s.generando, rng = this.range(), ab = s.facilAbierto || null;
-    const elegida = this.FACIL().find(o => o[0] === s.facilOpcion);
-    const linea = (k, titulo, valor) => ({ k, titulo, valor, abierto: ab === k, btn: ab === k ? 'Listo' : 'Cambiar', aria: (ab === k ? 'Cerrar ' : 'Cambiar ') + titulo.toLowerCase(),
-      toggle: () => this.setState({ facilAbierto: ab === k ? null : k }) });
-    const L = { dia: linea('dia', 'Cuándo', this.whenLabel() + ' · ' + this.time12(rng[0]) + '–' + this.time12(rng[1])),
-      zona: linea('zona', 'Dónde', this.zonesLabel()),
-      quien: linea('quien', 'Quiénes', this.whoLabel()),
-      presu: linea('presu', 'Presupuesto', this.budLabel()) };
+    const s = this.state; if (!s.facil) return { facilP1: false, facilP2: false, facilP3: false };
+    const enHome = view === 'home' && !s.generando, paso = s.facilPaso || 1;
+    const ir = n => this.setState({ facilPaso: n }, () => { try { window.scrollTo(0, 0); } catch(e) {} });
+    const cenar = s.facilOpcion === 'cenar' && (s.vibes || []).indexOf('foodie') >= 0;
     return {
-      facilP1: enHome && (s.facilPaso || 1) === 1, facilP2: enHome && s.facilPaso === 2,
-      facilOpts: this.FACIL().map(([k, emoji, label, cfg]) => ({ emoji, label, aria: label,
-        pick: () => { this.evPaso1(k);
-          this.setState(Object.assign({ cocinas: [], facilOpcion: k, facilPaso: 2, facilAbierto: null }, cfg,
-            { who: cfg.who || (s.who === 'familia' ? 'amigos' : s.who), groupSize: cfg.who === 'familia' ? 4 : s.groupSize }),
-            () => { try { window.scrollTo(0, 0); } catch(e) {} }); } })),
-      facilPlan: elegida ? elegida[1] + ' ' + elegida[2] : '', facilCambiarPlan: () => this.setState({ facilPaso: 1, facilAbierto: null }),
-      fDia: L.dia, fZona: L.zona, fQuien: L.quien, fPresu: L.presu,
-      facilGo: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); this.setState({ facilAbierto: 'dia' }); return; }
+      facilP1: enHome && paso === 1, facilP2: enHome && paso === 2, facilP3: enHome && paso === 3,
+      facilOpts: this.FACIL().map(([k, emoji, label, cfg]) => { const on = s.facilOpcion === k;
+        return { emoji, label, aria: label + (on ? ' (seleccionado)' : ''), pressed: on ? 'true' : 'false',
+          pick: () => { this.evPaso1(k);
+            const quien = cfg.who ? { who: cfg.who, groupSize: cfg.groupSize } : (['date', 'familia'].indexOf(s.who) >= 0 ? { who: 'amigos', groupSize: 4 } : {});
+            this.setState(Object.assign({ cocinas: [], facilOpcion: k, vibes: cfg.vibes.slice() }, quien, k === 'cenar' ? {} : { facilPaso: 2 }),
+              () => { if (k !== 'cenar') { try { window.scrollTo(0, 0); } catch(e) {} } }); } }; }),
+      // "Cenar rico": el tipo de comida (como en la versión actual) y al elegirlo avanza solo.
+      facilCocinaOn: enHome && paso === 1 && cenar,
+      facilCocinaOpts: [['', 'Todo tipo']].concat(this.COCINAS()).map(([k, l]) => ({ label: l, aria: l,
+        pick: () => { this.evPaso1('cocina_' + (k || 'todo')); this.setState({ cocinas: k ? [k] : [], facilPaso: 2 }, () => { try { window.scrollTo(0, 0); } catch(e) {} }); } })),
+      facilAtras: () => ir(Math.max(1, paso - 1)),
+      facilSiguiente: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); return; } ir(3); },
+      facilGo: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); ir(2); return; }
         this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: this.zonesLabel(), cocinas: this.cocinasSel().join(',') }); lanzar(false); }
     };
   }
   irAFormulario(id) {
-    if (this.state.facil) { this.setState({ facilPaso: 2, facilAbierto: null }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} return; }
+    if (this.state.facil) { this.setState({ facilPaso: id === 'armar-quien' ? 3 : id === 'armar-donde' ? 2 : 1 }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} return; }
     const pasoDe = { 'armar-ambiente': 1, 'armar-donde': 2, 'armar-quien': 3 };
     this.setState({ paso: pasoDe[id] || 1, pasoDir: 'back' });
     this.nav('home');
