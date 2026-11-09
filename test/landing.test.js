@@ -542,7 +542,7 @@ test('38.2 · ?v=facil se activa, preselecciona Roma · Condesa y Juárez · Cen
   assert(a._win.sessionStorage.getItem('sobres_v') === 'facil', 'no se guardó en la sesión');
   const b = makeApp({}, { search: '?utm_source=meta', session: { sobres_v: 'facil' } });
   assert(b.state.facil, 'al navegar (sin ?v) se perdió la versión fácil');
-  const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan,sanangel,cu', 'pisó la zona del anuncio: ' + c.state.zonesSel);
+  const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan,cu', 'pisó la zona del anuncio: ' + c.state.zonesSel);
 });
 
 test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Cenar rico" pide el tipo de comida y ése avanza', () => {
@@ -599,14 +599,17 @@ test('38.5 · con los valores por defecto salen 3 planes completos (sin planes d
 // ── 39 · Zonas en 8 grupos, presupuesto nuevo y logo (8 nov 2026) ─────────────
 section('39 · Zonas en grupos, presupuesto y logo');
 
-test('39.1 · las zonas se eligen en 8 grupos y cada grupo elige todas sus zonas', () => {
+test('39.1 · las zonas se eligen en 10 zonas y cada una elige todas sus colonias', () => {
   const a = makeApp({});
   const Z = a.renderVals().zoneOpts.map(o => o.label);
-  assert(Z.join('|') === 'Toda la ciudad|Roma · Condesa|Polanco · Chapultepec|Juárez · Centro|Del Valle · Nápoles|Coyoacán · Sur|Santa Fe · Poniente|Lomas · Satélite|Xochimilco', Z.join('|'));
+  assert(Z.join('|') === 'Toda la ciudad|Roma · Condesa|Polanco · Chapultepec|Juárez · Centro|Del Valle · Nápoles|Coyoacán · CU|San Ángel|Santa Fe · Poniente|Lomas · Tecamachalco|Satélite · Naucalpan|Xochimilco', Z.join('|'));
   const z = n => a.renderVals().zoneOpts.find(o => o.label === n);
   z('Roma · Condesa').pick(); assert(a.state.zone === 'all', 'Roma · Condesa no se quita');
-  z('Coyoacán · Sur').pick(); assert(a.zoneList().join() === 'coyoacan,sanangel,cu' && a.zonesLabel() === 'Coyoacán · Sur', a.zoneList());
-  z('Lomas · Satélite').pick(); assert(a.zonesLabel() === 'Coyoacán · Sur y Lomas · Satélite', a.zonesLabel());
+  z('Coyoacán · CU').pick(); assert(a.zoneList().join() === 'coyoacan,cu' && a.zonesLabel() === 'Coyoacán · CU', a.zoneList());
+  z('San Ángel').pick(); assert(a.zonesLabel() === 'Coyoacán · CU y San Ángel', a.zonesLabel());
+  // Lo que antes quedaba "lejos" (sólo en Toda la ciudad) ahora sale en su zona.
+  const x = makeApp({ zone: 'xochimilco', zonesSel: ['xochimilco'] }); const ids = x.cat().filter(v => x.inZone(v)).map(v => v.n);
+  assert(ids.indexOf('Museo Yancuic') >= 0, 'Museo Yancuic no entró a Xochimilco');
   // Un enlace viejo con una sola zona sigue funcionando y se nombra por su zona.
   const v = makeApp({ zone: 'roma', zonesSel: ['roma'] }); assert(v.zonesLabel() === 'Roma Norte' && v.renderVals().zoneOpts.find(o => o.label === 'Roma · Condesa').pressed === 'true', v.zonesLabel());
 });
