@@ -628,4 +628,44 @@ test('39.3 · el logo de SOBRES regresa al principio (paso 1), en las dos versio
   f.renderVals().brandGo(); assert(f.state.facilPaso === 1 && f.state.view === 'home', 'fácil: paso ' + f.state.facilPaso);
 });
 
+// 9 nov 2026: paso 2 sin "Día" (el plan es para hoy y manda el horario), cabe sin scroll
+// en celular; título grande sin subtítulo; logo más grande; pie hasta abajo en celular.
+const fs40 = require('fs'), path40 = require('path');
+const html40 = fs40.readFileSync(path40.join(__dirname, '..', 'index.html'), 'utf8');
+const bloque40 = id => { const i = html40.indexOf('<div id="' + id + '"'); return html40.slice(i, html40.indexOf('</sc-if>', i)); };
+
+test('40.1 · paso 2 fácil: sin "Día", sólo zona y "Horario de hoy"; el plan queda para hoy aunque el preset diga finde', () => {
+  const b = bloque40('armar-facil-donde');
+  assert(b.indexOf('whenOpts') < 0 && b.indexOf('customDate') < 0 && !/>Día</.test(b), 'el paso 2 todavía trae el día');
+  assert(/Horario de hoy/.test(b) && /¿Dónde y a qué hora\?/.test(b), 'falta el horario o el título');
+  const f = makeApp({}, { search: '?v=facil&preset=familia' });
+  assert(f.state.when === 'noche' && !f.state.customDate, 'when = ' + f.state.when);
+  assert(f.fechaPlanISO() === f.todayISO(), 'la fecha del plan no es hoy: ' + f.fechaPlanISO());
+  f.ev = () => {}; f.facilVals('home', () => {}).facilOpts[0].pick(); f.facilVals('home', () => {}).facilCocinaOpts[0].pick();
+  f.facilVals('home', () => {}).facilSiguiente(); assert(f.state.facilPaso === 3, 'Siguiente no avanzó: ' + f.state.facilPaso);
+});
+
+test('40.2 · paso 1 fácil: título grande en negritas y sin el subtítulo "Te damos 3 planes…"', () => {
+  const b = bloque40('armar-facil');
+  assert(/class="sb-facil-titulo">Arma tu próxima salida en 3 pasos\./.test(b), 'falta el título');
+  assert(b.indexOf('Te damos 3 planes') < 0 && b.indexOf('sb-facil-sub') < 0, 'sigue el subtítulo');
+  assert(/\.sb-facil-titulo\{font:800 40px/.test(html40), 'el título no es de 40px en negritas');
+  assert(b.indexOf('Paso 1 de 3') > b.indexOf('sb-facil-titulo') && b.indexOf('¿Qué se les antoja?') > b.indexOf('Paso 1 de 3'), 'el orden cambió');
+});
+
+test('40.3 · logo más grande (29px celular, 32px compu) y pie hasta abajo en celular, oculto en pasos 2 y 3', () => {
+  assert(/\.sb-marca\{font:800 29px/.test(html40) && /\.sb-marca\{font-size:32px\}/.test(html40), 'logo');
+  assert(html40.indexOf('font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--ink)">SOBRES') < 0, 'quedó el logo chico');
+  assert(/\.sb-home-facil \.sb-pie-home\{margin-top:auto/.test(html40), 'el pie no se va hasta abajo');
+  assert(/\.sb-facil-p2 \.sb-pie-home,\.sb-home-facil\.sb-facil-p3 \.sb-pie-home\{display:none\}/.test(html40), 'el pie no se oculta en pasos 2 y 3');
+  const f = makeApp({}, { search: '?v=facil' }); assert(f.renderVals().homeFacilCls === 'sb-home-facil sb-facil-p1', 'clase: ' + f.renderVals().homeFacilCls);
+  assert(makeApp({}).renderVals().homeFacilCls === '', 'la versión actual cambió');
+});
+
+test('40.4 · en ?v=facil "Hasta" no lleva "(+1 día)" (se cortaba en celular); la versión actual sí', () => {
+  const f = makeApp({}, { search: '?v=facil' });
+  assert(!f.renderVals().toOpts.some(o => /\+1 día/.test(o.label)), 'fácil trae +1 día');
+  assert(makeApp({}).renderVals().toOpts.some(o => /\+1 día/.test(o.label)), 'la actual perdió +1 día');
+});
+
 if (require.main === module) report();

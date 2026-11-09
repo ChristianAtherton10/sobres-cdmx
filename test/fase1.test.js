@@ -376,10 +376,14 @@ test('17d · piezas con oferta real: karaoke, billar, boliche, go karts, baile, 
   });
 });
 
+// Regresión (9 nov 2026): la prueba usaba "hoy" y un lunes no abre ningún karaoke,
+// billar ni salón de la Roma (todos abren de miércoles a domingo): fallaba según el día.
+// Ahora corre un viernes fijo.
+const viernes17e = (() => { const d = new Date(); d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
 test('17e · "con amigos" de noche en la Roma puede proponer karaoke, billar o salón de baile', () => {
   const R = makeApp({}).RECETAS(); const vistos = new Set();
   [1, 2, 3, 4, 5, 6, 7, 8].forEach(sd => {
-    const { app, plans } = corre({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], vibes: ['social'], when: 'noche', budget: 'b1000' }, sd);
+    const { app, plans } = corre({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], vibes: ['social'], when: 'fecha', customDate: viernes17e, budget: 'b1000' }, sd);
     plans.forEach(p => p.stops.forEach(v => ['karaoke', 'billar', 'salon_baile', 'boliche'].forEach(k => { if (app.esPieza(v, R.piezas[k])) vistos.add(k); })));
   });
   assert(vistos.size >= 2, 'en 8 tandas sólo salió: ' + [...vistos].join(', '));

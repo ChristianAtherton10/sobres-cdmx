@@ -68,6 +68,36 @@
   .sb-rapido{margin-bottom:96px}
 }
 .sb-facil{max-width:560px}
+/* 9 nov 2026: título en negritas y más grande; logo más grande; en celular el pie
+   ("Acerca de SOBRES · Tus datos y gustos") va hasta abajo, y en los pasos 2 y 3 no
+   sale (lo taparía el botón fijo y obligaría a hacer scroll). */
+.sb-facil-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:-10px}
+.sb-facil-cab .sb-facil-paso{margin-top:0}
+.sb-facil-cab .sb-btn3{margin-right:-12px}
+/* Celulares bajos (iPhone SE, 667 px): el paso 2 completo sin scroll. */
+@media (max-width:819px) and (max-height:760px){
+  .sb-home-facil{padding-top:12px!important}
+  .sb-facil-conf .sb-h2{font-size:26px;margin-bottom:6px!important}
+  .sb-facil-conf .sb-chips{gap:6px}
+  .sb-facil-conf .sb-chip{min-height:33px!important;padding:0 11px!important;font-size:13.5px!important}
+  .sb-facil-conf .sb-label{margin-bottom:5px}
+  .sb-facil-conf .sb-mt{margin-top:10px}
+  .sb-facil-conf .sb-sel{min-height:40px;height:40px}
+  .sb-facil-conf .sb-note{margin-bottom:3px!important}
+  .sb-facil-conf .sb-cta-fija{padding:8px 16px}
+  .sb-facil-conf .sb-cta-fija .sb-btn{min-height:50px!important}
+  .sb-home-facil .sb-facil-conf{padding-bottom:70px}
+}
+@media (max-width:400px){ .sb-facil-conf .sb-sel{font-size:15px;padding-left:10px;padding-right:22px} }
+.sb-facil-titulo{font:800 40px/1.04 var(--font-heading);letter-spacing:-.025em;color:var(--ink);margin:0 0 18px}
+.sb-marca{font:800 29px var(--font-heading)}
+.sb-marca-cuadro{width:24px;height:24px}
+@media (min-width:820px){ .sb-marca{font-size:32px} .sb-marca-cuadro{width:26px;height:26px} .sb-facil .sb-facil-titulo{font-size:48px;line-height:1.04;margin-bottom:24px} }
+@media (max-width:819px){
+  .sb-home-facil{display:flex;flex-direction:column;min-height:calc(100dvh - 64px - var(--nav-h) - env(safe-area-inset-bottom))}
+  .sb-home-facil .sb-pie-home{margin-top:auto!important;padding-top:24px;text-align:center}
+  .sb-home-facil.sb-facil-p2 .sb-pie-home,.sb-home-facil.sb-facil-p3 .sb-pie-home{display:none}
+}
 .sb-facil-sub{font:400 15.5px/1.5 var(--font-body);color:var(--color-neutral-700)}
 .sb-facil-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .sb-facil-op{display:flex;align-items:center;gap:10px;min-height:64px;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);font:700 16px/1.2 var(--font-body);text-align:left;cursor:pointer}
@@ -529,8 +559,8 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <header class="sb-top">
 <div>
 <button onClick="{{ brandGo }}" aria-label="SOBRES MX, ir al inicio" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0;min-height:44px;flex:none">
-<span style="width:20px;height:20px;background:var(--electrico);display:inline-block;border-radius:6px;flex:none"></span>
-<span class="sb-marca" style="font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--ink)">SOBRES<span class="sb-mx"> MX</span></span>
+<span class="sb-marca-cuadro" style="background:var(--electrico);display:inline-block;border-radius:6px;flex:none"></span>
+<span class="sb-marca" style="letter-spacing:-.025em;color:var(--ink)">SOBRES<span class="sb-mx"> MX</span></span>
 </button>
 <nav class="sb-topnav" aria-label="Secciones">
 <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3"><button aria-current="{{ n.current }}" onClick="{{ n.go }}">{{ n.label }}</button></sc-for>
@@ -551,11 +581,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 
 <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-<section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" data-paso="{{ paso }}" style="padding:26px 0 32px">
+<section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade {{ homeFacilCls }}" data-paso="{{ paso }}" style="padding:26px 0 32px">
 <sc-if value="{{ facilP1 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-facil" class="sb-facil">
-<h1 class="sb-h2" style="margin:0">Arma tu próxima salida en 3 pasos.</h1>
-<p class="sb-facil-sub" style="margin:6px 0 16px">Te damos 3 planes completos para votar con tu grupo.</p>
+<h1 class="sb-facil-titulo">Arma tu próxima salida en 3 pasos.</h1>
 <div class="sb-facil-paso">Paso 1 de 3</div>
 <h2 class="sb-h3" style="margin:4px 0 10px">¿Qué se les antoja?</h2>
 <div class="sb-facil-grid" role="group" aria-label="Qué se les antoja">
@@ -571,15 +600,11 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <sc-if value="{{ facilP2 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-facil-donde" class="sb-facil sb-facil-conf">
-<button class="sb-btn3" style="margin-left:-12px" onClick="{{ facilAtras }}" aria-label="Regresar al paso 1">← Atrás</button>
-<div class="sb-facil-paso">Paso 2 de 3</div>
-<h2 class="sb-h2" style="margin:2px 0 12px">¿Dónde y cuándo?</h2>
+<div class="sb-facil-cab"><div class="sb-facil-paso">Paso 2 de 3</div><button class="sb-btn3" onClick="{{ facilAtras }}" aria-label="Regresar al paso 1">← Atrás</button></div>
+<h2 class="sb-h2" style="margin:2px 0 10px">¿Dónde y a qué hora?</h2>
 <span class="sb-label">Zona · puedes elegir varias</span>
 <div class="sb-chips" role="group" aria-label="Zona"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button class="sb-chip" style="min-height:38px;padding:0 13px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<span class="sb-label sb-mt">Día</span>
-<div class="sb-chips" role="group" aria-label="Cuándo"><sc-for list="{{ whenOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:38px;padding:0 13px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<sc-if value="{{ showDateInput }}" hint-placeholder-val="{{ false }}"><input class="sb-input" aria-label="Fecha del plan" type="date" value="{{ customDate }}" onChange="{{ setDate }}" style="margin-top:10px;width:100%;max-width:260px"></sc-if>
-<span class="sb-label sb-mt">Horario</span>
+<span class="sb-label sb-mt">Horario de hoy</span>
 <div class="sb-row" style="flex-wrap:nowrap">
 <label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Desde</span><select class="sb-sel" style="width:100%" aria-label="Desde qué hora" value="{{ planFromVal }}" onChange="{{ setPlanFrom }}"><sc-for list="{{ fromOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
 <label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Hasta</span><select class="sb-sel" style="width:100%" aria-label="Hasta qué hora" value="{{ planToVal }}" onChange="{{ setPlanTo }}"><sc-for list="{{ toOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
@@ -589,8 +614,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <sc-if value="{{ facilP3 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-facil-quien" class="sb-facil sb-facil-conf">
-<button class="sb-btn3" style="margin-left:-12px" onClick="{{ facilAtras }}" aria-label="Regresar al paso 2">← Atrás</button>
-<div class="sb-facil-paso">Paso 3 de 3</div>
+<div class="sb-facil-cab"><div class="sb-facil-paso">Paso 3 de 3</div><button class="sb-btn3" onClick="{{ facilAtras }}" aria-label="Regresar al paso 2">← Atrás</button></div>
 <h2 class="sb-h2" style="margin:2px 0 12px">¿Con quién y cuánto?</h2>
 <span class="sb-label">Van</span>
 <div class="sb-chips" role="group" aria-label="Con quién"><sc-for list="{{ whoOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:40px;padding:0 14px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
@@ -3072,7 +3096,8 @@ class Component extends DCLogic {
     let facil = q.get('v') === 'facil';
     try { if (facil) sessionStorage.setItem('sobres_v', 'facil');
       else if (!q.get('v') && sessionStorage.getItem('sobres_v') === 'facil') facil = true; } catch(e) {}
-    if (facil) { out.facil = true; out.facilPaso = 1;
+    // Sin "Día" en el paso 2 (9 nov 2026): el plan es para hoy y manda el horario.
+    if (facil) { out.facil = true; out.facilPaso = 1; out.when = 'noche'; out.customDate = '';
       if (!z) { out.zone = 'roma'; out.zonesSel = this.conGrupos(['roma', 'juarez']); } }   // Roma · Condesa y Juárez · Centro
     return out;
   }
@@ -5214,7 +5239,7 @@ class Component extends DCLogic {
     const whenOpts = mkChips(this.WHEN, s.when, id => { this.setState({ when: id, planFrom: null, planTo: null }); }, 'cuándo');
     const rng = this.range();
     const fromOpts = []; for (let h = 7; h <= 23; h++) fromOpts.push({ v: String(h), label: this.time12(h) });
-    const toOpts = []; for (let h = Math.floor(rng[0]) + 2; h <= 28; h++) toOpts.push({ v: String(h), label: this.time12(h) + (h >= 24 ? ' (+1 día)' : '') });
+    const toOpts = []; for (let h = Math.floor(rng[0]) + 2; h <= 28; h++) toOpts.push({ v: String(h), label: this.time12(h) + (h >= 24 && !s.facil ? ' (+1 día)' : '') });   // en ?v=facil no cabe en celular; "hasta las 2 am" se entiende
     // "$1,000+" no es un tope: es "sin tope". Se aclara para que un plan de
     // $378 no se describa como "total $1,000+".
     const budgetOpts = this.BUD.map(([id,label]) => { const on = s.budget === id && s.budgetCustom == null;
@@ -6094,8 +6119,8 @@ class Component extends DCLogic {
       facilCocinaOpts: [['', 'Todo tipo']].concat(this.COCINAS()).map(([k, l]) => ({ label: l, aria: l,
         pick: () => { this.evPaso1('cocina_' + (k || 'todo')); this.setState({ cocinas: k ? [k] : [], facilPaso: 2 }, () => { try { window.scrollTo(0, 0); } catch(e) {} }); } })),
       facilAtras: () => ir(Math.max(1, paso - 1)),
-      facilSiguiente: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); return; } ir(3); },
-      facilGo: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); ir(2); return; }
+      facilSiguiente: () => ir(3),
+      facilGo: () => {
         this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: this.zonesLabel(), cocinas: this.cocinasSel().join(',') }); lanzar(false); }
     };
   }
@@ -6289,7 +6314,7 @@ class Component extends DCLogic {
       retomar: () => this.nav('results'),
       retomarLink: retomar ? ('o retoma ' + (s.results.plans.length === 1 ? 'tu opción' : 'tus ' + s.results.plans.length + ' opciones') + ' de hace rato →') : '',
       rapidoOn: !!s.rapido && !s.facil && view === 'home', noRapido: !s.rapido && !s.facil,
-      noFacil: !s.facil, ...this.facilVals(view, lanzar),
+      noFacil: !s.facil, homeFacilCls: s.facil ? 'sb-home-facil sb-facil-p' + (s.facilPaso || 1) : '', ...this.facilVals(view, lanzar),
       rapidoNota: 'Lo demás va por defecto: ' + this.whoLabel().toLowerCase() + ', ' + this.whenLabel().toLowerCase() + '. Lo puedes cambiar después.',
       armarMioOn: !!(r && r.compartida), armarMio: () => this.armarElMio(),
       ...this.perfilVals(), paso, paso1: paso === 1, paso2: paso === 2, paso3: paso === 3,
