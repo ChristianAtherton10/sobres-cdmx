@@ -37,9 +37,9 @@ test('1 · Santa Fe se puede deseleccionar (y la siguiente búsqueda no queda en
   const z = nombre => app.renderVals().zoneOpts.find(o => o.label.replace('✓ ', '') === nombre);
   z('Santa Fe · Poniente').pick();
   assert(app.state.zone === 'all' || !app.zoneList().includes('santafe'), 'Santa Fe sigue seleccionada después de tocarla otra vez');
-  z('Polanco').pick();
-  assert(app.zonesLabel() === 'Polanco', 'después de quitar Santa Fe y elegir Polanco quedó: ' + app.zonesLabel());
-  z('Polanco').pick();
+  z('Polanco · Chapultepec').pick();   // zonas en grupos desde el 8 nov 2026
+  assert(app.zonesLabel() === 'Polanco · Chapultepec', 'después de quitar Santa Fe y elegir Polanco quedó: ' + app.zonesLabel());
+  z('Polanco · Chapultepec').pick();
   assert(!app.zoneList().includes('polanco') || app.state.zone === 'all', 'Polanco no se quita');
 });
 

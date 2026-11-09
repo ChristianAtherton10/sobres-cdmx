@@ -1549,9 +1549,9 @@ class Component extends DCLogic {
     this.EXT = [];
     this.WHO = [['solo','Solo'],['date','Date'],['amigos','Amigos'],['familia','Familia'],['compa','Compañeros']];
     this.WHEN = [['ahora','Ahora mismo'],['noche','Hoy en la noche'],['manana','Mañana'],['finde','Este finde'],['fecha','Elegir fecha…']];
-    this.BUD = [['free','Gratis',0],['b300','Hasta $300',300],['b600','$300–600',600],['b1000','$600–1,000',1000],['b1999','$1,000–1,999',1999],['b1k','$2,000+',99999],['any','Sin presupuesto',99999]];   // 'any': de todo tipo de precio (5 nov 2026)
+    this.BUD = [['free','Gratis',0],['b600','Hasta $600',600],['b1000','$600–1,000',1000],['b1999','$1,000–1,999',1999],['b1k','$2,000+',99999],['any','Sin presupuesto',99999]];   // 'any': de todo tipo de precio (5 nov 2026)
     // Piso de cada rango: con $1,000–1,999 o $2,000+ no tiene sentido proponer sólo tacos de $150.
-    this.BUD_MIN = { free: 0, b300: 0, b600: 300, b1000: 600, b1999: 1000, b1k: 2000, any: 0 };
+    this.BUD_MIN = { free: 0, b600: 0, b1000: 600, b1999: 1000, b1k: 2000, any: 0 };   // 'b300' (enlaces viejos) = 'b600'
     this.VIBES = ['romántico','chill','aventurero','foodie','nightlife','cultural','creativo','social','joyita','familiar'];
     this.DIET = ['Vegetariano','Vegano','Sin alcohol','Pet friendly','Terraza sí o sí','Accesible'];
     this.FOOD = ['Restaurante','Taquería','Fonda de autor','Café','Churrería','Izakaya','Mercado','Cantina'];
@@ -1584,6 +1584,8 @@ class Component extends DCLogic {
     // Fase 3: la página respeta el anuncio (preset, utm_content, zona) y el
     // modo rápido (?v=rapido, experimento E31).
     Object.assign(st, this.desdeUrl(st));
+    // Zonas por grupo desde el inicio: "Roma Norte" sola ya no es una opción en pantalla.
+    if (st.zone !== 'all') st.zonesSel = this.conGrupos((st.zonesSel && st.zonesSel.length) ? st.zonesSel : [st.zone]);
     this.state = st;
   }
   componentDidMount() {
@@ -2767,12 +2769,27 @@ class Component extends DCLogic {
   planConfirmed(p) { const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
   chip(on) { return `padding:9px 14px;min-height:40px;border-radius:999px;border:1.5px solid ${on?'var(--fill)':'var(--color-neutral-300)'};background:${on?'var(--fill)':'var(--card)'};color:${on?'var(--on-fill)':'var(--ink)'};font:600 13.5px var(--font-body);cursor:pointer;white-space:nowrap`; }
   strip(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
-  budgetMax() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const b = this.BUD.find(x => x[0] === s.budget); return b ? b[2] : 99999; }
+  budgetMax() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const id = s.budget === 'b300' ? 'b600' : s.budget; const b = this.BUD.find(x => x[0] === id); return b ? b[2] : 99999; }
+  // Zonas en pantalla (8 nov 2026, pedido del fundador): 8 grupos. El motor, las distancias y
+  // las zonas vecinas siguen con las 15 zonas; elegir un grupo elige todas sus zonas.
+  ZGRUPOS() { return [['Roma · Condesa', ['roma', 'romasur', 'condesa']], ['Polanco · Chapultepec', ['polanco', 'chapultepec']],
+    ['Juárez · Centro', ['juarez', 'centro']], ['Del Valle · Nápoles', ['delvalle']], ['Coyoacán · Sur', ['coyoacan', 'sanangel', 'cu']],
+    ['Santa Fe · Poniente', ['santafe']], ['Lomas · Satélite', ['lomas', 'satelite']], ['Xochimilco', ['xochimilco']]]; }
+  // Una lista de zonas completada a grupos enteros (?zona=coyoacan → Coyoacán, San Ángel y CU).
+  conGrupos(l) { const out = []; (l || []).forEach(z => { const g = this.ZGRUPOS().find(x => x[1].indexOf(z) >= 0);
+      (g ? g[1] : [z]).forEach(k => { if (out.indexOf(k) < 0) out.push(k); }); }); return out; }
   zoneList() { const s = this.state; if (s.zone === 'all') return this.ZONES.map(z => z[0]);
     const l = (s.zonesSel && s.zonesSel.length) ? s.zonesSel : [s.zone]; return l; }
   inZone(v) { return this.state.zone === 'all' || this.zoneList().includes(v.z); }
   zonesLabel() { const s = this.state; if (s.zone === 'all') return 'Toda la ciudad';
-    const l = this.zoneList(); if (l.length === 1) return this.zLabel(l[0]);
+    // Un grupo completo se nombra como grupo ("Roma · Condesa"); una zona suelta (de un
+    // enlace viejo) con su nombre.
+    const z0 = this.zoneList(), n = [];
+    this.ZGRUPOS().forEach(([lbl, zs]) => { if (zs.every(z => z0.indexOf(z) >= 0)) n.push(lbl); });
+    z0.forEach(z => { if (!this.ZGRUPOS().some(([, zs]) => zs.indexOf(z) >= 0 && zs.every(k => z0.indexOf(k) >= 0))) n.push(this.zLabel(z)); });
+    if (n.length === 1) return n[0];
+    if (n.length && n.length < z0.length) return n.slice(0, -1).join(', ') + ' y ' + n[n.length - 1];
+    const l = z0; if (l.length === 1) return this.zLabel(l[0]);
     if (l.length === 2) return this.zLabel(l[0]) + ' y ' + this.zLabel(l[1]);
     return l.slice(0, -1).map(z => this.zLabel(z)).join(', ') + ' y ' + this.zLabel(l[l.length - 1]); }
   zLabel(k) { if (k === 'all') return 'Toda la ciudad'; const z = this.ZONES.find(x => x[0] === k); return z ? z[1] : k; }
@@ -3031,7 +3048,7 @@ class Component extends DCLogic {
     if (P[clave]) { Object.assign(out, P[clave]); out.preset = clave; }
     const zn = this.strip(q.get('zona') || '').replace(/[^a-z]/g, '');
     const z = (this.ZONES || []).find(x => x[0] === zn);
-    if (z) { out.zone = z[0]; out.zonesSel = [z[0]]; }
+    if (z) { out.zone = z[0]; out.zonesSel = this.conGrupos([z[0]]); }
     if (q.get('v') === 'rapido') out.rapido = true;
     // A/B "paso 1 fácil" (8 nov 2026): ?v=facil se queda toda la sesión (sessionStorage,
     // como los UTM) aunque naveguen o recarguen. Sin parámetro: la versión actual.
@@ -3039,7 +3056,7 @@ class Component extends DCLogic {
     try { if (facil) sessionStorage.setItem('sobres_v', 'facil');
       else if (!q.get('v') && sessionStorage.getItem('sobres_v') === 'facil') facil = true; } catch(e) {}
     if (facil) { out.facil = true; out.facilPaso = 1;
-      if (!z) { out.zone = 'roma'; out.zonesSel = ['roma', 'condesa', 'juarez']; } }   // Roma Norte · Condesa · Juárez
+      if (!z) { out.zone = 'roma'; out.zonesSel = this.conGrupos(['roma', 'juarez']); } }   // Roma · Condesa y Juárez · Centro
     return out;
   }
   // Pasos vistos (GA4): un evento por tarjeta del formulario la primera vez
@@ -4272,7 +4289,7 @@ class Component extends DCLogic {
   budLabel() { const s = this.state;
     if (s.budgetCustom === 0) return 'gratis ($0 pp)';
     if (s.budgetCustom != null) return `≤ $${s.budgetCustom} pp`;
-    const b = this.BUD.find(x => x[0] === s.budget);
+    const b = this.BUD.find(x => x[0] === (s.budget === 'b300' ? 'b600' : s.budget));
     return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '$2,000+ pp' : b[0] === 'any' ? 'sin presupuesto' : b[0] === 'b1999' ? '$1,000–1,999 pp' : `≤ $${b[2]} pp`) : ''; }
   budgetMin() { const s = this.state; if (s.budgetCustom != null) return 0; return (this.BUD_MIN || {})[s.budget] || 0; }
   whenLabel() { const s = this.state; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
@@ -5165,16 +5182,16 @@ class Component extends DCLogic {
     const zoneOpts = [{ label: 'Toda la ciudad', style: this.chip(s.zone === 'all'), on: s.zone === 'all',
         pressed: s.zone === 'all' ? 'true' : 'false', aria: 'Toda la ciudad — zona' + (s.zone === 'all' ? ' (seleccionado)' : ''),
         pick: () => this.setState({ zone: 'all', zonesSel: [] }) }]
-      .concat(this.ZONES.map(z => { const on = s.zone !== 'all' && this.zoneList().includes(z[0]);
-        return { label: (on && this.zoneList().length > 1 ? '✓ ' : '') + z[1], style: this.chip(on), on,
-          pressed: on ? 'true' : 'false', aria: z[1] + ' — zona' + (on ? ' (seleccionado)' : ''),
-          pick: () => { const cur = s.zone === 'all' ? [] : this.zoneList().slice();
-            const i2 = cur.indexOf(z[0]);
+      .concat(this.ZGRUPOS().map(([lbl, zs]) => { const on = s.zone !== 'all' && zs.some(z => this.zoneList().includes(z));
+        return { label: lbl, style: this.chip(on), on,
+          pressed: on ? 'true' : 'false', aria: lbl + ' — zona' + (on ? ' (seleccionado)' : ''),
+          pick: () => { let cur = s.zone === 'all' ? [] : this.zoneList().slice();
+            if (on) cur = cur.filter(z => zs.indexOf(z) < 0); else zs.forEach(z => { if (cur.indexOf(z) < 0) cur.push(z); });
+            const i2 = -2;
             // Tocar otra vez una zona la quita, aunque sea la única: antes la
             // última zona no se podía soltar y Santa Fe se quedaba pegada a
             // todas las búsquedas siguientes ("Santa Fe y Polanco"). Sin zonas
             // elegidas, la búsqueda vuelve a Toda la ciudad.
-            if (i2 >= 0) cur.splice(i2, 1); else cur.push(z[0]);
             if (!cur.length) { this.setState({ zone: 'all', zonesSel: [] }); return; }
             this.setState({ zonesSel: cur, zone: cur[0] }); } }; }));
     const whenOpts = mkChips(this.WHEN, s.when, id => { this.setState({ when: id, planFrom: null, planTo: null }); }, 'cuándo');
@@ -5540,7 +5557,7 @@ class Component extends DCLogic {
     const R = {
       isMobile: s.isMobile, padBottom: s.isMobile ? '58px' : '0px', showBottomNav: s.isMobile && view !== 'venues', topNavDisplay: s.isMobile ? 'none' : 'flex',
       showTopSearch: !s.isMobile && view !== 'venues', showMobileSearch: s.isMobile && view !== 'venues',
-      navItems, bottomNav, brandGo: () => this.nav(view === 'venues' ? 'venues' : 'home'), brandSub: view === 'venues' ? 'PARA VENUES' : 'CDMX',
+      navItems, bottomNav, brandGo: view === 'venues' ? (() => this.nav('venues')) : () => { this.setState({ paso: 1, pasoDir: 'back', facilPaso: 1, pasoN: (s.pasoN || 0) + 1 }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} }, brandSub: view === 'venues' ? 'PARA VENUES' : 'CDMX',
       venueSwitchLabel: view === 'venues' ? '← Lado consumidor' : 'Para venues', venueSwitchGo: () => this.nav(view === 'venues' ? 'home' : 'venues'), venueBtnBg: view === 'venues' ? 'var(--color-text)' : 'transparent', venueBtnFg: view === 'venues' ? '#fff' : 'var(--color-text)',
       demoBadge: (this.props.insigniasDemo ?? true) && !s.isMobile, catCount: String(this.cat().length),
       searchQ: s.searchQ, setSearchQ: e => { const q = e.target.value; this.setState({ searchQ: q }); this.evSearch(q); }, searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
@@ -6234,7 +6251,7 @@ class Component extends DCLogic {
       toastStyle: 'position:fixed;left:50%;transform:translateX(-50%);bottom:' + (showBottomNav ? 'calc(var(--nav-h) + 14px)' : (enArmar || editando) ? '96px' : '24px')
         + ';z-index:100;background:var(--fill);color:var(--on-fill);padding:12px 18px;border-radius:14px;font:600 14px/1.4 var(--font-body);box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px);'
         + (s.toast ? 'opacity:1' : 'opacity:0;pointer-events:none') + ';transition:opacity .2s',
-      brandGo: () => this.nav('home'),
+      brandGo: () => { this.setState({ paso: 1, pasoDir: 'back', facilPaso: 1, pasoN: (s.pasoN || 0) + 1 }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} },   // el logo regresa al principio (paso 1)
       hasUser: !!s.userName, isGuest: !s.userName, avatarLetter: (s.userName || '?')[0].toUpperCase(),
       avatarAria: 'Tu perfil, ' + (s.userName || ''), goProfile: () => this.nav('profile'),
       cuentaAbrir: () => this.pedirCuenta('general'),

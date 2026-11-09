@@ -528,21 +528,21 @@ test('37.5 · lo de Google en vivo entra a la lista sólo si está en tus zonas'
 section('38 · ?v=facil: 3 pasos (paso 1 de un toque, ← Atrás en 2 y 3)');
 const conEv = a => { const L = []; a.ev = (n, p) => L.push([n, Object.assign({ version: a.versionAB() }, p || {})]); return L; };
 
-test('38.1 · sin parámetro la versión actual no cambia', () => {
+test('38.1 · sin parámetro no sale la versión fácil (zona por defecto: el grupo Roma · Condesa)', () => {
   const a = makeApp({}); const u = a.facilVals('home', () => {});
   assert(!a.state.facil && !u.facilP1 && !u.facilP2 && a.versionAB() === 'actual', 'la actual cambió');
-  assert(a.state.zonesSel.join() === 'roma', 'la zona por defecto cambió: ' + a.state.zonesSel);
+  assert(a.state.zonesSel.join() === 'roma,romasur,condesa' && a.zonesLabel() === 'Roma · Condesa', 'zona por defecto: ' + a.state.zonesSel);
   const b = makeApp({}, { search: '?v=rapido' }); assert(b.versionAB() === 'rapido' && !b.state.facil, 'v=rapido cambió');
 });
 
-test('38.2 · ?v=facil se activa, preselecciona Roma Norte · Condesa · Juárez y se queda toda la sesión', () => {
+test('38.2 · ?v=facil se activa, preselecciona Roma · Condesa y Juárez · Centro y se queda toda la sesión', () => {
   const a = makeApp({}, { search: '?v=facil' });
   assert(a.state.facil && a.state.facilPaso === 1 && a.versionAB() === 'facil', 'no se activó');
-  assert(a.state.zonesSel.join() === 'roma,condesa,juarez', 'zonas: ' + a.state.zonesSel);
+  assert(a.state.zonesSel.join() === 'roma,romasur,condesa,juarez,centro' && a.zonesLabel() === 'Roma · Condesa y Juárez · Centro', 'zonas: ' + a.state.zonesSel);
   assert(a._win.sessionStorage.getItem('sobres_v') === 'facil', 'no se guardó en la sesión');
   const b = makeApp({}, { search: '?utm_source=meta', session: { sobres_v: 'facil' } });
   assert(b.state.facil, 'al navegar (sin ?v) se perdió la versión fácil');
-  const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan', 'pisó la zona del anuncio');
+  const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan,sanangel,cu', 'pisó la zona del anuncio: ' + c.state.zonesSel);
 });
 
 test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Cenar rico" pide el tipo de comida y ése avanza', () => {
@@ -594,6 +594,35 @@ test('38.5 · con los valores por defecto salen 3 planes completos (sin planes d
   // Y la versión actual NO cambia su motor: "Comer rico" sin ?v sigue pudiendo dar una cena sola.
   const b = makeApp({ vibes: ['foodie'] }, { dseed: 1 }); b.ev = () => {}; const rb = b.runSearch({ nueva: true });
   assert(!rb.plans.some(p => p.stops.some(v => ['Bar', 'Cantina', 'Speakeasy'].includes(v.cat))), 'la actual metió bares en "Comer rico"');
+});
+
+// ── 39 · Zonas en 8 grupos, presupuesto nuevo y logo (8 nov 2026) ─────────────
+section('39 · Zonas en grupos, presupuesto y logo');
+
+test('39.1 · las zonas se eligen en 8 grupos y cada grupo elige todas sus zonas', () => {
+  const a = makeApp({});
+  const Z = a.renderVals().zoneOpts.map(o => o.label);
+  assert(Z.join('|') === 'Toda la ciudad|Roma · Condesa|Polanco · Chapultepec|Juárez · Centro|Del Valle · Nápoles|Coyoacán · Sur|Santa Fe · Poniente|Lomas · Satélite|Xochimilco', Z.join('|'));
+  const z = n => a.renderVals().zoneOpts.find(o => o.label === n);
+  z('Roma · Condesa').pick(); assert(a.state.zone === 'all', 'Roma · Condesa no se quita');
+  z('Coyoacán · Sur').pick(); assert(a.zoneList().join() === 'coyoacan,sanangel,cu' && a.zonesLabel() === 'Coyoacán · Sur', a.zoneList());
+  z('Lomas · Satélite').pick(); assert(a.zonesLabel() === 'Coyoacán · Sur y Lomas · Satélite', a.zonesLabel());
+  // Un enlace viejo con una sola zona sigue funcionando y se nombra por su zona.
+  const v = makeApp({ zone: 'roma', zonesSel: ['roma'] }); assert(v.zonesLabel() === 'Roma Norte' && v.renderVals().zoneOpts.find(o => o.label === 'Roma · Condesa').pressed === 'true', v.zonesLabel());
+});
+
+test('39.2 · presupuesto: Gratis, Hasta $600, $600–1,000, $1,000–1,999, $2,000+ y Sin presupuesto; "Hasta $300" viejo = Hasta $600', () => {
+  const a = makeApp({});
+  assert(a.renderVals().budgetOpts.map(o => o.label).join('|').replace(/✓ /g, '').replace('Gratis ($0)', 'Gratis') === 'Gratis|Hasta $600|$600–1,000|$1,000–1,999|$2,000+|Sin presupuesto', a.renderVals().budgetOpts.map(o => o.label));
+  const b = makeApp({ budget: 'b600' }); assert(b.budgetMax() === 600 && b.budgetMin() === 0, 'Hasta $600 debe ir de $0 a $600');
+  const c = makeApp({ budget: 'b300' }); assert(c.budgetMax() === 600 && /600/.test(c.budLabel()), 'un enlace viejo "Hasta $300" quedó sin tope: ' + c.budgetMax());
+});
+
+test('39.3 · el logo de SOBRES regresa al principio (paso 1), en las dos versiones', () => {
+  const a = makeApp({ paso: 3 }); a.nav('results'); a.renderVals().brandGo();
+  assert(a.state.view === 'home' && a.state.paso === 1, 'actual: ' + a.state.view + ' paso ' + a.state.paso);
+  const f = makeApp({}, { search: '?v=facil' }); f.ev = () => {}; f.facilVals('home', () => {}).facilOpts[1].pick(); f.facilVals('home', () => {}).facilSiguiente();
+  f.renderVals().brandGo(); assert(f.state.facilPaso === 1 && f.state.view === 'home', 'fácil: paso ' + f.state.facilPaso);
 });
 
 if (require.main === module) report();
