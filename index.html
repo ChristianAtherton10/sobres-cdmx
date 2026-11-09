@@ -68,6 +68,7 @@
   .sb-rapido{margin-bottom:96px}
 }
 .sb-facil{max-width:560px}
+.sb-facil-sub{font:400 15.5px/1.5 var(--font-body);color:var(--color-neutral-700)}
 .sb-facil-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .sb-facil-op{display:flex;align-items:center;gap:10px;min-height:64px;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);font:700 16px/1.2 var(--font-body);text-align:left;cursor:pointer}
 .sb-facil-op .e{font-size:24px;line-height:1}
@@ -546,7 +547,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ facilP1 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-facil" class="sb-facil">
 <h1 class="sb-h2" style="margin:0">¿Qué se les antoja?</h1>
-<p class="sb-sub" style="margin:6px 0 16px">Toca uno y en segundos tienes 3 planes para votar.</p>
+<p class="sb-facil-sub" style="margin:6px 0 16px">Toca uno y en segundos tienes 3 planes para votar.</p>
 <div class="sb-facil-grid" role="group" aria-label="Qué se les antoja">
 <sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="e" aria-hidden="true">{{ o.emoji }}</span><span>{{ o.label }}</span></button></sc-for>
 </div>
@@ -555,7 +556,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ facilP2 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-confirma" class="sb-facil sb-facil-conf">
 <h1 class="sb-h2" style="margin:0">Confirma y listo</h1>
-<p class="sb-sub" style="margin:6px 0 12px">Ya lo llenamos por ti. Cambia lo que quieras.</p>
+<p class="sb-facil-sub" style="margin:6px 0 12px">Ya lo llenamos por ti. Cambia lo que quieras.</p>
 <div class="sb-facil-linea"><span class="t">Plan</span><span class="sb-chip sb-chip-sel">{{ facilPlan }}</span><button class="sb-btn3" onClick="{{ facilCambiarPlan }}" aria-label="Cambiar el plan">Cambiar</button></div>
 <div class="sb-facil-linea"><span class="t">{{ fDia.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fDia.valor }}</span><button class="sb-btn3" onClick="{{ fDia.toggle }}" aria-label="{{ fDia.aria }}" aria-expanded="{{ fDia.abierto }}">{{ fDia.btn }}</button></div>
 <sc-if value="{{ fDia.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas">
