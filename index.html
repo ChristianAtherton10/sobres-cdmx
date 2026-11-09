@@ -604,7 +604,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <h2 class="sb-h2" style="margin:2px 0 10px">¿Dónde y a qué hora?</h2>
 <span class="sb-label">Zona · puedes elegir varias</span>
 <div class="sb-chips" role="group" aria-label="Zona"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button class="sb-chip" style="min-height:38px;padding:0 13px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<span class="sb-label sb-mt">Horario de hoy</span>
+<span class="sb-label sb-mt">Horario</span>
 <div class="sb-row" style="flex-wrap:nowrap">
 <label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Desde</span><select class="sb-sel" style="width:100%" aria-label="Desde qué hora" value="{{ planFromVal }}" onChange="{{ setPlanFrom }}"><sc-for list="{{ fromOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
 <label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Hasta</span><select class="sb-sel" style="width:100%" aria-label="Hasta qué hora" value="{{ planToVal }}" onChange="{{ setPlanTo }}"><sc-for list="{{ toOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
@@ -2452,7 +2452,7 @@ class Component extends DCLogic {
   // como texto plano con separadores que la URL no tiene que escapar
   // (A-Z a-z 0-9 - . _ ~), así que el enlace baja a ~130.
   C_WHO = { amigos: 'a', date: 'd', familia: 'f', compa: 'c', solo: 's' };
-  C_WHEN = { ahora: 'a', noche: 'n', manana: 'm', finde: 'w', fecha: 'd' };
+  C_WHEN = { ahora: 'a', noche: 'n', manana: 'm', finde: 'w', fecha: 'd', libre: 'l' };
   C_TR = { propio: 'p', servicio: 'u', caminando: 'c', metro: 'm' };
   C_VIBE = { 'romántico': 'ro', chill: 'ch', aventurero: 'av', foodie: 'fo', nightlife: 'ni',
              cultural: 'cu', creativo: 'cr', social: 'so', joyita: 'jo', familiar: 'fa' };
@@ -2906,6 +2906,7 @@ class Component extends DCLogic {
   // Los campos `dias` (días en que abre) y `cerrado` (días en que NO abre) ya se
   // guardaban en el catálogo auditado pero nadie los miraba.
   abreEseDia(v, iso) {
+    if (!iso && this.sinFecha()) return true;   // plan sin fecha: el día lo eligen ellos
     const wd = this.diaSemana(iso || this.fechaPlanISO());
     if (wd == null) return true;
     if (v.dias && v.dias.length) return v.dias.indexOf(wd) >= 0;
@@ -2927,10 +2928,12 @@ class Component extends DCLogic {
     return 'hasta el ' + d(f.hasta); }
   timingOk(v) { const s = this.state, w = s.when;
     // Un evento con fecha sólo cuenta si el plan cae dentro de sus fechas.
+    // Sin fecha no se puede saber si coincide con un evento: los eventos con fecha no entran.
+    if (this.sinFecha() && (v.fechas || v.date)) return false;
     if (v.fechas && !this.vigenteEn(v, this.fechaDelPlan())) return false;
     if (!this.abreEseDia(v)) return false;
     if (v.date) { if (w === 'fecha' && s.customDate) return v.date === s.customDate; const today = new Date().toISOString().slice(0,10); if (w === 'ahora' || w === 'noche') return v.date === today; return true; }
-    if (s.planFrom != null || s.planTo != null) { const r2 = this.range(); const cov = []; if (r2[0] < 12) cov.push('manana'); if (r2[0] < 18 && r2[1] > 12) cov.push('tarde'); if (r2[1] > 18) cov.push('noche'); if (w === 'finde' || (w === 'fecha' && s.customDate && this.isWknd(s.customDate))) cov.push('finde'); const wo = v.tm.length === 1 && v.tm[0] === 'finde'; if (wo && !cov.includes('finde')) return false; return v.tm.some(x => cov.includes(x)); }
+    if (s.planFrom != null || s.planTo != null || w === 'libre') { const r2 = this.range(); const cov = []; if (r2[0] < 12) cov.push('manana'); if (r2[0] < 18 && r2[1] > 12) cov.push('tarde'); if (r2[1] > 18) cov.push('noche'); if (w === 'finde' || w === 'libre' || (w === 'fecha' && s.customDate && this.isWknd(s.customDate))) cov.push('finde'); const wo = v.tm.length === 1 && v.tm[0] === 'finde'; if (wo && !cov.includes('finde')) return false; return v.tm.some(x => cov.includes(x)); }
     const wkndOnly = v.tm.length === 1 && v.tm[0] === 'finde';
     if (w === 'fecha') { if (!s.customDate) return true; return wkndOnly ? this.isWknd(s.customDate) : true; }
     if (w === 'manana') return true;
@@ -3153,8 +3156,8 @@ class Component extends DCLogic {
     let facil = q.get('v') === 'facil';
     try { if (facil) sessionStorage.setItem('sobres_v', 'facil');
       else if (!q.get('v') && sessionStorage.getItem('sobres_v') === 'facil') facil = true; } catch(e) {}
-    // Sin "Día" en el paso 2 (9 nov 2026): el plan es para hoy y manda el horario.
-    if (facil) { out.facil = true; out.facilPaso = 1; out.when = 'noche'; out.customDate = '';
+    // Sin "Día" en el paso 2 (9 nov 2026): el plan NO tiene fecha (when 'libre'), sólo horario.
+    if (facil) { out.facil = true; out.facilPaso = 1; out.when = 'libre'; out.customDate = '';
       if (!z) { out.zone = 'roma'; out.zonesSel = this.conGrupos(['roma', 'juarez']); } }   // Roma · Condesa y Juárez · Centro
     return out;
   }
@@ -4391,7 +4394,11 @@ class Component extends DCLogic {
     const b = this.BUD.find(x => x[0] === (s.budget === 'b300' ? 'b600' : s.budget));
     return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '$2,000+ pp' : b[0] === 'any' ? 'sin presupuesto' : b[0] === 'b1999' ? '$1,000–1,999 pp' : `≤ $${b[2]} pp`) : ''; }
   budgetMin() { const s = this.state; if (s.budgetCustom != null) return 0; return (this.BUD_MIN || {})[s.budget] || 0; }
-  whenLabel() { const s = this.state; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
+  // ?v=facil (9 nov 2026): plan SIN fecha (when 'libre'): sólo horario, ningún texto de día.
+  sinFecha() { return this.state.when === 'libre'; }
+  cw(pre, low) { const l = this.whenLabel(); return l ? pre + (low ? l.toLowerCase() : l) : ''; }
+  fechaTxt() { return this.sinFecha() ? '' : this.fmtDate(this.state.planDate || this.todayISO()); }
+  whenLabel() { const s = this.state; if (s.when === 'libre') return ''; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
   // ============================================================
   // ENCABEZADO
   // Antes el título concatenaba todos los filtros ("5 amigos · Toda la
@@ -4436,7 +4443,7 @@ class Component extends DCLogic {
     const s = this.state; const r = this.range(); const out = [];
     out.push({ k: 'Quiénes', v: this.whoLabel() });
     out.push({ k: 'Zona', v: this.zonesLabel() });
-    out.push({ k: 'Cuándo', v: this.whenLabel() + ' ' + this.time12(r[0]) + '–' + this.time12(r[1]) });
+    out.push({ k: this.sinFecha() ? 'Horario' : 'Cuándo', v: this.cw('', false) + (this.whenLabel() ? ' ' : '') + this.time12(r[0]) + '–' + this.time12(r[1]) });
     out.push({ k: 'Presupuesto', v: this.budLabel() });
     out.push({ k: 'Transporte', v: this.provNombre() });
     if ((s.vibes || []).length) out.push({ k: 'Vibra', v: s.vibes.join(' + ') });
@@ -4444,7 +4451,7 @@ class Component extends DCLogic {
     return out;
   }
 
-  summary() { const s = this.state; const r = this.range(); return `${this.whoLabel()} · ${this.zonesLabel()} · ${this.whenLabel()} ${this.time12(r[0])}–${this.time12(r[1])} · ${this.budLabel()}${s.vibes.length ? ' · ' + s.vibes.join(' + ') : ''}`; }
+  summary() { const s = this.state; const r = this.range(); return `${this.whoLabel()} · ${this.zonesLabel()} · ${this.cw('', false) + (this.whenLabel() ? ' ' : '')}${this.time12(r[0])}–${this.time12(r[1])} · ${this.budLabel()}${s.vibes.length ? ' · ' + s.vibes.join(' + ') : ''}`; }
   why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : this.zoneList().includes(v.z) ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.ppUnknown) parts.push('falta confirmar el precio'); else if (v.pp === 0) parts.push(v.pEstado === 'verificado' ? 'entrada libre' : 'entrada libre según su categoría, sin confirmar'); else parts.push(`${this.precioTxt(v)}, dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
   // Identidad de la búsqueda actual. Si cambia, el historial se reinicia para no
   // encerrar al usuario en resultados viejos de otros filtros.
@@ -4550,7 +4557,7 @@ class Component extends DCLogic {
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
-    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, avoidPlantillas: (_mismo && _nuevo) ? (s.seenPlantillas || []) : [], bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); const _pp = (_mismo && _nuevo) ? (s.seenPlantillas || []) : [];
+    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: (() => { if (s.when === 'libre') return ''; if (s.when === 'fecha' && s.customDate) return s.customDate; const d = new Date(); if (s.when === 'manana') d.setDate(d.getDate() + 1); if (s.when === 'finde') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, avoidPlantillas: (_mismo && _nuevo) ? (s.seenPlantillas || []) : [], bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); const _pp = (_mismo && _nuevo) ? (s.seenPlantillas || []) : [];
       this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v,
         seenPlantillas: _pp.concat(((this._lastR || {}).plans || []).map(p => p.plantilla).filter(Boolean)).slice(-12) }); }
     this.persist(); this.nav('results'); return this._lastR; }
@@ -5872,9 +5879,9 @@ class Component extends DCLogic {
       listoTitulo: (s.who === 'solo' || (s.groupSize || 0) <= 1) ? 'Tu plan está listo' : 'Su plan está listo',
       listoSub: (() => {
         if (!plan) return '';
-        const f = this.fmtDate(s.planDate || this.todayISO());
+        const f = this.fechaTxt();
         const q = (s.who === 'solo' || (s.groupSize || 0) <= 1) ? 'para ti' : 'para ' + this.whoLabel().toLowerCase();
-        return f + ' · ' + plan.stops.length + (plan.stops.length === 1 ? ' parada ' : ' paradas ') + q + '. Lo guardamos en Mis planes.';
+        return (f ? f + ' · ' : '') + plan.stops.length + (plan.stops.length === 1 ? ' parada ' : ' paradas ') + q + '. Lo guardamos en Mis planes.';
       })(),
       // Regresar del editor vuelve a DONDE se entró (resultados, votación o
       // Mis planes), no siempre a la lista de planes guardados.
@@ -6142,7 +6149,7 @@ class Component extends DCLogic {
   compartirTanda() { const r = this.state.results; if (!r || !(r.plans || []).length) { this.toast('Primero arma tus opciones'); return; }
     this.aprende('compartidoTanda', [].concat(...r.plans.slice(0, 3).map(x => x.stops || [])));
     this.setState({ sendOpen: true, compartirTanda: true, compCopiado: false, sendSel: [], sendQ: '' }); }
-  textoCompartir(tanda) { const s = this.state; const fecha = this.fmtDate(s.planDate || this.todayISO());
+  textoCompartir(tanda) { const s = this.state; const fecha = this.fechaTxt();
     if (tanda) { const pls = (s.results && s.results.plans || []).slice(0, 3);
       return '¡Mira ' + (pls.length === 1 ? 'este plan' : 'estas ' + pls.length + ' opciones') + ' que armé en SOBRES! ' + fecha + '\n\n'
         + pls.map((pl, i) => (i + 1) + '. ' + pl.stops.map(v => v.n.split(' ·')[0]).join(' → ')).join('\n')
@@ -6230,7 +6237,7 @@ class Component extends DCLogic {
     const cocinaResumen = cocinaOn && cocSel.length ? 'Comida ' + this.cocinasTxt(cocSel) : '';
     const vibesTxt = ((s.vibes || []).map(v => (VIBE_TXT[v] || [v])[0]).join(' · ') || 'Lo que sea') + (cocinaResumen ? ' · ' + cocinaResumen.toLowerCase() : '');
     const resumenPaso = paso === 1 ? vibesTxt
-      : paso === 2 ? (this.zonesLabel() + ' · ' + this.whenLabel())
+      : paso === 2 ? (this.zonesLabel() + this.cw(' · '))
       : (this.whoLabel() + ' · ' + this.budLabel());
     const irPaso = (n, dir) => this.setState({ paso: n, pasoDir: dir || 'in', pasoN: (s.pasoN || 0) + 1 }, () => { try { window.scrollTo(0, 0); } catch(e) {} });
     const lanzar = sorpresa => this.generar(() => this.runSearch(sorpresa ? { surprise: true } : { nueva: true }));
@@ -6298,7 +6305,7 @@ class Component extends DCLogic {
     const rng = this.range();
     const resFiltros = [
       { label: vibesTxt, aria: 'Cambiar el ambiente', go: () => this.irAFormulario('armar-ambiente') },
-      { label: this.zonesLabel() + ' · ' + this.whenLabel() + ' ' + this.time12(rng[0]) + '–' + this.time12(rng[1]), aria: 'Cambiar zona y horario', go: () => this.irAFormulario('armar-donde') },
+      { label: this.zonesLabel() + ' · ' + this.cw('', false) + (this.whenLabel() ? ' ' : '') + this.time12(rng[0]) + '–' + this.time12(rng[1]), aria: 'Cambiar zona y horario', go: () => this.irAFormulario('armar-donde') },
       { label: this.whoLabel() + ' · ' + this.budLabel(), aria: 'Cambiar grupo y presupuesto', go: () => this.irAFormulario('armar-quien') }
     ];
 
@@ -6364,15 +6371,15 @@ class Component extends DCLogic {
       // Armar en UNA pantalla: todo el formulario en Inicio y un solo botón.
       armarGo: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); this.irAFormulario('armar-donde'); return; }
         this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: this.zonesLabel(), cocinas: this.cocinasSel().join(',') }); lanzar(false); },
-      armarResumen: vibesTxt + ' · ' + this.zonesLabel() + ' · ' + this.whenLabel().toLowerCase() + ' · ' + this.whoLabel().toLowerCase() + ' · ' + this.budLabel(),
+      armarResumen: vibesTxt + ' · ' + this.zonesLabel() + this.cw(' · ', true) + ' · ' + this.whoLabel().toLowerCase() + ' · ' + this.budLabel(),
       surpriseGo: () => lanzar(true),
       hayRetomar: retomar && view === 'home',
-      retomarTxt: retomar ? ((s.results.plans.length === 1 ? 'Tu opción' : 'Tus ' + s.results.plans.length + ' opciones') + ' · ' + this.zonesLabel() + ', ' + this.whenLabel().toLowerCase()) : '',
+      retomarTxt: retomar ? ((s.results.plans.length === 1 ? 'Tu opción' : 'Tus ' + s.results.plans.length + ' opciones') + ' · ' + this.zonesLabel() + this.cw(', ', true)) : '',
       retomar: () => this.nav('results'),
       retomarLink: retomar ? ('o retoma ' + (s.results.plans.length === 1 ? 'tu opción' : 'tus ' + s.results.plans.length + ' opciones') + ' de hace rato →') : '',
       rapidoOn: !!s.rapido && !s.facil && view === 'home', noRapido: !s.rapido && !s.facil,
       noFacil: !s.facil, homeFacilCls: s.facil ? 'sb-home-facil sb-facil-p' + (s.facilPaso || 1) : '', ...this.facilVals(view, lanzar),
-      rapidoNota: 'Lo demás va por defecto: ' + this.whoLabel().toLowerCase() + ', ' + this.whenLabel().toLowerCase() + '. Lo puedes cambiar después.',
+      rapidoNota: 'Lo demás va por defecto: ' + this.whoLabel().toLowerCase() + this.cw(', ', true) + '. Lo puedes cambiar después.',
       armarMioOn: !!(r && r.compartida), armarMio: () => this.armarElMio(),
       ...this.perfilVals(), paso, paso1: paso === 1, paso2: paso === 2, paso3: paso === 3,
       pasoTxt: 'Paso ' + paso + ' de 3', pasoAncho: (paso / 3 * 100).toFixed(1) + '%',
@@ -6389,7 +6396,7 @@ class Component extends DCLogic {
       genPasos: ['Buscando lugares abiertos a esa hora', 'Calculando trayectos y costos', 'Eligiendo opciones distintas']
         .map((txt, i) => ({ txt, cls: (s.genFase || 0) > i ? 'ok' : (s.genFase || 0) === i ? 'on' : '' })),
       ajustar: () => this.irAFormulario('armar-ambiente'),
-      resKicker: 'Tus opciones · ' + this.whenLabel(),
+      resKicker: 'Tus opciones' + this.cw(' · '),
       // Si todas son lugares sueltos, no se llaman "planes".
       resTitulo: (() => { const sueltas = rp.length && rp.every(p => (p.stops || []).length === 1);
         if (sueltas) return nOpc === 3 ? 'Tres lugares para elegir' : nOpc === 2 ? 'Dos lugares para elegir' : 'Un lugar para ti';
@@ -6675,9 +6682,9 @@ class Component extends DCLogic {
     if (!(s.syncOn && s.userName)) { this.toast('El envío en vivo funciona con el link del salón'); return; }
     this.ensureProposed(p).then(id => this.mutate('sharePlan', { user: s.userName, planId: id, to: [f] })).then(() => this.toast(`Plan enviado a ${f} 📬 — le llega en su dispositivo`)); }
   planText(p, url) { const rng = this.range(); const ts = (p.times && p.times.length === p.stops.length) ? p.times : this.planTimes(p.stops.length);
-    const fecha = this.fmtDate(this.state.planDate || this.todayISO());
+    const fecha = this.fechaTxt();
     const lineas = p.stops.map((v, i) => `${this.time12(ts[i])} · ${v.n}${v.pp ? ' ($' + v.pp + ' pp)' : ''}`).join('\n');
-    return `*Plan en SOBRES* — ${fecha}\n\n${lineas}\n\nTotal: ~$${p.spent} pp · ${this.whoLabel()}\n\nÁbrelo y vota aquí:\n${url}`; }
+    return `*Plan en SOBRES*${fecha ? ' — ' + fecha : ''}\n\n${lineas}\n\nTotal: ~$${p.spent} pp · ${this.whoLabel()}\n\nÁbrelo y vota aquí:\n${url}`; }
   waShare() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
     this.ensureProposed(p).then(id => { const txt = this.planText(p, this.planLink(id));
       try { window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank'); } catch(e) {}
