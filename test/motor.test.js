@@ -912,7 +912,9 @@ test('el perfil no muestra textos técnicos de API keys', () => {
 test('las fichas Soumaya distinguen sede y actividad', () => {
   const app = makeApp(BASE, { dseed: 1 });
   const fichas = app.cat().filter(v => /soumaya/i.test(v.n));
-  assert(fichas.length >= 3, 'se perdieron fichas: ' + fichas.length);
+  // Revisión del fundador (9 nov 2026): el Auditorio del Soumaya sale como ficha aparte
+  // ("puede ser sede de un evento, no una parada aparte"); quedan Plaza Carso y Plaza Loreto.
+  assert(fichas.length >= 2 && fichas.some(v => /carso/i.test(v.n)) && fichas.some(v => /loreto/i.test(v.n)), 'se perdieron fichas: ' + fichas.length);
   const nombres = fichas.map(v => v.n);
   assert(new Set(nombres).size === nombres.length, 'hay títulos repetidos');
   // La Casa Guillermo Tovar de Teresa (Roma) es otra sede, llegó con el paquete del 3 nov 2026.
@@ -2306,5 +2308,7 @@ require('./catalogo.test.js');
 require('./perfil.test.js');
 // Fase 3: llegada desde un anuncio (feat/landing, 4 nov 2026).
 require('./landing.test.js');
+// Revisión del catálogo del fundador en Excel (9 nov 2026).
+require('./revision.test.js');
 
 report();

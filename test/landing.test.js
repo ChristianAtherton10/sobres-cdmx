@@ -344,7 +344,10 @@ test('33.4 · la lista de hotspots trae fuente y fecha, sólo ids del catálogo,
   assert(H && Object.keys(H.ids).length > 120, 'pocos hotspots');
   Object.values(H.fuentes).forEach(f => assert(/^https?:\/\//.test(f.url) && /^\d{4}-\d{2}-\d{2}$/.test(f.fecha), 'fuente sin url o fecha: ' + f.n));
   const ids = new Set(a.cat().map(v => v.id));
-  Object.entries(H.ids).forEach(([id, h]) => { assert(ids.has(id), 'id que no existe: ' + id); h.f.forEach(f => assert(H.fuentes[f], 'fuente desconocida ' + f)); });
+  // Revisión del fundador (9 nov 2026): una ficha duplicada dada de baja pasa su hotspot a la buena.
+  const DUP = (a._win.SOBRES_REVISION && a._win.SOBRES_REVISION.duplicados) || {};
+  Object.entries(H.ids).forEach(([id, h]) => { assert(ids.has(DUP[id] || id), 'id que no existe: ' + id); h.f.forEach(f => assert(H.fuentes[f], 'fuente desconocida ' + f)); });
+  if (DUP.baltra) assert(a.cat().find(v => v.id === DUP.baltra).hot >= 2, 'Baltra perdió su hotspot al quitar el duplicado');
   ['Quintonil', 'Pujol', 'Handshake Speakeasy', 'Bar Mauro', 'Contramar'].forEach(n => assert(a.cat().find(v => v.n === n).hot >= 2, n + ' no es hotspot'));
   assert(!a.cat().find(v => v.id === 'os-n9965047017').hot, '"Hunan" de Satélite quedó como el Hunan de Marco Beteta');
   const dias = (Date.parse(a.todayISO()) - Date.parse(H.actualizado)) / 864e5;

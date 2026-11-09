@@ -88,6 +88,10 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // Hotspots (define window.SOBRES_HOTSPOTS)
   const hsp = path.join(ROOT, 'data', 'hotspots.js');
   if (fs.existsSync(hsp) && !opts.sinHotspots) new Function('window', fs.readFileSync(hsp, 'utf8'))(win);
+  // Revisión del catálogo del fundador, 9 nov 2026 (define window.SOBRES_REVISION)
+  const rvp = path.join(ROOT, 'data', 'revision.js');
+  if (fs.existsSync(rvp) && !opts.sinRevision) new Function('window', fs.readFileSync(rvp, 'utf8'))(win);
+  if (opts.revision && win.SOBRES_REVISION) Object.assign(win.SOBRES_REVISION, opts.revision);
   // Recetas por ambiente (define window.SOBRES_RECETAS)
   const rc = path.join(ROOT, 'data', 'recetas.js');
   if (fs.existsSync(rc) && !opts.sinRecetas) new Function('window', fs.readFileSync(rc, 'utf8'))(win);

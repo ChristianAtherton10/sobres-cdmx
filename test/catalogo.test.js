@@ -19,6 +19,10 @@ test('cada lugar nuevo trae fuente (URL), fecha de consulta y precio con su esta
   });
 });
 
+// Mismo nombre a menos de 300 m pero lugares distintos (revisados a mano, 9 nov 2026):
+// · La Cava de la Docena (Obregón 23, apertura de oct 2026 según The Happening) ≠ La Docena (Obregón 31).
+// · Boicot Café es un café DENTRO de Plaza Satélite (alta de la revisión del fundador), no el centro comercial.
+const DISTINTOS = ['La Cava de la Docena|La Docena · Roma', 'Boicot Café Plaza Satélite|Plaza Satélite'];
 test('ningún lugar nuevo repite uno que ya estaba (mismo nombre a menos de 300 m)', () => {
   const app = makeApp({});
   const n = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -28,6 +32,7 @@ test('ningún lugar nuevo repite uno que ya estaba (mismo nombre a menos de 300 
   app.cat().filter(v => /^pq-/.test(v.id) && v.lat != null && !v.coordAprox).forEach(v => viejos.forEach(o => {
     if (o.coordAprox || km(v, o) > 0.3) return;
     const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
+    if (DISTINTOS.indexOf(v.n + '|' + o.n) >= 0) return;
     if (a.length > 3 && (a === b || a.includes(b) && b.length > 5 || b.includes(a) && a.length > 5) && v.cat === o.cat) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.join(' · '));
@@ -187,6 +192,7 @@ test('ningún lugar de OSM repite uno que ya estaba (mismo nombre a menos de 300
   const dup = [];
   app.cat().filter(v => /^os-/.test(v.id)).forEach(v => viejos.forEach(o => {
     const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
+    if (DISTINTOS.indexOf(v.n + '|' + o.n) >= 0) return;
     if (a.length > 3 && km(v, o) < 0.3 && (a === b || (a.includes(b) && b.length > 5) || (b.includes(a) && a.length > 5))) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.slice(0, 8).join(' · '));
