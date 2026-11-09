@@ -912,7 +912,9 @@ test('el perfil no muestra textos técnicos de API keys', () => {
 test('las fichas Soumaya distinguen sede y actividad', () => {
   const app = makeApp(BASE, { dseed: 1 });
   const fichas = app.cat().filter(v => /soumaya/i.test(v.n));
-  assert(fichas.length >= 3, 'se perdieron fichas: ' + fichas.length);
+  // Revisión del fundador (9 nov 2026): el Auditorio del Soumaya sale como ficha aparte
+  // ("puede ser sede de un evento, no una parada aparte"); quedan Plaza Carso y Plaza Loreto.
+  assert(fichas.length >= 2 && fichas.some(v => /carso/i.test(v.n)) && fichas.some(v => /loreto/i.test(v.n)), 'se perdieron fichas: ' + fichas.length);
   const nombres = fichas.map(v => v.n);
   assert(new Set(nombres).size === nombres.length, 'hay títulos repetidos');
   // La Casa Guillermo Tovar de Teresa (Roma) es otra sede, llegó con el paquete del 3 nov 2026.
@@ -1056,7 +1058,7 @@ test('aventurero en una zona sin oferta lo dice en vez de disfrazarlo', () => {
 
 test('creativo entrega un taller donde se hace algo, no una galería', () => {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'all', zonesSel:[], when:'manana',
-    budget:'b1k', budgetCustom:null, vibes:['creativo'], planFrom:11, planTo:23 }, { dseed: 35 });
+    budget:'b1k', budgetCustom:null, vibes:['creativo'], planFrom:11, planTo:23 }, { dseed: 35, sinRevision: true });   // talleres pausados por la revisión del 9 nov 2026; con ella: 41.9
   app.runSearch();
   const plans = app.state.results.plans || [];
   assert(plans.length >= 3, 'deben salir tres planes, salieron ' + plans.length);
@@ -1941,7 +1943,8 @@ test('R08/R09 · un antro por noche, siempre al final y llegando cerca de 23:30'
 // Antes: una noche que empieza tarde podía ser sólo el antro. Desde la regla del
 // 3 nov 2026 todo plan lleva al menos dos paradas: un trago y luego el antro.
 test('P13 · noche que empieza tarde → un trago y el antro cierra (mínimo dos paradas)', () => {
-  const app = makeApp(Object.assign({}, NOCHE_ROMA, { planFrom: 23.5, planTo: 27 }), { dseed: 21 });
+  // Lógica del motor sobre el catálogo sin la revisión del 9 nov 2026 (pausó antros por horario).
+  const app = makeApp(Object.assign({}, NOCHE_ROMA, { planFrom: 23.5, planTo: 27 }), { dseed: 21, sinRevision: true });
   const r = app.runSearch({ nueva: true });
   assert(r.plans.length > 0, 'no hubo planes');
   // Desde el 4 nov 2026 una opción puede ser un lugar suelto (un bar); las que
@@ -2306,5 +2309,7 @@ require('./catalogo.test.js');
 require('./perfil.test.js');
 // Fase 3: llegada desde un anuncio (feat/landing, 4 nov 2026).
 require('./landing.test.js');
+// Revisión del catálogo del fundador en Excel (9 nov 2026).
+require('./revision.test.js');
 
 report();

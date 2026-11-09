@@ -1693,9 +1693,13 @@ class Component extends DCLogic {
   aplicarAuditoria(lista) {
     const A = this.AUD(); if (!A) return lista;
     const XLU = (window.SOBRES_EXCEL && window.SOBRES_EXCEL.actualiza) || {};
+    // Revisión del catálogo del fundador en Excel (9 nov 2026, data/revision.js): bajas,
+    // pausas, correcciones, altas y funciones nuevas. Es la capa de más arriba: gana a todas.
+    const REV = (typeof window !== 'undefined' && window.SOBRES_REVISION) || null;
+    const RB = (REV && REV.bajas) || {};
     const out = [];
     for (const v0 of lista) {
-      if (A.BAJA[v0.id]) continue;                       // identidad fabricada
+      if (A.BAJA[v0.id] || RB[v0.id]) continue;          // identidad fabricada / baja en la revisión
       const v = Object.assign({}, v0);
       // Corrección a mano (auditoría) gana sobre el dato importado del Excel.
       const xu = XLU[v.id], al = A.LUGARES[v.id];
@@ -1767,10 +1771,13 @@ class Component extends DCLogic {
         // + lugares de OpenStreetMap aprobados el 4 nov 2026 (data/osm.js).
         .concat((window.SOBRES_OSM && window.SOBRES_OSM.lugares) || [])
         // + eventos con fecha (data/eventos.js): los vencidos ni se cargan.
-        .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
+        .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())))
+        // + altas y funciones nuevas de la revisión del fundador (9 nov 2026).
+        .concat((REV && REV.altas) || [])
+        .concat(((REV && REV.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
       for (const r0 of A.NUEVOS.concat(XL)) {
-        if (A.BAJA[r0.id]) continue;
+        if (A.BAJA[r0.id] || RB[r0.id]) continue;
         let r = XLU[r0.id] ? Object.assign({}, r0, XLU[r0.id]) : r0;
         if (A.UBICA && A.UBICA[r0.id]) r = Object.assign({}, r, A.UBICA[r0.id], { coordAprox: false });
         if (yaEsta.has(r.id)) continue; yaEsta.add(r.id);
@@ -1823,10 +1830,13 @@ class Component extends DCLogic {
         v.pNotaLugar = v.pNotaLugar.replace(/La fuente es antigua[^.]*\.\s*Mientras tanto no lo proponemos en planes\.?/i, 'Sigue abierto según ' + c.fuente.split(' —')[0] + ' (' + c.consultado + ').').trim();
       }
       v.confirmado = c; });
+    if (REV) out.forEach(v => this.aplicaRevision(v, REV));
     // Hotspots (data/hotspots.js): nivel 3 = Michelin / 50 Best / museos top;
     // 2 = guías del año y aperturas del mes. Una apertura pesa como "nueva" 4 meses.
-    const HS = (typeof window !== 'undefined' && window.SOBRES_HOTSPOTS && window.SOBRES_HOTSPOTS.ids) || {};
+    let HS = (typeof window !== 'undefined' && window.SOBRES_HOTSPOTS && window.SOBRES_HOTSPOTS.ids) || {};
     const mesHoy = this.todayISO().slice(0, 7), mesesDesde = m => { const a = m.split('-').map(Number), b = mesHoy.split('-').map(Number); return (b[0] - a[0]) * 12 + b[1] - a[1]; };
+    const DUP = (REV && REV.duplicados) || {};   // hotspot de una ficha duplicada dada de baja → la ficha buena
+    Object.keys(DUP).forEach(k => { if (HS[k] && !HS[DUP[k]]) { HS = Object.assign({}, HS); HS[DUP[k]] = HS[k]; } });
     out.forEach(v => { const h = HS[v.id]; if (!h) return; v.hot = h.nivel; v.hotF = h.f; v.hotNuevo = !!h.nuevo && mesesDesde(h.mes) < 4; });
     { const COLZ = { 'Juárez': 'juarez', 'Roma Norte': 'roma', 'Roma Sur': 'romasur', 'Condesa': 'condesa', 'Hipódromo': 'condesa', 'Hipódromo Condesa': 'condesa' };
       const VEC = ['juarez', 'roma', 'romasur', 'condesa'];
@@ -1840,6 +1850,53 @@ class Component extends DCLogic {
     return out;
   }
 
+  // Revisión del fundador (data/revision.js, reportes/revision/build_revision.py): sólo trae
+  // lo que cambió en el Excel. PAUSA = sigue en el catálogo pero no sale en planes hasta
+  // resolver el motivo; `pausasActivas: false` las apaga todas de un jalón.
+  aplicaRevision(v, REV) {
+    const c = (REV.cambios || {})[v.id];
+    if (c) {
+      if (c.n) v.n = c.n;
+      if (c.cat) v.cat = c.cat;
+      if (c.cocina != null) v.cocina = c.cocina;
+      if (c.col != null) v.col = c.col;
+      if (c.addr) v.addr = c.addr;
+      if (c.hrs) v.hrs = c.hrs;
+      if (c.oh) { v.oh = c.oh.slice(); v.horaEstimada = false; }
+      if (c.dias) { v.dias = c.dias.length ? c.dias.slice() : null; v.cerrado = null; }
+      if (c.tags && c.tags.length) v.tags = c.tags.slice();
+      if (c.who && c.who.length) v.who = c.who.slice();
+      if (c.basis) v.d = c.basis;
+      if (c.web != null) v.web = c.web;
+      if (c.tel) v.tel = c.tel;
+      if (c.fuente) v.src = c.fuente;
+      if (c.zone) v.z = c.zone;
+      if (c.lat != null) { v.lat = c.lat; v.lng = c.lng; v.coordAprox = false; }
+      else if (c.coordAprox) v.coordAprox = true;
+      if (c.zone || c.lat != null) {
+        const z = this.ZONES.find(zz => zz[0] === v.z), g = (this.ZGEO || {})[v.z];
+        if (z) { v.x = z[2]; v.y = z[3]; if (g && v.lat != null) { v.x = z[2] + (v.lng - g[1]) * 2.6; v.y = z[3] + (v.lat - g[0]) * 2.6; } }
+      }
+      if (c.fechas) v.fechas = Object.assign({}, c.fechas);
+      // Precio: sólo cambia lo que cambió. Mismo precio → se queda el rango y el precio
+      // anterior (sólo se actualizan estado, fuente, liga y fecha); otro precio → nuevo.
+      if (c.pr) {
+        const pi = v.propinaIncluida, viejo = v.ppUnknown ? null : v.pp, nuevo = c.pr.precio ? c.pr.precio.rep : null;
+        const meta = { estado: c.pr.estado, fuente: c.pr.fuente, url: c.pr.url, fecha: c.pr.fecha };
+        if (c.pr.estado === 'por_confirmar' || nuevo == null) this.ponPrecio(v, Object.assign(meta, { estado: 'por_confirmar', ppAnterior: viejo == null ? v.ppAnterior : viejo }));
+        else if (nuevo === viejo) this.ponPrecio(v, Object.assign(meta, { precio: { min: v.pMin, rep: v.pRep != null ? v.pRep : nuevo, max: v.pMax, unidad: v.pUnidad, moneda: v.pMoneda, canasta: v.pCanasta }, ppAnterior: v.ppAnterior, nota: v.pNota, falta: v.pFalta }));
+        else this.ponPrecio(v, Object.assign(meta, { precio: { rep: nuevo, unidad: 'persona', moneda: 'MXN', canasta: '' }, ppAnterior: viejo }));
+        if (pi) v.propinaIncluida = true;
+      }
+      v.revisado = REV.fecha;
+    }
+    const p = (REV.pausas || {})[v.id];
+    if (p && REV.pausasActivas !== false) {
+      v.recomendable = false; v.pausa = p;
+      v.pNotaLugar = ('En pausa: ' + p + ' ' + (v.pNotaLugar || '')).trim();
+    }
+    if ((REV.activar || []).indexOf(v.id) >= 0) v.recomendable = true;
+  }
   // Precio AUDITADO: guarda el rango, la unidad, la moneda y la canasta.
   // `pp` (lo que usa el presupuesto) pasa a ser el consumo REPRESENTATIVO,
   // no el mínimo: el plato más barato no es lo que cuesta hacer el plan.
@@ -2918,7 +2975,7 @@ class Component extends DCLogic {
   // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
   // ============================================================
   catalogoListo() { const w = typeof window !== 'undefined' ? window : {};
-    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS', 'SOBRES_HOTSPOTS'].every(k => !!w[k]); }
+    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS', 'SOBRES_HOTSPOTS', 'SOBRES_REVISION'].every(k => !!w[k]); }
   // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
   // comprimidos) llegan después, en orden, sin pelearle la red al marco.
   // ── Google Places en vivo (4 nov 2026) ──
@@ -3061,7 +3118,7 @@ class Component extends DCLogic {
   cargaCatalogo() {
     if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
     const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
-      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js'], ['SOBRES_HOTSPOTS', 'data/hotspots.js']];
+      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js'], ['SOBRES_HOTSPOTS', 'data/hotspots.js'], ['SOBRES_REVISION', 'data/revision.js']];
     lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
     if (!window.SOBRES_GID) { const el = document.createElement('script'); el.src = 'data/google_ids.js'; el.async = true; document.head.appendChild(el); }
   }

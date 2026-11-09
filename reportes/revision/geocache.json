@@ -1,0 +1,5960 @@
+{
+"Av. Insurgentes Sur 377, Condesa, México": [
+{
+"place_id": 311035044,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421186045,
+"lat": "19.4102369",
+"lon": "-99.1675103",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "377, Avenida Insurgentes Sur, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"house_number": "377",
+"road": "Avenida Insurgentes Sur",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4101163",
+"19.4103513",
+"-99.1677206",
+"-99.1673015"
+]
+},
+{
+"place_id": 419912324,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 13917151919,
+"lat": "19.4101810",
+"lon": "-99.1673747",
+"category": "amenity",
+"type": "nightclub",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Fünk",
+"display_name": "Fünk, 377, Avenida Insurgentes Sur, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"amenity": "Fünk",
+"house_number": "377",
+"road": "Avenida Insurgentes Sur",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4101310",
+"19.4102310",
+"-99.1674247",
+"-99.1673247"
+]
+}
+],
+"Tonalá 15, Roma Norte, México": [
+{
+"place_id": 311271674,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420811558,
+"lat": "19.4210726",
+"lon": "-99.1635314",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "15, Calle Tonalá, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "15",
+"road": "Calle Tonalá",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4209134",
+"19.4212043",
+"-99.1636160",
+"-99.1634485"
+]
+}
+],
+"Plaza Río de Janeiro 56, Roma Norte, México": [
+{
+"place_id": 310742142,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204553,
+"lat": "19.4210456",
+"lon": "-99.1597296",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "56, Calle Plaza Río de Janeiro, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "56",
+"road": "Calle Plaza Río de Janeiro",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4208750",
+"19.4212337",
+"-99.1599091",
+"-99.1595518"
+]
+}
+],
+"Chihuahua 135, Roma Norte, México": [
+{
+"place_id": 312412583,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24689912,
+"lat": "19.4174872",
+"lon": "-99.1596698",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Chihuahua",
+"display_name": "Calle Chihuahua, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Chihuahua",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4164189",
+"19.4185555",
+"-99.1650302",
+"-99.1543095"
+]
+}
+],
+"Tabasco 156, Roma Norte, México": [
+{
+"place_id": 314246715,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204601,
+"lat": "19.4190612",
+"lon": "-99.1596437",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "156, Calle Tabasco, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "156",
+"road": "Calle Tabasco",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4189827",
+"19.4191404",
+"-99.1596969",
+"-99.1595921"
+]
+}
+],
+"Av. Álvaro Obregón 106, Roma Norte, México": [
+{
+"place_id": 311509847,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 4596053989,
+"lat": "19.4181496",
+"lon": "-99.1595255",
+"category": "place",
+"type": "house",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "place",
+"name": "",
+"display_name": "106, Avenida Álvaro Obregón, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "106",
+"road": "Avenida Álvaro Obregón",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4180996",
+"19.4181996",
+"-99.1595755",
+"-99.1594755"
+]
+}
+],
+"Oaxaca 89, Roma Norte, México": [
+{
+"place_id": 311914390,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420811327,
+"lat": "19.4190256",
+"lon": "-99.1675380",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "89, Avenida Oaxaca, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "89",
+"road": "Avenida Oaxaca",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4189273",
+"19.4191484",
+"-99.1676865",
+"-99.1674264"
+]
+}
+],
+"Córdoba 146, Roma Norte, México": [
+{
+"place_id": 311112719,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24685466,
+"lat": "19.4150911",
+"lon": "-99.1576846",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Córdoba",
+"display_name": "Calle Córdoba, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Córdoba",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4117651",
+"19.4184226",
+"-99.1585107",
+"-99.1568364"
+]
+}
+],
+"Iztaccíhuatl 36D, Condesa, México": [
+{
+"place_id": 311100054,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 4803385,
+"lat": "19.4089207",
+"lon": "-99.1683159",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Iztaccihuatl",
+"display_name": "Calle Iztaccihuatl, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"road": "Calle Iztaccihuatl",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4081712",
+"19.4096804",
+"-99.1687565",
+"-99.1678650"
+]
+}
+],
+"Altata 7, Condesa, México": [
+{
+"place_id": 312252095,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420910359,
+"lat": "19.4070545",
+"lon": "-99.1726338",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "7, Calle Altata, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"house_number": "7",
+"road": "Calle Altata",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4070135",
+"19.4071004",
+"-99.1727022",
+"-99.1725537"
+]
+},
+{
+"place_id": 312227549,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 863924144,
+"lat": "19.4069860",
+"lon": "-99.1724645",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Altata",
+"display_name": "Altata, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"road": "Altata",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4066797",
+"19.4072923",
+"-99.1725502",
+"-99.1723788"
+]
+}
+],
+"Xochicalco 273, Narvarte, México": [
+{
+"place_id": 312117680,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617237569,
+"lat": "19.3913370",
+"lon": "-99.1540666",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Xochicalco",
+"display_name": "Calle Xochicalco, Colonia Narvarte Oriente, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle Xochicalco",
+"neighbourhood": "Colonia Narvarte Oriente",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3870347",
+"19.3956659",
+"-99.1546390",
+"-99.1537284"
+]
+},
+{
+"place_id": 311188252,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617281185,
+"lat": "19.4028948",
+"lon": "-99.1531857",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Xochicalco",
+"display_name": "Calle Xochicalco, Colonia Piedad Narvarte, La Piedad, Ciudad de México, Benito Juárez, Ciudad de México, 03000, México",
+"address": {
+"road": "Calle Xochicalco",
+"neighbourhood": "Colonia Piedad Narvarte",
+"quarter": "La Piedad",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4019170",
+"19.4038727",
+"-99.1532622",
+"-99.1531092"
+]
+},
+{
+"place_id": 311214007,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 865046081,
+"lat": "19.3982730",
+"lon": "-99.1535410",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Xochicalco",
+"display_name": "Calle Xochicalco, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03000, México",
+"address": {
+"road": "Calle Xochicalco",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3982049",
+"19.3983411",
+"-99.1535462",
+"-99.1535357"
+]
+}
+],
+"Aguascalientes 206, Condesa, México": [
+{
+"place_id": 311111903,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421186262,
+"lat": "19.4072509",
+"lon": "-99.1718632",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "206, Calle Aguascalientes, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"house_number": "206",
+"road": "Calle Aguascalientes",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4071792",
+"19.4073215",
+"-99.1719491",
+"-99.1717775"
+]
+}
+],
+"Córdoba 87, Roma Norte, México": [
+{
+"place_id": 312117627,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204580,
+"lat": "19.4195989",
+"lon": "-99.1590506",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "87, Calle Córdoba, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "87",
+"road": "Calle Córdoba",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4195059",
+"19.4196904",
+"-99.1591899",
+"-99.1589108"
+]
+}
+],
+"Avenida Chapultepec 360, Roma Norte, México": [
+{
+"place_id": 311019275,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1190739819,
+"lat": "19.4225633",
+"lon": "-99.1659217",
+"category": "building",
+"type": "commercial",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "Centera Chapultepec",
+"display_name": "Centera Chapultepec, 360, Avenida Chapultepec, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"building": "Centera Chapultepec",
+"house_number": "360",
+"road": "Avenida Chapultepec",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4223737",
+"19.4227530",
+"-99.1662574",
+"-99.1655861"
+]
+}
+],
+"Aguascalientes 158 Condesa, México": [
+{
+"place_id": 309303368,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 569074579,
+"lat": "19.4076286",
+"lon": "-99.1706515",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Aguascalientes",
+"display_name": "Calle Aguascalientes, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"road": "Calle Aguascalientes",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4071248",
+"19.4081712",
+"-99.1734425",
+"-99.1678650"
+]
+},
+{
+"place_id": 309300985,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24690052,
+"lat": "19.4089732",
+"lon": "-99.1637948",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Aguascalientes",
+"display_name": "Calle Aguascalientes, Roma Sur, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06760, México",
+"address": {
+"road": "Calle Aguascalientes",
+"neighbourhood": "Roma Sur",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06760",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4082044",
+"19.4097167",
+"-99.1677125",
+"-99.1598723"
+]
+}
+],
+"Campeche 280, Condesa, México": [
+{
+"place_id": 310252427,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421186342,
+"lat": "19.4082071",
+"lon": "-99.1705826",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "280, Calle Campeche, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"house_number": "280",
+"road": "Calle Campeche",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4080403",
+"19.4083743",
+"-99.1706708",
+"-99.1704938"
+]
+},
+{
+"place_id": 431577302,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 14320192702,
+"lat": "19.4083665",
+"lon": "-99.1706130",
+"category": "shop",
+"type": "bakery",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "Emmer",
+"display_name": "Emmer, 280, Calle Campeche, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"shop": "Emmer",
+"house_number": "280",
+"road": "Calle Campeche",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4083165",
+"19.4084165",
+"-99.1706630",
+"-99.1705630"
+]
+}
+],
+"Cacahuamilpa 5, Condesa, México": [
+{
+"place_id": 311732081,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421186019,
+"lat": "19.4163607",
+"lon": "-99.1676405",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "5, Calle Cacahuamilpa, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"house_number": "5",
+"road": "Calle Cacahuamilpa",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4163119",
+"19.4164041",
+"-99.1677130",
+"-99.1675688"
+]
+}
+],
+"Sonora 92, Roma Norte, México": [
+{
+"place_id": 312622526,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420617668,
+"lat": "19.4175629",
+"lon": "-99.1710627",
+"category": "building",
+"type": "apartments",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "92, Avenida Sonora, Roma Norte, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "92",
+"road": "Avenida Sonora",
+"neighbourhood": "Roma Norte",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4174933",
+"19.4176435",
+"-99.1711644",
+"-99.1709893"
+]
+}
+],
+"San Luis Potosí 110-B, Roma Norte, México": [
+{
+"place_id": 311017815,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24690020,
+"lat": "19.4132119",
+"lon": "-99.1641684",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle San Luis Potosí",
+"display_name": "Calle San Luis Potosí, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle San Luis Potosí",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4128067",
+"19.4136231",
+"-99.1662086",
+"-99.1621294"
+]
+},
+{
+"place_id": 311013236,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1122156958,
+"lat": "19.4138378",
+"lon": "-99.1610244",
+"category": "highway",
+"type": "primary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "primary",
+"name": "Calle San Luis Potosí",
+"display_name": "Calle San Luis Potosí, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle San Luis Potosí",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4137338",
+"19.4139419",
+"-99.1615598",
+"-99.1604890"
+]
+}
+],
+"Colima 179, Roma Norte, México": [
+{
+"place_id": 309301088,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204673,
+"lat": "19.4199737",
+"lon": "-99.1606103",
+"category": "shop",
+"type": "bakery",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "Rosetta",
+"display_name": "Rosetta, 179, Calle Colima, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"shop": "Rosetta",
+"house_number": "179",
+"road": "Calle Colima",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4198583",
+"19.4200886",
+"-99.1607084",
+"-99.1605124"
+]
+}
+],
+"La Morena 1556, Narvarte, México": [
+{
+"place_id": 308535379,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617513717,
+"lat": "19.3981733",
+"lon": "-99.1483438",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle La Morena",
+"display_name": "Calle La Morena, Unidad Habitacional IMSS Narvarte, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle La Morena",
+"neighbourhood": "Unidad Habitacional IMSS Narvarte",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3980505",
+"19.3981881",
+"-99.1508021",
+"-99.1459525"
+]
+},
+{
+"place_id": 311376923,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 569407350,
+"lat": "19.3983374",
+"lon": "-99.1533294",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle La Morena",
+"display_name": "Calle La Morena, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03000, México",
+"address": {
+"road": "Calle La Morena",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3983211",
+"19.3983474",
+"-99.1557416",
+"-99.1509174"
+]
+},
+{
+"place_id": 311445302,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 864815591,
+"lat": "19.3983336",
+"lon": "-99.1508518",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle La Morena",
+"display_name": "Calle La Morena, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle La Morena",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3983334",
+"19.3983338",
+"-99.1509174",
+"-99.1507862"
+]
+}
+],
+"Campeche 440, Condesa, México": [
+{
+"place_id": 311285814,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420909540,
+"lat": "19.4109558",
+"lon": "-99.1775099",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "440, Calle Campeche, Hipódromo Condesa, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06170, México",
+"address": {
+"house_number": "440",
+"road": "Calle Campeche",
+"neighbourhood": "Hipódromo Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06170",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4108608",
+"19.4110508",
+"-99.1775847",
+"-99.1774339"
+]
+},
+{
+"place_id": 309164363,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 13095080701,
+"lat": "19.4110088",
+"lon": "-99.1774712",
+"category": "amenity",
+"type": "cafe",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Red Coffee",
+"display_name": "Red Coffee, 440, Calle Campeche, Hipódromo Condesa, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06160, México",
+"address": {
+"amenity": "Red Coffee",
+"house_number": "440",
+"road": "Calle Campeche",
+"neighbourhood": "Hipódromo Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06160",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4109588",
+"19.4110588",
+"-99.1775212",
+"-99.1774212"
+]
+}
+],
+"Gral. Benjamín Hill 146, Hipódromo Condesa, México": [
+{
+"place_id": 310740013,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 2111530360,
+"lat": "19.4088212",
+"lon": "-99.1816430",
+"category": "amenity",
+"type": "bicycle_rental",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Ecobici Gral. Benjamín Hill / Carlos B. Zetina",
+"display_name": "Ecobici Gral. Benjamín Hill / Carlos B. Zetina, Calle General Benjamín Hill, Hipódromo Condesa, San Miguel Chapultepec, Ciudad de México, Cuauhtémoc, Ciudad de México, 11850, México",
+"address": {
+"amenity": "Ecobici Gral. Benjamín Hill / Carlos B. Zetina",
+"road": "Calle General Benjamín Hill",
+"neighbourhood": "Hipódromo Condesa",
+"quarter": "San Miguel Chapultepec",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11850",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4087712",
+"19.4088712",
+"-99.1816930",
+"-99.1815930"
+]
+}
+],
+"Tajín 452, Narvarte Oriente, México": [
+{
+"place_id": 312241883,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617281184,
+"lat": "19.3922653",
+"lon": "-99.1533449",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tajín",
+"display_name": "Calle Tajín, Colonia Narvarte Oriente, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle Tajín",
+"neighbourhood": "Colonia Narvarte Oriente",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3889105",
+"19.3956202",
+"-99.1536179",
+"-99.1530735"
+]
+},
+{
+"place_id": 312234270,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617237568,
+"lat": "19.3851205",
+"lon": "-99.1542141",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tajín",
+"display_name": "Calle Tajín, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle Tajín",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3822102",
+"19.3880350",
+"-99.1547015",
+"-99.1537532"
+]
+}
+],
+"Coahuila 16, Roma Norte, México": [
+{
+"place_id": 311064438,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24690022,
+"lat": "19.4113254",
+"lon": "-99.1626098",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Coahuila",
+"display_name": "Calle Coahuila, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Coahuila",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4104924",
+"19.4121863",
+"-99.1669512",
+"-99.1582691"
+]
+}
+],
+"Av. Yucatán 84, Roma Norte, México": [
+{
+"place_id": 311144638,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1426430754,
+"lat": "19.4141850",
+"lon": "-99.1626311",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "Páramo",
+"display_name": "Páramo, 84, Avenida Yucatán, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"building": "Páramo",
+"house_number": "84",
+"road": "Avenida Yucatán",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4140213",
+"19.4143200",
+"-99.1628636",
+"-99.1624450"
+]
+},
+{
+"place_id": 311112684,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 6322349586,
+"lat": "19.4142114",
+"lon": "-99.1628312",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Expendio de Maiz Sin Nombre",
+"display_name": "Expendio de Maiz Sin Nombre, 84, Avenida Yucatán, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"amenity": "Expendio de Maiz Sin Nombre",
+"house_number": "84",
+"road": "Avenida Yucatán",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4141614",
+"19.4142614",
+"-99.1628812",
+"-99.1627812"
+]
+},
+{
+"place_id": 311022760,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 1684963266,
+"lat": "19.4140824",
+"lon": "-99.1625995",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "El Parnita",
+"display_name": "El Parnita, 84, Avenida Yucatán, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"amenity": "El Parnita",
+"house_number": "84",
+"road": "Avenida Yucatán",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4140324",
+"19.4141324",
+"-99.1626495",
+"-99.1625495"
+]
+}
+],
+"Querétaro 90, Roma Norte, México": [
+{
+"place_id": 312564548,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1427372717,
+"lat": "19.4149533",
+"lon": "-99.1587018",
+"category": "building",
+"type": "apartments",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "90, Avenida Querétaro, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "90",
+"road": "Avenida Querétaro",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4148415",
+"19.4150650",
+"-99.1588061",
+"-99.1585980"
+]
+},
+{
+"place_id": 312135762,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 5984252685,
+"lat": "19.4150487",
+"lon": "-99.1587516",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "La Pitahaya",
+"display_name": "La Pitahaya, 90, Avenida Querétaro, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"amenity": "La Pitahaya",
+"house_number": "90",
+"road": "Avenida Querétaro",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4149987",
+"19.4150987",
+"-99.1588016",
+"-99.1587016"
+]
+},
+{
+"place_id": 312603182,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 13565939001,
+"lat": "19.4148793",
+"lon": "-99.1587275",
+"category": "shop",
+"type": "clothes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "Benji & Lola",
+"display_name": "Benji & Lola, 90, Avenida Querétaro, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"shop": "Benji & Lola",
+"house_number": "90",
+"road": "Avenida Querétaro",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4148293",
+"19.4149293",
+"-99.1587775",
+"-99.1586775"
+]
+}
+],
+"Chiapas 208, Roma Norte, México": [
+{
+"place_id": 311121312,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24684794,
+"lat": "19.4133263",
+"lon": "-99.1576335",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Chiapas",
+"display_name": "Calle Chiapas, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Chiapas",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4127698",
+"19.4139156",
+"-99.1605848",
+"-99.1546888"
+]
+},
+{
+"place_id": 311086694,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 654745861,
+"lat": "19.4133360",
+"lon": "-99.1566015",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada Chiapas",
+"display_name": "Cerrada Chiapas, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Cerrada Chiapas",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4131367",
+"19.4135353",
+"-99.1566467",
+"-99.1565564"
+]
+}
+],
+"Heriberto Frías 205, Narvarte, México": [
+{
+"place_id": 311349925,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 12484754502,
+"lat": "19.4001378",
+"lon": "-99.1592894",
+"category": "amenity",
+"type": "cafe",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Alma Café",
+"display_name": "Alma Café, 205, Calle Heriberto Frías, Colonia Narvarte Poniente, Ciudad de México, Benito Juárez, Ciudad de México, 03020, México",
+"address": {
+"amenity": "Alma Café",
+"house_number": "205",
+"road": "Calle Heriberto Frías",
+"neighbourhood": "Colonia Narvarte Poniente",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03020",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4000878",
+"19.4001878",
+"-99.1593394",
+"-99.1592394"
+]
+}
+],
+"Tonalá 171, Roma Norte, México": [
+{
+"place_id": 311730873,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1180581569,
+"lat": "19.4196478",
+"lon": "-99.1630316",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tonalá",
+"display_name": "Calle Tonalá, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Tonalá",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4178535",
+"19.4213316",
+"-99.1635837",
+"-99.1625798"
+]
+},
+{
+"place_id": 313807442,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24684984,
+"lat": "19.4114676",
+"lon": "-99.1609923",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tonalá",
+"display_name": "Calle Tonalá, Roma Sur, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06760, México",
+"address": {
+"road": "Calle Tonalá",
+"neighbourhood": "Roma Sur",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06760",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4075741",
+"19.4153719",
+"-99.1619850",
+"-99.1600003"
+]
+},
+{
+"place_id": 311379364,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 654842578,
+"lat": "19.4200316",
+"lon": "-99.1627612",
+"category": "highway",
+"type": "service",
+"place_rank": 27,
+"importance": 0.040093993286030354,
+"addresstype": "road",
+"name": "Privada Segunda Tonalá",
+"display_name": "Privada Segunda Tonalá, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Privada Segunda Tonalá",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4199511",
+"19.4201120",
+"-99.1631058",
+"-99.1624167"
+]
+}
+],
+"C. Colima 76, Roma Norte, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 311192712,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204530,
+"lat": "19.4203790",
+"lon": "-99.1566192",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "76, Calle Colima, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "76",
+"road": "Calle Colima",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4202035",
+"19.4205902",
+"-99.1567501",
+"-99.1564987"
+]
+}
+],
+"Tabasco 189, Roma Norte, México": [
+{
+"place_id": 309654808,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204620,
+"lat": "19.4189718",
+"lon": "-99.1615993",
+"category": "building",
+"type": "apartments",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "189, Calle Tabasco, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "189",
+"road": "Calle Tabasco",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4188355",
+"19.4191100",
+"-99.1617600",
+"-99.1614384"
+]
+}
+],
+"C. Puebla 387, Roma Norte, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 311870597,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420618040,
+"lat": "19.4202231",
+"lon": "-99.1745171",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "387, Calle Puebla, Roma Norte, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "387",
+"road": "Calle Puebla",
+"neighbourhood": "Roma Norte",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4201244",
+"19.4203221",
+"-99.1745861",
+"-99.1744477"
+]
+}
+],
+"Pachuca 13, Condesa, México": [
+{
+"place_id": 310749563,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420618151,
+"lat": "19.4182925",
+"lon": "-99.1761895",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "13, Calle Pachuca, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"house_number": "13",
+"road": "Calle Pachuca",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4181584",
+"19.4184257",
+"-99.1763246",
+"-99.1760552"
+]
+},
+{
+"place_id": 311284605,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420618188,
+"lat": "19.4167383",
+"lon": "-99.1764049",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "13, Cerrada Pachuca, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"house_number": "13",
+"road": "Cerrada Pachuca",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4166580",
+"19.4168189",
+"-99.1764737",
+"-99.1763356"
+]
+},
+{
+"place_id": 311734372,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 7021931787,
+"lat": "19.4182896",
+"lon": "-99.1761160",
+"category": "shop",
+"type": "laundry",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "",
+"display_name": "13, Calle Pachuca, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"house_number": "13",
+"road": "Calle Pachuca",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4182396",
+"19.4183396",
+"-99.1761660",
+"-99.1760660"
+]
+}
+],
+"Coahuila 143, Roma Norte, México": [
+{
+"place_id": 310253081,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24690022,
+"lat": "19.4113254",
+"lon": "-99.1626098",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Coahuila",
+"display_name": "Calle Coahuila, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Coahuila",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4104924",
+"19.4121863",
+"-99.1669512",
+"-99.1582691"
+]
+}
+],
+"Pachuca 59, Condesa, México": [
+{
+"place_id": 311043050,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420617925,
+"lat": "19.4166808",
+"lon": "-99.1771890",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "59, Calle Pachuca, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"house_number": "59",
+"road": "Calle Pachuca",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4165177",
+"19.4168456",
+"-99.1773949",
+"-99.1769831"
+]
+},
+{
+"place_id": 311054650,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 4695736837,
+"lat": "19.4165544",
+"lon": "-99.1771124",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Veguísimi Vegan Restaurant",
+"display_name": "Veguísimi Vegan Restaurant, 59, Calle Pachuca, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"amenity": "Veguísimi Vegan Restaurant",
+"house_number": "59",
+"road": "Calle Pachuca",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4165044",
+"19.4166044",
+"-99.1771624",
+"-99.1770624"
+]
+}
+],
+"Córdoba 140, Roma Norte, México": [
+{
+"place_id": 309299027,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24685466,
+"lat": "19.4150911",
+"lon": "-99.1576846",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Córdoba",
+"display_name": "Calle Córdoba, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Córdoba",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4117651",
+"19.4184226",
+"-99.1585107",
+"-99.1568364"
+]
+}
+],
+"Av. Álvaro Obregón 23, Roma Norte, México": [
+{
+"place_id": 312612557,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204519,
+"lat": "19.4193626",
+"lon": "-99.1556722",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "23, Avenida Álvaro Obregón, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "23",
+"road": "Avenida Álvaro Obregón",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4192901",
+"19.4195003",
+"-99.1557531",
+"-99.1556071"
+]
+}
+],
+"Alfonso Reyes 203, Condesa, México": [
+{
+"place_id": 311033713,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420911618,
+"lat": "19.4072320",
+"lon": "-99.1743429",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "203, Calle Alfonso Reyes, Hipódromo, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06100, México",
+"address": {
+"house_number": "203",
+"road": "Calle Alfonso Reyes",
+"neighbourhood": "Hipódromo",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4071584",
+"19.4073378",
+"-99.1744438",
+"-99.1742366"
+]
+}
+],
+"Campeche 396, Condesa, México": [
+{
+"place_id": 309298913,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420909623,
+"lat": "19.4101324",
+"lon": "-99.1757903",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "396, Calle Campeche, Hipódromo Condesa, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06170, México",
+"address": {
+"house_number": "396",
+"road": "Calle Campeche",
+"neighbourhood": "Hipódromo Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06170",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4100529",
+"19.4102121",
+"-99.1758881",
+"-99.1756926"
+]
+}
+],
+"Puebla 90, Roma Norte, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 312243621,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204063,
+"lat": "19.4230498",
+"lon": "-99.1586295",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "90, Calle Puebla, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "90",
+"road": "Calle Puebla",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4229390",
+"19.4231543",
+"-99.1587448",
+"-99.1585131"
+]
+},
+{
+"place_id": 312238061,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 12817527801,
+"lat": "19.4231332",
+"lon": "-99.1587029",
+"category": "amenity",
+"type": "cafe",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Café Tormenta",
+"display_name": "Café Tormenta, 90, Calle Puebla, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"amenity": "Café Tormenta",
+"house_number": "90",
+"road": "Calle Puebla",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4230832",
+"19.4231832",
+"-99.1587529",
+"-99.1586529"
+]
+}
+],
+"Dr. José María Vértiz 1024, Narvarte, México": [
+{
+"place_id": 308440347,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 569407359,
+"lat": "19.3955440",
+"lon": "-99.1510018",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Avenida Doctor José María Vértiz",
+"display_name": "Avenida Doctor José María Vértiz, Colonia Narvarte Oriente, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Avenida Doctor José María Vértiz",
+"neighbourhood": "Colonia Narvarte Oriente",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3954836",
+"19.3956044",
+"-99.1510059",
+"-99.1509968"
+]
+},
+{
+"place_id": 314255299,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617510820,
+"lat": "19.4040412",
+"lon": "-99.1502707",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Avenida Doctor José María Vértiz",
+"display_name": "Avenida Doctor José María Vértiz, Buenos Aires, La Piedad, Ciudad de México, Benito Juárez, Ciudad de México, 03010, México",
+"address": {
+"road": "Avenida Doctor José María Vértiz",
+"neighbourhood": "Buenos Aires",
+"quarter": "La Piedad",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03010",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4039224",
+"19.4041600",
+"-99.1502934",
+"-99.1502480"
+]
+},
+{
+"place_id": 311371677,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24700800,
+"lat": "19.4038801",
+"lon": "-99.1501634",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Avenida Doctor José María Vértiz",
+"display_name": "Avenida Doctor José María Vértiz, Colonia Atenor Sala, La Piedad, Ciudad de México, Benito Juárez, Ciudad de México, 03010, México",
+"address": {
+"road": "Avenida Doctor José María Vértiz",
+"neighbourhood": "Colonia Atenor Sala",
+"quarter": "La Piedad",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03010",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4038415",
+"19.4039187",
+"-99.1501693",
+"-99.1501575"
+]
+}
+],
+"Mazatlán 81, Condesa, México": [
+{
+"place_id": 311072608,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420617250,
+"lat": "19.4144716",
+"lon": "-99.1772674",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "81, Avenida Mazatlán, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"house_number": "81",
+"road": "Avenida Mazatlán",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4143731",
+"19.4145676",
+"-99.1773591",
+"-99.1771764"
+]
+},
+{
+"place_id": 311114047,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 1042263321,
+"lat": "19.4144162",
+"lon": "-99.1772819",
+"category": "shop",
+"type": "convenience",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "Green Corner",
+"display_name": "Green Corner, 81, Avenida Mazatlán, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"shop": "Green Corner",
+"house_number": "81",
+"road": "Avenida Mazatlán",
+"neighbourhood": "Condesa",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4143662",
+"19.4144662",
+"-99.1773319",
+"-99.1772319"
+]
+}
+],
+"Orizaba 96, Roma Norte, México": [
+{
+"place_id": 314223361,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1421204600,
+"lat": "19.4190281",
+"lon": "-99.1597425",
+"category": "building",
+"type": "apartments",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "96, Calle Orizaba, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "96",
+"road": "Calle Orizaba",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4189532",
+"19.4191253",
+"-99.1598235",
+"-99.1596621"
+]
+}
+],
+"Mercado Roma, tercer, Roma Norte, México": [],
+"Petén 434, Narvarte, México": [
+{
+"place_id": 311880555,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 617237573,
+"lat": "19.3857467",
+"lon": "-99.1534904",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Petén",
+"display_name": "Calle Petén, Colonia Narvarte Oriente, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle Petén",
+"neighbourhood": "Colonia Narvarte Oriente",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3820944",
+"19.3894058",
+"-99.1541281",
+"-99.1529117"
+]
+},
+{
+"place_id": 309169993,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 4794210,
+"lat": "19.4029327",
+"lon": "-99.1518355",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Petén",
+"display_name": "Calle Petén, Colonia Piedad Narvarte, La Piedad, Ciudad de México, Benito Juárez, Ciudad de México, 03000, México",
+"address": {
+"road": "Calle Petén",
+"neighbourhood": "Colonia Piedad Narvarte",
+"quarter": "La Piedad",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4019877",
+"19.4038776",
+"-99.1519281",
+"-99.1517415"
+]
+},
+{
+"place_id": 309874843,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 664703503,
+"lat": "19.4019286",
+"lon": "-99.1519329",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Petén",
+"display_name": "Calle Petén, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03000, México",
+"address": {
+"road": "Calle Petén",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4018694",
+"19.4019877",
+"-99.1519377",
+"-99.1519281"
+]
+}
+],
+"Sinaloa 69, Roma Norte, México": [
+{
+"place_id": 312426341,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420811253,
+"lat": "19.4209838",
+"lon": "-99.1671142",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "69, Calle Sinaloa, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "69",
+"road": "Calle Sinaloa",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4208885",
+"19.4210778",
+"-99.1671697",
+"-99.1670565"
+]
+}
+],
+"José Alvarado 30, segundo, Roma Norte, México": [],
+"Oaxaca 93, Roma Norte, México": [
+{
+"place_id": 312373359,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420811582,
+"lat": "19.4189547",
+"lon": "-99.1676031",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "93, Avenida Oaxaca, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "93",
+"road": "Avenida Oaxaca",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4188525",
+"19.4190568",
+"-99.1677050",
+"-99.1674863"
+]
+}
+],
+"Torres Adalid 636, Narvarte, México": [
+{
+"place_id": 312304487,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 25312326,
+"lat": "19.3879302",
+"lon": "-99.1475601",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Torres Adalid",
+"display_name": "Calle Torres Adalid, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03023, México",
+"address": {
+"road": "Calle Torres Adalid",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03023",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3878340",
+"19.3880351",
+"-99.1481190",
+"-99.1469996"
+]
+},
+{
+"place_id": 312339640,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 654544887,
+"lat": "19.3903098",
+"lon": "-99.1606408",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada Segunda Torres Adalid",
+"display_name": "Cerrada Segunda Torres Adalid, Colonia Narvarte Poniente, Ciudad de México, Benito Juárez, Ciudad de México, 03020, México",
+"address": {
+"road": "Cerrada Segunda Torres Adalid",
+"neighbourhood": "Colonia Narvarte Poniente",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03020",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3900407",
+"19.3905788",
+"-99.1607114",
+"-99.1605702"
+]
+},
+{
+"place_id": 311857984,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 654544889,
+"lat": "19.3903661",
+"lon": "-99.1608982",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada Primera Torres Adalid",
+"display_name": "Cerrada Primera Torres Adalid, Colonia Narvarte Poniente, Ciudad de México, Benito Juárez, Ciudad de México, 03020, México",
+"address": {
+"road": "Cerrada Primera Torres Adalid",
+"neighbourhood": "Colonia Narvarte Poniente",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03020",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3900981",
+"19.3906341",
+"-99.1609581",
+"-99.1608382"
+]
+}
+],
+"Puebla 236 esq. Medellín, Roma Norte, México": [],
+"Av. Álvaro Obregón 130, Roma Norte, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 312425646,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 6937456863,
+"lat": "19.4179168",
+"lon": "-99.1606122",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "El Parián",
+"display_name": "El Parián, 130, Avenida Álvaro Obregón, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"amenity": "El Parián",
+"house_number": "130",
+"road": "Avenida Álvaro Obregón",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4178668",
+"19.4179668",
+"-99.1606622",
+"-99.1605622"
+]
+}
+],
+"Chiapas 46, Roma Norte, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 311121312,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24684794,
+"lat": "19.4133263",
+"lon": "-99.1576335",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Chiapas",
+"display_name": "Calle Chiapas, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Chiapas",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4127698",
+"19.4139156",
+"-99.1605848",
+"-99.1546888"
+]
+},
+{
+"place_id": 311086694,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 654745861,
+"lat": "19.4133360",
+"lon": "-99.1566015",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada Chiapas",
+"display_name": "Cerrada Chiapas, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Cerrada Chiapas",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4131367",
+"19.4135353",
+"-99.1566467",
+"-99.1565564"
+]
+}
+],
+"Puebla 231, Roma Norte, México": [
+{
+"place_id": 311051230,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420811545,
+"lat": "19.4220738",
+"lon": "-99.1666998",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "231, Calle Puebla, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"house_number": "231",
+"road": "Calle Puebla",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4218656",
+"19.4222180",
+"-99.1667802",
+"-99.1666016"
+]
+}
+],
+"Tapachula 94, Roma Norte, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 311341874,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24690037,
+"lat": "19.4117464",
+"lon": "-99.1636535",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tapachula",
+"display_name": "Calle Tapachula, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Calle Tapachula",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4112989",
+"19.4122540",
+"-99.1661278",
+"-99.1611909"
+]
+}
+],
+"Av. Álvaro Obregón 100, Roma Norte, México": [
+{
+"place_id": 311414800,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 12628683401,
+"lat": "19.4181560",
+"lon": "-99.1592321",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Taquería Orinoco",
+"display_name": "Taquería Orinoco, 100, Avenida Álvaro Obregón, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"amenity": "Taquería Orinoco",
+"house_number": "100",
+"road": "Avenida Álvaro Obregón",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4181060",
+"19.4182060",
+"-99.1592821",
+"-99.1591821"
+]
+}
+],
+"Zamora 7, Condesa, México": [
+{
+"place_id": 311041088,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1420618077,
+"lat": "19.4194539",
+"lon": "-99.1765970",
+"category": "amenity",
+"type": "theatre",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Foro Shakespeare",
+"display_name": "Foro Shakespeare, 7, Calle Zamora, Condesa, San Miguel Chapultepec, Ciudad de México, Cuauhtémoc, Ciudad de México, 06140, México",
+"address": {
+"amenity": "Foro Shakespeare",
+"house_number": "7",
+"road": "Calle Zamora",
+"neighbourhood": "Condesa",
+"quarter": "San Miguel Chapultepec",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06140",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4193624",
+"19.4195469",
+"-99.1767309",
+"-99.1764637"
+]
+}
+],
+"Av. Presidente Masaryk 393 (por confirmar), Polanco, México": [],
+"Lago Zurich 219–245, Carso 2, Ampliación Granada, México": [],
+"Bosque de Duraznos 39, Pabellón Bosques, Bosques de las Lomas, México": [],
+"Virgilio 9-, Polanco, México": [
+{
+"place_id": 312448989,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 5780503141,
+"lat": "19.4307781",
+"lon": "-99.1971284",
+"category": "shop",
+"type": "bag",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "O Bag Store",
+"display_name": "O Bag Store, 9, Calle Virgilio, Polanco 3ª Sección, Polanco, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11540, México",
+"address": {
+"shop": "O Bag Store",
+"house_number": "9",
+"road": "Calle Virgilio",
+"neighbourhood": "Polanco 3ª Sección",
+"suburb": "Polanco",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11540",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4307281",
+"19.4308281",
+"-99.1971784",
+"-99.1970784"
+]
+}
+],
+"Av José Vasconselos 267, San Miguel Chapultepec, México": [],
+"Laguna de Términos 249, Polanco, México": [
+{
+"place_id": 312140507,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1190750038,
+"lat": "19.4433053",
+"lon": "-99.1824288",
+"category": "building",
+"type": "commercial",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "249, Calle Laguna de Términos, Mariano Escobedo, Polanco, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11310, México",
+"address": {
+"house_number": "249",
+"road": "Calle Laguna de Términos",
+"neighbourhood": "Mariano Escobedo",
+"suburb": "Polanco",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11310",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4430050",
+"19.4434915",
+"-99.1828601",
+"-99.1820212"
+]
+}
+],
+"Molinos del Campo 19, San Miguel Chapultepec, México": [
+{
+"place_id": 310792421,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1172325166,
+"lat": "19.4119466",
+"lon": "-99.1887816",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada General Francisco Molinos del Campo",
+"display_name": "Cerrada General Francisco Molinos del Campo, San Miguel Chapultepec 1ª Sección, San Miguel Chapultepec, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11850, México",
+"address": {
+"road": "Cerrada General Francisco Molinos del Campo",
+"neighbourhood": "San Miguel Chapultepec 1ª Sección",
+"quarter": "San Miguel Chapultepec",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11850",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4114393",
+"19.4124538",
+"-99.1889779",
+"-99.1885853"
+]
+},
+{
+"place_id": 311348549,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 335975614,
+"lat": "19.4129612",
+"lon": "-99.1883853",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada General Francisco Molinos del Campo",
+"display_name": "Cerrada General Francisco Molinos del Campo, San Miguel Chapultepec 2ª Sección, San Miguel Chapultepec, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11850, México",
+"address": {
+"road": "Cerrada General Francisco Molinos del Campo",
+"neighbourhood": "San Miguel Chapultepec 2ª Sección",
+"quarter": "San Miguel Chapultepec",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11850",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4124538",
+"19.4134685",
+"-99.1885853",
+"-99.1881852"
+]
+}
+],
+"Gob. Rafael Rebollar 94, San Miguel Chapultepec, México": [],
+"Lamartine 300, Polanco, México": [
+{
+"place_id": 311076252,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 8231879217,
+"lat": "19.4332543",
+"lon": "-99.1896290",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Gelateria & Pasticceria Don Nino",
+"display_name": "Gelateria & Pasticceria Don Nino, 300, Calle Lamartine, Polanco 5ª Sección, Polanco, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11560, México",
+"address": {
+"amenity": "Gelateria & Pasticceria Don Nino",
+"house_number": "300",
+"road": "Calle Lamartine",
+"neighbourhood": "Polanco 5ª Sección",
+"suburb": "Polanco",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11560",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4332043",
+"19.4333043",
+"-99.1896790",
+"-99.1895790"
+]
+}
+],
+"Miguel de Cervantes Saavedra 303, Granada, México": [
+{
+"place_id": 311748665,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24985082,
+"lat": "19.4410129",
+"lon": "-99.1968752",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Boulevard Miguel de Cervantes Saavedra",
+"display_name": "Boulevard Miguel de Cervantes Saavedra, Granada, Nuevo Polanco, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11520, México",
+"address": {
+"road": "Boulevard Miguel de Cervantes Saavedra",
+"neighbourhood": "Granada",
+"quarter": "Nuevo Polanco",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11520",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4401605",
+"19.4410596",
+"-99.2029937",
+"-99.1906200"
+]
+}
+],
+"Paseo de la Reforma 51, primera sección del Bosque de Chapultepec, México": [],
+"Gobernador Gregorio V. Gelati 105, San Miguel Chapultepec, México": [],
+"Juan de la Barrera 143, San Miguel Chapultepec, México": [
+{
+"place_id": 312566277,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 126882842,
+"lat": "19.4184748",
+"lon": "-99.1790810",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Juan de la Barrera",
+"display_name": "Calle Juan de la Barrera, San Miguel Chapultepec 2ª Sección, San Miguel Chapultepec, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11850, México",
+"address": {
+"road": "Calle Juan de la Barrera",
+"neighbourhood": "San Miguel Chapultepec 2ª Sección",
+"quarter": "San Miguel Chapultepec",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11850",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4182184",
+"19.4187173",
+"-99.1795864",
+"-99.1785825"
+]
+}
+],
+"Av. Isaac Newton 300, Polanco, Miguel Hildalgo, Mexico, México": [],
+"Bruselas 7, Juárez, México": [
+{
+"place_id": 311005625,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1229209858,
+"lat": "19.4283739",
+"lon": "-99.1565002",
+"category": "building",
+"type": "apartments",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "7, Calle Bruselas, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"house_number": "7",
+"road": "Calle Bruselas",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4283261",
+"19.4285163",
+"-99.1565863",
+"-99.1563374"
+]
+}
+],
+"Plaza de la Ciudadela 4, Centro, México": [
+{
+"place_id": 312218440,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24836217,
+"lat": "19.4296344",
+"lon": "-99.1506385",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Plaza de la Ciudadela",
+"display_name": "Calle Plaza de la Ciudadela, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06040, México",
+"address": {
+"road": "Calle Plaza de la Ciudadela",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06040",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4295432",
+"19.4297043",
+"-99.1509584",
+"-99.1503156"
+]
+}
+],
+"Eje 1 Norte Mosqueta s/n, esquina Aldama, Buenavista, México": [],
+"Havre 73, Juárez, México": [
+{
+"place_id": 311209106,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1222125564,
+"lat": "19.4253113",
+"lon": "-99.1607716",
+"category": "building",
+"type": "house",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "73, Calle Havre, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"house_number": "73",
+"road": "Calle Havre",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4252145",
+"19.4254001",
+"-99.1608873",
+"-99.1606585"
+]
+},
+{
+"place_id": 311845847,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 11458397915,
+"lat": "19.4253307",
+"lon": "-99.1606790",
+"category": "place",
+"type": "house",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "place",
+"name": "",
+"display_name": "73, Calle Havre, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"house_number": "73",
+"road": "Calle Havre",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4252807",
+"19.4253807",
+"-99.1607290",
+"-99.1606290"
+]
+},
+{
+"place_id": 312420248,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 4595815090,
+"lat": "19.4252812",
+"lon": "-99.1607198",
+"category": "shop",
+"type": "bakery",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "Panadería Rosetta",
+"display_name": "Panadería Rosetta, 73, Calle Havre, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"shop": "Panadería Rosetta",
+"house_number": "73",
+"road": "Calle Havre",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4252312",
+"19.4253312",
+"-99.1607698",
+"-99.1606698"
+]
+}
+],
+"Eje Central Lázaro Cárdenas 42, Centro Histórico, México": [],
+"Río Nazas 43, Cuauhtémoc, México": [
+{
+"place_id": 311043454,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 145961903,
+"lat": "19.4313446",
+"lon": "-99.1691249",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Río Nazas",
+"display_name": "Calle Río Nazas, Cuauhtémoc, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06500, México",
+"address": {
+"road": "Calle Río Nazas",
+"neighbourhood": "Cuauhtémoc",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06500",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4294112",
+"19.4333060",
+"-99.1732780",
+"-99.1649849"
+]
+}
+],
+"Dr. Lavista 189, Doctores, México": [
+{
+"place_id": 309950683,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1198088179,
+"lat": "19.4238522",
+"lon": "-99.1481712",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Doctor Lavista",
+"display_name": "Calle Doctor Lavista, Doctores, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06720, México",
+"address": {
+"road": "Calle Doctor Lavista",
+"neighbourhood": "Doctores",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06720",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4237421",
+"19.4239765",
+"-99.1495824",
+"-99.1467589"
+]
+}
+],
+"Luis Moya 31, Centro Histórico, México": [],
+"Milán 45, esquina Roma, Juárez, México": [],
+"Antiguo Palacio del Ayuntamiento, Plaza de la Constitución 2, Centro Histórico, México": [],
+"Río Tigris 148, Cuauhtémoc, México": [
+{
+"place_id": 310980781,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 6027800,
+"lat": "19.4320065",
+"lon": "-99.1678814",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Río Tigris",
+"display_name": "Calle Río Tigris, Cuauhtémoc, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06500, México",
+"address": {
+"road": "Calle Río Tigris",
+"neighbourhood": "Cuauhtémoc",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06500",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4295784",
+"19.4344619",
+"-99.1691067",
+"-99.1665901"
+]
+}
+],
+"Marsella 28 Cuauhtémoc, Juárez, México": [
+{
+"place_id": 312225478,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1222831037,
+"lat": "19.4259985",
+"lon": "-99.1574188",
+"category": "building",
+"type": "hotel",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "28, Calle Marsella, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"house_number": "28",
+"road": "Calle Marsella",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4258473",
+"19.4262312",
+"-99.1576109",
+"-99.1573162"
+]
+}
+],
+"Río Lerma 297, Cuauhtémoc, Juárez, México": [],
+"Londres 28, Juárez, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 308014735,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1230520919,
+"lat": "19.4278788",
+"lon": "-99.1584973",
+"category": "building",
+"type": "house",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "28, Calle Londres, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"house_number": "28",
+"road": "Calle Londres",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4278254",
+"19.4279722",
+"-99.1585655",
+"-99.1584161"
+]
+}
+],
+"Belisario Domínguez 70-72, Centro, México": [
+{
+"place_id": 311211105,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 4278412389,
+"lat": "19.4379928",
+"lon": "-99.1350335",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "La Hostería de Santo Domingo",
+"display_name": "La Hostería de Santo Domingo, 70-72, Calle Belisario Domínguez, Centro, Ciudad de México, Cuauhtémoc, Ciudad de México, 06010, México",
+"address": {
+"amenity": "La Hostería de Santo Domingo",
+"house_number": "70-72",
+"road": "Calle Belisario Domínguez",
+"neighbourhood": "Centro",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06010",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4379428",
+"19.4380428",
+"-99.1350835",
+"-99.1349835"
+]
+}
+],
+"Londres 130 (hotel Casa Prim), Juárez, México": [],
+"Emilio Dondé 68B, Centro, México": [
+{
+"place_id": 309280478,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 616812021,
+"lat": "19.4303068",
+"lon": "-99.1492649",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Emilio Dondé",
+"display_name": "Calle Emilio Dondé, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06040, México",
+"address": {
+"road": "Calle Emilio Dondé",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06040",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4301673",
+"19.4304463",
+"-99.1501640",
+"-99.1483658"
+]
+},
+{
+"place_id": 310239640,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1150560854,
+"lat": "19.4301870",
+"lon": "-99.1482995",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Emilio Dondé",
+"display_name": "Calle Emilio Dondé, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06070, México",
+"address": {
+"road": "Calle Emilio Dondé",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06070",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4301673",
+"19.4301887",
+"-99.1483658",
+"-99.1482303"
+]
+},
+{
+"place_id": 309280427,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1240905478,
+"lat": "19.4310837",
+"lon": "-99.1515408",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Emilio Dondé",
+"display_name": "Calle Emilio Dondé, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"road": "Calle Emilio Dondé",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4310332",
+"19.4310992",
+"-99.1516423",
+"-99.1514519"
+]
+}
+],
+"Río Nazas 24, Cuauhtémoc, México": [
+{
+"place_id": 312690445,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 145961903,
+"lat": "19.4313446",
+"lon": "-99.1691249",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Río Nazas",
+"display_name": "Calle Río Nazas, Cuauhtémoc, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06500, México",
+"address": {
+"road": "Calle Río Nazas",
+"neighbourhood": "Cuauhtémoc",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06500",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4294112",
+"19.4333060",
+"-99.1732780",
+"-99.1649849"
+]
+}
+],
+"Marsella 92, Juárez, México": [
+{
+"place_id": 309892913,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1221633327,
+"lat": "19.4244407",
+"lon": "-99.1610903",
+"category": "building",
+"type": "house",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "92, Calle Marsella, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"house_number": "92",
+"road": "Calle Marsella",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4244154",
+"19.4244775",
+"-99.1611201",
+"-99.1610623"
+]
+}
+],
+"Humboldt 59, Centro, México": [
+{
+"place_id": 310239977,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24836247,
+"lat": "19.4341862",
+"lon": "-99.1483917",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Humboldt",
+"display_name": "Calle Humboldt, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06040, México",
+"address": {
+"road": "Calle Humboldt",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06040",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4330545",
+"19.4353180",
+"-99.1486467",
+"-99.1481367"
+]
+},
+{
+"place_id": 309296393,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1319627996,
+"lat": "19.4356797",
+"lon": "-99.1480567",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Humboldt",
+"display_name": "Calle Humboldt, Centro, Ciudad de México, Cuauhtémoc, Ciudad de México, 06040, México",
+"address": {
+"road": "Calle Humboldt",
+"neighbourhood": "Centro",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06040",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4353180",
+"19.4360414",
+"-99.1481367",
+"-99.1479767"
+]
+}
+],
+"Amberes 65, Juárez, México": [
+{
+"place_id": 311039548,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24697286,
+"lat": "19.4256996",
+"lon": "-99.1653446",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Amberes",
+"display_name": "Calle Amberes, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"road": "Calle Amberes",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4241235",
+"19.4272757",
+"-99.1661685",
+"-99.1645207"
+]
+}
+],
+"López 103, Centro, Cuauhtémoc, Mexico, México": [
+{
+"place_id": 311042963,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24703903,
+"lat": "19.4312343",
+"lon": "-99.1423475",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle López",
+"display_name": "Calle López, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06050, México",
+"address": {
+"road": "Calle López",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06050",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4280692",
+"19.4343873",
+"-99.1427845",
+"-99.1418300"
+]
+},
+{
+"place_id": 311086394,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 866735729,
+"lat": "19.4274999",
+"lon": "-99.1428695",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle López",
+"display_name": "Calle López, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06070, México",
+"address": {
+"road": "Calle López",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06070",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4269307",
+"19.4280692",
+"-99.1429544",
+"-99.1427845"
+]
+}
+],
+"Av. Francisco I. Madero 71, Centro, Cuauhtémoc, Mexico, México": [],
+"Motolinía 21, Centro, México": [
+{
+"place_id": 311010205,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1422209424,
+"lat": "19.4341350",
+"lon": "-99.1374877",
+"category": "building",
+"type": "yes",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "21, Calle Motolinia, Centro, Ciudad de México, Cuauhtémoc, Ciudad de México, 06060, México",
+"address": {
+"house_number": "21",
+"road": "Calle Motolinia",
+"neighbourhood": "Centro",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06060",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4340149",
+"19.4342384",
+"-99.1377397",
+"-99.1372459"
+]
+}
+],
+"Aniceto Ortega 1148, del Valle, Del Valle, México": [
+{
+"place_id": 311457964,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 25364852,
+"lat": "19.3756303",
+"lon": "-99.1661002",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Aniceto Ortega",
+"display_name": "Calle Aniceto Ortega, Colonia Del Valle Centro, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03100, México",
+"address": {
+"road": "Calle Aniceto Ortega",
+"neighbourhood": "Colonia Del Valle Centro",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3711788",
+"19.3800879",
+"-99.1672139",
+"-99.1650121"
+]
+},
+{
+"place_id": 311338409,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 865136100,
+"lat": "19.3817082",
+"lon": "-99.1645899",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Cerrada Aniceto Ortega",
+"display_name": "Cerrada Aniceto Ortega, Colonia Del Valle Centro, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03100, México",
+"address": {
+"road": "Cerrada Aniceto Ortega",
+"neighbourhood": "Colonia Del Valle Centro",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3813191",
+"19.3820972",
+"-99.1646864",
+"-99.1644935"
+]
+}
+],
+"Recreo 27, del Valle, Del Valle, México": [
+{
+"place_id": 312491753,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 4841388,
+"lat": "19.3722027",
+"lon": "-99.1773415",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Recreo",
+"display_name": "Calle Recreo, Actipan, Santo Tomás Actipan, Ciudad de México, Benito Juárez, Ciudad de México, 03104, México",
+"address": {
+"road": "Calle Recreo",
+"neighbourhood": "Actipan",
+"quarter": "Santo Tomás Actipan",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03104",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3711398",
+"19.3732673",
+"-99.1776106",
+"-99.1770798"
+]
+}
+],
+"Hamburgo 70B, Juárez, México": [
+{
+"place_id": 312425037,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1243784901,
+"lat": "19.4284563",
+"lon": "-99.1600087",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Hamburgo",
+"display_name": "Calle Hamburgo, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"road": "Calle Hamburgo",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4281234",
+"19.4287891",
+"-99.1607020",
+"-99.1593153"
+]
+},
+{
+"place_id": 311220013,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1232841046,
+"lat": "19.4225447",
+"lon": "-99.1725757",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Hamburgo",
+"display_name": "Calle Hamburgo, Juárez, Condesa, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"road": "Calle Hamburgo",
+"neighbourhood": "Juárez",
+"suburb": "Condesa",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4223010",
+"19.4227884",
+"-99.1730954",
+"-99.1720560"
+]
+}
+],
+"Av. Río Churubusco 601, Mítikah, Xoco, México": [],
+"Manzanas 27-B, Tlacoquemecatl del Valle, Benito Juárez, Mexico, México": [
+{
+"place_id": 312299972,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 4841412,
+"lat": "19.3761447",
+"lon": "-99.1775376",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Manzanas",
+"display_name": "Calle Manzanas, Colonia Tlacoquemecatl, San Lorenzo Xochimanca, Ciudad de México, Benito Juárez, Ciudad de México, 03200, México",
+"address": {
+"road": "Calle Manzanas",
+"neighbourhood": "Colonia Tlacoquemecatl",
+"quarter": "San Lorenzo Xochimanca",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03200",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3735356",
+"19.3787642",
+"-99.1781925",
+"-99.1769247"
+]
+}
+],
+"Tlacoquemecatl 47, Del Valle, México": [
+{
+"place_id": 311521036,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 4841404,
+"lat": "19.3773476",
+"lon": "-99.1680910",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tlacoquemécatl",
+"display_name": "Calle Tlacoquemécatl, Tlacoquemecatl del Valle, Santa Cruz Tlacoquemécatl, Ciudad de México, Benito Juárez, Ciudad de México, 03200, México",
+"address": {
+"road": "Calle Tlacoquemécatl",
+"neighbourhood": "Tlacoquemecatl del Valle",
+"quarter": "Santa Cruz Tlacoquemécatl",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03200",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3766921",
+"19.3779340",
+"-99.1711380",
+"-99.1650570"
+]
+},
+{
+"place_id": 311416885,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 351275191,
+"lat": "19.3779423",
+"lon": "-99.1712081",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle Tlacoquemécatl",
+"display_name": "Calle Tlacoquemécatl, Tlacoquemecatl del Valle, Santa Cruz Tlacoquemécatl, Ciudad de México, Benito Juárez, Ciudad de México, 03200, México",
+"address": {
+"road": "Calle Tlacoquemécatl",
+"neighbourhood": "Tlacoquemecatl del Valle",
+"quarter": "Santa Cruz Tlacoquemécatl",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03200",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3779340",
+"19.3779505",
+"-99.1712782",
+"-99.1711380"
+]
+},
+{
+"place_id": 309877890,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 351275190,
+"lat": "19.3784665",
+"lon": "-99.1742592",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Tlacoquemécatl",
+"display_name": "Calle Tlacoquemécatl, Colonia Tlacoquemecatl, Santa Cruz Tlacoquemécatl, Ciudad de México, Benito Juárez, Ciudad de México, 03200, México",
+"address": {
+"road": "Calle Tlacoquemécatl",
+"neighbourhood": "Colonia Tlacoquemecatl",
+"quarter": "Santa Cruz Tlacoquemécatl",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03200",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3779505",
+"19.3787979",
+"-99.1772666",
+"-99.1712782"
+]
+}
+],
+"Av. Coyoacán 1435, Del Valle, México": [
+{
+"place_id": 311575797,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 654760648,
+"lat": "19.3864510",
+"lon": "-99.1673200",
+"category": "highway",
+"type": "primary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "primary",
+"name": "Avenida Coyoacán",
+"display_name": "Avenida Coyoacán, Colonia Del Valle Centro, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03100, México",
+"address": {
+"road": "Avenida Coyoacán",
+"neighbourhood": "Colonia Del Valle Centro",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3832382",
+"19.3896669",
+"-99.1681216",
+"-99.1665309"
+]
+},
+{
+"place_id": 311748861,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 864832719,
+"lat": "19.3937929",
+"lon": "-99.1662914",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Avenida Coyoacán",
+"display_name": "Avenida Coyoacán, Colonia Del Valle, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03103, México",
+"address": {
+"road": "Avenida Coyoacán",
+"neighbourhood": "Colonia Del Valle",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03103",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3926111",
+"19.3949748",
+"-99.1666006",
+"-99.1659822"
+]
+},
+{
+"place_id": 314237221,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 864832722,
+"lat": "19.3966756",
+"lon": "-99.1669738",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Avenida Coyoacán",
+"display_name": "Avenida Coyoacán, Colonia Del Valle, La Piedad, Ciudad de México, Benito Juárez, Ciudad de México, 03103, México",
+"address": {
+"road": "Avenida Coyoacán",
+"neighbourhood": "Colonia Del Valle",
+"quarter": "La Piedad",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03103",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3957922",
+"19.3975590",
+"-99.1671951",
+"-99.1667524"
+]
+}
+],
+"Torres Adalid 1211, Del Valle, México": [
+{
+"place_id": 316033893,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 402788401,
+"lat": "19.3919805",
+"lon": "-99.1694458",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle Torres Adalid",
+"display_name": "Calle Torres Adalid, Colonia Del Valle, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03103, México",
+"address": {
+"road": "Calle Torres Adalid",
+"neighbourhood": "Colonia Del Valle",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03103",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3912273",
+"19.3927187",
+"-99.1727501",
+"-99.1661449"
+]
+},
+{
+"place_id": 312236745,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 693114315,
+"lat": "19.3911410",
+"lon": "-99.1657652",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Torres Adalid",
+"display_name": "Calle Torres Adalid, Colonia Del Valle, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03103, México",
+"address": {
+"road": "Calle Torres Adalid",
+"neighbourhood": "Colonia Del Valle",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03103",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3910546",
+"19.3912273",
+"-99.1661449",
+"-99.1653855"
+]
+},
+{
+"place_id": 312261862,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 691236414,
+"lat": "19.3906675",
+"lon": "-99.1635451",
+"category": "highway",
+"type": "living_street",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "living_street",
+"name": "Calle Torres Adalid",
+"display_name": "Calle Torres Adalid, Colonia Del Valle, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03103, México",
+"address": {
+"road": "Calle Torres Adalid",
+"neighbourhood": "Colonia Del Valle",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03103",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3905941",
+"19.3907408",
+"-99.1638787",
+"-99.1632116"
+]
+}
+],
+"Av. Río Churubusco 601, Xoco, México": [
+{
+"place_id": 311173888,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1102990815,
+"lat": "19.3599383",
+"lon": "-99.1689384",
+"category": "shop",
+"type": "mall",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "shop",
+"name": "Mítikah Centro Comercial",
+"display_name": "Mítikah Centro Comercial, 601, Avenida Río Churubusco, Colonia Xoco, San Sebastián Xoco, Ciudad de México, Benito Juárez, Ciudad de México, 03330, México",
+"address": {
+"shop": "Mítikah Centro Comercial",
+"house_number": "601",
+"road": "Avenida Río Churubusco",
+"neighbourhood": "Colonia Xoco",
+"quarter": "San Sebastián Xoco",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03330",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3593917",
+"19.3607603",
+"-99.1695763",
+"-99.1683279"
+]
+},
+{
+"place_id": 311136129,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 696705535,
+"lat": "19.3594583",
+"lon": "-99.1679517",
+"category": "building",
+"type": "apartments",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "Nomad Mítikah Apartments",
+"display_name": "Nomad Mítikah Apartments, 601, Avenida Río Churubusco, Colonia Xoco, San Sebastián Xoco, Ciudad de México, Benito Juárez, Ciudad de México, 03330, México",
+"address": {
+"building": "Nomad Mítikah Apartments",
+"house_number": "601",
+"road": "Avenida Río Churubusco",
+"neighbourhood": "Colonia Xoco",
+"quarter": "San Sebastián Xoco",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03330",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3591438",
+"19.3597961",
+"-99.1681389",
+"-99.1677806"
+]
+}
+],
+"Av. México-Coyoacán 389, Xoco, México": [
+{
+"place_id": 311939490,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 406874352,
+"lat": "19.3603487",
+"lon": "-99.1636242",
+"category": "amenity",
+"type": "parking",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Estacionamiento de la Cineteca Nacional",
+"display_name": "Estacionamiento de la Cineteca Nacional, 389, Avenida México-Coyoacán, Colonia Xoco, San Sebastián Xoco, Ciudad de México, Benito Juárez, Ciudad de México, 03330, México",
+"address": {
+"amenity": "Estacionamiento de la Cineteca Nacional",
+"house_number": "389",
+"road": "Avenida México-Coyoacán",
+"neighbourhood": "Colonia Xoco",
+"quarter": "San Sebastián Xoco",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03330",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3600384",
+"19.3606308",
+"-99.1639213",
+"-99.1633373"
+]
+},
+{
+"place_id": 311554327,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 2131788146,
+"lat": "19.3604218",
+"lon": "-99.1636028",
+"category": "amenity",
+"type": "bicycle_parking",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Bici estacionamiento Cineteca Nacional",
+"display_name": "Bici estacionamiento Cineteca Nacional, 389, Avenida México-Coyoacán, Colonia Xoco, San Sebastián Xoco, Ciudad de México, Benito Juárez, Ciudad de México, 03330, México",
+"address": {
+"amenity": "Bici estacionamiento Cineteca Nacional",
+"house_number": "389",
+"road": "Avenida México-Coyoacán",
+"neighbourhood": "Colonia Xoco",
+"quarter": "San Sebastián Xoco",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03330",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3603718",
+"19.3604718",
+"-99.1636528",
+"-99.1635528"
+]
+},
+{
+"place_id": 312377688,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 2131788410,
+"lat": "19.3602750",
+"lon": "-99.1633963",
+"category": "amenity",
+"type": "parking",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Estacionamiento Cineteca Nacional",
+"display_name": "Estacionamiento Cineteca Nacional, 389, Avenida México-Coyoacán, Colonia Xoco, San Sebastián Xoco, Ciudad de México, Benito Juárez, Ciudad de México, 03330, México",
+"address": {
+"amenity": "Estacionamiento Cineteca Nacional",
+"house_number": "389",
+"road": "Avenida México-Coyoacán",
+"neighbourhood": "Colonia Xoco",
+"quarter": "San Sebastián Xoco",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03330",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3602250",
+"19.3603250",
+"-99.1634463",
+"-99.1633463"
+]
+}
+],
+"Av. Río Churubusco 79, Country Club Churubusco, México": [],
+"Av. Insurgentes Sur 3000, Centro Cultural Universitario, Ciudad Universitaria, México": [],
+"Museo 150, San Pablo Tepetlapa, México": [
+{
+"place_id": 311160289,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 31779406,
+"lat": "19.3277017",
+"lon": "-99.1403441",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Museo",
+"display_name": "Calle Museo, Colonia Xotepingo, San Pablo Tepetlapa, Ciudad de México, Coyoacán, Ciudad de México, 04610, México",
+"address": {
+"road": "Calle Museo",
+"neighbourhood": "Colonia Xotepingo",
+"quarter": "San Pablo Tepetlapa",
+"city": "Ciudad de México",
+"borough": "Coyoacán",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "04610",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3276268",
+"19.3281604",
+"-99.1412015",
+"-99.1396543"
+]
+},
+{
+"place_id": 311176291,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 569429540,
+"lat": "19.3274671",
+"lon": "-99.1415243",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle Museo",
+"display_name": "Calle Museo, Colonia Xotepingo, San Pablo Tepetlapa, Ciudad de México, Coyoacán, Ciudad de México, 04610, México",
+"address": {
+"road": "Calle Museo",
+"neighbourhood": "Colonia Xotepingo",
+"quarter": "San Pablo Tepetlapa",
+"city": "Ciudad de México",
+"borough": "Coyoacán",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "04610",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3274100",
+"19.3275241",
+"-99.1416079",
+"-99.1414407"
+]
+},
+{
+"place_id": 311160721,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 66310176,
+"lat": "19.3230418",
+"lon": "-99.1435317",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle Museo",
+"display_name": "Calle Museo, Colonia Hidalgo 191, San Pablo Tepetlapa, Ciudad de México, Coyoacán, Ciudad de México, 04620, México",
+"address": {
+"road": "Calle Museo",
+"neighbourhood": "Colonia Hidalgo 191",
+"quarter": "San Pablo Tepetlapa",
+"city": "Ciudad de México",
+"borough": "Coyoacán",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "04620",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3209746",
+"19.3255809",
+"-99.1444711",
+"-99.1429995"
+]
+}
+],
+"Camino a Nativitas 500, Xaltocan, México": [
+{
+"place_id": 311189408,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 33465891,
+"lat": "19.2523944",
+"lon": "-99.1011086",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Camino a Nativitas",
+"display_name": "Camino a Nativitas, Colonia Xaltocan, Santa María Nativitas, Ciudad de México, Xochimilco, Ciudad de México, 16090, México",
+"address": {
+"road": "Camino a Nativitas",
+"neighbourhood": "Colonia Xaltocan",
+"quarter": "Santa María Nativitas",
+"city": "Ciudad de México",
+"borough": "Xochimilco",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "16090",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.2505806",
+"19.2554976",
+"-99.1051217",
+"-99.0964580"
+]
+},
+{
+"place_id": 311220311,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 52834861,
+"lat": "19.2502101",
+"lon": "-99.0949505",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Camino a Nativitas",
+"display_name": "Camino a Nativitas, Colonia San Jerónimo, Santa María Nativitas, Ciudad de México, Xochimilco, Ciudad de México, 16420, México",
+"address": {
+"road": "Camino a Nativitas",
+"neighbourhood": "Colonia San Jerónimo",
+"quarter": "Santa María Nativitas",
+"city": "Ciudad de México",
+"borough": "Xochimilco",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "16420",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.2490906",
+"19.2505806",
+"-99.0964580",
+"-99.0940198"
+]
+}
+],
+"Plaza San Jacinto 11, San Ángel, México": [],
+"Av. Luis Barragán 505, Santa Fe, México": [
+{
+"place_id": 311417328,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 878591203,
+"lat": "19.3531681",
+"lon": "-99.2710279",
+"category": "highway",
+"type": "unclassified",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "unclassified",
+"name": "Avenida Luis Barragán",
+"display_name": "Avenida Luis Barragán, Santa Fe Cuajimalpa, Ciudad de México, Cuajimalpa de Morelos, Ciudad de México, 05348, México",
+"address": {
+"road": "Avenida Luis Barragán",
+"neighbourhood": "Santa Fe Cuajimalpa",
+"city": "Ciudad de México",
+"borough": "Cuajimalpa de Morelos",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "05348",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3526489",
+"19.3536873",
+"-99.2712458",
+"-99.2708100"
+]
+}
+],
+"Av. Vasco de Quiroga 1401, Santa Fe, México": [
+{
+"place_id": 424754595,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "relation",
+"osm_id": 21218662,
+"lat": "19.3885484",
+"lon": "-99.2285169",
+"category": "amenity",
+"type": "cinema",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Cineteca Nacional Chapultepec",
+"display_name": "Cineteca Nacional Chapultepec, 1401, Avenida Vasco de Quiroga, Bejero, Ciudad de México, Álvaro Obregón, Ciudad de México, 01210, México",
+"address": {
+"amenity": "Cineteca Nacional Chapultepec",
+"house_number": "1401",
+"road": "Avenida Vasco de Quiroga",
+"neighbourhood": "Bejero",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01210",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3881147",
+"19.3889375",
+"-99.2289799",
+"-99.2278155"
+]
+},
+{
+"place_id": 424754594,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "relation",
+"osm_id": 21218661,
+"lat": "19.3886995",
+"lon": "-99.2302506",
+"category": "building",
+"type": "yes;university",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "building",
+"name": "CCC Chapultepec",
+"display_name": "CCC Chapultepec, 1401, Avenida Vasco de Quiroga, Bejero, Ciudad de México, Álvaro Obregón, Ciudad de México, 01219, México",
+"address": {
+"building": "CCC Chapultepec",
+"house_number": "1401",
+"road": "Avenida Vasco de Quiroga",
+"neighbourhood": "Bejero",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01219",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3884386",
+"19.3888515",
+"-99.2306010",
+"-99.2294614"
+]
+},
+{
+"place_id": 425570464,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 14111537301,
+"lat": "19.3888533",
+"lon": "-99.2282779",
+"category": "amenity",
+"type": "cafe",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Cafetería 8/12",
+"display_name": "Cafetería 8/12, 1401, Avenida Vasco de Quiroga, Bejero, Ciudad de México, Álvaro Obregón, Ciudad de México, 01210, México",
+"address": {
+"amenity": "Cafetería 8/12",
+"house_number": "1401",
+"road": "Avenida Vasco de Quiroga",
+"neighbourhood": "Bejero",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01210",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3888033",
+"19.3889033",
+"-99.2283279",
+"-99.2282279"
+]
+}
+],
+"Periférico Oriente 1, Ciénega Grande, Xochimilco, México": [],
+"Ignacio Aldama 74, entrada por Berlín 7, Del Carmen, México": [],
+"Av. Altavista 1, San Ángel, México": [
+{
+"place_id": 308116955,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 12661212430,
+"lat": "19.3472199",
+"lon": "-99.1905322",
+"category": "office",
+"type": "company",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "office",
+"name": "Altavista Bussiness Center",
+"display_name": "Altavista Bussiness Center, 1, Avenida Altavista, San Ángel, Ciudad de México, Álvaro Obregón, Ciudad de México, 01000, México",
+"address": {
+"office": "Altavista Bussiness Center",
+"house_number": "1",
+"road": "Avenida Altavista",
+"neighbourhood": "San Ángel",
+"suburb": "San Ángel",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3471699",
+"19.3472699",
+"-99.1905822",
+"-99.1904822"
+]
+}
+],
+"Circuito Circunvalación Poniente F7, Ciudad Satélite, México": [
+{
+"place_id": 312550668,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24956622,
+"lat": "19.5047883",
+"lon": "-99.2485411",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05338810788128477,
+"addresstype": "secondary",
+"name": "Circuito Circunvalación Poniente",
+"display_name": "Circuito Circunvalación Poniente, Ciudad Satélite, Naucalpan Centro, Satelite, Naucalpan de Juárez, Estado de México, 53230, México",
+"address": {
+"road": "Circuito Circunvalación Poniente",
+"neighbourhood": "Ciudad Satélite",
+"suburb": "Naucalpan Centro",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53230",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4988632",
+"19.5083856",
+"-99.2491099",
+"-99.2438701"
+]
+},
+{
+"place_id": 312554947,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 778624624,
+"lat": "19.5194576",
+"lon": "-99.2419579",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05338810788128477,
+"addresstype": "secondary",
+"name": "Circuito Circunvalación Poniente",
+"display_name": "Circuito Circunvalación Poniente, Ciudad Satélite, Satelite, Naucalpan de Juárez, Estado de México, 53119, México",
+"address": {
+"road": "Circuito Circunvalación Poniente",
+"neighbourhood": "Ciudad Satélite",
+"suburb": "Satelite",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53119",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.5183608",
+"19.5205271",
+"-99.2427641",
+"-99.2410932"
+]
+},
+{
+"place_id": 312514051,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 778367463,
+"lat": "19.4980609",
+"lon": "-99.2484980",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05338810788128477,
+"addresstype": "secondary",
+"name": "Circuito Circunvalación Poniente",
+"display_name": "Circuito Circunvalación Poniente, Ciudad Satélite, Naucalpan Centro, San Mateo, Naucalpan de Juárez, Estado de México, 53230, México",
+"address": {
+"road": "Circuito Circunvalación Poniente",
+"neighbourhood": "Ciudad Satélite",
+"suburb": "Naucalpan Centro",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53230",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4979884",
+"19.4984692",
+"-99.2490155",
+"-99.2478339"
+]
+}
+],
+"Maestro Antonio Caso 89, San Rafael, México": [
+{
+"place_id": 311421089,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24866752,
+"lat": "19.4350049",
+"lon": "-99.1625016",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Calle Maestro Antonio Caso",
+"display_name": "Calle Maestro Antonio Caso, San Rafael, Ciudad de México, Cuauhtémoc, Ciudad de México, 06470, México",
+"address": {
+"road": "Calle Maestro Antonio Caso",
+"neighbourhood": "San Rafael",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06470",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4343951",
+"19.4356085",
+"-99.1668702",
+"-99.1581340"
+]
+},
+{
+"place_id": 310722359,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1175175083,
+"lat": "19.4343831",
+"lon": "-99.1580488",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Calle Maestro Antonio Caso",
+"display_name": "Calle Maestro Antonio Caso, Tabacalera, Ciudad de México, Cuauhtémoc, Ciudad de México, 06030, México",
+"address": {
+"road": "Calle Maestro Antonio Caso",
+"neighbourhood": "Tabacalera",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06030",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4343711",
+"19.4343951",
+"-99.1581340",
+"-99.1579637"
+]
+},
+{
+"place_id": 311410790,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 616551859,
+"lat": "19.4360628",
+"lon": "-99.1686051",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Avenida Parque Vía",
+"display_name": "Avenida Parque Vía, San Rafael, Ciudad de México, Cuauhtémoc, Ciudad de México, 06470, México",
+"address": {
+"road": "Avenida Parque Vía",
+"neighbourhood": "San Rafael",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06470",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4357710",
+"19.4363473",
+"-99.1693640",
+"-99.1678490"
+]
+}
+],
+"Blvd. Interlomas 5, Interlomas, Huixquilucan, México": [
+{
+"place_id": 318611232,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 830620667,
+"lat": "19.4007533",
+"lon": "-99.2749374",
+"category": "building",
+"type": "office",
+"place_rank": 30,
+"importance": 4.5001144426596745e-05,
+"addresstype": "building",
+"name": "",
+"display_name": "5, Boulevard Magnocentro, Magnocentro, Montón Cuarteles, La Herradura, Huixquilucan de Degollado, Huixquilucan, Estado de México, 52760, México",
+"address": {
+"house_number": "5",
+"road": "Boulevard Magnocentro",
+"neighbourhood": "Magnocentro",
+"quarter": "Montón Cuarteles",
+"suburb": "La Herradura",
+"city": "Huixquilucan de Degollado",
+"county": "Huixquilucan",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "52760",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4005667",
+"19.4009399",
+"-99.2750820",
+"-99.2747929"
+]
+},
+{
+"place_id": 311124959,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 30107247,
+"lat": "19.4000317",
+"lon": "-99.2690382",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Boulevard Interlomas",
+"display_name": "Boulevard Interlomas, Lomas Anahuác, Montón Cuarteles, Huixquilucan de Degollado, Huixquilucan, Estado de México, 52786, México",
+"address": {
+"road": "Boulevard Interlomas",
+"neighbourhood": "Lomas Anahuác",
+"quarter": "Montón Cuarteles",
+"city": "Huixquilucan de Degollado",
+"county": "Huixquilucan",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "52786",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3997037",
+"19.4009369",
+"-99.2702777",
+"-99.2676416"
+]
+},
+{
+"place_id": 311119117,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 832459232,
+"lat": "19.4015650",
+"lon": "-99.2712025",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Boulevard Interlomas",
+"display_name": "Boulevard Interlomas, Magnocentro, Montón Cuarteles, La Herradura, Huixquilucan de Degollado, Huixquilucan, Estado de México, 52786, México",
+"address": {
+"road": "Boulevard Interlomas",
+"neighbourhood": "Magnocentro",
+"quarter": "Montón Cuarteles",
+"suburb": "La Herradura",
+"city": "Huixquilucan de Degollado",
+"county": "Huixquilucan",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "52786",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4010634",
+"19.4020850",
+"-99.2718830",
+"-99.2705082"
+]
+}
+],
+"Desierto de los Leones 52, San Ángel, México": [
+{
+"place_id": 312783310,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 26484245,
+"lat": "19.3495711",
+"lon": "-99.1886356",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Camino al Desierto de los Leones",
+"display_name": "Camino al Desierto de los Leones, San Ángel, Chimalistac, Ciudad de México, Álvaro Obregón, Ciudad de México, 01000, México",
+"address": {
+"road": "Camino al Desierto de los Leones",
+"neighbourhood": "San Ángel",
+"quarter": "Chimalistac",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3486932",
+"19.3502580",
+"-99.1905006",
+"-99.1866579"
+]
+},
+{
+"place_id": 311148749,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 850174087,
+"lat": "19.3482571",
+"lon": "-99.1913026",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Camino al Desierto de los Leones",
+"display_name": "Camino al Desierto de los Leones, San Ángel, Ciudad de México, Álvaro Obregón, Ciudad de México, 01000, México",
+"address": {
+"road": "Camino al Desierto de los Leones",
+"neighbourhood": "San Ángel",
+"suburb": "San Ángel",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3482075",
+"19.3485820",
+"-99.1920528",
+"-99.1906289"
+]
+},
+{
+"place_id": 311159992,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 687224260,
+"lat": "19.3465580",
+"lon": "-99.2081079",
+"category": "highway",
+"type": "secondary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "secondary",
+"name": "Camino al Desierto de los Leones",
+"display_name": "Camino al Desierto de los Leones, Colonia La Herradura, Las Águilas, Ciudad de México, Álvaro Obregón, Ciudad de México, 01760, México",
+"address": {
+"road": "Camino al Desierto de los Leones",
+"neighbourhood": "Colonia La Herradura",
+"suburb": "Las Águilas",
+"city": "Ciudad de México",
+"borough": "Álvaro Obregón",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "01760",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3454744",
+"19.3468536",
+"-99.2092401",
+"-99.2065752"
+]
+}
+],
+"Héroes de Pedierna 132, San Jerónimo Lídice, México": [],
+"Av. Medellín 191A, Roma Norte, México": [
+{
+"place_id": 318552478,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 569073708,
+"lat": "19.4133524",
+"lon": "-99.1649456",
+"category": "highway",
+"type": "primary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "primary",
+"name": "Avenida Medellín",
+"display_name": "Avenida Medellín, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Avenida Medellín",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4119868",
+"19.4147175",
+"-99.1652876",
+"-99.1646052"
+]
+},
+{
+"place_id": 311053236,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24689938,
+"lat": "19.4183925",
+"lon": "-99.1661830",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Avenida Medellín",
+"display_name": "Avenida Medellín, Roma Norte, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06700, México",
+"address": {
+"road": "Avenida Medellín",
+"neighbourhood": "Roma Norte",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06700",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4171935",
+"19.4195915",
+"-99.1664859",
+"-99.1658800"
+]
+}
+],
+"Calle Tres 55, Lomas de Santa Fe, México": [],
+"Blvd. Manuel Ávila Camacho 3023, La Florida, Naucalpan, México": [
+{
+"place_id": 311316633,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 845500773,
+"lat": "19.4932511",
+"lon": "-99.2368349",
+"category": "highway",
+"type": "trunk",
+"place_rank": 26,
+"importance": 0.34081317763107843,
+"addresstype": "trunk",
+"name": "Boulevard Manuel Ávila Camacho",
+"display_name": "Boulevard Manuel Ávila Camacho, La Florida, Naucalpan Centro, Santa Cruz Acatlán, Naucalpan de Juárez, Estado de México, 53010, México",
+"address": {
+"road": "Boulevard Manuel Ávila Camacho",
+"neighbourhood": "La Florida",
+"suburb": "Naucalpan Centro",
+"village": "Santa Cruz Acatlán",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53010",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4848883",
+"19.5020554",
+"-99.2370604",
+"-99.2345660"
+]
+},
+{
+"place_id": 311158442,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24963099,
+"lat": "19.4951961",
+"lon": "-99.2367195",
+"category": "highway",
+"type": "primary",
+"place_rank": 26,
+"importance": 0.05338810788128477,
+"addresstype": "primary",
+"name": "Boulevard Manuel Ávila Camacho",
+"display_name": "Boulevard Manuel Ávila Camacho, La Florida, Naucalpan Centro, Echegaray, Naucalpan de Juárez, Estado de México, 53300, México",
+"address": {
+"road": "Boulevard Manuel Ávila Camacho",
+"neighbourhood": "La Florida",
+"suburb": "Naucalpan Centro",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53300",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4905516",
+"19.4998382",
+"-99.2367839",
+"-99.2365876"
+]
+},
+{
+"place_id": 311053703,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 432638085,
+"lat": "19.4984351",
+"lon": "-99.2366959",
+"category": "highway",
+"type": "motorway_link",
+"place_rank": 27,
+"importance": 0.04005477454795146,
+"addresstype": "road",
+"name": "Boulevard Manuel Ávila Camacho",
+"display_name": "Boulevard Manuel Ávila Camacho, La Florida, Naucalpan Centro, Echegaray, Naucalpan de Juárez, Estado de México, 53100, México",
+"address": {
+"road": "Boulevard Manuel Ávila Camacho",
+"neighbourhood": "La Florida",
+"suburb": "Naucalpan Centro",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4970316",
+"19.4998382",
+"-99.2367782",
+"-99.2366210"
+]
+}
+],
+"Adolfo Prieto 1439, Del Valle Centro, México": [
+{
+"place_id": 311124399,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 351275179,
+"lat": "19.3822208",
+"lon": "-99.1700747",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle Adolfo Prieto",
+"display_name": "Calle Adolfo Prieto, Colonia Del Valle Centro, Santa Cruz Tlacoquemécatl, Ciudad de México, Benito Juárez, Ciudad de México, 03100, México",
+"address": {
+"road": "Calle Adolfo Prieto",
+"neighbourhood": "Colonia Del Valle Centro",
+"quarter": "Santa Cruz Tlacoquemécatl",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3790085",
+"19.3853596",
+"-99.1709581",
+"-99.1690691"
+]
+},
+{
+"place_id": 311087625,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1175233911,
+"lat": "19.3854897",
+"lon": "-99.1690759",
+"category": "highway",
+"type": "tertiary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "tertiary",
+"name": "Calle Adolfo Prieto",
+"display_name": "Calle Adolfo Prieto, Colonia Del Valle Centro, Del Valle, Ciudad de México, Benito Juárez, Ciudad de México, 03100, México",
+"address": {
+"road": "Calle Adolfo Prieto",
+"neighbourhood": "Colonia Del Valle Centro",
+"suburb": "Del Valle",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3853596",
+"19.3855603",
+"-99.1691810",
+"-99.1690618"
+]
+}
+],
+"Vasco de Quiroga 1800, Centro Comercial Santa Fe, Lomas de Santa Fe, México": [],
+"Monte Líbano 915, Lomas de Chapultepec, México": [
+{
+"place_id": 311892016,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 30641686,
+"lat": "19.4155530",
+"lon": "-99.2255861",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Monte Líbano",
+"display_name": "Calle Monte Líbano, Lomas de Chapultepec 2ª Sección, Lomas de Chapultepec, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11000, México",
+"address": {
+"road": "Calle Monte Líbano",
+"neighbourhood": "Lomas de Chapultepec 2ª Sección",
+"suburb": "Lomas de Chapultepec",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4154185",
+"19.4167247",
+"-99.2289337",
+"-99.2224086"
+]
+},
+{
+"place_id": 312487029,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 30876369,
+"lat": "19.4178312",
+"lon": "-99.2196211",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Calle Monte Líbano",
+"display_name": "Calle Monte Líbano, Lomas de Chapultepec 6ª Sección, Lomas de Chapultepec, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11000, México",
+"address": {
+"road": "Calle Monte Líbano",
+"neighbourhood": "Lomas de Chapultepec 6ª Sección",
+"suburb": "Lomas de Chapultepec",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4169392",
+"19.4180431",
+"-99.2208127",
+"-99.2181127"
+]
+},
+{
+"place_id": 312575294,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 220661064,
+"lat": "19.4185143",
+"lon": "-99.2150208",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Privada Monte Líbano",
+"display_name": "Privada Monte Líbano, Lomas de Chapultepec 6ª Sección, Lomas de Chapultepec, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11000, México",
+"address": {
+"road": "Privada Monte Líbano",
+"neighbourhood": "Lomas de Chapultepec 6ª Sección",
+"suburb": "Lomas de Chapultepec",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11000",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4180547",
+"19.4189739",
+"-99.2151073",
+"-99.2149342"
+]
+}
+],
+"Av. Santa Fe 601, Lomas de Santa Fe, México": [
+{
+"place_id": 311184873,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 5000943543,
+"lat": "19.3871293",
+"lon": "-99.2432802",
+"category": "highway",
+"type": "bus_stop",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "highway",
+"name": "Avenida Constituyentes - Puente CONAFRUT",
+"display_name": "Avenida Constituyentes - Puente CONAFRUT, Boulevard Reforma, Lomas de Bezares, Ciudad de México, Miguel Hidalgo, Ciudad de México, 11910, México",
+"address": {
+"highway": "Avenida Constituyentes - Puente CONAFRUT",
+"road": "Boulevard Reforma",
+"neighbourhood": "Lomas de Bezares",
+"city": "Ciudad de México",
+"borough": "Miguel Hidalgo",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "11910",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3870793",
+"19.3871793",
+"-99.2433302",
+"-99.2432302"
+]
+}
+],
+"Circuito Centro Comercial 2251, Ciudad Satélite, México": [
+{
+"place_id": 311680766,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 10602415465,
+"lat": "19.5095630",
+"lon": "-99.2339622",
+"category": "amenity",
+"type": "cafe",
+"place_rank": 30,
+"importance": 5.47745479514308e-05,
+"addresstype": "amenity",
+"name": "Boicot Café Plaza Satélite",
+"display_name": "Boicot Café Plaza Satélite, 2251, Circuito Centro Comercial, Ciudad Satélite, Satelite, Naucalpan de Juárez, Estado de México, 53100, México",
+"address": {
+"amenity": "Boicot Café Plaza Satélite",
+"house_number": "2251",
+"road": "Circuito Centro Comercial",
+"neighbourhood": "Ciudad Satélite",
+"suburb": "Satelite",
+"city": "Naucalpan de Juárez",
+"state": "Estado de México",
+"ISO3166-2-lvl4": "MX-MEX",
+"postcode": "53100",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.5095130",
+"19.5096130",
+"-99.2340122",
+"-99.2339122"
+]
+}
+],
+"Av. Río Churubusco 79, áreas verdes del CENART, Country Club Churubusco, México": [],
+"Mitla 410, Narvarte, México": [
+{
+"place_id": 313027200,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 24734803,
+"lat": "19.4014701",
+"lon": "-99.1492662",
+"category": "highway",
+"type": "residential",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "residential",
+"name": "Mitla",
+"display_name": "Mitla, Narvarte, Ciudad de México, Benito Juárez, Ciudad de México, 03010, México",
+"address": {
+"road": "Mitla",
+"suburb": "Narvarte",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03010",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4009381",
+"19.4020020",
+"-99.1492876",
+"-99.1492448"
+]
+}
+],
+"Av. Río Churubusco 79, CENART, Country Club Churubusco, México": [],
+"Circuito Centro Comercial 2251, Plaza Satélite, Ciudad Satélite, México": [],
+"Bucareli 69B, Juárez, México": [
+{
+"place_id": 313012345,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 616812018,
+"lat": "19.4308133",
+"lon": "-99.1515622",
+"category": "highway",
+"type": "primary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "primary",
+"name": "Avenida Bucareli",
+"display_name": "Avenida Bucareli, Juárez, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06600, México",
+"address": {
+"road": "Avenida Bucareli",
+"neighbourhood": "Juárez",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06600",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4306223",
+"19.4310332",
+"-99.1517236",
+"-99.1514519"
+]
+},
+{
+"place_id": 322879203,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "way",
+"osm_id": 1243626662,
+"lat": "19.4311715",
+"lon": "-99.1514486",
+"category": "highway",
+"type": "primary",
+"place_rank": 26,
+"importance": 0.05342732661936366,
+"addresstype": "primary",
+"name": "Avenida Bucareli",
+"display_name": "Avenida Bucareli, Centro, Roma, Ciudad de México, Cuauhtémoc, Ciudad de México, 06040, México",
+"address": {
+"road": "Avenida Bucareli",
+"neighbourhood": "Centro",
+"suburb": "Roma",
+"city": "Ciudad de México",
+"borough": "Cuauhtémoc",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "06040",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.4310332",
+"19.4313098",
+"-99.1514519",
+"-99.1514452"
+]
+}
+],
+"Av. Universidad 371, Narvarte Poniente, México": [
+{
+"place_id": 311117222,
+"licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+"osm_type": "node",
+"osm_id": 4630012686,
+"lat": "19.3869115",
+"lon": "-99.1548852",
+"category": "amenity",
+"type": "restaurant",
+"place_rank": 30,
+"importance": 9.399328603031995e-05,
+"addresstype": "amenity",
+"name": "Costra",
+"display_name": "Costra, 371, Avenida Universidad, Ciudad de México, Benito Juárez, Ciudad de México, 03020, México",
+"address": {
+"amenity": "Costra",
+"house_number": "371",
+"road": "Avenida Universidad",
+"city": "Ciudad de México",
+"borough": "Benito Juárez",
+"state": "Ciudad de México",
+"ISO3166-2-lvl4": "MX-CMX",
+"postcode": "03020",
+"country": "México",
+"country_code": "mx"
+},
+"boundingbox": [
+"19.3868615",
+"19.3869615",
+"-99.1549352",
+"-99.1548352"
+]
+}
+]
+}

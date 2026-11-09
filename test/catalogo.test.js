@@ -19,6 +19,10 @@ test('cada lugar nuevo trae fuente (URL), fecha de consulta y precio con su esta
   });
 });
 
+// Mismo nombre a menos de 300 m pero lugares distintos (revisados a mano, 9 nov 2026):
+// · La Cava de la Docena (Obregón 23, apertura de oct 2026 según The Happening) ≠ La Docena (Obregón 31).
+// · Boicot Café es un café DENTRO de Plaza Satélite (alta de la revisión del fundador), no el centro comercial.
+const DISTINTOS = ['La Cava de la Docena|La Docena · Roma', 'Boicot Café Plaza Satélite|Plaza Satélite'];
 test('ningún lugar nuevo repite uno que ya estaba (mismo nombre a menos de 300 m)', () => {
   const app = makeApp({});
   const n = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -28,6 +32,7 @@ test('ningún lugar nuevo repite uno que ya estaba (mismo nombre a menos de 300 
   app.cat().filter(v => /^pq-/.test(v.id) && v.lat != null && !v.coordAprox).forEach(v => viejos.forEach(o => {
     if (o.coordAprox || km(v, o) > 0.3) return;
     const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
+    if (DISTINTOS.indexOf(v.n + '|' + o.n) >= 0) return;
     if (a.length > 3 && (a === b || a.includes(b) && b.length > 5 || b.includes(a) && a.length > 5) && v.cat === o.cat) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.join(' · '));
@@ -187,6 +192,7 @@ test('ningún lugar de OSM repite uno que ya estaba (mismo nombre a menos de 300
   const dup = [];
   app.cat().filter(v => /^os-/.test(v.id)).forEach(v => viejos.forEach(o => {
     const a = n(v.n.split(/ · |, /)[0]), b = n(o.n.split(/ · |, /)[0]);
+    if (DISTINTOS.indexOf(v.n + '|' + o.n) >= 0) return;
     if (a.length > 3 && km(v, o) < 0.3 && (a === b || (a.includes(b) && b.length > 5) || (b.includes(a) && a.length > 5))) dup.push(v.n + ' = ' + o.n);
   }));
   assert(!dup.length, 'repetidos: ' + dup.slice(0, 8).join(' · '));
@@ -222,7 +228,7 @@ test('26f · Santa Fe: sin Jalalpa ni Prados de la Montaña; Cinépolis Patio Sa
   const C = app.cat();
   assert(!C.some(v => /jalalpa|prados de la monta/i.test(v.n)), 'siguen los parques que se pidió quitar');
   const cine = C.find(v => v.id === 'pq-f6673bacff');
-  assert(cine && app.esRecomendable(cine) && /Sigue abierto según SensaCine/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));
+  assert(cine && (app.esRecomendable(cine) || cine.pausa) && /Sigue abierto según SensaCine/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));   // pausa = revisión del fundador 9 nov 2026
   const bonvi = C.filter(v => /La Bonvi/.test(v.n));
   assert(bonvi.length === 2 && bonvi.every(v => /^iv-/.test(v.id) && v.pUrl && v.pEstado === 'por_confirmar'), 'La Bonvi: ' + bonvi.map(v => v.n + ' ' + v.pEstado));
   ['Carolo · Carso', 'Carolo · Interlomas', 'La Popular · Santa Fe', 'Carolo · Santa Fe', 'La Popular · Arcos Bosques'].forEach(n =>
@@ -247,7 +253,7 @@ test('26h · huecos de cobertura (4 nov 2026): cada lugar nuevo trae fuente ofic
     'Ruffian Wine Bar', 'Mitemaki · Polanco', 'Mitemaki · Bosques', 'Baltra'];
   N.forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && /^iv-/.test(v.id) && /^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente oficial');
-    assert(app.esRecomendable(v), n + ' no es recomendable'); });
+    assert(app.esRecomendable(v) || v.pausa, n + ' no es recomendable'); });   // o en pausa por la revisión del fundador (9 nov 2026)
   // Regresión: OpenStreetMap ubicó "Av. Chapultepec 606" en la Roma; el sitio dice San Miguel Chapultepec.
   const m = app.cat().find(x => x.n === 'Cantina El Mirador');
   assert(m.z === 'chapultepec' && km(m, 'chapultepec') < 1.5, 'El Mirador quedó en ' + m.z + ' a ' + km(m, 'chapultepec').toFixed(1) + ' km');
@@ -262,7 +268,7 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
   Object.keys(Z).forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && v.z === Z[n], n + ' en ' + (v && v.z));
     assert(/^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente o con fuente de Google');
-    assert(app.esRecomendable(v), n + ' no es recomendable'); });
+    assert(app.esRecomendable(v) || v.pausa, n + ' no es recomendable'); });   // o en pausa por la revisión del fundador (9 nov 2026)
   const t = app.cat().find(x => x.n === 'Terral Agrobar · San Ángel');
   assert(t.pp === 200 && t.pEstado === 'rango' && t.dias.indexOf(1) < 0, 'Terral: $' + t.pp + ' ' + t.pEstado + ' días ' + t.dias);
   // En San Ángel ya hay dónde tomar algo de noche (antes: 0).
@@ -283,7 +289,8 @@ test('Fonda Fina ($500) + Hanky Panky ($600) con propina incluida = $1,100 pp', 
   assert(f.pp === 500 && h.pp === 600 && f.propinaIncluida && h.propinaIncluida && /fundador/.test(f.pFuente) && /fundador/.test(h.pFuente), JSON.stringify([f.pp, h.pp, f.pFuente]));
   const c = a.costoPlan([f, h]); assert(c.propina === 0 && c.consumo + c.propina === 1100, JSON.stringify(c));
   // Otro restaurante sí paga su 10%.
-  const o = C.find(x => x.n === 'Contramar'); assert(a.costoPlan([o]).propina > 0, 'la propina dejó de sumarse a los demás');
+  // (Contramar quedó con precio "por confirmar" en la revisión del fundador, 9 nov 2026.)
+  const o = C.find(x => x.cat === 'Restaurante' && !x.ppUnknown && x.pp > 0 && !x.propinaIncluida); assert(a.costoPlan([o]).propina > 0, 'la propina dejó de sumarse a los demás: ' + o.n);
 });
 
 if (require.main === module) report();

@@ -113,7 +113,9 @@ test('29.4 · cada evento de GA4 lleva el número anónimo del usuario', () => {
 });
 
 test('29.5 · "Ver otras opciones" trae TIPOS de plan distintos, no sólo otros lugares', () => {
-  const a = makeApp({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], when: 'noche', vibes: ['nightlife'], budget: 'b1000', budgetCustom: null }, { dseed: 5, rseed: 36 });
+  // Lógica del motor (variedad de tipos): corre sobre el catálogo sin la revisión del 9 nov 2026,
+  // que pausó buena parte de la noche de la Roma. Con la revisión: prueba 41.9.
+  const a = makeApp({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], when: 'noche', vibes: ['nightlife'], budget: 'b1000', budgetCustom: null }, { dseed: 5, rseed: 36, sinRevision: true });
   a.runSearch({ nueva: true });
   const tipos = new Set(); let previa = null; let nuevasPorTanda = [];
   for (let i = 0; i < 4; i++) {
@@ -319,7 +321,9 @@ test('33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y 
   // Con $600–1,000 se revisa que no haya nada básico; con $1,000–1,999 (donde caben
   // los hotspots con su precio alto) además que la mayoría sean hotspots.
   ['juarez', 'coyoacan', 'roma', 'polanco', 'condesa'].forEach(z => [1, 2, 3].forEach(sd => ['b1000', 'b1999'].forEach(bud => {
-    const a = makeApp(Object.assign({}, COM, { who: 'date', groupSize: 2, zone: z, zonesSel: [z], budget: bud, vibes: ['foodie', 'romántico'] }), { dseed: sd, rseed: sd * 3 + 1 });
+    // Sin la revisión del 9 nov 2026: con los precios de OpenTable "por confirmar" los hotspots ya no se
+    // distinguen por precio. La parte de "nada básico" se repite con la revisión en la prueba 41.9.
+    const a = makeApp(Object.assign({}, COM, { who: 'date', groupSize: 2, zone: z, zonesSel: [z], budget: bud, vibes: ['foodie', 'romántico'] }), { dseed: sd, rseed: sd * 3 + 1, sinRevision: true });
     a.runSearch({ nueva: true });
     const st = (a.state.results.plans || []).flatMap(pl => pl.stops);
     const mal = st.filter(v => a.esCadenaCasual(v) || /casa de to[ñn]o|garat/i.test(v.n));
@@ -344,7 +348,10 @@ test('33.4 · la lista de hotspots trae fuente y fecha, sólo ids del catálogo,
   assert(H && Object.keys(H.ids).length > 120, 'pocos hotspots');
   Object.values(H.fuentes).forEach(f => assert(/^https?:\/\//.test(f.url) && /^\d{4}-\d{2}-\d{2}$/.test(f.fecha), 'fuente sin url o fecha: ' + f.n));
   const ids = new Set(a.cat().map(v => v.id));
-  Object.entries(H.ids).forEach(([id, h]) => { assert(ids.has(id), 'id que no existe: ' + id); h.f.forEach(f => assert(H.fuentes[f], 'fuente desconocida ' + f)); });
+  // Revisión del fundador (9 nov 2026): una ficha duplicada dada de baja pasa su hotspot a la buena.
+  const DUP = (a._win.SOBRES_REVISION && a._win.SOBRES_REVISION.duplicados) || {};
+  Object.entries(H.ids).forEach(([id, h]) => { assert(ids.has(DUP[id] || id), 'id que no existe: ' + id); h.f.forEach(f => assert(H.fuentes[f], 'fuente desconocida ' + f)); });
+  if (DUP.baltra) assert(a.cat().find(v => v.id === DUP.baltra).hot >= 2, 'Baltra perdió su hotspot al quitar el duplicado');
   ['Quintonil', 'Pujol', 'Handshake Speakeasy', 'Bar Mauro', 'Contramar'].forEach(n => assert(a.cat().find(v => v.n === n).hot >= 2, n + ' no es hotspot'));
   assert(!a.cat().find(v => v.id === 'os-n9965047017').hot, '"Hunan" de Satélite quedó como el Hunan de Marco Beteta');
   const dias = (Date.parse(a.todayISO()) - Date.parse(H.actualizado)) / 864e5;
@@ -400,7 +407,10 @@ test('34.3 · en su fecha los conciertos grandes sí salen, pero no se comen tod
     if (ps.some(p => p.stops.some(v => /^Soda Stereo/.test(v.n)))) soda++;
     assert(ps.filter(p => p.stops.some(v => v.concierto)).length <= 1, 'semilla ' + sd + ': más de una opción con concierto');
   });
-  assert(soda >= 1, 'Soda Stereo (23 nov, Palacio de los Deportes) nunca salió en el Centro');
+  // Si la revisión del fundador (9 nov 2026) lo pausó (hora y boletos sin confirmar), no debe salir.
+  const sodaV = makeApp(COM).cat().find(v => /^Soda Stereo/.test(v.n));
+  if (sodaV && sodaV.pausa) assert(soda === 0, 'Soda Stereo está en pausa y salió');
+  else assert(soda >= 1, 'Soda Stereo (23 nov, Palacio de los Deportes) nunca salió en el Centro');
   // Fuera de su fecha no aparece.
   const a = makeApp(Object.assign({}, COM, { who: 'amigos', groupSize: 4, zone: 'centro', zonesSel: ['centro'], when: 'fecha', customDate: '2026-11-24', vibes: ['nightlife', 'social'] }), { dseed: 1 });
   a.runSearch({ nueva: true });
@@ -462,7 +472,7 @@ test('36.1 · las listas nuevas marcan hotspots sólo de CDMX y sin pegar sucurs
 // las librerías sólo pasaban con nombre de una lista fija (99 Records quedaba fuera).
 test('36.2 · 99 Records (vinilos) y el restaurante Archivo sí se pueden proponer; un archivo histórico no', () => {
   const a = makeApp(COM), C = a.cat();
-  ['99 Records · Roma Norte', '99 Records · Condesa', 'Archivo'].forEach(n => { const v = C.find(x => x.n === n); assert(v && a.esRecomendable(v), n + ' no se propone'); });
+  ['99 Records · Roma Norte', '99 Records · Condesa', 'Archivo'].forEach(n => { const v = C.find(x => x.n === n); assert(v && (a.esRecomendable(v) || v.pausa), n + ' no se propone'); });   // pausa = revisión del fundador (9 nov 2026)
   const acervo = C.find(x => /^Biblioteca del Archivo Nacional/.test(x.n)); assert(!a.esRecomendable(acervo), 'un acervo entró como plan');
 });
 
@@ -485,8 +495,11 @@ test('37.1 · existe "Sin presupuesto": sin tope ni piso, y deja entrar lo de $2
   const a = makeApp(Object.assign({}, ASIA, { budget: 'any' }));
   assert(a.BUD.some(b => b[0] === 'any' && b[1] === 'Sin presupuesto'), 'falta la opción');
   assert(a.budgetMax() >= 99999 && a.budgetMin() === 0 && /sin presupuesto/.test(a.budLabel()), a.budgetMax() + ' ' + a.budgetMin() + ' ' + a.budLabel());
-  const g = a.cat().find(v => v.n === 'Galanga Thai House'); assert(a.budgetOk(g), 'Galanga ($2,000) no entra sin presupuesto');
-  const b = makeApp(ASIA); assert(!b.budgetOk(b.cat().find(v => v.n === 'Galanga Thai House')), 'con $1,000–1,999 Galanga ($2,000) no debe entrar');
+  // Desde la revisión del fundador (9 nov 2026) el precio de Galanga (banda de OpenTable) está
+  // "por confirmar"; la regla se prueba con un restaurante de precio conocido de $2,000 o más.
+  const caro = C0 => C0.find(v => v.cat === 'Restaurante' && !v.ppUnknown && v.pp >= 2000);
+  const g = caro(a.cat()); assert(g && a.budgetOk(g), (g && g.n) + ' ($' + (g && g.pp) + ') no entra sin presupuesto');
+  const b = makeApp(ASIA); const gb = b.cat().find(v => v.id === g.id); assert(!b.budgetOk(gb), 'con $1,000–1,999 ' + g.n + ' ($' + g.pp + ') no debe entrar');
 });
 
 // Regresión: El Mékông, Makan, Warung Makan y Pin-tó Thai no contaban como "China y otras asiáticas".
@@ -510,7 +523,9 @@ test('37.4 · debajo de las 3 opciones salen TODOS los que cumplen: zona, cocina
   L.forEach(v => { assert(['roma', 'romasur', 'condesa'].includes(v.z), v.n + ' fuera de zona: ' + v.z); assert(a.tiposCocina(v).includes('asiatica'), v.n + ' no es asiático');
     assert(!enPlan.has(v.id), v.n + ' ya está en un plan'); });
   const b = makeApp(Object.assign({}, ASIA, { budget: 'any' }), { dseed: 1, rseed: 5 }); b.runSearch({ nueva: true });
-  assert(b.listaFiltros().length > L.length, 'sin presupuesto no amplía la lista');
+  // Con la revisión del fundador (9 nov 2026) muchos precios quedaron "por confirmar" y ya entran con
+  // presupuesto; sin presupuesto la lista nunca es más corta.
+  assert(b.listaFiltros().length >= L.length, 'sin presupuesto achica la lista');
   assert(/listaTitulo/.test(require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8')), 'falta la lista en la plantilla');
 });
 
