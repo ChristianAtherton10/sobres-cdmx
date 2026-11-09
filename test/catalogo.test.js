@@ -228,7 +228,7 @@ test('26f · Santa Fe: sin Jalalpa ni Prados de la Montaña; Cinépolis Patio Sa
   const C = app.cat();
   assert(!C.some(v => /jalalpa|prados de la monta/i.test(v.n)), 'siguen los parques que se pidió quitar');
   const cine = C.find(v => v.id === 'pq-f6673bacff');
-  assert(cine && app.esRecomendable(cine) && /Sigue abierto según SensaCine/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));
+  assert(cine && (app.esRecomendable(cine) || cine.pausa) && /Sigue abierto según SensaCine/.test(cine.pNotaLugar), 'el cine sigue fuera: ' + (cine && cine.pNotaLugar));   // pausa = revisión del fundador 9 nov 2026
   const bonvi = C.filter(v => /La Bonvi/.test(v.n));
   assert(bonvi.length === 2 && bonvi.every(v => /^iv-/.test(v.id) && v.pUrl && v.pEstado === 'por_confirmar'), 'La Bonvi: ' + bonvi.map(v => v.n + ' ' + v.pEstado));
   ['Carolo · Carso', 'Carolo · Interlomas', 'La Popular · Santa Fe', 'Carolo · Santa Fe', 'La Popular · Arcos Bosques'].forEach(n =>
@@ -253,7 +253,7 @@ test('26h · huecos de cobertura (4 nov 2026): cada lugar nuevo trae fuente ofic
     'Ruffian Wine Bar', 'Mitemaki · Polanco', 'Mitemaki · Bosques', 'Baltra'];
   N.forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && /^iv-/.test(v.id) && /^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente oficial');
-    assert(app.esRecomendable(v), n + ' no es recomendable'); });
+    assert(app.esRecomendable(v) || v.pausa, n + ' no es recomendable'); });   // o en pausa por la revisión del fundador (9 nov 2026)
   // Regresión: OpenStreetMap ubicó "Av. Chapultepec 606" en la Roma; el sitio dice San Miguel Chapultepec.
   const m = app.cat().find(x => x.n === 'Cantina El Mirador');
   assert(m.z === 'chapultepec' && km(m, 'chapultepec') < 1.5, 'El Mirador quedó en ' + m.z + ' a ' + km(m, 'chapultepec').toFixed(1) + ' km');
@@ -268,7 +268,7 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
   Object.keys(Z).forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && v.z === Z[n], n + ' en ' + (v && v.z));
     assert(/^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente o con fuente de Google');
-    assert(app.esRecomendable(v), n + ' no es recomendable'); });
+    assert(app.esRecomendable(v) || v.pausa, n + ' no es recomendable'); });   // o en pausa por la revisión del fundador (9 nov 2026)
   const t = app.cat().find(x => x.n === 'Terral Agrobar · San Ángel');
   assert(t.pp === 200 && t.pEstado === 'rango' && t.dias.indexOf(1) < 0, 'Terral: $' + t.pp + ' ' + t.pEstado + ' días ' + t.dias);
   // En San Ángel ya hay dónde tomar algo de noche (antes: 0).
@@ -289,7 +289,8 @@ test('Fonda Fina ($500) + Hanky Panky ($600) con propina incluida = $1,100 pp', 
   assert(f.pp === 500 && h.pp === 600 && f.propinaIncluida && h.propinaIncluida && /fundador/.test(f.pFuente) && /fundador/.test(h.pFuente), JSON.stringify([f.pp, h.pp, f.pFuente]));
   const c = a.costoPlan([f, h]); assert(c.propina === 0 && c.consumo + c.propina === 1100, JSON.stringify(c));
   // Otro restaurante sí paga su 10%.
-  const o = C.find(x => x.n === 'Contramar'); assert(a.costoPlan([o]).propina > 0, 'la propina dejó de sumarse a los demás');
+  // (Contramar quedó con precio "por confirmar" en la revisión del fundador, 9 nov 2026.)
+  const o = C.find(x => x.cat === 'Restaurante' && !x.ppUnknown && x.pp > 0 && !x.propinaIncluida); assert(a.costoPlan([o]).propina > 0, 'la propina dejó de sumarse a los demás: ' + o.n);
 });
 
 if (require.main === module) report();

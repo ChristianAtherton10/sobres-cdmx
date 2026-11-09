@@ -63,4 +63,22 @@ test('41.8 · todo lugar sigue en una de las 10 zonas y los planes salen con la 
   p.runSearch(); assert((p.state.results.plans || []).length === 3, 'planes: ' + (p.state.results.plans || []).length);
 });
 
+// Con la revisión aplicada tal cual (pausas y precios por confirmar, decisión del fundador 9 nov 2026),
+// el motor sigue armando planes completos y nunca propone algo en pausa.
+test('41.9 · con todas las pausas: los planes salen, sin nada en pausa, sin cadenas, y creativo/noche siguen armando', () => {
+  const casos = [
+    { who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma', 'romasur', 'condesa'], when: 'noche', vibes: ['nightlife'], budget: 'b1000' },
+    { who: 'date', groupSize: 2, zone: 'polanco', zonesSel: ['polanco', 'chapultepec'], when: 'noche', vibes: ['foodie', 'romántico'], budget: 'b1999' },
+    { who: 'amigos', groupSize: 4, zone: 'all', zonesSel: [], when: 'manana', vibes: ['creativo'], budget: 'b1k', planFrom: 11, planTo: 23 },
+    { who: 'familia', groupSize: 4, zone: 'coyoacan', zonesSel: ['coyoacan', 'cu'], when: 'finde', vibes: ['familiar'], budget: 'b600' },
+  ];
+  casos.forEach((st, i) => [1, 2].forEach(sd => {
+    const a = makeApp(st, { dseed: sd, rseed: sd * 5 }); a.runSearch({ nueva: true });
+    const ps = a.state.results.plans || [];
+    // Creativo (caso 2): con los talleres en pausa hasta confirmar sesión y cupo sale al menos 1 plan.
+    assert(ps.length >= (i === 2 ? 1 : 2), 'caso ' + i + ' semilla ' + sd + ': ' + ps.length + ' planes');
+    ps.forEach(p => p.stops.forEach(v => { assert(!v.pausa, 'propuso algo en pausa: ' + v.n); if (i === 1) assert(!a.esCadenaCasual(v), 'cadena en una cita: ' + v.n); }));
+  }));
+});
+
 if (require.main === module) report();

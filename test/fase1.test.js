@@ -369,7 +369,9 @@ test('17c · las piezas no se confunden por una palabra dentro de otra', () => {
 test('17d · piezas con oferta real: karaoke, billar, boliche, go karts, baile, cine de arte, trajineras', () => {
   const app = makeApp({}); const R = app.RECETAS();
   const rec = app.cat().filter(v => app.esRecomendable(v));
-  const min = { karaoke: 5, billar: 4, boliche: 5, karting: 3, salon_baile: 6, cine_arte: 6, trajineras: 2, estadio: 4 };
+  // boliche 5 → 4, karting 3 → 2 y cine de arte 6 → 4: la revisión del fundador (9 nov 2026) pausó
+  // algunos hasta confirmar horario o cartelera.
+  const min = { karaoke: 5, billar: 4, boliche: 4, karting: 2, salon_baile: 6, cine_arte: 4, trajineras: 2, estadio: 4 };
   Object.keys(min).forEach(k => {
     const n = rec.filter(v => app.esPieza(v, R.piezas[k])).length;
     assert(n >= min[k], k + ' tiene ' + n + ' lugares recomendables (mínimo ' + min[k] + ')');
