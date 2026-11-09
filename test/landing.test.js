@@ -649,17 +649,36 @@ const fs40 = require('fs'), path40 = require('path');
 const html40 = fs40.readFileSync(path40.join(__dirname, '..', 'index.html'), 'utf8');
 const bloque40 = id => { const i = html40.indexOf('<div id="' + id + '"'); return html40.slice(i, html40.indexOf('</sc-if>', i)); };
 
-test('40.1 · paso 2 fácil: sin "Día", sólo zona y "Horario de hoy"; el plan queda para hoy aunque el preset diga finde', () => {
+// 9 nov 2026 (2ª versión): el plan fácil NO tiene fecha (when 'libre'): sólo horario, sin "hoy".
+test('40.1 · paso 2 fácil: sin "Día" ni "hoy", sólo zona y "Horario"; el plan no tiene fecha aunque el preset diga finde', () => {
   const b = bloque40('armar-facil-donde');
   assert(b.indexOf('whenOpts') < 0 && b.indexOf('customDate') < 0 && !/>Día</.test(b), 'el paso 2 todavía trae el día');
-  assert(/Horario de hoy/.test(b) && /¿Dónde y a qué hora\?/.test(b), 'falta el horario o el título');
+  assert(/>Horario</.test(b) && !/hoy/i.test(b) && /¿Dónde y a qué hora\?/.test(b), 'falta el horario, el título, o dice "hoy"');
   const f = makeApp({}, { search: '?v=facil&preset=familia' });
-  assert(f.state.when === 'noche' && !f.state.customDate, 'when = ' + f.state.when);
-  assert(f.fechaPlanISO() === f.todayISO(), 'la fecha del plan no es hoy: ' + f.fechaPlanISO());
+  assert(f.state.when === 'libre' && !f.state.customDate && f.sinFecha(), 'when = ' + f.state.when);
   f.ev = () => {}; f.facilVals('home', () => {}).facilOpts[0].pick(); f.facilVals('home', () => {}).facilCocinaOpts[0].pick();
   f.facilVals('home', () => {}).facilSiguiente(); assert(f.state.facilPaso === 3, 'Siguiente no avanzó: ' + f.state.facilPaso);
 });
 
+test('40.5 · plan sin fecha: ningún texto dice "hoy" ni trae fecha; no descarta por día; no propone eventos con fecha', () => {
+  [1, 2, 3].forEach(sd => {
+    const f = makeApp({}, { search: '?v=facil', dseed: sd, rseed: sd * 3 }); f.ev = () => {};
+    f.setState({ vibes: ['nightlife'], facilOpcion: 'fiesta', facilPaso: 3 });
+    f.runSearch({ nueva: true });
+    const ps = f.state.results.plans || []; assert(ps.length >= 2, 'semilla ' + sd + ': ' + ps.length + ' planes');
+    assert(f.state.planDate === '', 'el plan quedó con fecha ' + f.state.planDate);
+    ps.forEach(p => p.stops.forEach(v => assert(!v.fechas && !v.date, 'propuso un evento con fecha: ' + v.n)));
+    const rv = f.renderVals();
+    const textos = [rv.resKicker, f.summary(), rv.armarResumen, f.textoCompartir(true)].concat((rv.resFiltros || []).map(x => x.label)).join(' | ');
+    assert(!/\bhoy\b|ma[ñn]ana|este finde/i.test(textos), 'dice cuándo: ' + textos.slice(0, 300));
+    assert(!/\b(lun|mar|mi[eé]|jue|vie|s[aá]b|dom)\w*\.? \d/i.test(f.textoCompartir(true)), 'el texto para compartir trae fecha');
+  });
+  // Un lugar que sólo abre ciertos días sí puede entrar (el día lo eligen ellos)…
+  const f = makeApp({}, { search: '?v=facil' }); const v = f.cat().find(x => x.dias && x.dias.length === 1);
+  assert(f.abreEseDia(v), v.n + ' se descartó por día sin haber fecha');
+  // …y la versión actual sigue con fecha y "hoy en la noche".
+  const a = makeApp({}); assert(a.state.when === 'noche' && /hoy en la noche/.test(a.whenLabel()), 'cambió la versión actual');
+});
 test('40.2 · paso 1 fácil: título grande en negritas y sin el subtítulo "Te damos 3 planes…"', () => {
   const b = bloque40('armar-facil');
   assert(/class="sb-facil-titulo">Arma tu próxima salida en 3 pasos\./.test(b), 'falta el título');
