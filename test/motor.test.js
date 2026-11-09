@@ -1451,7 +1451,7 @@ test('el presupuesto abierto se nombra $2,000+ y existe el rango $1,000–1,999'
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
     budget:'b1k', budgetCustom:null, vibes:[] }, { dseed: 89 });
   assert(/\$2,000\+/.test(app.budLabel()), 'budLabel: ' + app.budLabel());
-  assert(app.BUD.map(b => b[1]).join('|') === 'Gratis|Hasta $300|$300–600|$600–1,000|$1,000–1,999|$2,000+|Sin presupuesto', 'rangos: ' + app.BUD.map(b => b[1]));
+  assert(app.BUD.map(b => b[1]).join('|') === 'Gratis|Hasta $600|$600–1,000|$1,000–1,999|$2,000+|Sin presupuesto', 'rangos: ' + app.BUD.map(b => b[1]));
   app.state.budget = 'b1999'; assert(app.budgetMax() === 1999 && /1,000–1,999/.test(app.budLabel()), 'rango 1,000–1,999');
   app.state.budget = 'b1k';
 
@@ -2231,15 +2231,15 @@ test('un lugar cerrado no se propone y la misma marca no sale en dos opciones', 
   }
 });
 
-test('lo que no se confirma no se propone y lo lejano sólo sale en toda la ciudad', () => {
+test('lo que no se confirma no se propone; lo lejano entra a su zona más cercana pesando menos (8 nov 2026)', () => {
   const app = makeApp(BASE, { dseed: 7 });
   const viejo = app.cat().find(v => v.id === 'xl-R0205');   // IDE Gourmet Oriental: única fuente de 2017
   assert(viejo && !app.esRecomendable(viejo), 'un lugar de una lista de 2017 sin confirmar se propone');
   const lejos = app.cat().find(v => v.id === 'xl-C0069');   // Parque Ejidal San Nicolás Totolapan
-  assert(lejos && lejos.lejos, 'el Ajusco debería marcarse lejos');
-  const cu = makeApp({ ...BASE, zone: 'cu', zonesSel: ['cu'], vibes: ['chill'], when: 'manana', planFrom: 9, planTo: 15 }, { dseed: 7 });
-  cu.runSearch();
-  assert(!(cu.state.results.plans || []).some(p => p.stops.some(v => v.lejos)), 'en CU · Sur propuso un lugar lejano');
+  assert(lejos && !lejos.lejos && lejos.lejosDeZona && !/sólo aparece al buscar en toda la ciudad/.test(lejos.pNotaLugar || ''), 'el Ajusco debería entrar a su zona (marcado lejosDeZona)');
+  // Todos los lugares están en una de las zonas, y lo lejano pesa menos que lo céntrico.
+  assert(app.cat().every(v => app.ZGRUPOS().some(([, zs]) => zs.indexOf(v.z) >= 0)), 'hay lugares fuera de las 10 zonas');
+  assert(!app.cat().some(v => v.lejos), 'quedan lugares escondidos como "lejos"');
 });
 
 test('los lugares del Excel viajan en el enlace compartido', () => {

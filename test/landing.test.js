@@ -524,4 +524,148 @@ test('37.5 · lo de Google en vivo entra a la lista sólo si está en tus zonas'
   assert(!n.includes('Min Sok Chon'), 'Min Sok Chon (Juárez) entró pidiendo Roma/Condesa');
 });
 
+// ── 38 · A/B "paso 1 fácil" (?v=facil, 8 nov 2026) ───────────────────────────
+section('38 · ?v=facil: 3 pasos (paso 1 de un toque, ← Atrás en 2 y 3)');
+const conEv = a => { const L = []; a.ev = (n, p) => L.push([n, Object.assign({ version: a.versionAB() }, p || {})]); return L; };
+
+test('38.1 · sin parámetro no sale la versión fácil (zona por defecto: el grupo Roma · Condesa)', () => {
+  const a = makeApp({}); const u = a.facilVals('home', () => {});
+  assert(!a.state.facil && !u.facilP1 && !u.facilP2 && a.versionAB() === 'actual', 'la actual cambió');
+  assert(a.state.zonesSel.join() === 'roma,romasur,condesa' && a.zonesLabel() === 'Roma · Condesa', 'zona por defecto: ' + a.state.zonesSel);
+  const b = makeApp({}, { search: '?v=rapido' }); assert(b.versionAB() === 'rapido' && !b.state.facil, 'v=rapido cambió');
+});
+
+test('38.2 · ?v=facil se activa, preselecciona Roma · Condesa y Juárez · Centro y se queda toda la sesión', () => {
+  const a = makeApp({}, { search: '?v=facil' });
+  assert(a.state.facil && a.state.facilPaso === 1 && a.versionAB() === 'facil', 'no se activó');
+  assert(a.state.zonesSel.join() === 'roma,romasur,condesa,juarez,centro' && a.zonesLabel() === 'Roma · Condesa y Juárez · Centro', 'zonas: ' + a.state.zonesSel);
+  assert(a._win.sessionStorage.getItem('sobres_v') === 'facil', 'no se guardó en la sesión');
+  const b = makeApp({}, { search: '?utm_source=meta', session: { sobres_v: 'facil' } });
+  assert(b.state.facil, 'al navegar (sin ?v) se perdió la versión fácil');
+  const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan,cu', 'pisó la zona del anuncio: ' + c.state.zonesSel);
+});
+
+test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Cenar rico" pide el tipo de comida y ése avanza', () => {
+  const a = makeApp({}, { search: '?v=facil' }); const L = conEv(a);
+  const u = a.facilVals('home', () => {}); assert(u.facilP1 && u.facilOpts.length === 6, 'opciones: ' + u.facilOpts.length);
+  assert(u.facilOpts.map(o => o.label).join('|') === 'Cenar rico|Noche y fiesta|Tranqui|Cultural|Romántico|En familia', u.facilOpts.map(o => o.label));
+  u.facilOpts[4].pick();   // Romántico: avanza solo y van en pareja
+  assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'romántico' && a.state.who === 'date', JSON.stringify([a.state.facilPaso, a.state.vibes, a.state.who]));
+  a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 1, 'el paso 2 no regresa al 1');
+  a.facilVals('home', () => {}).facilOpts[0].pick();   // Cenar rico: NO avanza, sale el tipo de comida
+  let v = a.facilVals('home', () => {});
+  assert(a.state.facilPaso === 1 && v.facilCocinaOn && v.facilCocinaOpts[0].label === 'Todo tipo' && a.state.who === 'amigos', 'Cenar rico no mostró el tipo de comida');
+  v.facilCocinaOpts.find(o => o.label === 'China y otras asiáticas').pick();
+  assert(a.state.facilPaso === 2 && a.state.cocinas.join() === 'asiatica', 'el tipo de comida no avanzó: ' + JSON.stringify([a.state.facilPaso, a.state.cocinas]));
+  const e = L.filter(x => x[0] === 'paso_1_elegido'); assert(e.length === 1 && e[0][1].opcion === 'romantico' && e[0][1].version === 'facil', JSON.stringify(e));
+});
+
+test('38.3b · pasos 2 y 3: Siguiente, ← Atrás y "Ver mis 3 planes" arma los planes', () => {
+  const a = makeApp({}, { search: '?v=facil' }); a.ev = () => {};
+  a.facilVals('home', () => {}).facilOpts[1].pick(); assert(a.facilVals('home', () => {}).facilP2, 'no llegó al paso 2');
+  a.facilVals('home', () => {}).facilSiguiente(); assert(a.state.facilPaso === 3 && a.facilVals('home', () => {}).facilP3, 'no llegó al paso 3');
+  a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 2, 'el paso 3 no regresa al 2');
+  a.facilVals('home', () => {}).facilSiguiente(); let lanzo = false; a.facilVals('home', () => { lanzo = true; }).facilGo();
+  assert(lanzo, '"Ver mis 3 planes" no armó los planes');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  ['Arma tu próxima salida en 3 pasos', 'id="armar-facil-donde"', 'id="armar-facil-quien"', 'Ver mis 3 planes', 'Regresar al paso 1', 'Regresar al paso 2']
+    .forEach(t => assert(html.indexOf(t) >= 0, 'falta en la plantilla: ' + t));
+});
+
+test('38.4 · en la actual, paso_1_elegido sale con el primer chip o "Siguiente", y todos los eventos llevan version', () => {
+  const a = makeApp({}); const L = []; a._win.gtag = (t, n, p) => L.push([n, p]);
+  a.evPaso1('nightlife'); a.evPaso1('siguiente'); a.ev('armar_planes', { vibras: 'nightlife' });
+  const e = L.filter(x => x[0] === 'paso_1_elegido');
+  assert(e.length === 1 && e[0][1].opcion === 'nightlife' && e[0][1].version === 'actual', JSON.stringify(L));
+  assert(L.every(x => x[1].version === 'actual'), 'falta version en algún evento');
+  const q = makeApp({}, { search: '?v=facil&utm_source=qa_claude' }); const M = []; q._win.gtag = (t, n, p) => M.push(n);
+  q.ev('armar_planes', {}); assert(!M.length, 'QA mandó eventos a GA4');
+});
+
+test('38.5 · con los valores por defecto salen 3 planes completos (sin planes de 1 parada) en casi todas las opciones', () => {
+  let malos = 0, tot = 0;
+  [1, 2, 3, 4].forEach(d => ['cenar', 'fiesta', 'tranqui', 'cultural', 'romantico', 'familia'].forEach(k => { tot++;
+    const a = makeApp({}, { search: '?v=facil', dseed: d }); a.ev = () => {};
+    const i = a.FACIL().findIndex(f => f[0] === k); a.facilVals('home', () => {}).facilOpts[i].pick();
+    if (k === 'cenar') a.facilVals('home', () => {}).facilCocinaOpts[0].pick();   // "Todo tipo"
+    const r = a.runSearch({ nueva: true }), ps = (r && r.plans) || [];
+    if (ps.length < 3 || ps.some(p => p.stops.length === 1)) malos++; }));
+  assert(malos <= 1, malos + ' de ' + tot + ' búsquedas con menos de 3 planes o planes de 1 parada');
+  // Y la versión actual NO cambia su motor: "Comer rico" sin ?v sigue pudiendo dar una cena sola.
+  const b = makeApp({ vibes: ['foodie'] }, { dseed: 1 }); b.ev = () => {}; const rb = b.runSearch({ nueva: true });
+  assert(!rb.plans.some(p => p.stops.some(v => ['Bar', 'Cantina', 'Speakeasy'].includes(v.cat))), 'la actual metió bares en "Comer rico"');
+});
+
+// ── 39 · Zonas en 8 grupos, presupuesto nuevo y logo (8 nov 2026) ─────────────
+section('39 · Zonas en grupos, presupuesto y logo');
+
+test('39.1 · las zonas se eligen en 10 zonas y cada una elige todas sus colonias', () => {
+  const a = makeApp({});
+  const Z = a.renderVals().zoneOpts.map(o => o.label);
+  assert(Z.join('|') === 'Toda la ciudad|Roma · Condesa|Polanco · Chapultepec|Juárez · Centro|Del Valle · Nápoles|Coyoacán · CU|San Ángel|Santa Fe · Poniente|Lomas · Tecamachalco|Satélite · Naucalpan|Xochimilco', Z.join('|'));
+  const z = n => a.renderVals().zoneOpts.find(o => o.label === n);
+  z('Roma · Condesa').pick(); assert(a.state.zone === 'all', 'Roma · Condesa no se quita');
+  z('Coyoacán · CU').pick(); assert(a.zoneList().join() === 'coyoacan,cu' && a.zonesLabel() === 'Coyoacán · CU', a.zoneList());
+  z('San Ángel').pick(); assert(a.zonesLabel() === 'Coyoacán · CU y San Ángel', a.zonesLabel());
+  // Lo que antes quedaba "lejos" (sólo en Toda la ciudad) ahora sale en su zona.
+  const x = makeApp({ zone: 'xochimilco', zonesSel: ['xochimilco'] }); const ids = x.cat().filter(v => x.inZone(v)).map(v => v.n);
+  assert(ids.indexOf('Museo Yancuic') >= 0, 'Museo Yancuic no entró a Xochimilco');
+  // Un enlace viejo con una sola zona sigue funcionando y se nombra por su zona.
+  const v = makeApp({ zone: 'roma', zonesSel: ['roma'] }); assert(v.zonesLabel() === 'Roma Norte' && v.renderVals().zoneOpts.find(o => o.label === 'Roma · Condesa').pressed === 'true', v.zonesLabel());
+});
+
+test('39.2 · presupuesto: Gratis, Hasta $600, $600–1,000, $1,000–1,999, $2,000+ y Sin presupuesto; "Hasta $300" viejo = Hasta $600', () => {
+  const a = makeApp({});
+  assert(a.renderVals().budgetOpts.map(o => o.label).join('|').replace(/✓ /g, '').replace('Gratis ($0)', 'Gratis') === 'Gratis|Hasta $600|$600–1,000|$1,000–1,999|$2,000+|Sin presupuesto', a.renderVals().budgetOpts.map(o => o.label));
+  const b = makeApp({ budget: 'b600' }); assert(b.budgetMax() === 600 && b.budgetMin() === 0, 'Hasta $600 debe ir de $0 a $600');
+  const c = makeApp({ budget: 'b300' }); assert(c.budgetMax() === 600 && /600/.test(c.budLabel()), 'un enlace viejo "Hasta $300" quedó sin tope: ' + c.budgetMax());
+});
+
+test('39.3 · el logo de SOBRES regresa al principio (paso 1), en las dos versiones', () => {
+  const a = makeApp({ paso: 3 }); a.nav('results'); a.renderVals().brandGo();
+  assert(a.state.view === 'home' && a.state.paso === 1, 'actual: ' + a.state.view + ' paso ' + a.state.paso);
+  const f = makeApp({}, { search: '?v=facil' }); f.ev = () => {}; f.facilVals('home', () => {}).facilOpts[1].pick(); f.facilVals('home', () => {}).facilSiguiente();
+  f.renderVals().brandGo(); assert(f.state.facilPaso === 1 && f.state.view === 'home', 'fácil: paso ' + f.state.facilPaso);
+});
+
+// 9 nov 2026: paso 2 sin "Día" (el plan es para hoy y manda el horario), cabe sin scroll
+// en celular; título grande sin subtítulo; logo más grande; pie hasta abajo en celular.
+const fs40 = require('fs'), path40 = require('path');
+const html40 = fs40.readFileSync(path40.join(__dirname, '..', 'index.html'), 'utf8');
+const bloque40 = id => { const i = html40.indexOf('<div id="' + id + '"'); return html40.slice(i, html40.indexOf('</sc-if>', i)); };
+
+test('40.1 · paso 2 fácil: sin "Día", sólo zona y "Horario de hoy"; el plan queda para hoy aunque el preset diga finde', () => {
+  const b = bloque40('armar-facil-donde');
+  assert(b.indexOf('whenOpts') < 0 && b.indexOf('customDate') < 0 && !/>Día</.test(b), 'el paso 2 todavía trae el día');
+  assert(/Horario de hoy/.test(b) && /¿Dónde y a qué hora\?/.test(b), 'falta el horario o el título');
+  const f = makeApp({}, { search: '?v=facil&preset=familia' });
+  assert(f.state.when === 'noche' && !f.state.customDate, 'when = ' + f.state.when);
+  assert(f.fechaPlanISO() === f.todayISO(), 'la fecha del plan no es hoy: ' + f.fechaPlanISO());
+  f.ev = () => {}; f.facilVals('home', () => {}).facilOpts[0].pick(); f.facilVals('home', () => {}).facilCocinaOpts[0].pick();
+  f.facilVals('home', () => {}).facilSiguiente(); assert(f.state.facilPaso === 3, 'Siguiente no avanzó: ' + f.state.facilPaso);
+});
+
+test('40.2 · paso 1 fácil: título grande en negritas y sin el subtítulo "Te damos 3 planes…"', () => {
+  const b = bloque40('armar-facil');
+  assert(/class="sb-facil-titulo">Arma tu próxima salida en 3 pasos\./.test(b), 'falta el título');
+  assert(b.indexOf('Te damos 3 planes') < 0 && b.indexOf('sb-facil-sub') < 0, 'sigue el subtítulo');
+  assert(/\.sb-facil-titulo\{font:800 40px/.test(html40), 'el título no es de 40px en negritas');
+  assert(b.indexOf('Paso 1 de 3') > b.indexOf('sb-facil-titulo') && b.indexOf('¿Qué se les antoja?') > b.indexOf('Paso 1 de 3'), 'el orden cambió');
+});
+
+test('40.3 · logo más grande (29px celular, 32px compu) y pie hasta abajo en celular, oculto en pasos 2 y 3', () => {
+  assert(/\.sb-marca\{font:800 29px/.test(html40) && /\.sb-marca\{font-size:32px\}/.test(html40), 'logo');
+  assert(html40.indexOf('font:800 24px var(--font-heading);letter-spacing:-.025em;color:var(--ink)">SOBRES') < 0, 'quedó el logo chico');
+  assert(/\.sb-home-facil \.sb-pie-home\{margin-top:auto/.test(html40), 'el pie no se va hasta abajo');
+  assert(/\.sb-facil-p2 \.sb-pie-home,\.sb-home-facil\.sb-facil-p3 \.sb-pie-home\{display:none\}/.test(html40), 'el pie no se oculta en pasos 2 y 3');
+  const f = makeApp({}, { search: '?v=facil' }); assert(f.renderVals().homeFacilCls === 'sb-home-facil sb-facil-p1', 'clase: ' + f.renderVals().homeFacilCls);
+  assert(makeApp({}).renderVals().homeFacilCls === '', 'la versión actual cambió');
+});
+
+test('40.4 · en ?v=facil "Hasta" no lleva "(+1 día)" (se cortaba en celular); la versión actual sí', () => {
+  const f = makeApp({}, { search: '?v=facil' });
+  assert(!f.renderVals().toOpts.some(o => /\+1 día/.test(o.label)), 'fácil trae +1 día');
+  assert(makeApp({}).renderVals().toOpts.some(o => /\+1 día/.test(o.label)), 'la actual perdió +1 día');
+});
+
 if (require.main === module) report();

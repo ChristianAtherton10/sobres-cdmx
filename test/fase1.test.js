@@ -37,9 +37,9 @@ test('1 · Santa Fe se puede deseleccionar (y la siguiente búsqueda no queda en
   const z = nombre => app.renderVals().zoneOpts.find(o => o.label.replace('✓ ', '') === nombre);
   z('Santa Fe · Poniente').pick();
   assert(app.state.zone === 'all' || !app.zoneList().includes('santafe'), 'Santa Fe sigue seleccionada después de tocarla otra vez');
-  z('Polanco').pick();
-  assert(app.zonesLabel() === 'Polanco', 'después de quitar Santa Fe y elegir Polanco quedó: ' + app.zonesLabel());
-  z('Polanco').pick();
+  z('Polanco · Chapultepec').pick();   // zonas en grupos desde el 8 nov 2026
+  assert(app.zonesLabel() === 'Polanco · Chapultepec', 'después de quitar Santa Fe y elegir Polanco quedó: ' + app.zonesLabel());
+  z('Polanco · Chapultepec').pick();
   assert(!app.zoneList().includes('polanco') || app.state.zone === 'all', 'Polanco no se quita');
 });
 
@@ -376,10 +376,14 @@ test('17d · piezas con oferta real: karaoke, billar, boliche, go karts, baile, 
   });
 });
 
+// Regresión (9 nov 2026): la prueba usaba "hoy" y un lunes no abre ningún karaoke,
+// billar ni salón de la Roma (todos abren de miércoles a domingo): fallaba según el día.
+// Ahora corre un viernes fijo.
+const viernes17e = (() => { const d = new Date(); d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
 test('17e · "con amigos" de noche en la Roma puede proponer karaoke, billar o salón de baile', () => {
   const R = makeApp({}).RECETAS(); const vistos = new Set();
   [1, 2, 3, 4, 5, 6, 7, 8].forEach(sd => {
-    const { app, plans } = corre({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], vibes: ['social'], when: 'noche', budget: 'b1000' }, sd);
+    const { app, plans } = corre({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], vibes: ['social'], when: 'fecha', customDate: viernes17e, budget: 'b1000' }, sd);
     plans.forEach(p => p.stops.forEach(v => ['karaoke', 'billar', 'salon_baile', 'boliche'].forEach(k => { if (app.esPieza(v, R.piezas[k])) vistos.add(k); })));
   });
   assert(vistos.size >= 2, 'en 8 tandas sólo salió: ' + [...vistos].join(', '));
