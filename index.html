@@ -67,6 +67,18 @@
   .sb-cta-pegada{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:5;background:var(--color-bg);padding:10px 0 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
   .sb-rapido{margin-bottom:96px}
 }
+.sb-facil{max-width:560px}
+.sb-facil-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sb-facil-op{display:flex;align-items:center;gap:10px;min-height:64px;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);font:700 16px/1.2 var(--font-body);text-align:left;cursor:pointer}
+.sb-facil-op .e{font-size:24px;line-height:1}
+.sb-facil-op:active,.sb-facil-op:hover{border-color:var(--ink)}
+.sb-facil-conf{padding-bottom:100px}
+.sb-facil-linea{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--color-divider)}
+.sb-facil-linea .t{flex:none;width:92px;font:600 13px var(--font-body);color:var(--muted,#6b6b6b)}
+.sb-facil-linea .sb-chip{flex:1;min-width:0;min-height:36px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.sb-facil-linea .sb-btn3{flex:none;min-height:36px;margin-right:-12px}
+.sb-facil-mas{padding:4px 0 12px}
+.sb-chip-sel{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
 .sb-cta-fija{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:6;background:var(--color-bg);padding:10px 16px 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
 @media (min-width:820px){.sb-cta-fija{position:sticky;bottom:0;padding:12px 0}}
 /* ═════════════════════ Tema SOBRES ═════════════════════
@@ -531,6 +543,41 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 
 <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
 <section data-screen-label="Inicio" class="sb-wrap sb-home sb-fade" data-paso="{{ paso }}" style="padding:26px 0 32px">
+<sc-if value="{{ facilP1 }}" hint-placeholder-val="{{ false }}">
+<div id="armar-facil" class="sb-facil">
+<h1 class="sb-h2" style="margin:0">¿Qué se les antoja?</h1>
+<p class="sb-sub" style="margin:6px 0 16px">Toca uno y en segundos tienes 3 planes para votar.</p>
+<div class="sb-facil-grid" role="group" aria-label="Qué se les antoja">
+<sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="e" aria-hidden="true">{{ o.emoji }}</span><span>{{ o.label }}</span></button></sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ facilP2 }}" hint-placeholder-val="{{ false }}">
+<div id="armar-confirma" class="sb-facil sb-facil-conf">
+<h1 class="sb-h2" style="margin:0">Confirma y listo</h1>
+<p class="sb-sub" style="margin:6px 0 12px">Ya lo llenamos por ti. Cambia lo que quieras.</p>
+<div class="sb-facil-linea"><span class="t">Plan</span><span class="sb-chip sb-chip-sel">{{ facilPlan }}</span><button class="sb-btn3" onClick="{{ facilCambiarPlan }}" aria-label="Cambiar el plan">Cambiar</button></div>
+<div class="sb-facil-linea"><span class="t">{{ fDia.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fDia.valor }}</span><button class="sb-btn3" onClick="{{ fDia.toggle }}" aria-label="{{ fDia.aria }}" aria-expanded="{{ fDia.abierto }}">{{ fDia.btn }}</button></div>
+<sc-if value="{{ fDia.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas">
+<div class="sb-chips" role="group" aria-label="Cuándo"><sc-for list="{{ whenOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<sc-if value="{{ showDateInput }}" hint-placeholder-val="{{ false }}"><input class="sb-input" aria-label="Fecha del plan" type="date" value="{{ customDate }}" onChange="{{ setDate }}" style="margin-top:10px;width:100%;max-width:260px"></sc-if>
+<div class="sb-row" style="flex-wrap:nowrap;margin-top:10px">
+<label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Desde</span><select class="sb-sel" style="width:100%" aria-label="Desde qué hora" value="{{ planFromVal }}" onChange="{{ setPlanFrom }}"><sc-for list="{{ fromOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
+<label style="flex:1;min-width:0"><span class="sb-note" style="display:block;margin-bottom:5px">Hasta</span><select class="sb-sel" style="width:100%" aria-label="Hasta qué hora" value="{{ planToVal }}" onChange="{{ setPlanTo }}"><sc-for list="{{ toOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
+</div></div></sc-if>
+<div class="sb-facil-linea"><span class="t">{{ fZona.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fZona.valor }}</span><button class="sb-btn3" onClick="{{ fZona.toggle }}" aria-label="{{ fZona.aria }}" aria-expanded="{{ fZona.abierto }}">{{ fZona.btn }}</button></div>
+<sc-if value="{{ fZona.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas"><div class="sb-chips" role="group" aria-label="Zona"><sc-for list="{{ zoneOpts }}" as="o" hint-placeholder-count="12"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div></div></sc-if>
+<div class="sb-facil-linea"><span class="t">{{ fQuien.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fQuien.valor }}</span><button class="sb-btn3" onClick="{{ fQuien.toggle }}" aria-label="{{ fQuien.aria }}" aria-expanded="{{ fQuien.abierto }}">{{ fQuien.btn }}</button></div>
+<sc-if value="{{ fQuien.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas">
+<div class="sb-chips" role="group" aria-label="Con quién"><sc-for list="{{ whoOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<sc-if value="{{ showSize }}" hint-placeholder-val="{{ true }}"><div class="sb-row sb-cuantos" style="margin-top:8px"><span class="sb-note" style="font-weight:600">Cuántos</span><button class="sb-x" aria-label="Quitar una persona" onClick="{{ sizeDown }}">−</button><span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--ink)" aria-live="polite">{{ groupSizeN }}</span><button class="sb-x" aria-label="Agregar una persona" onClick="{{ sizeUp }}">+</button></div></sc-if>
+</div></sc-if>
+<div class="sb-facil-linea"><span class="t">{{ fPresu.titulo }}</span><span class="sb-chip sb-chip-sel">{{ fPresu.valor }}</span><button class="sb-btn3" onClick="{{ fPresu.toggle }}" aria-label="{{ fPresu.aria }}" aria-expanded="{{ fPresu.abierto }}">{{ fPresu.btn }}</button></div>
+<sc-if value="{{ fPresu.abierto }}" hint-placeholder-val="{{ false }}"><div class="sb-facil-mas"><div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div></div></sc-if>
+<div class="sb-cta-fija"><button class="sb-btn sb-full {{ buscarFx }}" style="min-height:56px;font-size:17px" onClick="{{ facilGo }}"><span>Ver mis 3 planes</span><span aria-hidden="true">→</span></button></div>
+</div>
+</sc-if>
+<sc-if value="{{ noFacil }}" hint-placeholder-val="{{ true }}">
 <div class="sb-home-top">
 <div class="sb-home-txt">
 <div class="sb-kicker">{{ homeKicker }}</div>
@@ -582,6 +629,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ hayRetomar }}" hint-placeholder-val="{{ false }}">
 <button onClick="{{ retomar }}" class="sb-card sc-rise solo-celular" style="width:100%;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;text-align:left;margin-top:18px">
 <span style="flex:1;min-width:0"><span class="sb-kicker" style="display:block;margin-bottom:4px">Retomar</span><span style="display:block;font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ retomarTxt }}</span></span><span style="font:700 18px var(--font-body);color:var(--electrico)">→</span></button>
+</sc-if>
 </sc-if>
 
 <sc-if value="{{ rapidoOn }}" hint-placeholder-val="{{ false }}">
@@ -2126,16 +2174,22 @@ class Component extends DCLogic {
   // Cada evento lleva los UTM de la visita y la variante (E31). Algunos
   // eventos viejos además disparan el nombre nuevo de la Fase 3, sin
   // cambiar los que ya se medían (armar_planes sigue igual).
+  versionAB() { const s = this.state || {}; return s.facil ? 'facil' : s.rapido ? 'rapido' : 'actual'; }
   ev(name, params) { try {
-    if (typeof window.gtag !== 'function' || this.esQA()) return;
-    const p = Object.assign({}, params || {}, this.UTM || {}, { variante: this.state && this.state.rapido ? 'rapido' : 'normal' },
+    const p = Object.assign({}, params || {}, this.UTM || {}, { variante: this.state && this.state.rapido ? 'rapido' : 'normal', version: this.versionAB() },
       (typeof window !== 'undefined' && window.SOBRES_UID) ? { sobres_uid: window.SOBRES_UID } : {});
+    // QA (utm_source=qa|qa_claude): no se manda a GA4, pero se ve en la consola para verificar.
+    if (this.esQA()) { try { console.log('[SOBRES ev]', name, JSON.stringify(p)); } catch(e) {} return; }
+    if (typeof window.gtag !== 'function') return;
     window.gtag('event', name, p);
     const alias = { elegir_plan: 'plan_elegido', compartir_whatsapp: 'plan_compartido', compartir_enlace: 'plan_compartido',
       tanda_compartida: 'plan_compartido', plan_enviado: 'plan_compartido' }[name];
     if (alias) window.gtag('event', alias, p);
   } catch(e) {} }
 
+  // Primer toque a una opción del paso 1 (una vez por visita): en ?v=facil el
+  // botón grande; en la actual, un chip del paso 1 o "Siguiente".
+  evPaso1(opcion) { if (this._paso1Elegido) return; this._paso1Elegido = true; this.ev('paso_1_elegido', { opcion: String(opcion || '').slice(0, 40), version: this.versionAB() }); }
   evSearch(q) { try { clearTimeout(this._evSq); } catch(e) {}
     const t = (q || '').trim(); if (t.length < 3) return;
     this._evSq = setTimeout(() => this.ev('buscar', { termino: t.toLowerCase().slice(0, 60) }), 1200); }
@@ -2967,6 +3021,13 @@ class Component extends DCLogic {
     const z = (this.ZONES || []).find(x => x[0] === zn);
     if (z) { out.zone = z[0]; out.zonesSel = [z[0]]; }
     if (q.get('v') === 'rapido') out.rapido = true;
+    // A/B "paso 1 fácil" (8 nov 2026): ?v=facil se queda toda la sesión (sessionStorage,
+    // como los UTM) aunque naveguen o recarguen. Sin parámetro: la versión actual.
+    let facil = q.get('v') === 'facil';
+    try { if (facil) sessionStorage.setItem('sobres_v', 'facil');
+      else if (!q.get('v') && sessionStorage.getItem('sobres_v') === 'facil') facil = true; } catch(e) {}
+    if (facil) { out.facil = true; out.facilPaso = 1;
+      if (!z) { out.zone = 'roma'; out.zonesSel = ['roma', 'condesa', 'juarez']; } }   // Roma Norte · Condesa · Juárez
     return out;
   }
   // Pasos vistos (GA4): un evento por tarjeta del formulario la primera vez
@@ -2974,17 +3035,17 @@ class Component extends DCLogic {
   vigilaPasos() {
     if (this._pasosI || typeof window === 'undefined' || typeof document === 'undefined' || !document.getElementById) return;
     this._pasosVistos = {};
-    const ids = [['armar-ambiente', 1], ['armar-donde', 2], ['armar-quien', 3], ['armar-rapido', 1]];
+    const ids = [['armar-ambiente', 1], ['armar-donde', 2], ['armar-quien', 3], ['armar-rapido', 1], ['armar-facil', 1], ['armar-confirma', 2]];
     const mira = () => { ids.forEach(([id, n]) => { if (this._pasosVistos[n]) return; const el = document.getElementById(id); if (!el || !el.offsetParent) return;
         const r = el.getBoundingClientRect(); if (r.width > 0 && r.top < window.innerHeight && r.bottom > 0) { this._pasosVistos[n] = true; this.ev('paso_' + n + '_visto', {}); } });
-      if (this._pasosVistos[1] && this._pasosVistos[2] && this._pasosVistos[3]) { clearInterval(this._pasosI); } };
+      if (this._pasosVistos[1] && this._pasosVistos[2] && (this._pasosVistos[3] || (this.state && this.state.facil))) { clearInterval(this._pasosI); } };
     this._pasosI = setInterval(mira, 700); setTimeout(mira, 50);
   }
   esQA() { const u = this.UTM || {}; if (/^(qa|qa_claude)$/.test(u.utm_source || '')) return true;
     try { return sessionStorage.getItem('sobres_qa') === '1'; } catch(e) { return false; } }
   // Prellenar el formulario con lo mismo del plan que llegó por enlace o anuncio.
   armarElMio() { this.ev('armar_el_mio', { tanda: !!(this.state.results && this.state.results.compartida) });
-    this.setState({ paso: 1, pasoDir: 'back', tandaDe: '', rapido: false }); this.nav('home');
+    this.setState({ paso: 1, pasoDir: 'back', tandaDe: '', rapido: false, facilPaso: 1, facilAbierto: null }); this.nav('home');
     try { window.scrollTo(0, 0); } catch(e) {} }
 
   // ============================================================
@@ -3058,6 +3119,12 @@ class Component extends DCLogic {
     amb.forEach(a => franjas.forEach(f => (R.recetas[a][f] || []).forEach(t => {
       const mezcla = amb.filter(b => t.some(x => piezasDe[b].has(x))).length;
       if (!plantillas.some(p => p.t.join() === t.join())) plantillas.push({ t, a, f, peso: mezcla }); })));
+    // ?v=facil: "Cenar rico" de noche también puede ser cena y luego un trago (como
+    // "Cena y speakeasy"): de postre o café abiertos de noche hay muy pocos.
+    if (this.state.facil && amb.indexOf('foodie') >= 0 && franjas.indexOf('noche') >= 0 && !this.state.sinAlcohol && !this.esFamiliar() && R.piezas.bar)
+      [['cena_rica', 'bar'], ['cena_rapida', 'bar']].forEach(t => { if (!plantillas.some(p => p.t.join() === t.join())) plantillas.push({ t, a: 'foodie', f: 'noche', peso: 1 }); });
+    // ?v=facil: sin plantillas de UNA pieza ("Cena" sola) si hay de dos o más.
+    if (this.state.facil && plantillas.some(p => p.t.length > 1)) { for (let i = plantillas.length - 1; i >= 0; i--) if (plantillas[i].t.length < 2) plantillas.splice(i, 1); }
     // El número anónimo de cada persona (GA4) también mueve el azar: dos personas
     // que piden lo mismo no reciben exactamente las mismas tres opciones.
     const uidH = (() => { const u = (typeof window !== 'undefined' && window.SOBRES_UID) || ''; let h = 0; for (let i = 0; i < u.length; i++) h = (h * 31 + u.charCodeAt(i)) >>> 0; return h; })();
@@ -3611,6 +3678,7 @@ class Component extends DCLogic {
       const ambR = this.ambientesReceta();
       const sinCopas = !ambR.some(a => ['nightlife', 'romántico', 'social', '_libre', 'aventurero', 'joyita'].indexOf(a) >= 0)
         && !((s.aiPide || []).some(x => x === 'copas' || x === 'baile'));
+      const copasCena = !!s.facil && ambR.indexOf('foodie') >= 0 && this.range()[1] > 20 && !s.sinAlcohol && !fam;
       poolReceta = this.cat().filter(v => !excl.has(v.id) && this.budgetOk(v) && this.timingOk(v) && this.esRecomendable(v) && !v.cursoCerrado
         && (cityWide || zones.includes(v.z)) && (cityWide || !v.lejos)
         && !(this.state.sinAlcohol && this.implicaAlcohol(v)) && !(fam && (v.aptoFamilia || this.aptoFamiliaDe(v)) === 'no')
@@ -3621,7 +3689,9 @@ class Component extends DCLogic {
         && this.cocinaOk(v)
         // Sin un ambiente de copas (fiesta, romántico, amigos o "lo que sea"), ni bares ni
         // rooftops ni antros: "Tranqui + Cultural" no termina en un rooftop.
-        && (sinCopas ? ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Antro', 'Salón de baile', 'Cantina'].indexOf(v.cat) < 0 : true));
+        && (sinCopas ? (['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Antro', 'Salón de baile', 'Cantina'].indexOf(v.cat) < 0
+          // ?v=facil, "Cenar rico" de noche: un trago después de cenar sí (nunca antro ni salón).
+          || (copasCena && ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Cantina'].indexOf(v.cat) >= 0)) : true));
       const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida,
         avoidP: new Set(opts.avoidPlantillas || []) });
       // Con un horario ELEGIDO, el plan de la receta se completa hasta llenarlo
@@ -3945,6 +4015,9 @@ class Component extends DCLogic {
       : quiereNoche ? (v => this.CATS_NOCHE().includes(v.cat) || this.actsDe(v).indexOf('copas') >= 0)
       : this.soloCultural() ? (v => this.esCultural(v)) : null;
     const tipoS = usarRecetas ? recetaSuelto : tipoSuelto;
+    // ?v=facil (8 nov 2026): antes que un lugar suelto, otro plan COMPLETO de la receta
+    // (aunque repita tipo): la meta es 3 planes para votar, no lugares de 1 parada.
+    if (s.facil && usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
     if (tipoS && plans.length < 3 && !opts.subBusqueda) {
       const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
       const llegada = v => this.esAntro(v) ? Math.max(from, Math.min(this.ANTRO_IDEAL, to + this.MARGEN() / 60 - this.duracionAct(v))) : Math.max(from, v.oh[0]);
@@ -4149,6 +4222,19 @@ class Component extends DCLogic {
         expandNote = (expandNote || '').replace(/Con estos filtros sólo encontramos [^.]*\.[^.]*\.[^.]*\./, '').trim();
         expandNote = expandNote ? expandNote + ' ' + nota : nota;
       }
+    }
+    // ?v=facil (8 nov 2026): con los valores por defecto no se muestran planes de UNA
+    // parada si en las zonas vecinas hay planes completos; se amplía solo y se avisa.
+    if (s.facil && plans.length && plans.some(p => p.stops.length === 1) && !cityWide && !opts.ampliar && !opts.subBusqueda) {
+      const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
+      const multi = ((r2 && r2.plans) || []).filter(p => p.stops.length > 1);
+      const zs = [];
+      for (let i = 0; i < plans.length; i++) { if (plans[i].stops.length > 1) continue;
+        const otros = plans.filter((h, j) => j !== i);
+        const alt = multi.find(p => !otros.some(h => comparte(h, p)));
+        if (alt) { plans[i] = alt; multi.splice(multi.indexOf(alt), 1); alt.stops.forEach(v => { if (!sel.includes(v.z) && zs.indexOf(v.z) < 0) zs.push(v.z); }); } }
+      if (zs.length) { const nota = 'Para darte planes completos sumamos zonas vecinas: ' + zs.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).';
+        expandNote = expandNote ? expandNote + ' ' + nota : nota; }
     }
     // Si al final ninguna opción usa una zona vecina, no se dice que se amplió.
     if (!cityWide && !plans.some(p => p.stops.some(v => !sel.includes(v.z)))) {
@@ -5937,7 +6023,35 @@ class Component extends DCLogic {
     return '¡Mira este plan que armé en SOBRES! ' + fecha + '\n\n'
       + p.stops.map((v, i) => this.time12(ts[i]) + ' · ' + v.n.split(' ·')[0]).join('\n')
       + '\n\nCosto aproximado: ' + rs.costo + ' por persona\n\nÁbrelo aquí: ' + this.tandaLinkDe([p]); }
+  // ── ?v=facil: paso 1 de un toque + "Confirma y listo" (8 nov 2026) ──
+  FACIL() { return [['cenar', '🍽️', 'Cenar rico', { vibes: ['foodie'] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'] }],
+    ['tranqui', '☕', 'Tranqui', { vibes: ['chill'] }], ['cultural', '🎭', 'Cultural', { vibes: ['cultural'] }],
+    ['aventura', '🧗', 'Aventura', { vibes: ['aventurero'] }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia' }]]; }
+  facilVals(view, lanzar) {
+    const s = this.state; if (!s.facil) return { facilP1: false, facilP2: false };
+    const enHome = view === 'home' && !s.generando, rng = this.range(), ab = s.facilAbierto || null;
+    const elegida = this.FACIL().find(o => o[0] === s.facilOpcion);
+    const linea = (k, titulo, valor) => ({ k, titulo, valor, abierto: ab === k, btn: ab === k ? 'Listo' : 'Cambiar', aria: (ab === k ? 'Cerrar ' : 'Cambiar ') + titulo.toLowerCase(),
+      toggle: () => this.setState({ facilAbierto: ab === k ? null : k }) });
+    const L = { dia: linea('dia', 'Cuándo', this.whenLabel() + ' · ' + this.time12(rng[0]) + '–' + this.time12(rng[1])),
+      zona: linea('zona', 'Dónde', this.zonesLabel()),
+      quien: linea('quien', 'Quiénes', this.whoLabel() + (s.who !== 'date' && s.who !== 'solo' ? ' · ' + (s.groupSize || 1) : '')),
+      presu: linea('presu', 'Presupuesto', this.budLabel()) };
+    return {
+      facilP1: enHome && (s.facilPaso || 1) === 1, facilP2: enHome && s.facilPaso === 2,
+      facilOpts: this.FACIL().map(([k, emoji, label, cfg]) => ({ emoji, label, aria: label,
+        pick: () => { this.evPaso1(k);
+          this.setState(Object.assign({ cocinas: [], facilOpcion: k, facilPaso: 2, facilAbierto: null }, cfg,
+            { who: cfg.who || (s.who === 'familia' ? 'amigos' : s.who), groupSize: cfg.who === 'familia' ? 4 : s.groupSize }),
+            () => { try { window.scrollTo(0, 0); } catch(e) {} }); } })),
+      facilPlan: elegida ? elegida[1] + ' ' + elegida[2] : '', facilCambiarPlan: () => this.setState({ facilPaso: 1, facilAbierto: null }),
+      fDia: L.dia, fZona: L.zona, fQuien: L.quien, fPresu: L.presu,
+      facilGo: () => { if (s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); this.setState({ facilAbierto: 'dia' }); return; }
+        this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: this.zonesLabel(), cocinas: this.cocinasSel().join(',') }); lanzar(false); }
+    };
+  }
   irAFormulario(id) {
+    if (this.state.facil) { this.setState({ facilPaso: 2, facilAbierto: null }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} return; }
     const pasoDe = { 'armar-ambiente': 1, 'armar-donde': 2, 'armar-quien': 3 };
     this.setState({ paso: pasoDe[id] || 1, pasoDir: 'back' });
     this.nav('home');
@@ -5970,7 +6084,7 @@ class Component extends DCLogic {
       joyita: ['Joyitas', 'Lugares poco conocidos'], familiar: ['En familia', 'Para todas las edades'] };
     const vibeTiles = this.VIBES.map(vb => { const on = (s.vibes || []).indexOf(vb) >= 0; const t = VIBE_TXT[vb] || [vb, ''];
       return { label: t[0], hint: t[1], pressed: on ? 'true' : 'false', aria: t[0] + (on ? ' (seleccionado)' : ''),
-        pick: () => { const v = (s.vibes || []).slice(); const i = v.indexOf(vb);
+        pick: () => { this.evPaso1(vb); const v = (s.vibes || []).slice(); const i = v.indexOf(vb);
           if (i >= 0) v.splice(i, 1); else if (v.length < 2) v.push(vb);
           else { const fuera = v.shift(); v.push(vb); this.toast('Máximo dos — quité “' + ((VIBE_TXT[fuera] || [fuera])[0]) + '”'); }
           this.setState({ vibes: v }); } }; });
@@ -5978,10 +6092,10 @@ class Component extends DCLogic {
     const cocinaOn = (s.vibes || []).indexOf('foodie') >= 0;
     const cocSel = (s.cocinas || []).slice();
     const cocinaOpts = [{ label: 'Todo tipo', pressed: cocSel.length ? 'false' : 'true', aria: 'Todo tipo de comida' + (cocSel.length ? '' : ' (seleccionado)'),
-        pick: () => this.setState({ cocinas: [] }) }]
+        pick: () => { this.evPaso1('cocina_todo'); this.setState({ cocinas: [] }); } }]
       .concat(this.COCINAS().map(([k, l]) => { const on = cocSel.indexOf(k) >= 0;
         return { label: l, pressed: on ? 'true' : 'false', aria: l + (on ? ' (seleccionado)' : ''),
-          pick: () => { const c = cocSel.slice(); const i = c.indexOf(k); if (i >= 0) c.splice(i, 1); else c.push(k); this.setState({ cocinas: c }); } }; }));
+          pick: () => { this.evPaso1('cocina_' + k); const c = cocSel.slice(); const i = c.indexOf(k); if (i >= 0) c.splice(i, 1); else c.push(k); this.setState({ cocinas: c }); } }; }));
     const cocinaResumen = cocinaOn && cocSel.length ? 'Comida ' + this.cocinasTxt(cocSel) : '';
     const vibesTxt = ((s.vibes || []).map(v => (VIBE_TXT[v] || [v])[0]).join(' · ') || 'Lo que sea') + (cocinaResumen ? ' · ' + cocinaResumen.toLowerCase() : '');
     const resumenPaso = paso === 1 ? vibesTxt
@@ -5991,6 +6105,7 @@ class Component extends DCLogic {
     const lanzar = sorpresa => this.generar(() => this.runSearch(sorpresa ? { surprise: true } : { nueva: true }));
     const pasoSiguiente = () => {
       if (paso === 2 && s.when === 'fecha' && !s.customDate) { this.toast('Elige la fecha'); return; }
+      if (paso === 1) this.evPaso1('siguiente');
       if (paso < 3) { irPaso(paso + 1, 'in'); return; }
       this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: this.zonesLabel(), cocinas: this.cocinasSel().join(',') });
       lanzar(false);
@@ -6124,7 +6239,8 @@ class Component extends DCLogic {
       retomarTxt: retomar ? ((s.results.plans.length === 1 ? 'Tu opción' : 'Tus ' + s.results.plans.length + ' opciones') + ' · ' + this.zonesLabel() + ', ' + this.whenLabel().toLowerCase()) : '',
       retomar: () => this.nav('results'),
       retomarLink: retomar ? ('o retoma ' + (s.results.plans.length === 1 ? 'tu opción' : 'tus ' + s.results.plans.length + ' opciones') + ' de hace rato →') : '',
-      rapidoOn: !!s.rapido && view === 'home', noRapido: !s.rapido,
+      rapidoOn: !!s.rapido && !s.facil && view === 'home', noRapido: !s.rapido && !s.facil,
+      noFacil: !s.facil, ...this.facilVals(view, lanzar),
       rapidoNota: 'Lo demás va por defecto: ' + this.whoLabel().toLowerCase() + ', ' + this.whenLabel().toLowerCase() + '. Lo puedes cambiar después.',
       armarMioOn: !!(r && r.compartida), armarMio: () => this.armarElMio(),
       ...this.perfilVals(), paso, paso1: paso === 1, paso2: paso === 2, paso3: paso === 3,

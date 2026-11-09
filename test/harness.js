@@ -45,7 +45,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // sessionStorage PROPIO de cada app: Node 26 trae un sessionStorage global que
   // se comparte entre todas las apps de una corrida, y los "lugares vistos en
   // esta sesión" de una prueba se filtraban a la siguiente.
-  const sstore = {};
+  const sstore = Object.assign({}, opts.session || {});   // opts.session: simula una sesión ya abierta
   const sessionStorage = {
     getItem: k => (k in sstore ? sstore[k] : null),
     setItem: (k, v) => { sstore[k] = String(v); },
