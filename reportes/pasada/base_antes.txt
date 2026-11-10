@@ -1,0 +1,145 @@
+
+■ date-600
+  Date · Roma·Condesa + Juárez·Centro · hasta $600 · 7pm–2am (semilla 1): 3 opción(es) · limita: {"k":"zona","n":1529,"txt":"la zona (Roma · Condesa y Juárez · Centro) deja fuera 1529 lugares del catálogo"}
+    1. Cine de arte + Cena · 7:00 pm–10:00 pm · total $330 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 13 min
+       7:00 pm  Cinematógrafo del Chopo [Cine · funcion · Santa María la Ribera] sin$ hora~
+       8:45 pm  Barbacoa Gonzalitos [Restaurante · cena · Roma Norte] $300~
+    2. Teatro + Cena · 7:00 pm–10:15 pm · total $462 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 22 min
+       7:00 pm  Palacio de los Deportes [Foro · funcion · Granjas México] sin$ hora~
+       9:00 pm  Café de Tacuba [Restaurante · cena · Centro Histórico] $420~
+    3. Cine + Cena · 7:00 pm–10:00 pm · total $548 (incompleto: transporte en servicio de transporte) · traslados 9 min
+       7:00 pm  Cinemex Reforma 222 [Cine · funcion · Juárez] $130~
+       8:45 pm  Pizza Félix [Restaurante · cena · Roma Norte] $380~
+  Date · Roma·Condesa + Juárez·Centro · hasta $600 · 7pm–2am (semilla 2): 3 opción(es) · limita: {"k":"zona","n":1529,"txt":"la zona (Roma · Condesa y Juárez · Centro) deja fuera 1529 lugares del catálogo"}
+    1. Cine + Cena · 7:00 pm–10:00 pm · total $495 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 9 min
+       7:00 pm  Cineclub Condesa [Cine · funcion · Condesa] sin$ hora~
+       8:45 pm  Mi Compa Chava [Restaurante · cena · Roma Norte] $450~ hot2
+    2. Cena + A bailar · 7:00 pm–1:00 am · total $572 (incompleto: cover de El Bandazo; transporte en servicio de transporte) · traslados 15 min
+       7:00 pm  El Cardenal [Restaurante · cena · Centro Histórico] $450~ hot2
+      10:30 pm  El Bandazo [Salón de baile · visita · Juárez (Zona Rosa)] $70✓
+    3. Teatro + Cena · 7:00 pm–10:15 pm · total $495 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 21 min
+       7:00 pm  Estadio GNP Seguros [Foro · funcion · Granjas México] sin$ hora~
+       9:00 pm  Zéfiro [Restaurante · cena · Centro Histórico] $450~
+
+■ creativo
+  Creativo · Del Valle · Nápoles · $600–1,000 · 11am–8pm: 0 opción(es) · limita: {"k":"zona","n":2394,"txt":"la zona (Del Valle · Nápoles) deja fuera 2394 lugares del catálogo"}
+  Creativo · toda la ciudad · $600–1,000 · 11am–8pm: 0 opción(es) · limita: {"k":"horario","n":92,"txt":"el horario (11:00 am–8:00 pm) deja fuera 92 lugares"}
+
+■ antro-tacos
+  Antro y tacos · Roma·Condesa · 10pm–4am · $600–1,000: 3 opción(es) · limita: {"k":"zona","n":2130,"txt":"la zona (Roma · Condesa) deja fuera 2130 lugares del catálogo"}
+    1. Cenita rápida + Bar · 10:00 pm–1:30 am · total $198 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 11 min
+      10:00 pm  El Califa · Condesa [Taquería · cena · Condesa] $180~
+      11:30 pm  Jardín Paraíso [Bar · copas · Roma Norte] sin$ pin~
+    2. Tacos + Antro · 10:00 pm–2:00 am · total $660 (incompleto: cover de Patrick Miller; transporte en servicio de transporte) · traslados 11 min
+      10:00 pm  Taquería Los Parados [Taquería · comida · Roma Sur] $150~
+      11:30 pm  Patrick Miller [Antro · baile · Roma Norte] $450~
+    3. Bar + Antro · 10:00 pm–1:45 am · total $957 (incompleto: cover de Departamento; transporte en servicio de transporte) · traslados 7 min
+      10:00 pm  Bar Latosa [Bar · copas · Roma Norte] $550~ hot2
+      11:15 pm  Departamento [Antro · baile · Roma Norte] $320~
+  Antro y tacos · Santa Fe · 10pm–4am: 3 opción(es) · nota: Pocas opciones con esos filtros en Santa Fe · Poniente — ampliamos solo a zonas vecinas: Lomas · Tecamachalco, San Ángel, CU · Sur (marcado en cada lugar). En Santa Fe · Poniente y sus vecinas no hay antros ni bares para bailar abierto a esa hora — ampliamos a la zona más cercana con pista: Del Valle · Nápoles, Polanco (marcado en cada lugar). · limita: {"k":"zona","n":1774,"txt":"la zona (Santa Fe · Poniente) deja fuera 1774 lugares del catálogo"}
+    1. Tacos + Antro · 10:00 pm–2:00 am · total $935 (incompleto: cover de Café Drama; transporte en servicio de transporte) · traslados 9 min
+      10:00 pm  Tacos Juan · Masaryk [Taquería · comida · Polanco] $400✓ pin~
+      11:30 pm  Café Drama [Antro · baile · Polanco IV] $450~
+    2. Cantina + A bailar · 10:00 pm–2:15 am · total $803 (incompleto: cover de La Maraka; transporte en servicio de transporte) · traslados 23 min
+      10:00 pm  La Popular · Polanco [Cantina · copas · Polanco] $380~
+      11:45 pm  La Maraka [Salón de baile · baile · Narvarte] $350~
+    3. Cantina + Bar · 10:00 pm–1:00 am · total $825 (incompleto: transporte en servicio de transporte) · traslados 20 min
+      10:00 pm  Cantina La No. 20 · Artz [Cantina · copas · Pedregal] $550~
+      11:45 pm  Terral Agrobar · San Ángel [Bar · copas · San Ángel] $200✓
+   (aiParse "no quiero antros" → {"excluded":0,"cats":[{"g":"fiesta","at":11,"cats":null,"cui":null,"alt":null}],"noCats":null})
+   «No quiero antros»: hoy no existe como filtro del formulario.
+
+■ familia-plaza
+  Familia · Polanco·Chapultepec · 2pm–8pm · hasta $600: 3 opción(es) · limita: {"k":"zona","n":2486,"txt":"la zona (Polanco · Chapultepec) deja fuera 2486 lugares del catálogo"}
+    1. Comida + Café + Visita + Compras · 2:00 pm–6:45 pm · total $540 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 27 min
+       2:00 pm  Tacos Juan · Masaryk [Taquería · comida · Polanco] $400✓ pin~
+       3:30 pm  Don Nino [Heladería · cafe · Polanco] $100~
+       4:30 pm  Museo Soumaya · Plaza Carso [Museo · visita · Ampl. Granada] $0✓
+       6:00 pm  Antara Fashion Hall [Centro comercial · compras · Polanco] sin$
+    2. Comida + Visita + Café · 2:00 pm–6:15 pm · total $550 (incompleto: transporte en servicio de transporte) · traslados 23 min
+       2:00 pm  El Bajío · Polanco [Restaurante · comida · Polanco] $380~ hot2
+       3:30 pm  Museo de Sitio y Centro de Visitantes del Bosque de Chapultepec [Museo · visita · 1a. Sección del Bosque de Chapultepec] $0✓
+       5:00 pm  Santa Clara · Polanco [Café · cafe · Polanco] $120~
+    3. Comida en familia + Parque · 2:00 pm–4:30 pm · total $495 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 22 min
+       2:00 pm  Trattoria Grata [Restaurante · comida · Polanco] $450~
+       3:45 pm  Parque Bicentenario [Parque · paseo · San Lorenzo Tlaltenango] sin$
+  Familia · Coyoacán·CU (Mítikah) · 2pm–8pm · hasta $600: 3 opción(es) · nota: Para darte planes completos sumamos zonas vecinas: San Ángel (marcado en cada lugar). · limita: {"k":"zona","n":2583,"txt":"la zona (Coyoacán · CU) deja fuera 2583 lugares del catálogo"}
+    1. Visita + Comida + Juegos + Compras · 2:00 pm–6:45 pm · total $521 (incompleto: 2 paradas sin precio; transporte en servicio de transporte) · traslados 29 min
+       2:00 pm  Sport & Chips [Boliche · visita · Coyoacán] sin$
+       3:30 pm  Veggicano [Restaurante · comida · Del Carmen, Coyoacán] $237✓
+       5:00 pm  Boliche Bol Coyoacán [Boliche · juego · Coyoacán] $260~
+       6:00 pm  Mítikah [Centro comercial · compras · Xoco] sin$
+    2. Visita + Comida + Café · 2:00 pm–6:30 pm · total $431 (incompleto: transporte en servicio de transporte) · traslados 28 min
+       2:00 pm  Universum Museo de las Ciencias [Museo · visita · Ciudad Universitaria] $90✓
+       3:45 pm  La Casa de Toño · Mitikah [Restaurante · comida · Xoco] $150~ cadena
+       5:15 pm  Häagen-Dazs · Mitikah [Café · cafe · Xoco] $160~
+    3. Comida + Paseo + Visita + Compras · 2:00 pm–7:00 pm · total $572 (incompleto: 3 paradas sin precio; transporte en servicio de transporte) · traslados 32 min
+       2:00 pm  Saks · San Ángel [Restaurante · comida · San Ángel] $520~
+       3:45 pm  Viveros de Coyoacán [Parque · paseo · Del Carmen] sin$
+       4:45 pm  Centro Cultural y Artístico Danzite [Centro cultural · visita · Del Carmen Coyoacán] sin$
+       6:15 pm  Oasis Coyoacán [Centro comercial · compras · Coyoacán] sin$
+
+■ solo
+  Solo · museo · Juárez·Centro · 11am–6pm · hasta $600: 3 opción(es) · limita: {"k":"zona","n":2225,"txt":"la zona (Juárez · Centro) deja fuera 2225 lugares del catálogo"}
+    1. Comida + Visita + Librería · 1:00 pm–4:45 pm · total $567 (incompleto: transporte en servicio de transporte) · traslados 21 min
+       1:00 pm  Café de Tacuba [Restaurante · comida · Centro Histórico] $420~
+       2:30 pm  Templo Mayor (museo y zona arqueológica) [Museo · visita · Centro Histórico] $105✓ hot3
+       4:00 pm  Biblioteca Vasconcelos [Biblioteca · lectura · Buenavista] $0✓
+    2. Museo + Comida · 11:00 am–2:15 pm · total $432 (incompleto: transporte en servicio de transporte) · traslados 19 min
+      11:00 am  Museo Nacional de las Culturas del Mundo [Museo · visita · Centro] $80✓ hot3
+       1:00 pm  El Pialadero de Guadalajara [Restaurante · comida · Juárez] $320~
+    3. Visita + Comida · 11:00 am–1:45 pm · total $495 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 13 min
+      11:00 am  Centro Cultural Universitario Tlatelolco (CCUT) [Centro cultural · visita · Nonoalco Tlatelolco] sin$
+      12:30 pm  Kale+ [Restaurante · comida · San Rafael] $450~
+  Solo · tranqui/café · Roma·Condesa · 11am–6pm · hasta $600: 3 opción(es) · limita: {"k":"zona","n":2130,"txt":"la zona (Roma · Condesa) deja fuera 2130 lugares del catálogo"}
+    1. Visita + Comida + Café + Paseo · 11:00 am–4:15 pm · total $580 (incompleto: transporte en servicio de transporte) · traslados 23 min
+      11:00 am  Casa Guillermo Tovar de Teresa [Museo · visita · Roma] $85~
+      12:30 pm  Por Siempre Vegana Taquería [Taquería · comida · Roma Norte] $250~
+       2:00 pm  Alegra [Café · cafe · Condesa] $200~ hot2
+       3:30 pm  Parque México [Parque · paseo · Hipódromo] $0✓
+    2. Paseo + Comida + Café + Visita · 11:00 am–4:15 pm · total $558 (incompleto: 1 parada sin precio; transporte en servicio de transporte) · traslados 26 min
+      11:00 am  Parque España [Parque · paseo · Condesa] sin$
+      12:00 pm  Castacán [Restaurante · comida · Roma Norte] $300~
+       1:30 pm  Cardinal Casa de Café [Café · cafe · Roma Norte] $130~
+       3:00 pm  Museo Casa de las Mil Muñecas [Museo · visita · Roma Norte] $85~
+    3. Visita + Comida + Café + Paseo · 11:00 am–4:30 pm · total $585 (incompleto: 2 paradas sin precio; transporte en servicio de transporte) · traslados 23 min
+      11:00 am  Galería Furiosa [Galería · visita · Roma] sin$
+      12:30 pm  Plantasia [Restaurante · comida · Roma Norte] $450~
+       2:00 pm  Nieve de Olla [Heladería · cafe · Roma Norte] $90~
+       3:00 pm  Huerto Roma Verde [Al aire libre · paseo · Roma Sur] sin$
+
+■ regen
+  Buena cobertura: amigos, noche, Roma·Condesa, $600–1,000
+    tanda 0: 3 opciones · 3 actividades principales nuevas · 13 ms
+       El Califa · Condesa → Rhodesia Club Social
+       Rayo Cocktail Bar → Salón Covadonga
+       Licorería Limantour · Roma → Departamento
+    tanda 1: 3 opciones · 2 actividades principales nuevas · 13 ms · Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.
+       Salón Malafama → Revolver bar
+       Salón Covadonga → Páramo
+       Travieso → Departamento
+    tanda 2: 3 opciones · 3 actividades principales nuevas · 11 ms · Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.
+       Tacos del Valle → The Midnight Monkey
+       Supra Roma → Patrick Miller
+       Lucille · billar → Hiya Wine Bar
+    tanda 3: 3 opciones · 1 actividades principales nuevas · 10 ms · Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.
+       Jardín Paraíso → Terraza Karaoke Roma
+       Tacos Álvaro Obregón → Patrick Miller
+       Salón Covadonga → Musak
+    tanda 4: 3 opciones · 1 actividades principales nuevas · 10 ms · Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.
+       Bar Latosa → Órbita
+       El Pescadito · Condesa → Patrick Miller
+       Salón Covadonga → Casa Franca
+    tanda 5: 3 opciones · 0 actividades principales nuevas · 10 ms · Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.
+       Por Siempre Vegana Taquería → Rhodesia Club Social
+       Salón Covadonga → Antesala
+       Salón Malafama → Bar Latosa
+    → 36 paradas mostradas, 10 repetidas; actividades principales distintas: 10, repetidas 8; primera 13 ms, regeneraciones 13/11/10/10/10 ms
+  Se agota: creativo en Del Valle, $600–1,000, 11am–8pm
+    tanda 0: 0 opciones · 0 actividades principales nuevas · 17 ms
+    tanda 1: 0 opciones · 0 actividades principales nuevas · 17 ms
+    tanda 2: 0 opciones · 0 actividades principales nuevas · 15 ms
+    tanda 3: 0 opciones · 0 actividades principales nuevas · 14 ms
+    tanda 4: 0 opciones · 0 actividades principales nuevas · 14 ms
+    tanda 5: 0 opciones · 0 actividades principales nuevas · 13 ms
+    → 0 paradas mostradas, 0 repetidas; actividades principales distintas: 0, repetidas 0; primera 17 ms, regeneraciones 17/15/14/14/13 ms
