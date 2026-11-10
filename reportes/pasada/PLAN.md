@@ -37,5 +37,24 @@ Producción sólo con «aprobado». Se conserva el paso 2 aprobado (10 zonas, si
 - Regenerar (Roma noche): Salón Covadonga en 5 de 6 tandas; 10 de 36 paradas repetidas; avisa «no quedan nuevos» y sí hay.
 - Motor 10–17 ms por búsqueda en Node: el lag es de la interfaz (`generar`: 1,050 ms fijos + espera de Google ≤3.5 s).
 
+## Estado al 10 nov (corte por límite de uso) — F1 A MEDIAS, sin preview todavía
+Hecho en código (index.html, data/recetas.js), SIN terminar de ajustar pruebas:
+- esSede(): estadio/arena/foro sólo con evento. sedes()/sedeDe()/actKey()/mismoLugar(): misma sede = mismo lugar.
+- Costo: respaldoDe() (firme/estimado/libre/debil/pendiente), coverPendiente(), TARIFAS() (Metro $5/Metrobús $6;
+  taxímetro oficial $8.74 + $1.07/250 m o 45 s, +20% noche), costoTraslado() dividido una vez entre el grupo,
+  costoPlan(stops, times) con traslado, cabeEnTope estricto y budgetOk estricto (state.aceptaSinPrecio lo relaja).
+- Fechas en hora de CDMX con día de servicio (diaServicioISO, fechaDe). atHour respeta ultimoAcceso y cocinaCierra.
+- sigueBien(): sin «Compras» de relleno ni dos lugares del mismo tipo; máximo 3 paradas (4 si ventana ≥ 7 h).
+- Plaza: PLAZAS(), plazaDe(), piezas plaza_act/plaza_comida/plaza_postre, una opción de plaza en familia.
+- Remate: pieza tacos_madrugada, plantillas con remate, cierraBailando().
+Pendiente inmediato de F1: quitar auto-ampliación de zona (líneas ~3614, 3623, 4484, 4491, 4506) y ofrecer
+`ajustes` (calculaAjustes en engine()); «No quiero» (state.noQuiero vía exclSet + chips + aiParse); sin fecha =
+condicionado (eventos/talleres con «elige función»); actualizar pruebas (17d estadio, encabezado, las de
+auto-ampliación y las que usaban lugares sin precio con tope).
+Hallazgo clave: con tope estricto sólo ~322 lugares recomendables tienen precio respaldado; cines, boliches,
+taquerías de madrugada y locales de plaza están 'debil'/'pendiente' → hay que verificar precios (F3) para que
+salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pausa por sesión/cupo).
+
 ## Bitácora de decisiones
-(se va llenando)
+- Tope estricto: entran firme + estimado + libre; 'debil' y 'pendiente' quedan fuera salvo ajuste elegido.
+- Traslado en app: referencia con taxímetro oficial (defendible), con nota de que Uber/DiDi puede costar más.

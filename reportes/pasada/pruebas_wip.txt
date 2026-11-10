@@ -1,0 +1,17 @@
+  ✗ 10 Rehacer seguidos dan 10 combinaciones distintas
+  ✗ "Ver otras opciones" recorre muchas combinaciones y no repite sin avisar
+  ✗ al agotarse las combinaciones lo dice, no relaja filtros en silencio
+  ✗ el total no se presenta como completo si faltan costos
+  ✗ el ejemplo integrado entrega las cuatro actividades que pide
+  ✗ la intención sobrevive al Rehacer y el resumen sale del plan vigente
+  ✗ 4 · noche y fiesta pasada la 1 am: 2 de 3 opciones terminan en antro o bar con baile
+  ✗ 4b · si en la zona no hay dónde bailar, amplía a la más cercana y lo dice
+  ✗ 17d · piezas con oferta real: karaoke, billar, boliche, go karts, baile, cine de arte, trajineras
+  ✗ 17e · "con amigos" de noche en la Roma puede proponer karaoke, billar o salón de baile
+  ✗ un evento sólo se propone el día que pasa (y con su hora real)
+  ✗ 29.5 · "Ver otras opciones" trae TIPOS de plan distintos, no sólo otros lugares
+  ✗ 29.6 · dos personas distintas no reciben exactamente las mismas tres opciones
+  ✗ 33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y con presupuesto para ellos, al
+  ✗ 37.4 · debajo de las 3 opciones salen TODOS los que cumplen: zona, cocina, horario, sin repetir los del
+  ✗ 38.5 · con los valores por defecto salen 3 planes completos (sin planes de 1 parada) en casi todas las 
+✗ 277 pasaron, 16 fallaron

@@ -73,6 +73,12 @@ window.SOBRES_RECETAS = {
     parque_diversiones: { lbl: 'Parque de diversiones', cats: ['Parque de diversiones'], nombreTambien: 'aztl[aá]n parque', momento: 'dia' },
     bazar:           { lbl: 'Bazar', nombre: 'bazar|artesan|tianguis', momento: 'dia' },
     estadio:         { lbl: 'Partido', nombre: 'estadio', momento: 'libre', porConfirmar: true },
+    // ── plaza (bajo techo): todo dentro del mismo centro comercial (10 nov 2026) ──
+    plaza_act:       { lbl: 'Actividad', cats: ['Cine', 'Boliche', 'Atracción', 'Museo', 'Escape room', 'Billar'], momento: 'libre', porConfirmar: true },
+    plaza_comida:    { lbl: 'Comer ahí mismo', cats: ['Restaurante', 'Taquería', 'Fonda de autor', 'Cantina'], momento: 'libre', comida: true },
+    plaza_postre:    { lbl: 'Postre', cats: ['Heladería', 'Café', 'Churrería'], momento: 'libre' },
+    // Remate de la noche: tacos de madrugada después del bar o del antro, si la cocina sigue abierta.
+    tacos_madrugada: { lbl: 'Tacos de madrugada', cats: ['Taquería'], momento: 'madrugada', comida: true, remate: true },
     // Eventos con fecha (data/eventos.js). Sólo entran los que van con el
     // ambiente pedido (sus etiquetas) y cuya fecha coincide con la del plan.
     evento:          { lbl: 'Evento', evento: true, momento: 'libre', porConfirmar: true }
@@ -95,7 +101,9 @@ window.SOBRES_RECETAS = {
     'nightlife': {
       tarde:  [['bar', 'bar'], ['cantina', 'bar']],
       noche:  [['evento', 'bar'], ['cena_rapida', 'bar', 'antro'], ['bar', 'antro'], ['bar', 'bar'], ['cantina', 'salon_baile'], ['cena_rapida', 'bar'], ['rooftop', 'antro'], ['bar', 'karaoke'], ['karaoke'],
-               ['rooftop', 'bar'], ['cantina', 'bar'], ['bar', 'salon_baile'], ['tacos', 'antro'], ['billar', 'bar'], ['bar_romantico', 'antro']],
+               ['rooftop', 'bar'], ['cantina', 'bar'], ['bar', 'salon_baile'], ['tacos', 'antro'], ['billar', 'bar'], ['bar_romantico', 'antro'],
+               // Con remate (10 nov 2026): tacos de madrugada cuando la noche pasa de la 1 am.
+               ['bar', 'antro', 'tacos_madrugada'], ['bar', 'bar', 'tacos_madrugada'], ['antro', 'tacos_madrugada'], ['cena_rapida', 'bar', 'bar']],
       sueltos: ['bar', 'antro', 'rooftop', 'cantina', 'karaoke', 'salon_baile']
     },
     'cultural': {
