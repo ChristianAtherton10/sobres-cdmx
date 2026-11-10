@@ -189,7 +189,8 @@ test('30.5 · si no hay ese tipo en la zona, lo dice y muestra otras cocinas (no
   const hay = a.cat().some(v => v.z === 'xochimilco' && a.esComidaFiltrable(v) && a.esRecomendable(v) && a.tiposCocina(v).includes('francesa'));
   assert(!hay, 'la prueba supone que no hay francesa en Xochimilco');
   a.runSearch({ nueva: true });
-  assert((a.state.results.plans || []).length > 0, 'plan vacío');
+  // (10 nov 2026) Ya no se amplía la zona sola: o hay plan con otras cocinas, o se ofrecen ajustes. Siempre se dice.
+  assert((a.state.results.plans || []).length > 0 || (a.state.results.ajustes || []).length > 0, 'plan vacío y sin ajustes');
   assert(/No encontré comida francesa en/.test(a.state.results.expandNote || ''), 'no lo dijo: ' + a.state.results.expandNote);
 });
 
@@ -660,14 +661,17 @@ test('40.1 · paso 2 fácil: sin "Día" ni "hoy", sólo zona y "Horario"; el pla
   f.facilVals('home', () => {}).facilSiguiente(); assert(f.state.facilPaso === 3, 'Siguiente no avanzó: ' + f.state.facilPaso);
 });
 
-test('40.5 · plan sin fecha: ningún texto dice "hoy" ni trae fecha; no descarta por día; no propone eventos con fecha', () => {
+test('40.5 · plan sin fecha: ningún texto dice "hoy" ni trae fecha; no descarta por día; un evento sólo sale condicionado', () => {
   [1, 2, 3].forEach(sd => {
     const f = makeApp({}, { search: '?v=facil', dseed: sd, rseed: sd * 3 }); f.ev = () => {};
     f.setState({ vibes: ['nightlife'], facilOpcion: 'fiesta', facilPaso: 3 });
     f.runSearch({ nueva: true });
     const ps = f.state.results.plans || []; assert(ps.length >= 2, 'semilla ' + sd + ': ' + ps.length + ' planes');
     assert(f.state.planDate === '', 'el plan quedó con fecha ' + f.state.planDate);
-    ps.forEach(p => p.stops.forEach(v => assert(!v.fechas && !v.date, 'propuso un evento con fecha: ' + v.n)));
+    // (10 nov 2026) Un evento vigente sí puede salir, pero CONDICIONADO: dice que hay que elegir la función.
+    ps.forEach(p => p.stops.forEach(v => { if (v.fechas) { assert(f.vigenteDesde(v, f.todayISO()), 'evento vencido: ' + v.n);
+      assert(/elige la función/.test(f.condicionDe(v)), 'evento sin condición: ' + v.n); } assert(!v.date, 'evento de un día fijo: ' + v.n); }));
+    assert(ps.filter(p => p.stops.some(v => v.evento)).length <= 1, 'más de una opción depende de un evento');
     const rv = f.renderVals();
     const textos = [rv.resKicker, f.summary(), rv.armarResumen, f.textoCompartir(true)].concat((rv.resFiltros || []).map(x => x.label)).join(' | ');
     assert(!/\bhoy\b|ma[ñn]ana|este finde/i.test(textos), 'dice cuándo: ' + textos.slice(0, 300));

@@ -1892,8 +1892,17 @@ class Component extends DCLogic {
     }
     const p = (REV.pausas || {})[v.id];
     if (p && REV.pausasActivas !== false) {
-      v.recomendable = false; v.pausa = p;
-      v.pNotaLugar = ('En pausa: ' + p + ' ' + (v.pNotaLugar || '')).trim();
+      // (10 nov 2026) Una pausa que sólo pide ELEGIR función, sesión o boletos no es un dato que
+      // falte en la ficha: el lugar se propone "condicionado" y se pide reservar antes de darlo
+      // por hecho. Teatros y foros sin cartelera siguen fuera (son sede sin función concreta).
+      const soloSesion = /reserv|sesi[oó]n|funci[oó]n|cupo|taquilla|boleto|disponibilidad/i.test(p) && !/d[ií]as y horario|direcci[oó]n|geocodificar|acceso espec|\bpin\b/i.test(p);
+      if (soloSesion && (v.evento || ['Teatro', 'Foro', 'Espectáculo'].indexOf(v.cat) < 0)) {
+        v.condicion = p; v.sesionPorConfirmar = true; if (!v.evento) v.sesion = true;
+        v.pNotaLugar = ('Antes de ir: ' + p + ' ' + (v.pNotaLugar || '')).trim();
+      } else {
+        v.recomendable = false; v.pausa = p;
+        v.pNotaLugar = ('En pausa: ' + p + ' ' + (v.pNotaLugar || '')).trim();
+      }
     }
     if ((REV.activar || []).indexOf(v.id) >= 0) v.recomendable = true;
   }
@@ -2952,7 +2961,7 @@ class Component extends DCLogic {
       respaldado: sinResp.length === 0 && conCover.length === 0,
       completo: faltan.length === 0,
       // `seguro` = el total se apoya SÓLO en cifras verificadas y no falta nada.
-      seguro: faltan.length === 0 && !inferidos.length && !rangos.length,
+      seguro: faltan.length === 0 && !inferidos.length && !rangos.length && tr.respaldo === 'firme',
       inferidos, rangos, verificados, techo: techo + techoProp + transporte };
   }
 
@@ -3042,6 +3051,20 @@ class Component extends DCLogic {
   isWknd(iso) { try { const [y,m,d] = iso.split('-').map(Number); const wd = new Date(y,m-1,d).getDay(); return wd === 0 || wd === 6; } catch(e) { return false; } }
   // Fecha del plan que se está armando (la misma regla que runSearch).
   fechaDelPlan() { const s = this.state; return this.fechaDe(s.when === 'libre' ? 'noche' : s.when, s.customDate); }
+  vigenteDesde(v, iso) { const f = v && v.fechas; if (!f) return true;
+    if (f.solo && f.solo.length) return f.solo.some(d => d >= iso);
+    return !f.hasta || f.hasta >= iso; }
+  // DISPONIBILIDAD CONDICIONADA (10 nov 2026): lo que depende de un día, una función o una
+  // sesión que todavía no se eligió. Se propone diciendo qué falta elegir antes de darlo por hecho.
+  diasTxt(v) { const D = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    let ds = v.dias && v.dias.length ? v.dias.slice() : (v.cerrado && v.cerrado.length ? [0, 1, 2, 3, 4, 5, 6].filter(d => v.cerrado.indexOf(d) < 0) : null);
+    if (!ds || ds.length >= 7) return ''; return [1, 2, 3, 4, 5, 6, 0].filter(d => ds.indexOf(d) >= 0).map(d => D[d]).join(', '); }
+  condicionDe(v) { if (!v) return ''; const out = [];
+    if (v.evento) { if (this.sinFecha()) out.push('elige la función (' + this.fechasTxt(v) + ')'); else if (v.condicion) out.push('confirma boletos y hora'); }
+    else { if (this.sinFecha()) { const d = this.diasTxt(v); if (d) out.push('abre ' + d); }
+      if (v.condicion) out.push(['Taller', 'Escape room', 'Tour'].indexOf(v.cat) >= 0 ? 'reserva tu sesión' : 'elige función'); }
+    return out.join(' · '); }
+  condicionesPlan(stops) { return (stops || []).map(v => { const c = this.condicionDe(v); return c ? v.n.split(' ·')[0] + ': ' + c : ''; }).filter(Boolean); }
   vigenteEn(v, iso) { const f = v && v.fechas; if (!f) return true;
     if (f.solo && f.solo.length) return f.solo.indexOf(iso) >= 0;
     return (!f.desde || iso >= f.desde) && (!f.hasta || iso <= f.hasta); }
@@ -3052,7 +3075,8 @@ class Component extends DCLogic {
   timingOk(v) { const s = this.state, w = s.when;
     // Un evento con fecha sólo cuenta si el plan cae dentro de sus fechas.
     // Sin fecha no se puede saber si coincide con un evento: los eventos con fecha no entran.
-    if (this.sinFecha() && (v.fechas || v.date)) return false;
+    if (this.sinFecha() && v.date) return false;
+    if (this.sinFecha() && v.fechas) return this.vigenteDesde(v, this.todayISO());
     if (v.fechas && !this.vigenteEn(v, this.fechaDelPlan())) return false;
     if (!this.abreEseDia(v)) return false;
     if (v.date) { if (w === 'fecha' && s.customDate) return v.date === s.customDate; const today = new Date().toISOString().slice(0,10); if (w === 'ahora' || w === 'noche') return v.date === today; return true; }
@@ -3100,7 +3124,26 @@ class Component extends DCLogic {
   comboSig(stops) { return (stops || []).map(v => v.id).slice().sort().join('|'); }
 
   // Lugares que el usuario excluyó explícitamente (por lenguaje natural).
-  exclSet() { return new Set(this.state.aiExcluded || []); }
+  // «NO QUIERO» (10 nov 2026): exclusiones de ESTA salida. Son filtro duro en todo el motor
+  // (generar, regenerar, editar): viajan en exclSet junto con los lugares excluidos por nombre.
+  NOQUIERO() { return [
+    ['antro', 'Antros', v => this.esAntro(v)],
+    ['bar', 'Bares', v => this.DRINK.indexOf(v.cat) >= 0 && !this.esAntro(v)],
+    ['museo', 'Museos', v => ['Museo', 'Galería', 'Centro cultural', 'Sitio histórico'].indexOf(v.cat) >= 0],
+    ['cine', 'Cine', v => v.cat === 'Cine'],
+    ['concierto', 'Conciertos y teatro', v => ['Teatro', 'Foro', 'Espectáculo'].indexOf(v.cat) >= 0 || !!v.concierto],
+    ['tacos', 'Tacos', v => v.cat === 'Taquería'],
+    ['cadena', 'Cadenas', v => this.esCadenaCasual(v)],
+    ['plaza', 'Plazas', v => v.cat === 'Centro comercial' || !!this.plazaDe(v)],
+    ['airelibre', 'Al aire libre', v => ['Parque', 'Al aire libre'].indexOf(v.cat) >= 0]]; }
+  noQuiereA(v) { const nq = this.state.noQuiero || []; if (!nq.length || !v) return false;
+    return this.NOQUIERO().some(x => nq.indexOf(x[0]) >= 0 && x[2](v)); }
+  exclSet() { const s = this.state, C = this.cat(), k = (s.aiExcluded || []).join(',') + '~' + (s.noQuiero || []).join(',');
+    if (this._exclC && this._exclC.k === k && this._exclC.src === C) return this._exclC.set;
+    const set = new Set(s.aiExcluded || []);
+    if ((s.noQuiero || []).length) C.forEach(v => { if (this.noQuiereA(v)) set.add(v.id); });
+    this._exclC = { k, src: C, set }; return set; }
+  toggleNoQuiero(k) { const a = (this.state.noQuiero || []).slice(), i = a.indexOf(k); if (i >= 0) a.splice(i, 1); else a.push(k); this.setState({ noQuiero: a }); }
 
   // ============================================================
   // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
@@ -3508,7 +3551,9 @@ class Component extends DCLogic {
     if ((amb.indexOf('familiar') >= 0 || this.state.bajoTecho) && !elegidos.some(e => e.plaza)) {
       const tope = this.state.bajoTecho ? 3 : 1; let n = 0;
       cands.forEach(c => { if (n < tope && elegidos.length < 3 && c.plaza && !elegidos.some(e => e.plaza === c.plaza || comparte(e, c))) { elegidos.push(c); n++; } }); }
-    pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !(c.plaza && elegidos.some(e => e.plaza)) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
+    // Sin fecha, a lo más UNA opción depende de un evento (hay que elegir función); las otras dos sirven cualquier día.
+    const evDe = c => c.stops.some(v => v.evento);
+    pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !(c.plaza && elegidos.some(e => e.plaza)) && !(this.sinFecha() && evDe(c) && elegidos.some(evDe)) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
     const reserva = cands.filter(c => elegidos.indexOf(c) < 0);
     // Lo que se ofrece suelto cuando no hay plan: las piezas "sueltos" de cada ambiente.
     const sueltas = []; amb.forEach(a => (R.recetas[a].sueltos || []).forEach(k => { if (sueltas.indexOf(k) < 0) sueltas.push(k); }));
@@ -3518,7 +3563,46 @@ class Component extends DCLogic {
   }
   // Envoltura: si los tipos de comida elegidos dejan sin plan (zona, horario o
   // presupuesto), se dice y se arma con otras cocinas en vez de "sin planes".
+  // AJUSTES (10 nov 2026): con menos de tres opciones no se relaja nada en silencio. Se prueba
+  // cada filtro por separado (zona vecina, siguiente presupuesto, precio por confirmar, horario,
+  // quitar un «No quiero») y se ofrece SÓLO lo que de verdad da más opciones; la persona elige.
+  calculaAjustes(seed, opts, r) {
+    // Cuenta las salidas COMPLETAS (dos o más paradas, o una actividad que es el plan entero);
+    // un lugar suelto de consuelo no cuenta como opción completa.
+    const completas = rr => ((rr && rr.plans) || []).filter(p => this.planCompleto(p)).length;
+    const s = this.state, base = completas(r), out = [];
+    const prueba = (patch, o2) => { const prev = {}; Object.keys(patch).forEach(k => { prev[k] = s[k]; });
+      let n = 0; Object.assign(s, patch);
+      try { const r2 = this.engineBase(seed, Object.assign({}, opts, o2 || {}, { subBusqueda: true, avoidCombos: opts && opts.avoidCombos, bloquear: [] })); n = completas(r2); }
+      catch (e) { n = 0; } finally { Object.assign(s, prev); }
+      return n; };
+    const pon = (k, txt, patch, n, o2) => { if (n > base) out.push({ k, txt, patch, gana: n - base, opciones: n, ampliar: !!(o2 && o2.ampliar) }); };
+    if (s.zone !== 'all' && !(opts && opts.ampliar)) { const sel = this.zoneList(); const vec = [];
+      sel.forEach(z => this.vecinas(z, 2).forEach(k => { if (sel.indexOf(k) < 0 && vec.indexOf(k) < 0) vec.push(k); }));
+      if (vec.length) pon('zona', 'Sumar zonas vecinas (' + vec.slice(0, 2).map(z => this.zLabel(z)).join(' y ') + ')', { ampliarZonas: true }, prueba({}, { ampliar: true }), { ampliar: true }); }
+    const iB = this.BUD.findIndex(b => b[0] === s.budget);
+    if (s.budgetCustom == null && iB >= 0 && iB < this.BUD.length - 1 && s.budget !== 'any') { const sig = this.BUD[iB + 1];
+      pon('presupuesto', sig[0] === 'any' ? 'Buscar sin tope de presupuesto' : 'Subir el presupuesto a ' + sig[1].replace(/^Hasta /, 'hasta '), { budget: sig[0], budgetCustom: null }, prueba({ budget: sig[0], budgetCustom: null })); }
+    if (this.budgetMax() < 90000 && !s.aceptaSinPrecio) pon('precio', 'Incluir lugares con precio por confirmar', { aceptaSinPrecio: true }, prueba({ aceptaSinPrecio: true }));
+    const rg = this.range();
+    if (rg[0] > 9) pon('horario', 'Empezar a las ' + this.time12(rg[0] - 2), { planFrom: rg[0] - 2, planTo: rg[1] }, prueba({ planFrom: rg[0] - 2, planTo: rg[1] }));
+    if (rg[1] < 27) pon('horario', 'Terminar a las ' + this.time12(rg[1] + 2), { planFrom: rg[0], planTo: rg[1] + 2 }, prueba({ planFrom: rg[0], planTo: rg[1] + 2 }));
+    (s.noQuiero || []).forEach(k => { const lbl = (this.NOQUIERO().find(x => x[0] === k) || [k, k])[1];
+      const resto = (s.noQuiero || []).filter(x => x !== k); pon('noquiero', 'Quitar «No quiero ' + lbl.toLowerCase() + '»', { noQuiero: resto }, prueba({ noQuiero: resto })); });
+    return out.sort((a, b) => b.gana - a.gana).slice(0, 4); }
+  // Una salida completa: dos o más paradas, o una sola que por sí misma es el plan (un evento,
+  // un parque de diversiones, una función) según su receta.
+  planCompleto(p) { if (!p || !(p.stops || []).length) return false; if (p.stops.length > 1) return true;
+    const v = p.stops[0]; return !!(v.evento || (p.plantilla && p.plantilla.indexOf('+') < 0 && !p.suelto) || this.actsDe(v).indexOf('atraccion') >= 0); }
+  aplicaAjuste(a) { if (!a) return; this.setState(Object.assign({}, a.patch), () => this.generar(() => this.runSearch({ nueva: true }))); }
   engine(seed, opts) {
+    const r0 = this.engine0(seed, opts);
+    // Perezoso: los ajustes se calculan cuando la pantalla los pide (son hasta 6 búsquedas de prueba).
+    if (r0 && !(opts && (opts.subBusqueda || opts.sinAjustes)) && (r0.plans || []).filter(p => this.planCompleto(p)).length < 3) {
+      let memo = null; const o2 = Object.assign({}, opts || {});
+      try { Object.defineProperty(r0, 'ajustes', { enumerable: false, configurable: true, get: () => { if (memo) return memo; try { memo = this.calculaAjustes(seed, o2, r0); } catch (e) { memo = []; } return memo; } }); } catch (e) {} }
+    return r0; }
+  engine0(seed, opts) {
     this._cocinaForzada = false;
     const r = this.engineBase(seed, opts);
     if (this.cocinasSel().length && !this._cocinaLibre && r && !(r.plans || []).length) {
@@ -3529,6 +3613,7 @@ class Component extends DCLogic {
         r2.expandNote = r2.expandNote && r2.expandNote.indexOf('No encontré comida') < 0 ? nota + ' ' + r2.expandNote : (r2.expandNote || nota);
         return r2;
       }
+      if ((r.expandNote || '').indexOf('No encontré comida') < 0) r.expandNote = ('No encontré comida ' + this.cocinasTxt() + ' en ' + this.zonesLabel() + ' a esa hora y con ese presupuesto. ' + (r.expandNote || '')).trim();
     }
     return r;
   }
@@ -3611,16 +3696,17 @@ class Component extends DCLogic {
       return adj; };
     let addB = [];
     const pistas = () => new Set(pool.filter(v => this.bailable(v)).map(v => this.marcaDe(v))).size;
-    if (!cityWide && !opts.subBusqueda && (pool.length < 8 || opts.ampliar)) {
+    // (10 nov 2026) La zona ya NO se amplía sola: si salen menos de tres opciones se ofrece
+    // como ajuste ("Sumar zonas vecinas") y la persona decide. opts.ampliar = lo eligió.
+    if (!cityWide && opts.ampliar) {
       const added = [];
-      for (const az of vecinasSel(4)) { if (pool.length >= 8 && !opts.ampliar) break;
-        zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az && !v.lejos)); }
-      if (added.length) expandNote = (notaCocina ? notaCocina + ' ' : '') + 'Pocas opciones con esos filtros en ' + this.zonesLabel() + ' — ampliamos solo a zonas vecinas: ' + added.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).';
+      for (const az of vecinasSel(2)) { zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az && !v.lejos)); }
+      if (added.length) expandNote = (notaCocina ? notaCocina + ' ' : '') + 'Sumamos las zonas vecinas: ' + added.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).';
     }
     // Si se pidió fiesta y en la zona no hay al menos dos lugares para bailar,
     // se suma la zona más cercana que sí tenga (y se avisa), en vez de cerrar
     // la noche en un bar.
-    if (exigeBaile && !cityWide && !opts.subBusqueda && pistas() < 2) {
+    if (exigeBaile && !cityWide && opts.ampliar && pistas() < 2) {
       const antes = pistas();
       for (const az of vecinasSel(8)) { if (pistas() >= 2) break; if (zones.includes(az)) continue;
         const nuevos = all.filter(v => v.z === az && !v.lejos); if (!nuevos.some(v => this.bailable(v))) continue;
@@ -4323,7 +4409,7 @@ class Component extends DCLogic {
         const sg = this.comboSig([v]);
         const RR = this.RECETAS(); const kP = usarRecetas && recetaSueltas.find(k => this.esPieza(v, RR.piezas[k]));
         const lblS = kP ? RR.piezas[kP].lbl : null;
-        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: lblS || this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true,
+        plans.push({ stops: [v], times: [llegada(v)], acts: [ak], spent: v.pp, label: lblS || this.ACTLBL[ak] || 'Lugar', sig: sg, sigs: [sg], unaParada: true, suelto: true,
           cartelera: this.funcionSinConfirmar(v) }); }
     }
     // Sin más lugares sueltos, se repite plantilla con otros lugares.
@@ -4481,14 +4567,11 @@ class Component extends DCLogic {
     // Si con la zona elegida no salió NINGÚN plan (p. ej. dos bares de la Condesa
     // no caben en $1,000 un lunes), se intenta con las zonas vecinas y se avisa,
     // en vez de dejar la pantalla vacía.
-    if (!plans.length && !cityWide && !opts.ampliar && !opts.subBusqueda) {
-      const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
-      if (r2.plans && r2.plans.length) return r2;
-    }
+    // (10 nov 2026: sin ampliación automática; ver calculaAjustes.)
     // Menos de tres en la zona (p. ej. "Comer rico" en la Roma con $300–600:
     // casi no cabe una cena y un postre): las que faltan se buscan en las zonas
     // vecinas más cercanas, sin repetir lugares y marcadas como fuera de tu zona.
-    if (plans.length && plans.length < 3 && !cityWide && !opts.ampliar && !opts.subBusqueda) {
+    if (false && plans.length && plans.length < 3 && !cityWide && !opts.ampliar && !opts.subBusqueda) {
       const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
       const fuera = ((r2 && r2.plans) || []).filter(p => p.stops.some(v => !sel.includes(v.z)) && !plans.some(h => comparte(h, p)));
       const antes = plans.length;
@@ -4503,7 +4586,7 @@ class Component extends DCLogic {
     }
     // ?v=facil (8 nov 2026): con los valores por defecto no se muestran planes de UNA
     // parada si en las zonas vecinas hay planes completos; se amplía solo y se avisa.
-    if (s.facil && plans.length && plans.some(p => p.stops.length === 1) && !cityWide && !opts.ampliar && !opts.subBusqueda) {
+    if (false && s.facil && plans.length && plans.some(p => p.stops.length === 1) && !cityWide && !opts.ampliar && !opts.subBusqueda) {
       const r2 = this.engine(seed, Object.assign({}, opts, { ampliar: true }));
       const multi = ((r2 && r2.plans) || []).filter(p => p.stops.length > 1);
       const zs = [];
@@ -4516,7 +4599,7 @@ class Component extends DCLogic {
     }
     // Si al final ninguna opción usa una zona vecina, no se dice que se amplió.
     if (!cityWide && !plans.some(p => p.stops.some(v => !sel.includes(v.z)))) {
-      expandNote = (expandNote || '').replace(/Pocas opciones con esos filtros[^]*?\(marcado en cada lugar\)\.\s*/, '')
+      expandNote = (expandNote || '').replace(/(Pocas opciones con esos filtros|Sumamos las zonas vecinas)[^]*?\(marcado en cada lugar\)\.\s*/, '')
         .replace(/En [^.]*? — ampliamos a la zona más cercana con pista:[^]*?\(marcado en cada lugar\)\.\s*/, '').trim();
     }
     return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
@@ -4602,7 +4685,7 @@ class Component extends DCLogic {
   why(v) { const s = this.state, parts = []; const ov = v.tags.filter(t => s.vibes.includes(t)); if (ov.length) parts.push(`buscan algo ${ov.join(' y ')}`); parts.push(s.zone === 'all' ? `está en ${this.zLabel(v.z)}` : this.zoneList().includes(v.z) ? `está en ${this.zLabel(s.zone)}, a ${this.dist(v)} min` : `a ${this.dist(v)} min, en ${this.zLabel(v.z)} (zona vecina)`); if (v.ppUnknown) parts.push('falta confirmar el precio'); else if (v.pp === 0) parts.push(v.pEstado === 'verificado' ? 'entrada libre' : 'entrada libre según su categoría, sin confirmar'); else parts.push(`${this.precioTxt(v)}, dentro de su presupuesto`); return `Para ${this.whoLabel().toLowerCase()}: ${parts.join(', ')}.`; }
   // Identidad de la búsqueda actual. Si cambia, el historial se reinicia para no
   // encerrar al usuario en resultados viejos de otros filtros.
-  searchCtx() { const s = this.state; return [s.who, s.groupSize, s.zone, (s.zonesSel || []).join(','), s.when, s.customDate, s.budget, s.budgetCustom, (s.vibes || []).join(','), (s.aiExcluded || []).join(','), this.cocinasSel().join(','), s.aceptaSinPrecio ? 'sp' : '', (s.noQuiero || []).join(',')].join('~'); }
+  searchCtx() { const s = this.state; return [s.who, s.groupSize, s.zone, (s.zonesSel || []).join(','), s.when, s.customDate, s.budget, s.budgetCustom, (s.vibes || []).join(','), (s.aiExcluded || []).join(','), this.cocinasSel().join(','), s.aceptaSinPrecio ? 'sp' : '', s.ampliarZonas ? 'az' : '', s.bajoTecho ? 'bt' : '', (s.noQuiero || []).join(',')].join('~'); }
 
   // ─── Historial de lo MOSTRADO, persistente ───
   // Se guarda por usuario (o por invitado, con una clave seudónima de este
@@ -4677,7 +4760,7 @@ class Component extends DCLogic {
     const regen = (mismo ? (s.regenN || 0) : 0) + 1;
     const sol = this.nuevaSolicitud(); const ho = this.histOpts();
     const prevP = mismo ? (s.seenPlantillas || []) : [];
-    const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP,
+    const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP, ampliar: !!s.ampliarZonas,
       bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId, reqSeed: sol.reqSeed });
     this.registrarVistos(r);
     const h = this.histOf(r, prevC, prevV);
@@ -4704,7 +4787,7 @@ class Component extends DCLogic {
     const sp = !!(extra && extra.surprise); const seed = sp ? (s.surpriseN || 0) + 1 : 0;
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
-    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: this.fechaDe(s.when, s.customDate), results: (() => { const rr = this.engine(seed, { regen: _regen, avoidCombos: _prevC, avoidVenues: _prevV, avoidPlantillas: (_mismo && _nuevo) ? (s.seenPlantillas || []) : [], bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); const _pp = (_mismo && _nuevo) ? (s.seenPlantillas || []) : [];
+    const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: this.fechaDe(s.when, s.customDate), results: (() => { const rr = this.engine(seed, { regen: _regen, ampliar: !!s.ampliarZonas, avoidCombos: _prevC, avoidVenues: _prevV, avoidPlantillas: (_mismo && _nuevo) ? (s.seenPlantillas || []) : [], bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); const _pp = (_mismo && _nuevo) ? (s.seenPlantillas || []) : [];
       this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v,
         seenPlantillas: _pp.concat(((this._lastR || {}).plans || []).map(p => p.plantilla).filter(Boolean)).slice(-12) }); }
     this.persist(); this.nav('results'); return this._lastR; }
@@ -5351,9 +5434,9 @@ class Component extends DCLogic {
       partes.push('Dejé fuera: ' + marcas.join(', ') + '.');
     }
     const cst = this.costoPlan(stops || []);
-    const total = cst.consumo + cst.propina;
+    const total = cst.total;   // consumo + propina + traslado
     if (p.budget && p.budget < 90000) {
-      const detalle = 'consumo $' + cst.consumo + (cst.propina ? ' + propina ~$' + cst.propina : '');
+      const detalle = 'consumo $' + cst.consumo + (cst.propina ? ' + propina ~$' + cst.propina : '') + (cst.transporte ? ' + traslado ~$' + cst.transporte : '');
       partes.push(total <= p.budget
         ? (cst.completo ? 'Total $' + total + ' pp (' + detalle + '), dentro de tu tope.'
                         : 'Desde $' + total + ' pp (' + detalle + '), dentro de tu tope — falta ' + cst.faltan.join(' y ') + '.')
@@ -6200,8 +6283,8 @@ class Component extends DCLogic {
     let trasMin = 0, falta = false;
     for (let i = 0; i < n - 1; i++) { const km = this.legKm(stops[i], stops[i + 1]); const m = this.minutosTramo(km);
       if (m == null) falta = true; else trasMin += m; }
-    const c = this.costoPlan(stops);
-    const sinPrecio = stops.filter(v => v.ppUnknown).length;
+    const c = this.costoPlan(stops, ts);
+    const sinPrecio = stops.filter(v => v.ppUnknown && !this.accesoLibre(v)).length;
     let costo, costoNota;
     if (sinPrecio === n) { costo = 'Por confirmar'; costoNota = 'Ningún lugar publica precio todavía'; }
     else {
@@ -6420,13 +6503,15 @@ class Component extends DCLogic {
         stops: st.map((v, j) => ({ time: (p.cartelera || (p.porConfirmar && p.porConfirmar[j]))
             ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + (v.col || this.zLabel(v.z))) + (v.horaEstimada ? ' · horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '')
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
-          + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '') })),
+          + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) && !this.condicionDe(v) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '')
+          + (this.condicionDe(v) ? ' · ' + this.condicionDe(v) : '') })),
+        condicionada: this.condicionesPlan(st).length > 0,
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
         elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',
         porQue: this.porQue(st), hayPorQue: !!this.porQue(st),
-        avisoOp: [p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
-        hayAvisoOp: !!(p.avisoVentana || p.avisoComida || p.avisoPrecio),
+        avisoOp: [this.condicionesPlan(st).length ? 'Para darlo por hecho — ' + this.condicionesPlan(st).join('; ') + '.' : '', p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
+        hayAvisoOp: !!(this.condicionesPlan(st).length || p.avisoVentana || p.avisoComida || p.avisoPrecio),
         ...(() => { if (!(r && r.compartida)) return { votoOn: false };
           const pid = this.planOptId(p); const sp = ((s.sync && s.sync.plans) || []).find(x => x.id === pid);
           const vv = (sp && sp.votes) || {}; const yo = s.userName; const mio = yo ? vv[yo] : null;

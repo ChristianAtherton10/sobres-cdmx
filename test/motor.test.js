@@ -597,15 +597,24 @@ const conPlan = (extra) => {
   return app;
 };
 
-test('el total no se presenta como completo si faltan costos', () => {
+// (10 nov 2026) El traslado en app ya no "falta": entra al total como REFERENCIA con el taxímetro
+// oficial de taxi libre, dividido una vez entre el grupo. Por eso el total sigue sin presentarse
+// como cifra cerrada ("desde $") y el desglose dice de dónde sale.
+test('el total no se presenta como cerrado: el traslado en app es una referencia con fuente', () => {
   const app = conPlan();
-  app.state.transporte = 'uber';
-  const c = app.costoPlan(app.getPlan().stops);
-  assert(c.completo === false, 'dio por completo un total sin transporte');
-  assert(c.faltan.some(x => /transporte/i.test(x)), 'no dice que falta el transporte: ' + c.faltan);
+  app.state.transporte = 'servicio';
+  const st = app.getPlan().stops;
+  const c = app.costoPlan(st);
+  assert(c.transporte > 0 && c.traslado.respaldo === 'estimado' && /taxi/i.test(c.traslado.fuente.fuente), 'sin traslado de referencia: ' + JSON.stringify(c.traslado).slice(0, 200));
+  assert(c.total === c.consumo + c.propina + c.transporte, 'el total no suma el traslado');
+  assert(c.seguro === false, 'dio por seguro un total con traslado de referencia');
+  assert(!c.faltan.some(x => /transporte/i.test(x)) && c.estimados.some(x => /traslado/.test(x)), 'el traslado no está en el desglose: ' + c.estimados);
+  // Se divide UNA vez entre el grupo: con el doble de gente en un auto, la mitad por persona (redondeo a $5).
+  app.state.groupSize = 2; const dos = app.costoTraslado(st).porPersona; app.state.groupSize = 4; const cuatro = app.costoTraslado(st).porPersona;
+  assert(cuatro <= dos && cuatro >= Math.floor(dos / 2), 'no se dividió entre el grupo: 2 → $' + dos + ', 4 → $' + cuatro);
   const V = app.renderVals();
   assert(/^desde \$/.test(V.planTotal), 'lo presenta como total cerrado: ' + V.planTotal);
-  assert(/NO incluye/.test(V.planMeta), 'no lista lo que falta: ' + V.planMeta);
+  assert(/traslado/.test(V.planMeta), 'no desglosa el traslado: ' + V.planMeta);
 });
 
 test('a pie desaparece el hueco del transporte y se estima propina', () => {
@@ -769,10 +778,11 @@ test('el presupuesto incluye la propina que la app suma', () => {
   const app = makeApp({ ...BASE, zone: 'polanco', zonesSel: ['polanco'] }, { dseed: 1234 });
   app.aiBuild('pareja, cenar y tomar cafe en polanco hoy de 6pm a 11pm, maximo 600 por persona');
   const c = app.costoPlan(app.state.planCustom.stops);
-  assert(c.consumo + c.propina <= 600, 'consumo+propina = ' + (c.consumo + c.propina) + ' > 600');
+  // (10 nov 2026) El tope cubre TODO lo que la app suma: consumo, propina y traslado.
+  assert(c.total === c.consumo + c.propina + c.transporte && c.total <= 600, 'consumo+propina+traslado = ' + c.total + ' > 600');
   const resumen = app.state.aiSummary || '';
   const m = resumen.match(/\$(\d+) pp \(consumo/);
-  if (m) assert(+m[1] === c.consumo + c.propina, 'el resumen dice $' + m[1] + ' y el cálculo ' + (c.consumo + c.propina));
+  if (m) assert(+m[1] === c.total, 'el resumen dice $' + m[1] + ' y el cálculo ' + c.total);
 });
 
 test('si una actividad pedida no cabe, lo explica y no la sustituye', () => {
@@ -1305,10 +1315,11 @@ test('la intención sobrevive al Rehacer y el resumen sale del plan vigente', ()
     assert(app.FOOD.indexOf(st[0].cat) >= 0, 'la cena se convirtió en ' + st[0].cat + ' (' + st[0].n + ')');
     primeras.push(st[0].id);
     const esperado = app.costoPlan(st);
-    const m = (app.state.aiSummary || '').match(/Desde \$(\d+)/);
+    // (10 nov 2026) El total ya incluye el traslado; si no falta nada dice "Total", si falta, "Desde".
+    const m = (app.state.aiSummary || '').match(/(?:Desde|Total) \$(\d+)/);
     assert(m, 'el resumen debe decir el costo del plan vigente: ' + app.state.aiSummary);
-    assert(+m[1] === esperado.consumo + esperado.propina,
-      'el resumen dice $' + m[1] + ' y el plan vigente cuesta $' + (esperado.consumo + esperado.propina));
+    assert(+m[1] === esperado.total,
+      'el resumen dice $' + m[1] + ' y el plan vigente cuesta $' + esperado.total);
     resumenes.push(m[1]);
     app.regenerate();
   }
@@ -2311,5 +2322,7 @@ require('./perfil.test.js');
 require('./landing.test.js');
 // Revisión del catálogo del fundador en Excel (9 nov 2026).
 require('./revision.test.js');
+// Pasada profunda (10 nov 2026): tope estricto y catálogo de la preview.
+require('./pasada.test.js');
 
 report();

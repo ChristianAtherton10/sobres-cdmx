@@ -20,7 +20,8 @@ function fila(a, v, t, act) {
 }
 function pinta(a, r, titulo) {
   const ps = (r && r.plans) || [];
-  console.log(`  ${titulo}: ${ps.length} opción(es)` + (r && r.expandNote ? ` · nota: ${r.expandNote}` : '') + (r && r.exhausted ? ' · AGOTADO' : '') + (r && r.limita ? ` · limita: ${JSON.stringify(r.limita)}` : ''));
+  console.log(`  ${titulo}: ${ps.length} opción(es)` + (r && r.expandNote ? ` · nota: ${r.expandNote}` : '') + (r && r.exhausted ? ' · AGOTADO' : ''));
+  if (r && r.ajustes && r.ajustes.length) console.log('    AJUSTES que puede elegir: ' + r.ajustes.map(x => x.txt + ' (+' + x.gana + ')').join(' | '));
   ps.forEach((p, i) => {
     const c = a.costoPlan(p.stops), rs = a.resumenPlan(p.stops, p.times), v = a.viabilidad ? a.viabilidad(p.stops, p.times) : { ok: true, problemas: [] };
     console.log(`    ${i + 1}. ${p.label || p.plantilla || 'suelto'} · ${rs.horario} · total ${$(c.total)}${c.completo ? '' : ' (incompleto: ' + c.faltan.join('; ') + ')'} · traslados ${rs.traslados}${v.ok ? '' : ' · INVIABLE: ' + JSON.stringify(v.problemas).slice(0, 160)}`);
@@ -29,7 +30,7 @@ function pinta(a, r, titulo) {
   return ps;
 }
 function app(st, opts) {
-  const a = makeApp({}, Object.assign({ search: '?v=facil', dseed: 1, rseed: 3 }, opts || {})); a.ev = () => {};
+  const a = makeApp({}, Object.assign({ search: '?v=facil', dseed: 1, rseed: 3, estricto: true }, opts || {})); a.ev = () => {};
   if (st.zonas) { st.zonesSel = st.zonas === 'all' ? [] : a.conGrupos(st.zonas); st.zone = st.zonas === 'all' ? 'all' : st.zonesSel[0]; delete st.zonas; }
   a.setState(st); return a;
 }
@@ -44,7 +45,8 @@ const CASOS = {
     let a = app(Object.assign({}, st)); pinta(a, a.runSearch({ nueva: true }), 'Antro y tacos · Roma·Condesa · 10pm–4am · $600–1,000');
     a = app(Object.assign({}, st, { zonas: ['santafe'] })); pinta(a, a.runSearch({ nueva: true }), 'Antro y tacos · Santa Fe · 10pm–4am');
     a = app(Object.assign({}, st)); if (a.aiParse) { const p = a.aiParse('no quiero antros'); console.log('   (aiParse "no quiero antros" →', JSON.stringify({ excluded: (p.excluded || []).length, cats: p.cats, noCats: p.noCats || p.exclCats || null }) + ')'); }
-    if (a.setNoQuiero) { a.setNoQuiero(['antro']); pinta(a, a.runSearch({ nueva: true }), 'Noche con «No quiero antros»'); } else console.log('   «No quiero antros»: hoy no existe como filtro del formulario.'); },
+    a = app(Object.assign({}, st, { noQuiero: ['antro'] })); const ps = pinta(a, a.runSearch({ nueva: true }), 'Noche con «No quiero antros»');
+    console.log('   antros o salones en esas opciones: ' + ps.reduce((n, p) => n + p.stops.filter(v => a.esAntro(v)).length, 0)); },
   'familia-plaza': () => { const a = app({ who: 'familia', groupSize: 4, vibes: ['familiar'], facilOpcion: 'familia', budget: 'b600', zonas: ['polanco'], planFrom: 14, planTo: 20 });
     pinta(a, a.runSearch({ nueva: true }), 'Familia · Polanco·Chapultepec · 2pm–8pm · hasta $600');
     const b = app({ who: 'familia', groupSize: 4, vibes: ['familiar'], facilOpcion: 'familia', budget: 'b600', zonas: ['coyoacan'], planFrom: 14, planTo: 20 });

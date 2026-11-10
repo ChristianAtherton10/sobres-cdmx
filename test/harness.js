@@ -119,6 +119,12 @@ function makeApp(stateOverrides = {}, opts = {}) {
   app.V = app.aplicarAuditoria(app.V);
 
   app.state.catLoaded = app.EXT.length;   // como tras cargar el catálogo en el navegador
+  // TOPE ESTRICTO (10 nov 2026): en la app, con presupuesto elegido sólo entran lugares con
+  // costo respaldado. Las pruebas de LÓGICA del motor anteriores a esa regla se escribieron con
+  // la oferta completa (lugares con precio inferido o por confirmar): corren con
+  // `aceptaSinPrecio`, que es el ajuste que la persona puede elegir en pantalla. Las pruebas
+  // nuevas (test/pasada.test.js) usan { estricto: true }: el comportamiento por defecto.
+  if (!opts.estricto && !('aceptaSinPrecio' in stateOverrides)) app.state.aceptaSinPrecio = true;
   Object.assign(app.state, stateOverrides);
   app._store = store;
   app._win = win; app._sstore = sstore;

@@ -84,12 +84,17 @@ test('4 · noche y fiesta pasada la 1 am: 2 de 3 opciones terminan en antro o ba
     assert(bailan >= 2, sd + ': sólo ' + bailan + ' terminan bailando: ' + plans.map(txt).join(' || '));
   });
 });
-test('4b · si en la zona no hay dónde bailar, amplía a la más cercana y lo dice', () => {
-  const { app, plans, r } = corre({ who:'amigos', groupSize:6, zone:'coyoacan', zonesSel:['coyoacan'], vibes:['nightlife'], when:'finde', budget:'b1000', planFrom:21, planTo:27 }, 5);
+// (10 nov 2026) La zona ya NO se amplía sola: se queda en lo que pidieron y OFRECE sumar las
+// vecinas; si la persona lo elige, entonces sí hay dónde bailar y se dice de dónde salió.
+test('4b · si en la zona no hay dónde bailar, no amplía en silencio: lo ofrece y, si lo eligen, lo dice', () => {
+  const st = { who:'amigos', groupSize:6, zone:'coyoacan', zonesSel:['coyoacan'], vibes:['nightlife'], when:'finde', budget:'b1000', planFrom:21, planTo:27 };
+  const { app, plans, r } = corre(st, 5);
   assert(!app.cat().some(v => v.z === 'coyoacan' && app.bailable(v) && !v.lejos), 'la prueba supone que Coyoacán no tiene antro');
-  const bailan = plans.filter(p => app.bailable(p.stops[p.stops.length - 1])).length;
-  assert(bailan >= 2, 'Coyoacán de fiesta: sólo ' + bailan + ' opciones terminan bailando');
-  assert(/bailar|antro/i.test(r.expandNote || ''), 'no avisó que amplió la zona para ir a bailar: ' + r.expandNote);
+  plans.forEach(p => p.stops.forEach(v => assert(v.z === 'coyoacan', 'amplió la zona sin preguntar: ' + v.n + ' (' + v.z + ')')));
+  assert((r.ajustes || []).some(a => a.k === 'zona'), 'no ofreció sumar zonas vecinas: ' + JSON.stringify((r.ajustes || []).map(a => a.txt)));
+  const b = corre(Object.assign({}, st, { ampliarZonas: true }), 5);
+  assert(b.plans.some(p => app.cierraBailando(p.stops)), 'con las vecinas sumadas tampoco hay dónde bailar: ' + b.plans.map(txt).join(' || '));
+  assert(/zonas vecinas|bailar/i.test(b.r.expandNote || ''), 'no dijo que sumó zonas: ' + b.r.expandNote);
 });
 
 // 5 ───────────────────────────────────────────────────────────────
@@ -251,7 +256,8 @@ test('14 · "Comer rico" no propone bares, cantinas, antros ni taquerías', () =
   zonas.forEach((z, i) => [3, 29, 83].forEach(sd => {
     const st = { who:'amigos', groupSize:4, zone:z, zonesSel:[z], vibes:['foodie'], when:'noche', budget:'b600' };
     const { app, plans } = corre(i % 2 ? Object.assign(st, { budget:'b1000', planFrom:19, planTo:24 }) : st, sd);
-    assert(plans.length, z + '/' + sd + ': comer rico no dio planes');
+    // (10 nov 2026) Sin ampliación automática: si en la zona no cabe, no hay plan y se ofrecen ajustes.
+    assert(plans.length || (app.state.results.ajustes || []).length, z + '/' + sd + ': comer rico no dio planes ni ajustes');
     plans.forEach(p => {
       p.stops.forEach(v => assert(!NO.includes(v.cat), z + '/' + sd + ': comer rico propuso ' + v.n + ' (' + v.cat + '): ' + txt(p)));
       p.stops.forEach(v => assert(!app.esCadenaCasual(v), z + '/' + sd + ': comer rico propuso la cadena ' + v.n));
@@ -323,7 +329,10 @@ test('16 · "Cultural": cada opción es cultural; nada de tacos, cafés, helader
 });
 test('16b · "Cultural" de noche en la Roma da lugares culturales (teatros con cartelera por confirmar), no comida', () => {
   const { app, plans } = corre({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], vibes:['cultural'], when:'noche', budget:'b600' }, 3);
-  assert(plans.length >= 1, 'no dio ninguna opción');
+  // (10 nov 2026) Un foro o teatro sin función concreta ya no se propone (es sede, no salida): si en
+  // la Roma de noche no queda nada cultural, se dice con ajustes en vez de rellenar con comida.
+  assert(plans.length >= 1 || (app.state.results.ajustes || []).length >= 1, 'no dio ninguna opción ni ajustes');
+  plans.forEach(p => p.stops.forEach(v => assert(!app.esSede(v), 'propuso un recinto sin función: ' + v.n)));
   plans.forEach(p => assert(p.stops.some(v => app.esCultural(v)), 'opción sin nada cultural: ' + txt(p)));
   // Sin función confirmada no se inventa horario en la tarjeta.
   app.setState({ results: app.state.results });
@@ -372,6 +381,11 @@ test('17d · piezas con oferta real: karaoke, billar, boliche, go karts, baile, 
   // boliche 5 → 4, karting 3 → 2 y cine de arte 6 → 4: la revisión del fundador (9 nov 2026) pausó
   // algunos hasta confirmar horario o cartelera.
   const min = { karaoke: 5, billar: 4, boliche: 4, karting: 2, salon_baile: 6, cine_arte: 4, trajineras: 2, estadio: 4 };
+  // (10 nov 2026) Un estadio sólo sale con un partido o concierto concreto: la pieza "estadio"
+  // ya no cuenta recintos sueltos.
+  const est = rec.filter(v => app.esPieza(v, R.piezas.estadio));
+  assert(est.every(v => v.evento), 'estadio sin función: ' + est.filter(v => !v.evento).map(v => v.n));
+  delete min.estadio;
   Object.keys(min).forEach(k => {
     const n = rec.filter(v => app.esPieza(v, R.piezas[k])).length;
     assert(n >= min[k], k + ' tiene ' + n + ' lugares recomendables (mínimo ' + min[k] + ')');
