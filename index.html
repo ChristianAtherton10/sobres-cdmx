@@ -118,6 +118,7 @@
 }
 .sb-facil-op:active,.sb-facil-op:hover{border-color:var(--ink)}
 .sb-facil-conf{padding-bottom:100px}
+.sb-regen{opacity:.4;pointer-events:none;transition:opacity .12s}
 .sb-cta-fija{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:6;background:var(--color-bg);padding:10px 16px 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
 @media (min-width:820px){.sb-cta-fija{position:sticky;bottom:0;padding:12px 0}}
 /* ═════════════════════ Tema SOBRES ═════════════════════
@@ -817,7 +818,11 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 </div>
 
-<div class="sb-optgrid" style="margin-top:18px">
+<sc-if value="{{ activosOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-chips sb-wrap" style="margin:10px auto 0"><sc-for list="{{ activos }}" as="f" hint-placeholder-count="1"><button class="sb-chip" aria-pressed="true" style="min-height:34px;padding:0 12px;font-size:13px" onClick="{{ f.go }}" aria-label="{{ f.aria }}">{{ f.label }}</button></sc-for></div>
+</sc-if>
+<sc-if value="{{ regenOn }}" hint-placeholder-val="{{ false }}"><p class="sb-note sb-wrap" role="status" style="margin:12px auto 0;font-weight:600">Buscando otras opciones…</p></sc-if>
+<div class="sb-optgrid {{ regenCls }}" style="margin-top:18px">
 <sc-for list="{{ opciones }}" as="o" hint-placeholder-count="3">
 <article class="sb-card sb-opt {{ o.fx }}" style="{{ o.fxDelay }}" aria-label="{{ o.aria }}">
 <div class="foto" style="background:{{ o.fondo }}">
@@ -872,11 +877,27 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </section>
 </sc-if>
 
+<sc-if value="{{ agotadoOn }}" hint-placeholder-val="{{ false }}">
+<div id="sb-agotado" class="sb-card sb-wrap" role="status" style="padding:18px 16px;margin-top:22px;border-color:var(--electrico)">
+<h2 class="sb-h3">{{ agotadoTit }}</h2>
+<p class="sb-note" style="margin:6px 0 12px">{{ agotadoTxt }}</p>
+<button class="sb-btn2" onClick="{{ reiniciar }}">Volver a empezar</button>
+</div>
+</sc-if>
+<sc-if value="{{ ajustesOn }}" hint-placeholder-val="{{ false }}">
+<div id="sb-ajustes" class="sb-card sb-wrap" style="padding:18px 16px;margin-top:22px">
+<sc-if value="{{ ajustesTit }}" hint-placeholder-val="{{ '' }}"><h2 class="sb-h3">{{ ajustesTit }}</h2></sc-if>
+<p class="sb-note" style="margin:6px 0 12px">{{ ajustesTxt }}</p>
+<div style="display:grid;gap:8px"><sc-for list="{{ ajustes }}" as="a" hint-placeholder-count="2"><button class="sb-btn2 sb-full" style="justify-content:flex-start;text-align:left;min-height:48px" onClick="{{ a.go }}" aria-label="{{ a.aria }}">{{ a.txt }}</button></sc-for></div>
+</div>
+</sc-if>
 <sc-if value="{{ hayOpciones }}" hint-placeholder-val="{{ true }}">
 <div class="sb-card sb-wrap" style="padding:18px 16px;margin-top:22px">
 <h2 class="sb-h3">¿Ninguno los convence?</h2>
 <p class="sb-note" style="margin:4px 0 12px">{{ otrasNota }}</p>
 <button class="sb-btn2" onClick="{{ resurprise }}">Ver otras opciones</button>
+<div style="margin-top:14px"><span class="sb-label" style="margin-bottom:6px">No quiero…</span>
+<div class="sb-chips" role="group" aria-label="No quiero"><sc-for list="{{ noQuieroOpts }}" as="o" hint-placeholder-count="6"><button class="sb-chip" style="min-height:36px;padding:0 12px;font-size:13.5px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div></div>
 <sc-if value="{{ puedeCompartirTanda }}" hint-placeholder-val="{{ true }}">
 <div style="height:1px;background:var(--color-divider);margin:16px 0 8px"></div>
 <div class="sb-row" style="gap:2px;margin-left:-12px">
@@ -2821,7 +2842,9 @@ class Component extends DCLogic {
     const PRIM = ['reto','taller','atraccion','recorrido','funcion','visita','baile'];
     const MEAL = ['comida','cena','desayuno'];
     const actsDe = (v, i) => (acts && acts[i]) ? [acts[i]] : this.actsDe(v);
-    for (const grupo of [PRIM, MEAL]) {
+    // De noche y fiesta, la actividad principal es dónde se toma o se baila, no los tacos de antes.
+    const noche = (this.state.vibes || []).indexOf('nightlife') >= 0;
+    for (const grupo of (noche ? [PRIM, ['copas'], MEAL] : [PRIM, MEAL])) {
       const i = st.findIndex((v, j) => actsDe(v, j).some(k => grupo.indexOf(k) >= 0));
       if (i >= 0) return st[i].id;
     }
@@ -3121,7 +3144,7 @@ class Component extends DCLogic {
       .sort((a, b) => b.sc - a.sc).map(x => x.g); }
   // Firma de una combinación: independiente del orden, la hora y el título.
   // Reordenar las mismas paradas NO cuenta como un plan nuevo.
-  comboSig(stops) { return (stops || []).map(v => v.id).slice().sort().join('|'); }
+  comboSig(stops) { return (stops || []).map(v => this.actKey(v)).slice().sort().join('|'); }
 
   // Lugares que el usuario excluyó explícitamente (por lenguaje natural).
   // «NO QUIERO» (10 nov 2026): exclusiones de ESTA salida. Son filtro duro en todo el motor
@@ -3412,6 +3435,7 @@ class Component extends DCLogic {
   armarConRecetas(ctx) {
     const R = this.RECETAS(); if (!R) return { planes: [], suelto: null };
     const { pool, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq } = ctx;
+    const yaEnPlan = ctx.yaEnPlan || (() => false);   // ya salió en un plan de ESTA búsqueda
     const amb = this.ambientesReceta();
     const joya = (this.state.vibes || []).indexOf('joyita') >= 0;
     const franjas = []; if (from < 12) franjas.push('manana'); if (from < 18 && to > 12) franjas.push('tarde'); if (to > 18) franjas.push('noche');
@@ -3451,7 +3475,8 @@ class Component extends DCLogic {
         const iAntro = pl.t.indexOf('antro');
         const desde0 = (!prev && iAntro > 0) ? Math.max(from, 22.5 - iAntro * 1.5) : from;
         const opciones = [];
-        for (const v of candDe(k)) {
+        const candK = candDe(k), ordenK = ctx.yaEnPlan ? candK.filter(v => !yaEnPlan(v)).concat(candK.filter(yaEnPlan)) : candK;
+        for (const v of ordenK) {
           if (st.indexOf(v) >= 0 || st.some(x => this.mismoLugar(x, v))) continue;
           if (pl.plaza && (!this.plazaDe(v) || v.cat === 'Centro comercial' || (st.length && this.plazaDe(v) !== this.plazaDe(st[0])))) continue;
           let viaje = 0;
@@ -3480,6 +3505,8 @@ class Component extends DCLogic {
           if (opciones.length >= 24) break;
         }
         if (!opciones.length) return null;
+        // «Dame otros 3»: si hay lugares que no ha visto para esta pieza, se elige entre ésos.
+        { const fr = opciones.filter(o => !yaEnPlan(o.v)); if (fr.length && fr.length < opciones.length) { opciones.length = 0; fr.forEach(o => opciones.push(o)); } }
         opciones.sort((a, b) => b.sc - a.sc);
         // Azar sólo entre los que están cerca del mejor (≤ 4 puntos): antes era entre
         // los 6 primeros, y con 2 hotspots abiertos salían 4 lugares cualquiera igual de seguido.
@@ -3515,7 +3542,12 @@ class Component extends DCLogic {
     // "Ver otras opciones": los TIPOS de plan que ya viste en esta búsqueda bajan
     // (no sólo los mismos lugares), para que la siguiente tanda sea distinta.
     const avoidP = ctx.avoidP || new Set();
-    cands.forEach(c => { c.orden = c.puntaje + azar() * 6 - (avoidP.has(c.plantilla) ? 9 : 0); });
+    // Novedad: una actividad principal ya vista en esta búsqueda va al final (2); una parada de
+    // apoyo repetida pesa menos (1). Así la siguiente tanda explora otras actividades y lugares.
+    cands.forEach(c => { const pid = this.anclaDe(c.stops, c.acts), pr = c.stops.find(v => v.id === pid) || c.stops[0];
+      c.novedad = (yaEnPlan(pr) ? 2 : 0) + (c.stops.some(v => v !== pr && yaEnPlan(v)) ? 1 : 0);
+      c.orden = c.puntaje + azar() * 6 - (avoidP.has(c.plantilla) ? 9 : 0) - c.novedad * 25; });
+    if (ctx.soloNuevos) { for (let i = cands.length - 1; i >= 0; i--) if (cands[i].novedad >= 2) cands.splice(i, 1); }
     cands.sort((a, b) => b.orden - a.orden);
     // Las tres como CONJUNTO: sin lugares (ni marcas) repetidos, plantillas y
     // arranques distintos mientras se pueda.
@@ -3594,7 +3626,7 @@ class Component extends DCLogic {
   // un parque de diversiones, una función) según su receta.
   planCompleto(p) { if (!p || !(p.stops || []).length) return false; if (p.stops.length > 1) return true;
     const v = p.stops[0]; return !!(v.evento || (p.plantilla && p.plantilla.indexOf('+') < 0 && !p.suelto) || this.actsDe(v).indexOf('atraccion') >= 0); }
-  aplicaAjuste(a) { if (!a) return; this.setState(Object.assign({}, a.patch), () => this.generar(() => this.runSearch({ nueva: true }))); }
+  aplicaAjuste(a) { if (!a) return; this.setState(Object.assign({ agotado: null }, a.patch), () => this.generar(() => this.runSearch({ nueva: true }))); }
   engine(seed, opts) {
     const r0 = this.engine0(seed, opts);
     // Perezoso: los ajustes se calculan cuando la pantalla los pide (son hasta 6 búsquedas de prueba).
@@ -3659,6 +3691,12 @@ class Component extends DCLogic {
     const nivel = v => (enTanda(v) ? 2 : 0) + (yaVistoV(v) ? 1 : 0);
     const mejores = lista => { if (!lista.length) return lista; const m = Math.min.apply(null, lista.map(nivel)); return lista.filter(v => nivel(v) === m); };
     const excl = this.exclSet();
+    // «DAME OTROS 3» (10 nov 2026): lo que ya salió en un plan de ESTA búsqueda, por actividad/sede
+    // (no por ficha ni por orden). La siguiente tanda explora primero lo que falta por ver.
+    const vistoPlan = new Set();
+    if ((opts.vistosPlan || []).length) { const porId = new Map(); this.cat().forEach(v => porId.set(v.id, v));
+      opts.vistosPlan.forEach(id => { const v = porId.get(id); vistoPlan.add(v ? this.actKey(v) : id); }); }
+    const yaEnPlan = v => vistoPlan.has(this.actKey(v));
 
     // Filtro DURO por compatibilidad de vibra. Antes la vibra sólo sumaba
     // puntos (rank) y reordenaba grupos (groupOrder), así que un bar entraba
@@ -4056,7 +4094,7 @@ class Component extends DCLogic {
         && (sinCopas ? (['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Antro', 'Salón de baile', 'Cantina'].indexOf(v.cat) < 0
           // ?v=facil, "Cenar rico" de noche: un trago después de cenar sí (nunca antro ni salón).
           || (copasCena && ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Cantina'].indexOf(v.cat) >= 0)) : true));
-      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida,
+      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida, yaEnPlan: vistoPlan.size ? yaEnPlan : null, soloNuevos: !!opts.soloNuevos && vistoPlan.size > 0,
         avoidP: new Set(opts.avoidPlantillas || []) });
       // Con un horario ELEGIDO, el plan de la receta se completa hasta llenarlo
       // (o trae su explicación): una familia de 1 a 9 pm no se va a las 2:15.
@@ -4393,10 +4431,10 @@ class Component extends DCLogic {
         : pool;
       const base0 = fuenteSueltos.filter(v => (cityWide || sel.includes(v.z)) && tipoS(v) && !marcas.has(this.marcaDe(v))
           && this.atHour(v, llegada(v)) && this.cabeEnVentana(v, llegada(v), to) && this.cabeEnTope([v], max).ok);
-      let nuevos0 = base0.filter(v => !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)));
+      let nuevos0 = base0.filter(v => !firmasDe([v]).some(f => avoidC.has(f) || bloq.has(f)) && !(opts.soloNuevos && yaEnPlan(v)));
       // Si ya se mostraron todos y no queda NADA que ofrecer, se repiten y se
       // avisa ("ya viste todas"), en vez de dejar la pantalla vacía.
-      if (!nuevos0.length && !plans.length && base0.length) { nuevos0 = base0; exhausted = true; }
+      if (!nuevos0.length && !plans.length && base0.length && !opts.soloNuevos) { nuevos0 = base0; exhausted = true; }
       const sueltos = nuevos0
         .sort((a, b) => { const bar = v => quiereComer && quiereNoche && (this.esBarDeNombre(v) || this.actsDe(v).indexOf('copas') >= 0 || this.CATS_NOCHE().includes(v.cat)) ? 2 : 0;
           return (rk(b) + bar(b) - nivel(b) * 6 - (b.ppUnknown ? 3 : 0)) - (rk(a) + bar(a) - nivel(a) * 6 - (a.ppUnknown ? 3 : 0)); });
@@ -4440,14 +4478,18 @@ class Component extends DCLogic {
     // zona quedan fuera por cada causa, para nombrar la que más pesa.
     let limita = null;
     {
-      const enZona = this.cat().filter(v => !excl.has(v.id) && (cityWide || zones.includes(v.z)));
-      const porBud = enZona.filter(v => !this.budgetOk(v)).length;
-      const porHora = enZona.filter(v => this.budgetOk(v) && !this.timingOk(v)).length;
-      const porZona = this.cat().length - enZona.length;
+      // (10 nov 2026) Cada filtro se mide SOLO: cuántos lugares recomendables que cumplen los otros
+      // dos quedan fuera por él. Antes se contaba contra todo el catálogo y siempre "ganaba" la zona.
+      const B = this.cat().filter(v => !excl.has(v.id) && this.esRecomendable(v) && !v.evento);
+      const enZ = v => cityWide || zones.includes(v.z);
+      const porZona = cityWide ? 0 : B.filter(v => !enZ(v) && this.budgetOk(v) && this.timingOk(v)).length;
+      const fueraBud = B.filter(v => enZ(v) && this.timingOk(v) && !this.budgetOk(v));
+      const porBud = fueraBud.length, sinResp = fueraBud.filter(v => this.sinRespaldo(v) && (v.ppUnknown || v.pp <= max)).length;
+      const porHora = B.filter(v => enZ(v) && this.budgetOk(v) && !this.timingOk(v)).length;
       const cand = [
-        { k: 'presupuesto', n: porBud, txt: 'el presupuesto (' + this.budLabel() + ') deja fuera ' + porBud + ' lugares de la zona' },
-        { k: 'horario', n: porHora, txt: 'el horario (' + this.time12(this.range()[0]) + '–' + this.time12(this.range()[1]) + ') deja fuera ' + porHora + ' lugares' },
-        { k: 'zona', n: cityWide ? 0 : porZona, txt: 'la zona (' + this.zonesLabel() + ') deja fuera ' + porZona + ' lugares del catálogo' }
+        { k: 'presupuesto', n: porBud, sinRespaldo: sinResp, txt: 'el presupuesto: ' + porBud + ' lugares de tu zona abiertos a esa hora quedan fuera de «' + this.budLabel() + '»' + (sinResp ? ' (' + sinResp + ' por no tener precio confirmado)' : '') },
+        { k: 'horario', n: porHora, txt: 'el horario: ' + porHora + ' lugares de tu zona y presupuesto no abren de ' + this.time12(this.range()[0]) + ' a ' + this.time12(this.range()[1]) },
+        { k: 'zona', n: porZona, txt: 'la zona: fuera de ' + this.zonesLabel() + ' hay ' + porZona + ' lugares que sí cumplen horario y presupuesto' }
       ].filter(x => x.n > 0).sort((a, b) => b.n - a.n);
       if (excl.size) cand.push({ k: 'exclusiones', n: excl.size, txt: 'tus exclusiones quitan ' + excl.size + ' lugares' });
       limita = cand[0] || null;
@@ -4520,10 +4562,10 @@ class Component extends DCLogic {
     // Algunas paradas repetidas (no todas): se dice por qué, no se disimula.
     const penal = new Set(opts.penalizar || []);
     const repetidosSesion = idsTanda.filter(id => yaVistos.has(id) || penal.has(id));
-    if (!soloRecombina && repetidosSesion.length && plans.length) {
+    if (!soloRecombina && repetidosSesion.length && plans.length && !opts.soloNuevos) {
       expandNote = (expandNote ? expandNote + ' ' : '') + 'Algunas paradas ya las habías visto: con esta zona, horario y presupuesto no quedan lugares nuevos para todas. Amplía la zona o el presupuesto para ver otros.';
     }
-    if (soloRecombina) {
+    if (soloRecombina && !opts.soloNuevos) {
       const sinVer = pool.filter(v => !yaVistos.has(v.id) && this.vibeAdmite(v, VM)).length;
       expandNote = (expandNote ? expandNote + ' ' : '')
         + 'Ojo: estas son combinaciones nuevas de lugares que ya te mostramos, no lugares nuevos. '
@@ -4549,7 +4591,7 @@ class Component extends DCLogic {
 
     // Menos de tres porque las demás ya se mostraron en búsquedas recientes: se
     // dice, en vez de dejar que parezca que no hay más (guía: informar, no inventar).
-    if (plans.length < 3 && yaVistosAntes > 0 && !exhausted) {
+    if (plans.length < 3 && yaVistosAntes > 0 && !exhausted && !opts.soloNuevos) {
       const nota = 'Las demás combinaciones que cumplen estos filtros ya te las mostramos en búsquedas recientes. Cambia la zona, el horario o el presupuesto para ver otras.';
       expandNote = expandNote ? nota + ' ' + expandNote : nota;
     }
@@ -4602,7 +4644,15 @@ class Component extends DCLogic {
       expandNote = (expandNote || '').replace(/(Pocas opciones con esos filtros|Sumamos las zonas vecinas)[^]*?\(marcado en cada lugar\)\.\s*/, '')
         .replace(/En [^.]*? — ampliamos a la zona más cercana con pista:[^]*?\(marcado en cada lugar\)\.\s*/, '').trim();
     }
-    return { venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
+    let agotado = null;
+    if (opts.soloNuevos && vistoPlan.size) {
+      const prin = p => p.stops.find(v => v.id === p.ancla) || p.stops.find(v => v.id === this.anclaDe(p.stops, p.acts)) || p.stops[0];
+      const frescos = plans.slice(0, 3).filter(p => !yaEnPlan(prin(p)));
+      if (frescos.length < 3) agotado = { nuevas: frescos.length, vistas: vistoPlan.size };
+      plans = frescos;
+      if (agotado) expandNote = (expandNote || '').replace(/Algunas paradas ya las habías visto:[^.]*\.[^.]*\./, '').replace(/Sólo encontramos [^.]*\.[^.]*\./, '').replace(/Ojo: estas son combinaciones nuevas[^.]*\.[^.]*\./, '').trim();
+    }
+    return { agotado, venues: top, plans: plans.slice(0, 3), total: this.cat().length, poolN: pool.length,
       reqSeed: opts.reqSeed || 0, reqId: opts.reqId || '', dseed,
       expandNote, ranked, zones, exhausted, overBudget, limita, avisoCopas, avisoProt, avisoCompartida,
       lugaresNuevos: lugaresNuevos.length, soloRecombina, elegibles: pool.length,
@@ -4751,26 +4801,37 @@ class Component extends DCLogic {
     return this.regenerateLibre();
   }
 
+  // Paradas (ids) que ya salieron en planes de esta búsqueda.
+  idsDePlanes(r) { const out = []; ((r && r.plans) || []).forEach(p => (p.stops || []).forEach(v => { if (out.indexOf(v.id) < 0) out.push(v.id); })); return out; }
+  // "Volver a empezar": olvida lo mostrado en esta búsqueda y en la sesión, y genera de nuevo.
+  reiniciarVistos() { try { sessionStorage.removeItem('sobres_sesion_vistos'); } catch (e) {} this._sesionVistos = [];
+    this.setState({ seenStops: [], seenCombos: [], seenVenues: [], seenPlantillas: [], agotado: null, regenN: 0 }, () => this.generar(() => this.runSearch({ nueva: true }))); }
   regenerateLibre() {
     const s = this.state;
     const ctx = this.searchCtx();
     const mismo = ctx === s.seenCtx;
+    const prevS = mismo ? (s.seenStops || this.idsDePlanes(s.results)) : [];
     const prevC = mismo ? (s.seenCombos || []) : [];
     const prevV = mismo ? (s.seenVenues || []) : [];
     const regen = (mismo ? (s.regenN || 0) : 0) + 1;
     const sol = this.nuevaSolicitud(); const ho = this.histOpts();
     const prevP = mismo ? (s.seenPlantillas || []) : [];
-    const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP, ampliar: !!s.ampliarZonas,
+    const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP, ampliar: !!s.ampliarZonas, vistosPlan: prevS, soloNuevos: true,
       bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId, reqSeed: sol.reqSeed });
+    // AGOTADO sin nada nuevo: se conserva la última tanda útil y se dice qué limita (con ajustes).
+    if (r.agotado && !(r.plans || []).length) {
+      this.setState({ regenN: regen, seenCtx: ctx, seenStops: prevS, agotado: { nuevas: 0, vistas: r.agotado.vistas, limita: r.limita || null, ajustes: r.ajustes || [] } });
+      return r; }
     this.registrarVistos(r);
     const h = this.histOf(r, prevC, prevV);
     const nuevasP = (r.plans || []).map(p => p.plantilla).filter(Boolean);
     // Si ya se vieron todos los tipos, se vuelve a empezar (no se bloquea la búsqueda).
     this.setState({ seenPlantillas: prevP.concat(nuevasP).slice(-12) });
     this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '', listaN: 12,
+      seenStops: prevS.concat(this.idsDePlanes(r).filter(id => prevS.indexOf(id) < 0)),
+      agotado: r.agotado ? { nuevas: (r.plans || []).length, vistas: r.agotado.vistas, limita: r.limita || null, ajustes: r.ajustes || [] } : null,
       planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
-    if (r.exhausted) this.toast('Ya viste todas las combinaciones con estos filtros — amplía zona, horario o presupuesto');
-    this.persist();
+    this.persist(); return r;
   }
 
   runSearch(extra) { const s = this.state;
@@ -4788,7 +4849,8 @@ class Component extends DCLogic {
     const _ctx = this.searchCtx(); const _mismo = _ctx === s.seenCtx; const _nuevo = sp || !!(extra && extra.fresh);
     const _prevC = (_mismo && _nuevo) ? (s.seenCombos || []) : []; const _prevV = (_mismo && _nuevo) ? (s.seenVenues || []) : [];
     const _regen = (_mismo ? (s.regenN || 0) : 0) + (_nuevo ? 1 : 0); const c = JSON.parse(JSON.stringify(s.counters)); c.searches++; if (s.zone !== 'all') c.zones[s.zone] = (c.zones[s.zone]||0)+1; s.vibes.forEach(v => c.vibes[v] = (c.vibes[v]||0)+1); c.who[s.who] = (c.who[s.who]||0)+1; const m = this.budgetMax(); if (m < 90000) { c.budN++; c.budSum += m; } const rng = this.range(); this.setState({ counters: c, tandaDe: '', planDesdeTanda: false, tandaUrl: '', visibleCount: this.props.resultadosMax ?? 12, surpriseN: sp ? seed : (s.surpriseN || 0), surpriseOn: sp, planStops: Math.max(2, Math.min(5, Math.round((rng[1] - rng[0]) / 2.2))), planDate: this.fechaDe(s.when, s.customDate), results: (() => { const rr = this.engine(seed, { regen: _regen, ampliar: !!s.ampliarZonas, avoidCombos: _prevC, avoidVenues: _prevV, avoidPlantillas: (_mismo && _nuevo) ? (s.seenPlantillas || []) : [], bloquear: _ho.bloquear, penalizar: _ho.penalizar, reqId: _sol.reqId, reqSeed: _sol.reqSeed }); this._lastR = rr; this._ultSol = { reqId: _sol.reqId, r: rr }; this.registrarVistos(rr); this.ev('plan_visto', { opciones: (rr.plans || []).length, origen: 'busqueda' }); return rr; })() }); { const _h = this.histOf(this._lastR || {}, _prevC, _prevV); const _pp = (_mismo && _nuevo) ? (s.seenPlantillas || []) : [];
-      this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v,
+      this.setState({ seenCtx: _ctx, regenN: _regen, seenCombos: _h.c, seenVenues: _h.v, agotado: null,
+        seenStops: ((_mismo && _nuevo) ? (s.seenStops || []) : []).concat(this.idsDePlanes(this._lastR)).filter((x, i, arr) => arr.indexOf(x) === i),
         seenPlantillas: _pp.concat(((this._lastR || {}).plans || []).map(p => p.plantilla).filter(Boolean)).slice(-12) }); }
     this.persist(); this.nav('results'); return this._lastR; }
   loadTm(date) { import('./data/providers.js').then(m => m.fetchTicketmasterEvents(date)).then(ev => this.setState({ tmEvents: ev })).catch(() => this.setState({ tmEvents: null })); }
@@ -5517,7 +5579,7 @@ class Component extends DCLogic {
     }, 'con quién');
     const zoneOpts = [{ label: 'Toda la ciudad', style: this.chip(s.zone === 'all'), on: s.zone === 'all',
         pressed: s.zone === 'all' ? 'true' : 'false', aria: 'Toda la ciudad — zona' + (s.zone === 'all' ? ' (seleccionado)' : ''),
-        pick: () => this.setState({ zone: 'all', zonesSel: [] }) }]
+        pick: () => this.setState({ zone: 'all', zonesSel: [], ampliarZonas: false }) }]
       .concat(this.ZGRUPOS().map(([lbl, zs]) => { const on = s.zone !== 'all' && zs.some(z => this.zoneList().includes(z));
         return { label: lbl, style: this.chip(on), on,
           pressed: on ? 'true' : 'false', aria: lbl + ' — zona' + (on ? ' (seleccionado)' : ''),
@@ -5528,8 +5590,8 @@ class Component extends DCLogic {
             // última zona no se podía soltar y Santa Fe se quedaba pegada a
             // todas las búsquedas siguientes ("Santa Fe y Polanco"). Sin zonas
             // elegidas, la búsqueda vuelve a Toda la ciudad.
-            if (!cur.length) { this.setState({ zone: 'all', zonesSel: [] }); return; }
-            this.setState({ zonesSel: cur, zone: cur[0] }); } }; }));
+            if (!cur.length) { this.setState({ zone: 'all', zonesSel: [], ampliarZonas: false }); return; }
+            this.setState({ zonesSel: cur, zone: cur[0], ampliarZonas: false }); } }; }));
     const whenOpts = mkChips(this.WHEN, s.when, id => { this.setState({ when: id, planFrom: null, planTo: null }); }, 'cuándo');
     const rng = this.range();
     const fromOpts = []; for (let h = 7; h <= 23; h++) fromOpts.push({ v: String(h), label: this.time12(h) });
@@ -6339,22 +6401,69 @@ class Component extends DCLogic {
   }
 
   // Generar con progreso visible. Un doble toque no lanza dos generaciones.
-  generar(fn) {
-    if (this._genBusy) return;
-    this._genBusy = true;
+  // GENERAR (10 nov 2026, «Dame otros 3» de raíz). Antes: 1,050 ms fijos por solicitud + hasta 3.5 s
+  // esperando a Google EN CADA regeneración, pantalla completa de "Un momento…" y los toques
+  // siguientes se perdían. Ahora:
+  //  · regenerar no espera a Google ni tapa la pantalla: la tanda actual se atenúa y cambia en ~⅛ s;
+  //  · la primera búsqueda espera a Google máx. 900 ms (lo que llegue después entra a la lista);
+  //  · la solicitud MÁS RECIENTE manda (ficha `tk`): una respuesta vieja nunca pisa a la nueva, así
+  //    que cambiar un filtro mientras carga muestra el resultado del filtro nuevo;
+  //  · varios toques seguidos a "Ver otras opciones" = una sola tanda nueva (no se saltan tandas);
+  //  · si algo falla, se conserva el último resultado útil y se avisa.
+  generar(fn, tipo) {
+    tipo = tipo || 'nueva';
+    if (this._gen && this._gen.tipo === 'regen' && tipo === 'regen') return;
+    const tk = (this._genTk = (this._genTk || 0) + 1);
+    this._gen = { tk, tipo };
     const corto = this.reduceMov();
-    const t = corto ? [0, 60, 120] : [0, 380, 760];
-    this.setState({ generando: true, genFase: 0 });
-    setTimeout(() => this.setState({ genFase: 1 }), t[1]);
-    setTimeout(() => this.setState({ genFase: 2 }), t[2]);
-    // Si el catálogo todavía no llega (celular lento), se espera hasta 20 s.
-    let espera = 0, gListo = false;
-    // Lugares de Google en vivo para esta búsqueda; si tarda más de 3.5 s se arma sin ellos.
-    try { this.traeGoogle().then(() => { gListo = true; }, () => { gListo = true; }); } catch (e) { gListo = true; }
-    setTimeout(() => { gListo = true; }, 3500);
-    const correr = () => { if ((!this.state.catLoaded || !gListo) && espera++ < 100) { setTimeout(correr, 200); return; }
-      try { fn(); } finally { this._genBusy = false; this.setState({ generando: false, genFase: 0, planEditando: false }); } };
-    setTimeout(correr, corto ? 180 : 1050);
+    const enRes = tipo === 'regen' && this.state.view === 'results' && !!(this.state.results && (this.state.results.plans || []).length);
+    const t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    this.setState(enRes ? { regenerando: true } : { generando: true, regenerando: false, genFase: 0 });
+    if (!enRes) { setTimeout(() => { if (this._genTk === tk) this.setState({ genFase: 1 }); }, corto ? 40 : 140);
+      setTimeout(() => { if (this._genTk === tk) this.setState({ genFase: 2 }); }, corto ? 80 : 280); }
+    let espera = 0, gListo = enRes;
+    if (!enRes) { try { this.traeGoogle().then(() => { gListo = true; }, () => { gListo = true; }); } catch (e) { gListo = true; }
+      setTimeout(() => { gListo = true; }, 900); }
+    const correr = () => {
+      if (this._genTk !== tk) return;   // llegó una solicitud más nueva: ésta ya no pinta nada
+      // Si el catálogo todavía no llega (celular lento), se espera hasta 20 s.
+      if ((!this.state.catLoaded || !gListo) && espera++ < 200) { setTimeout(correr, 100); return; }
+      try { fn(); }
+      catch (e) { try { console.error('[SOBRES generar]', e); } catch (_) {} this.toast('No pudimos armar otras opciones. Te dejamos las que ya tenías.'); }
+      finally { if (this._genTk === tk) { this._gen = null;
+        this._genMs = Math.round(((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - t0);
+        this.setState({ generando: false, regenerando: false, genFase: 0, planEditando: false }); } }
+    };
+    setTimeout(correr, enRes ? (corto ? 0 : 110) : (corto ? 100 : 400));
+  }
+
+  // Lo que se ofrece debajo de las opciones: ajustes elegibles, aviso de agotado y «No quiero».
+  valsOtros(view, r, rp) {
+    const s = this.state; if (view !== 'results') return { ajustesOn: false, agotadoOn: false, noQuieroOpts: [], regenCls: '', regenOn: false, activosOn: false, activos: [] };
+    const completas = (rp || []).filter(p => this.planCompleto(p)).length;
+    const ag = s.agotado || null;
+    let aj = []; try { aj = ag ? (ag.ajustes || []) : (completas < 3 && r ? (r.ajustes || []) : []); } catch (e) { aj = []; }
+    const relanza = patch => this.setState(patch, () => this.generar(() => this.runSearch({ nueva: true })));
+    const activos = [];
+    if (s.aceptaSinPrecio && this.budgetMax() < 90000) activos.push({ label: 'Con precio por confirmar ✕', aria: 'Quitar: incluir lugares con precio por confirmar', go: () => relanza({ aceptaSinPrecio: false }) });
+    if (s.ampliarZonas) activos.push({ label: 'Con zonas vecinas ✕', aria: 'Quitar las zonas vecinas', go: () => relanza({ ampliarZonas: false }) });
+    (s.noQuiero || []).forEach(k => { const x = this.NOQUIERO().find(q => q[0] === k); if (x) activos.push({ label: 'Sin ' + x[1].toLowerCase() + ' ✕', aria: 'Quitar «No quiero ' + x[1].toLowerCase() + '»', go: () => relanza({ noQuiero: (s.noQuiero || []).filter(q => q !== k) }) }); });
+    return {
+      regenOn: !!s.regenerando, regenCls: s.regenerando ? 'sb-regen' : '',
+      activosOn: activos.length > 0, activos,
+      ajustesOn: aj.length > 0 && !s.regenerando,
+      ajustesTit: ag ? '' : (completas === 0 ? 'Con estos filtros no cupo una salida completa' : completas === 1 ? 'Sólo cupo una salida completa' : 'Sólo cupieron dos salidas completas'),
+      ajustesTxt: 'No cambiamos nada por ti. Elige qué mover y lo volvemos a armar:',
+      ajustes: aj.map(a => ({ txt: a.txt, aria: a.txt, go: () => { this.ev('ajuste_elegido', { ajuste: a.k }); this.aplicaAjuste(a); } })),
+      agotadoOn: !!ag && !s.regenerando,
+      agotadoTit: ag ? (ag.nuevas === 0 ? 'Ya viste todo lo que cabe con estos filtros' : ag.nuevas === 1 ? 'Ésta es la última opción nueva' : 'Éstas son las últimas ' + ag.nuevas + ' opciones nuevas') : '',
+      agotadoTxt: ag ? ('Ya te mostramos ' + ag.vistas + ' lugares distintos y no repetimos ninguno como actividad principal.' + (ag.limita && ag.limita.txt ? ' Lo que más limita es ' + ag.limita.txt + '.' : '')
+        + (ag.nuevas === 0 ? ' Dejamos en pantalla las últimas que viste.' : '')) : '',
+      reiniciar: () => this.reiniciarVistos(),
+      noQuieroOpts: this.NOQUIERO().map(([k, lbl]) => { const on = (s.noQuiero || []).indexOf(k) >= 0;
+        return { label: lbl, pressed: on ? 'true' : 'false', aria: 'No quiero ' + lbl.toLowerCase() + (on ? ' (activo)' : ''),
+          pick: () => { this.ev('no_quiero', { que: k, on: !on }); const nq = (s.noQuiero || []).filter(q => q !== k).concat(on ? [] : [k]);
+            if (view === 'results') relanza({ noQuiero: nq }); else this.setState({ noQuiero: nq }); } }; }) };
   }
 
   // Cuenta opcional. Guardar y compartir NUNCA esperan a la cuenta: primero se
@@ -6651,7 +6760,8 @@ class Component extends DCLogic {
       explorarTxt: 'Ver lugares sueltos en ' + this.zonesLabel() + ' →', tandaDeTxt: (() => { const uno = ((r && r.plans) || []).length === 1; const que = uno ? 'este plan: vota si te late' : 'estos planes: vota el que te late'; return s.tandaDe ? s.tandaDe + ' te compartió ' + que : 'Te compartieron ' + que; })(),
       otrasNota: nOpc < 3 && nOpc > 0 ? 'Con estos filtros no hay más planes que cumplan todo. Te mostramos los que sí; amplía zona, horario o presupuesto para ver más.'
         : 'Te armamos otras opciones sin repetir lo que ya viste.',
-      resurprise: () => this.generar(() => this.regenerate()),
+      resurprise: () => this.generar(() => this.regenerate(), 'regen'),
+      ...this.valsOtros(view, r, rp),
       // Compartir no espera a la cuenta: primero se comparte y después se ofrece.
       copiarTanda: () => this.compartirTanda(),
       waTanda: () => this.compartirTanda(),

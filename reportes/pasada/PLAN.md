@@ -12,10 +12,10 @@ Producción sólo con «aprobado». Se conserva el paso 2 aprobado (10 zonas, si
 
 ## Orden (el que pidió): 1) inviables, repetidos, lentos → 2) edición y cierre → 3) hotspots y personalización
 - [x] F0 Línea base: `reportes/pasada/casos.js` → `base_antes.txt`; conciliación de precios `concilia_precios.py`.
-- [ ] F1 Motor: sedes (estadio sólo con evento), misma sede = mismo lugar, actividad principal, tope estricto
+- [x] F1 Motor: sedes (estadio sólo con evento), misma sede = mismo lugar, actividad principal, tope estricto
       (costo respaldado; pendientes obligatorios fuera del tope), traslado en el desglose, último acceso y
       cocina, remate de tacos tras antro, «No quiero», <3 opciones con ajustes concretos, sin fecha = condicionado.
-- [ ] F2 «Dame otros 3»: historial por sede, novedad de actividad principal, agotado con filtro que limita,
+- [x] F2 «Dame otros 3»: historial por sede, novedad de actividad principal, agotado con filtro que limita,
       lag (1.05 s fijo + Google por regeneración), clics rápidos, cambio de filtro mientras carga.
 - [ ] F3 Catálogo: conciliación por ID, motivos de pausa estructurados + reactivación, cobertura por
       zona × intención × presupuesto, huecos (Creativo, Del Valle) con actividades verificadas.
@@ -54,6 +54,18 @@ auto-ampliación y las que usaban lugares sin precio con tope).
 Hallazgo clave: con tope estricto sólo ~322 lugares recomendables tienen precio respaldado; cines, boliches,
 taquerías de madrugada y locales de plaza están 'debil'/'pendiente' → hay que verificar precios (F3) para que
 salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pausa por sesión/cupo).
+
+## Rendimiento medido en navegador (390×844, misma máquina)
+- ANTES (producción, 10 nov): primera generación 1,121 ms; «Ver otras opciones» 1,077/1,073/1,071/1,069/1,072 ms;
+  pantalla completa de «Un momento…» en cada una; toques repetidos se perdían.
+- DESPUÉS (rama): primera 544 ms; regeneraciones 208/194/192/186/183 ms; la tanda anterior se queda a la vista;
+  4 toques seguidos = 1 tanda nueva; cambiar un filtro mientras carga muestra sólo el resultado del filtro nuevo.
+
+## F2 hecho
+- generar(fn, tipo): ficha de solicitud (la más reciente manda), sin 1,050 ms fijos, Google ≤900 ms sólo en la primera.
+- seenStops por búsqueda → opts.vistosPlan/soloNuevos; novedad por actKey (sede); comboSig por actKey.
+- state.agotado {nuevas, vistas, limita, ajustes}; reiniciarVistos(); limita mide cada filtro por separado.
+- UI: chips activos (✕), panel de ajustes, panel de agotado, «No quiero…» en resultados. Pruebas 43.1–43.4.
 
 ## Bitácora de decisiones
 - Tope estricto: entran firme + estimado + libre; 'debil' y 'pendiente' quedan fuera salvo ajuste elegido.

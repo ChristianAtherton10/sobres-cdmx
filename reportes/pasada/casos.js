@@ -61,11 +61,13 @@ const CASOS = {
       console.log('  ' + t);
       for (let i = 0; i <= 5; i++) {
         const [r, t1] = ms(() => { if (i === 0) return a.runSearch({ nueva: true }); a.regenerate(); return a.state.results; }); tiempos.push(t1);
+        const ag = i > 0 ? a.state.agotado : null;
+        if (ag && ag.nuevas === 0) { console.log(`    tanda ${i}: AGOTADO · 0 opciones nuevas · ${t1.toFixed(0)} ms · se conserva la tanda anterior · «${(ag.limita || {}).txt || ''}» · ajustes: ${(ag.ajustes || []).map(x => x.txt).join(' | ') || 'ninguno'}`); continue; }
         const ps = (r && r.plans) || []; let nuevosPrin = 0;
         ps.forEach(p => { const pr = (p.stops.find(v => v.id === p.ancla) || p.stops[0]); const kp = a.sedeDe ? a.sedeDe(pr) : pr.id;
           if (prin.has(kp)) repPrin++; else { prin.add(kp); nuevosPrin++; }
           p.stops.forEach(v => { total++; const k = a.sedeDe ? a.sedeDe(v) : v.id; if (vistos.has(k)) rep++; vistos.add(k); }); });
-        console.log(`    tanda ${i}: ${ps.length} opciones · ${nuevosPrin} actividades principales nuevas · ${t1.toFixed(0)} ms${r && r.exhausted ? ' · AGOTADO' : ''}${r && r.expandNote ? ' · ' + r.expandNote : ''}`);
+        console.log(`    tanda ${i}: ${ps.length} opciones · ${nuevosPrin} actividades principales nuevas · ${t1.toFixed(0)} ms${ag ? ' · últimas ' + ag.nuevas : ''}${r && r.expandNote ? ' · ' + r.expandNote : ''}`);
         ps.forEach(p => console.log('       ' + p.stops.map(v => v.n).join(' → ')));
       }
       console.log(`    → ${total} paradas mostradas, ${rep} repetidas; actividades principales distintas: ${prin.size}, repetidas ${repPrin}; primera ${tiempos[0].toFixed(0)} ms, regeneraciones ${tiempos.slice(1).map(x => x.toFixed(0)).join('/')} ms`);

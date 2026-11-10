@@ -155,4 +155,57 @@ test('42.12 · disponibilidad condicionada: taller con sesión por reservar sí 
   ps.forEach(p => { const cond = b.condicionesPlan(p.stops); if (p.stops.some(v => v.condicion)) assert(cond.length >= 1, 'plan con sesión por reservar sin aviso: ' + txt(p)); });
 });
 
+section('43 · Pasada profunda F2: «Dame otros 3» de raíz');
+
+const prinDe = (a, p) => a.actKey(p.stops.find(v => v.id === p.ancla) || p.stops.find(v => v.id === a.anclaDe(p.stops, p.acts)) || p.stops[0]);
+
+test('43.1 · cinco regeneraciones con buena cobertura: ninguna actividad principal ni lugar repetido, por sede', () => {
+  const a = nueva(Object.assign({}, NOCHE, { budget: 'any' })); a.runSearch({ nueva: true });
+  const prin = new Set(), lugares = new Set(); let tandas = 0, rep = 0, repPrin = 0;
+  for (let i = 0; i <= 5; i++) { if (i) a.regenerate(); if (a.state.agotado && a.state.agotado.nuevas === 0) break; tandas++;
+    (a.state.results.plans || []).forEach(p => { const k = prinDe(a, p); if (prin.has(k)) repPrin++; prin.add(k);
+      p.stops.forEach(v => { const s = a.actKey(v); if (lugares.has(s)) rep++; lugares.add(s); }); }); }
+  assert(tandas === 6, 'se agotó demasiado pronto: ' + tandas + ' tandas');
+  assert(repPrin === 0, repPrin + ' actividades principales repetidas');
+  assert(rep === 0, rep + ' lugares repetidos habiendo cobertura de sobra');
+  assert(prin.size >= 16, 'pocas actividades principales nuevas: ' + prin.size);
+});
+
+test('43.2 · al agotarse no recicla en silencio: conserva la última tanda útil, dice qué limita y ofrece ajustes o volver a empezar', () => {
+  const a = nueva(NOCHE); a.runSearch({ nueva: true }); const vistos = new Set(); let ultima = null, agotado = null;
+  for (let i = 0; i < 25 && !agotado; i++) { (a.state.results.plans || []).forEach(p => { const k = prinDe(a, p);
+      if (ultima !== a.state.results) { assert(!vistos.has(k), 'tanda ' + i + ': repitió actividad principal ' + txt(p)); } });
+    if (ultima !== a.state.results) (a.state.results.plans || []).forEach(p => vistos.add(prinDe(a, p)));
+    ultima = a.state.results; a.regenerate(); if (a.state.agotado && a.state.agotado.nuevas === 0) agotado = a.state.agotado; }
+  assert(agotado, 'nunca avisó que se agotó');
+  assert(a.state.results === ultima && (ultima.plans || []).length >= 1, 'no conservó el último resultado útil');
+  assert(agotado.limita && ['presupuesto', 'horario', 'zona', 'exclusiones'].indexOf(agotado.limita.k) >= 0 && !/del catálogo/.test(agotado.limita.txt), 'no dice qué filtro limita: ' + JSON.stringify(agotado.limita));
+  const V = a.renderVals(); assert(V.agotadoOn && /Ya viste todo/.test(V.agotadoTit) && typeof V.reiniciar === 'function', 'la pantalla no lo dice: ' + V.agotadoTit);
+  (agotado.ajustes || []).forEach(x => assert(x.txt && x.patch && x.gana > 0, 'ajuste sin efecto: ' + JSON.stringify(x)));
+  a.reiniciarVistos(); assert(!a.state.agotado && (a.state.results.plans || []).length >= 1 && (a.state.seenStops || []).length > 0, 'volver a empezar no regeneró');
+});
+
+test('43.3 · el historial es por sede y sin orden: la otra ficha del mismo lugar o el mismo plan al revés ya se vieron', () => {
+  const a = nueva({}); const C = a.cat();
+  const b1 = C.find(v => v.n === 'Museo Franz Mayer'), b2 = C.find(v => v.n === 'Librería del Museo Franz Mayer'), x = C.find(v => v.n === 'Castacán'), y = C.find(v => v.n === 'Bar Latosa');
+  assert(a.comboSig([x, y]) === a.comboSig([y, x]), 'cambiar el orden cuenta como plan nuevo');
+  if (b1 && b2) assert(a.comboSig([b1, x]) === a.comboSig([b2, x]), 'la otra ficha de la misma sede cuenta como lugar nuevo');
+  const r = a.engine(0, { vistosPlan: [y.id], soloNuevos: true, regen: 1, reqSeed: 5 });
+  (r.plans || []).forEach(p => assert(prinDe(a, p) !== a.actKey(y), 'volvió a salir como principal un lugar ya visto: ' + txt(p)));
+});
+
+test('43.4 · generar: toques repetidos no encolan tandas, un error conserva lo último útil y no deja la pantalla cargando', () => {
+  const a = nueva(Object.assign({}, NOCHE, { budget: 'any' })); a.runSearch({ nueva: true }); a.nav('results');
+  const antes = a.state.results; let corrio = 0;
+  a._gen = { tk: 99, tipo: 'regen' }; a.generar(() => { corrio++; }, 'regen'); assert(corrio === 0, 'un segundo toque encoló otra regeneración');
+  let aviso = ''; a.toast = t => { aviso = t; }; const ce = console.error; console.error = () => {};
+  a._gen = null; a.generar(() => { throw new Error('falla simulada'); }, 'regen'); console.error = ce;
+  assert(a.state.results === antes && !a.state.regenerando && !a.state.generando, 'el error borró el resultado o dejó la pantalla cargando');
+  assert(/No pudimos armar/.test(aviso), 'no avisó del error: ' + aviso);
+  a.generar(() => a.regenerate(), 'regen'); assert(a.state.results !== antes && !a.state.regenerando, 'después del error ya no regenera');
+  // Una respuesta vieja no pisa a la nueva: la ficha más reciente manda.
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert(/if \(this\._genTk !== tk\) return;/.test(src) && !/setTimeout\(correr, corto \? 180 : 1050\)/.test(src), 'volvió la espera fija de 1,050 ms o falta la ficha de solicitud');
+});
+
 if (require.main === module) report();

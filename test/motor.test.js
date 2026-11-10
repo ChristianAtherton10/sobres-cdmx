@@ -129,10 +129,12 @@ test('al repetir, siempre lo avisa y nombra la restricción que limita', () => {
     const p = app.getPlan(); if (!p) break;
     const f = sig(p);
     if (vistos.has(f)) {
-      assert(app.state.results.exhausted, 'repitió en el paso ' + i + ' sin avisar');
-      const nota = app.state.results.expandNote || '';
-      assert(/zona|presupuesto|horario|exclusiones/.test(nota), 'la nota no nombra la restricción: ' + nota);
-      assert(/amplía/i.test(nota), 'la nota no ofrece ampliar: ' + nota);
+      // (10 nov 2026, «Dame otros 3») Al agotarse ya no recicla: deja en pantalla la última tanda útil
+      // y lo dice en `agotado`, nombrando el filtro que limita y con ajustes para elegir.
+      const ag = app.state.agotado;
+      assert(ag && ag.nuevas === 0, 'repitió en el paso ' + i + ' sin avisar');
+      assert(ag.limita && /zona|presupuesto|horario|exclusiones/.test(ag.limita.txt), 'no nombra la restricción: ' + JSON.stringify(ag.limita));
+      assert(Array.isArray(ag.ajustes), 'no trae ajustes para elegir');
       return;
     }
     vistos.add(f); app.regenerate();
