@@ -249,4 +249,97 @@ test('44.4 · un alta del Excel sólo se activa con pin confirmado y horario pub
   assert(!a.esRecomendable(ada) && ada.coordAprox, 'Adamanta Del Valle se activó sin pin confirmado');
 });
 
+section('45 · Pasada profunda F4: editar, deshacer, borrador y compartir');
+
+// Un plan de noche en la Roma, ya en el editor.
+const enEditor = (extra, opts) => { const a = nueva(Object.assign({}, NOCHE, { budget: 'any' }, extra || {}), Object.assign({ dseed: 2, rseed: 5 }, opts || {}));
+  a.runSearch({ nueva: true }); const p0 = a.state.results.plans.find(p => p.stops.length >= 2) || a.state.results.plans[0];
+  a.setState({ planCustom: { stops: p0.stops.slice(), times: p0.times.slice(), spent: p0.spent }, planStops: p0.stops.length, planEditando: true, planView: 'edit', planHist: [] }); a.nav('plan'); return a; };
+const ids = p => p.stops.map(v => v.id).join(',');
+
+test('45.1 · cada cambio se revisa con las reglas del motor: explica qué dejó de cuadrar, ofrece reemplazo y se puede deshacer', () => {
+  const a = enEditor(); const antes = a.getPlan(), tAntes = a.curTimes(antes).join();
+  assert(a.revisaPlan().ok, 'el plan recién armado ya traía problemas: ' + JSON.stringify(a.revisaPlan().problemas.map(x => x.txt)));
+  a.setStopTime(0, 9);   // 9 am: el bar o la taquería de la noche no reciben
+  const rev = a.revisaPlan(); assert(!rev.ok && rev.problemas.some(x => x.tipo === 'horario' && /no recibe a las 9:00 am/.test(x.txt)), 'no explicó el horario: ' + JSON.stringify(rev.problemas.map(x => x.txt)));
+  const V = a.renderVals(); assert(V.revOn && V.revItems.length >= 1 && V.hayDeshacer && /dejó de cuadrar|dejaron de cuadrar/.test(V.revTit), 'la pantalla no lo muestra');
+  rev.problemas.filter(x => x.reemplazo).forEach(x => { const st = a.getPlan().stops.slice(), ts = a.curTimes(a.getPlan()); st[x.i] = x.reemplazo;
+    assert(a.atHour(x.reemplazo, ts[x.i]) && a.cabeEnTope(st, a.budgetMax(), ts).ok, 'el reemplazo ofrecido tampoco funciona: ' + x.reemplazo.n); });
+  a.deshacer(); const p = a.getPlan();
+  assert(ids(p) === ids(antes) && a.curTimes(p).join() === tAntes && a.revisaPlan().ok, 'deshacer no dejó el plan como estaba');
+  // Con tope: meter un lugar sin precio confirmado se explica como tal.
+  const b = enEditor({ budget: 'b1000' }); const sinP = b.cat().find(v => v.ppUnknown && v.cat === 'Bar' && v.z === 'roma' && !v.pausa && !v.coordAprox);
+  if (sinP) { b.replaceStop(b.getPlan().stops.length - 1, sinP); const r2 = b.revisaPlan(); assert(r2.problemas.some(x => x.tipo === 'precio' || x.tipo === 'horario' || x.tipo === 'trayecto'), 'metió un lugar sin precio con tope y no dijo nada'); }
+});
+
+test('45.2 · fijar una parada y pedir alternativas para lo demás: la fijada se queda a su hora y las nuevas funcionan con el plan completo', () => {
+  const a = enEditor({ noQuiero: ['antro'] }); const p0 = a.getPlan(); const fija = p0.stops[0], tFija = a.curTimes(p0)[0];
+  a.fijar(fija.id); assert(a.renderVals().itinerary[0].fijada && /lo demás/.test(a.renderVals().altRestoTxt), 'no quedó fijada en pantalla');
+  a.alternativasResto(); const p = a.getPlan(), ts = a.curTimes(p);
+  assert(p.stops[0].id === fija.id && ts[0] === tFija, 'la parada fijada cambió');
+  assert(p.stops.slice(1).some((v, k) => v.id !== p0.stops[k + 1].id), 'no cambió ninguna de las otras');
+  p.stops.forEach((v, i) => { assert(a.atHour(v, ts[i]) || a.funcionSinConfirmar(v), v.n + ' cerrado a las ' + a.time12(ts[i])); assert(!a.noQuiereA(v), 'alternativa de «No quiero»: ' + v.n); });
+  assert(new Set(p.stops.map(v => a.sedeDe(v))).size === p.stops.length && a.revisaPlan().ok && a.cabeEnTope(p.stops, a.budgetMax(), ts).ok, 'las alternativas no cuadran: ' + JSON.stringify(a.revisaPlan().problemas.map(x => x.txt)));
+  a.deshacer(); assert(ids(a.getPlan()) === ids(p0), 'deshacer no regresó el plan anterior');
+});
+
+test('45.3 · sustituir: sólo lugares que funcionan para el plan completo, dentro del tope estricto y sin lo excluido', () => {
+  const a = enEditor({ budget: 'b1000', noQuiero: ['cadena'] }); const p = a.getPlan(), ts = a.curTimes(p);
+  p.stops.forEach((cur, i) => a.swapSuggest(i).forEach(v => { const st = p.stops.slice(); st[i] = v;
+    assert(a.atHour(v, ts[i]) || a.funcionSinConfirmar(v), v.n + ' cerrado a esa hora'); assert(a.cabeEnTope(st, a.budgetMax(), ts).ok, v.n + ' saca al plan del tope');
+    assert(['firme', 'estimado', 'libre'].indexOf(a.respaldoDe(v)) >= 0, v.n + ' sin precio respaldado con tope'); assert(!a.esCadenaCasual(v), 'cadena excluida: ' + v.n);
+    assert(!p.stops.some((x, j) => j !== i && a.mismoLugar(x, v)), 'mismo lugar que otra parada: ' + v.n);
+    if (i > 0) assert(a.alcanzaTramo(p.stops[i - 1], v, ts[i] - ts[i - 1]), 'no alcanza el trayecto hacia ' + v.n); }));
+});
+
+test('45.4 · "¿Qué hacemos después?": sugiere tipos que tienen sentido a esa hora; al agregar recalcula ruta y total', () => {
+  const a = nueva({ who: 'amigos', groupSize: 4, vibes: ['foodie'], budget: 'any', zonas: ['roma'], planFrom: 19, planTo: 26 }); const C = a.cat();
+  const cena = C.find(v => v.n === 'Castacán'); a.setState({ planCustom: { stops: [cena], times: [19.5], spent: cena.pp }, planStops: 1, planEditando: true, planView: 'edit' }); a.nav('plan');
+  const D = a.sugerirDespues(); assert(D.length >= 2, 'casi no sugirió nada después de cenar: ' + D.map(d => d.lbl));
+  assert(D.some(d => d.k === 'copas' || d.k === 'postre') && !D.some(d => d.k === 'comer' || d.k === 'tacos'), 'tipos sin sentido después de cenar: ' + D.map(d => d.lbl));
+  D.forEach(d => { assert(a.atHour(d.v, d.t) && d.t >= 19.5 + a.duracionAct(cena) - 1e-6, d.lbl + ': ' + d.v.n + ' a una hora imposible'); assert(a.legKm(cena, d.v) <= 3, d.v.n + ' queda lejos'); });
+  const antes = a.resumenPlan([cena], [19.5]); const V = a.renderVals(); assert(V.despuesOn && V.despues.length === D.length, 'no sale en pantalla');
+  V.despues[0].add(); const p = a.getPlan(), rs = a.resumenPlan(p.stops, a.curTimes(p));
+  assert(p.stops.length === 2 && p.stops[1].id === D[0].v.id && a.curTimes(p)[1] === D[0].t, 'no agregó la sugerencia a su hora');
+  assert(rs.trasMin === D[0].min && (rs.costoNum > antes.costoNum || D[0].v.ppUnknown) && a.revisaPlan().ok, 'no recalculó ruta y total: ' + JSON.stringify(rs));
+  // Después del antro sólo queda rematar con tacos (si hay taquería abierta), nunca otro museo o café.
+  const b = enEditor(); const antro = b.cat().find(v => v.n === 'Patrick Miller'); b.setState({ planCustom: { stops: [antro], times: [23], spent: antro.pp }, planStops: 1 });
+  b.sugerirDespues().forEach(d => assert(d.k === 'tacos' || d.k === 'comer', 'después del antro sugirió ' + d.lbl));
+});
+
+test('45.5 · quitar conserva las horas de las demás; agregar llega cuando de verdad se puede (fin de la anterior + trayecto)', () => {
+  const a = enEditor(); const p0 = a.getPlan(), t0 = a.curTimes(p0); const extra = a.sugerirDespues()[0];
+  if (extra) { a.addStop(extra.v); const p1 = a.getPlan(), t1 = a.curTimes(p1); const u = p0.stops.length - 1;
+    assert(t1[t1.length - 1] >= t0[u] + a.duracionAct(p0.stops[u]) - 1e-6, 'la parada nueva empieza antes de que acabe la anterior'); a.removeStop(p1.stops.length - 1); }
+  if (p0.stops.length >= 2) { a.removeStop(0); const p2 = a.getPlan(); assert(p2.stops.length === p0.stops.length - 1 && a.curTimes(p2)[0] === t0[1], 'al quitar se movieron las horas de las demás: ' + a.curTimes(p2) + ' vs ' + t0); }
+});
+
+test('45.6 · borrador: se guarda solo al editar, se retoma con los mismos lugares, horas y filtros, y se puede borrar', () => {
+  const a = enEditor(); a.setStopTime(0, a.curTimes(a.getPlan())[0] + 0.25); a.fijar(a.getPlan().stops[0].id);
+  const p = a.getPlan(), ts = a.curTimes(p).join(); const b0 = a.borradorLee(); assert(b0 && b0.c && /→/.test(b0.n), 'no guardó el borrador');
+  const b = makeApp({}, { search: '?v=facil', estricto: true, storage: { sobres_borrador: a._store.sobres_borrador } }); b.ev = () => {};
+  assert(b.renderVals().borradorOn && /Retomar tu borrador/.test(b.renderVals().borradorTxt), 'el inicio no ofrece retomar el borrador');
+  assert(b.retomaBorrador(), 'no retomó'); const q = b.getPlan();
+  assert(ids(q) === ids(p) && b.curTimes(q).join() === ts, 'el borrador no trae los mismos lugares y horas');
+  assert(b.state.view === 'plan' && b.state.who === a.state.who && b.state.groupSize === a.state.groupSize && b.state.budget === a.state.budget && (b.state.fijadas || []).join() === p.stops[0].id, 'no restauró filtros o lo fijado');
+  b.trashPlan(); assert(!b.borradorLee(), 'borrar el plan no borró el borrador');
+  a.borraBorrador(); assert(!a.borradorLee() && !a._store.sobres_borrador, 'no se pudo borrar el borrador');
+});
+
+test('45.7 · el enlace de WhatsApp abre el MISMO plan (paradas, horas y costo) y avisa si lo cambias después de compartirlo', () => {
+  const a = enEditor({ transporte: 'servicio' }); a.setStopTime(0, a.curTimes(a.getPlan())[0] + 0.5);
+  const p = a.getPlan(), ts = a.curTimes(p); const costo = a.costoPlan(p.stops, ts);
+  const url = a.tandaLinkDe([{ stops: p.stops, times: ts }]); assert(/\?p=/.test(url) && url.length < 600, 'enlace: ' + url);
+  const b = makeApp({}, { estricto: true }); b.ev = () => {}; b.abrirTanda(decodeURIComponent(url.split('?p=')[1]), true);
+  const q = (b.state.results.plans || [])[0]; assert(q && ids(q) === ids(p), 'el enlace no abre las mismas paradas');
+  assert(q.times.join() === ts.join(), 'no llegan las mismas horas: ' + q.times + ' vs ' + ts);
+  const c2 = b.costoPlan(q.stops, q.times); assert(c2.total === costo.total && c2.transporte === costo.transporte && b.state.groupSize === a.state.groupSize, 'no llega el mismo costo: $' + c2.total + ' vs $' + costo.total);
+  assert(b.state.results.compartida && b.planOptId(q) === a.planOptId({ stops: p.stops }), 'los votos no quedarían en el mismo plan');
+  // Versión: compartir y luego cambiar una parada.
+  a.compartirUnPlan(); assert(!a.renderVals().versionOn, 'avisa de versión sin haber cambiado nada');
+  const alt = a.swapSuggest(p.stops.length - 1)[0]; if (alt) { a.replaceStop(p.stops.length - 1, alt); const V = a.renderVals();
+    assert(V.versionOn && /sigue viendo y votando la versión que mandaste/.test(V.versionTxt), 'no avisa que el grupo vota la versión anterior');
+    assert(a.planOptId(a.getPlan()) !== a.planOptId({ stops: p.stops }), 'la versión nueva comparte id de votación con la anterior'); }
+});
+
 if (require.main === module) report();

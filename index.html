@@ -591,6 +591,9 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-facil-grid" role="group" aria-label="Qué se les antoja">
 <sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="e" aria-hidden="true">{{ o.emoji }}</span><span>{{ o.label }}</span></button></sc-for>
 </div>
+<sc-if value="{{ borradorOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-row" style="margin-top:14px;gap:4px;flex-wrap:nowrap"><button class="sb-btn3" style="margin-left:-12px;text-align:left;min-width:0;flex:1" onClick="{{ retomaBorrador }}">{{ borradorTxt }} →</button><button class="sb-btn3" style="flex:none;color:var(--color-neutral-700)" onClick="{{ borraBorrador }}" aria-label="Borrar el borrador">Borrar</button></div>
+</sc-if>
 <sc-if value="{{ facilCocinaOn }}" hint-placeholder-val="{{ false }}">
 <div class="sc-rise" style="margin-top:14px">
 <span class="sb-label">¿Qué tipo de comida?</span>
@@ -1029,9 +1032,22 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 <sc-if value="{{ planRO }}" hint-placeholder-val="{{ false }}"><p class="sb-note" style="margin:8px 0 0">Fecha del plan: <b>{{ roDate }}</b></p></sc-if>
 <sc-if value="{{ planEditando }}" hint-placeholder-val="{{ false }}">
-<label class="sb-row" style="margin:14px 0 0"><span class="sb-label" style="margin:0">Fecha</span><input class="sb-input" aria-label="Fecha del plan" type="date" value="{{ planDateVal }}" onChange="{{ setPlanDate }}"></label>
+<label class="sb-row" style="margin:14px 0 0"><span class="sb-label" style="margin:0">{{ planFechaLbl }}</span><input class="sb-input" aria-label="Fecha del plan" type="date" value="{{ planDateVal }}" onChange="{{ setPlanDate }}"></label>
 </sc-if>
 <sc-if value="{{ planWhy }}" hint-placeholder-val="{{ '' }}"><div class="sb-info" style="margin:14px 0 0">{{ planWhy }}</div></sc-if>
+<sc-if value="{{ versionOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-info" role="status" style="margin:14px 0 0"><div>{{ versionTxt }}</div><button class="sb-btn2" style="min-height:40px;margin-top:8px" onClick="{{ compartirVersion }}">Compartir esta versión</button></div>
+</sc-if>
+<sc-if value="{{ revOn }}" hint-placeholder-val="{{ false }}">
+<div id="sb-revision" class="sb-card" role="alert" style="padding:14px 16px;margin-top:14px;border-color:var(--electrico)">
+<div class="sb-kicker" style="color:var(--electrico)">{{ revTit }}</div>
+<sc-for list="{{ revItems }}" as="rv" hint-placeholder-count="1">
+<div style="padding:8px 0;border-top:1px solid var(--color-divider);margin-top:8px"><p class="sb-note" style="margin:0;color:var(--ink);font-weight:600">{{ rv.txt }}</p>
+<sc-if value="{{ rv.hayAlt }}" hint-placeholder-val="{{ false }}"><button class="sb-btn2" style="min-height:40px;margin-top:8px;font-size:13.5px" onClick="{{ rv.alt }}">{{ rv.altTxt }}</button></sc-if></div>
+</sc-for>
+<sc-if value="{{ hayDeshacer }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" style="margin:6px 0 0 -12px" onClick="{{ deshacer }}">↩ Deshacer el último cambio</button></sc-if>
+</div>
+</sc-if>
 
 <sc-if value="{{ planZero }}" hint-placeholder-val="{{ false }}">
 <div class="sb-soft" style="padding:16px;margin-top:16px"><b style="display:block;font:700 15px var(--font-body);color:var(--ink)">Plan en blanco</b><span class="sb-note">Agrega tu primera parada abajo — del catálogo o escrita a mano.</span></div>
@@ -1050,9 +1066,10 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <button onClick="{{ st.open }}" style="background:none;border:none;padding:6px 0;margin:-6px 0;min-height:34px;font:700 15.5px/1.25 var(--font-body);cursor:pointer;text-align:left;color:var(--ink);overflow-wrap:anywhere">{{ st.name }}</button>
 <div class="sb-note" style="font-size:12.5px;margin-top:2px">{{ st.sub }}</div>
 <div style="font:700 13px var(--font-body);color:var(--color-neutral-700);margin-top:4px">{{ st.pp }}</div>
+<sc-if value="{{ st.hayCond }}" hint-placeholder-val="{{ false }}"><div style="font:600 12.5px/1.35 var(--font-body);color:var(--electrico);margin-top:4px">Antes de darlo por hecho: {{ st.cond }}</div></sc-if>
 <sc-if value="{{ st.gAviso }}" hint-placeholder-val="{{ '' }}"><div role="status" style="font:600 12.5px/1.35 var(--font-body);color:var(--color-danger, #b3261e);margin-top:4px">{{ st.gAviso }}</div></sc-if>
 <sc-if value="{{ st.editar }}" hint-placeholder-val="{{ false }}">
-<div class="sb-row" style="gap:6px;margin-top:8px"><button class="sb-btn2" style="min-height:38px;padding:0 14px;font-size:13.5px" onClick="{{ st.swap }}">Cambiar</button><button class="sb-btn3" style="min-height:38px;color:var(--color-neutral-700)" onClick="{{ st.quit }}">Quitar</button></div>
+<div class="sb-row" style="gap:4px;margin-top:8px;flex-wrap:nowrap"><button class="sb-chip" style="min-height:38px;padding:0 10px;font-size:13px;flex:none" aria-pressed="{{ st.fijarPressed }}" onClick="{{ st.fijar }}">{{ st.fijarTxt }}</button><button class="sb-btn2" style="min-height:38px;padding:0 11px;font-size:13px;flex:none" onClick="{{ st.swap }}">Cambiar</button><button class="sb-btn3" style="min-height:38px;padding:0 8px;font-size:13px;color:var(--color-neutral-700);flex:none" onClick="{{ st.quit }}">Quitar</button></div>
 </sc-if>
 </div>
 </div>
@@ -1080,6 +1097,19 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 
 <sc-if value="{{ planEditando }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ altRestoOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-card" style="padding:14px 16px;margin-top:12px">
+<button class="sb-btn2 sb-full" onClick="{{ altResto }}">{{ altRestoTxt }}</button>
+<p class="sb-note" style="margin:8px 0 0;font-size:12.5px">{{ altRestoNota }}</p>
+<sc-if value="{{ hayDeshacer }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" style="margin:4px 0 0 -12px" onClick="{{ deshacer }}">↩ Deshacer el último cambio</button></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ despuesOn }}" hint-placeholder-val="{{ false }}">
+<div id="sb-despues" class="sb-card" style="padding:14px 16px;margin-top:12px">
+<span class="sb-label" style="margin:0 0 8px">¿Qué hacemos después?</span>
+<div style="display:grid;gap:8px"><sc-for list="{{ despues }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.add }}" aria-label="{{ d.aria }}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px 12px;background:var(--card);border:1px solid var(--color-divider);border-radius:12px;cursor:pointer;min-height:52px"><span style="min-width:0;flex:1"><span style="display:block;font:700 14px var(--font-body);color:var(--ink)">{{ d.lbl }}</span><span class="sb-note" style="display:block;font-size:12.5px">{{ d.txt }}</span></span><span style="font:700 13px var(--font-body);color:var(--electrico)">Agregar</span></button></sc-for></div>
+</div>
+</sc-if>
 <div class="sb-card" style="padding:14px 16px;margin-top:12px;position:relative">
 <div class="sb-row" style="margin-bottom:8px"><span class="sb-label" style="margin:0;color:{{ swapLabelColor }}">{{ swapLabel }}</span><sc-if value="{{ swapMode }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" style="margin-left:auto;min-height:34px" onClick="{{ cancelSwap }}">Cancelar</button></sc-if></div>
 <input class="sb-input" style="width:100%" aria-label="Buscar un lugar para el plan" value="{{ planQ }}" onInput="{{ setPlanQ }}" placeholder="Busca: Ryoshi, boliche, Cineteca…">
@@ -2906,7 +2936,7 @@ class Component extends DCLogic {
     if (b.cat === 'Centro comercial') return false;
     if (a.cat === b.cat && this.DRINK.indexOf(b.cat) < 0) return false;   // dos museos, dos boliches, dos cafés
     const T = { desayuno: ['paseo', 'visita', 'lectura'], comida: ['paseo', 'cafe', 'visita', 'lectura', 'vista', 'copas'], cena: ['copas', 'cafe', 'baile', 'paseo', 'vista'],
-      cafe: ['paseo', 'visita', 'lectura', 'vista'], copas: ['copas', 'baile', 'cena'], baile: ['cena', 'comida'],
+      cafe: ['paseo', 'visita', 'lectura', 'vista', 'copas'], copas: ['copas', 'baile', 'cena'], baile: ['cena', 'comida'],
       paseo: ['comida', 'cena', 'cafe', 'desayuno', 'visita'], vista: ['comida', 'cena', 'cafe', 'copas'], lectura: ['cafe', 'comida', 'cena', 'paseo'],
       visita: ['comida', 'cena', 'cafe', 'paseo', 'copas', 'lectura'], funcion: ['cena', 'comida', 'cafe', 'copas'], taller: ['comida', 'cena', 'cafe', 'copas'],
       reto: ['comida', 'cena', 'copas', 'cafe'], juego: ['comida', 'cena', 'copas', 'cafe'], recorrido: ['comida', 'cena', 'cafe', 'copas'], atraccion: ['comida', 'cena', 'cafe'] };
@@ -4712,7 +4742,8 @@ class Component extends DCLogic {
     return b ? (b[0] === 'free' ? 'gratis ($0 pp)' : b[0] === 'b1k' ? '$2,000+ pp' : b[0] === 'any' ? 'sin presupuesto' : b[0] === 'b1999' ? '$1,000–1,999 pp' : `≤ $${b[2]} pp`) : ''; }
   budgetMin() { const s = this.state; if (s.budgetCustom != null) return 0; return (this.BUD_MIN || {})[s.budget] || 0; }
   // ?v=facil (9 nov 2026): plan SIN fecha (when 'libre'): sólo horario, ningún texto de día.
-  sinFecha() { return this.state.when === 'libre'; }
+  // Sin fecha: flujo ?v=facil mientras no se elija una en el plan (ahí ya manda esa fecha).
+  sinFecha() { return this.state.when === 'libre' && !this.state.planDate; }
   cw(pre, low) { const l = this.whenLabel(); return l ? pre + (low ? l.toLowerCase() : l) : ''; }
   fechaTxt() { return this.sinFecha() ? '' : this.fmtDate(this.state.planDate || this.todayISO()); }
   whenLabel() { const s = this.state; if (s.when === 'libre') return ''; if (s.when === 'fecha') return s.customDate ? this.fmtDate(s.customDate) : 'fecha por elegir'; const w = this.WHEN.find(x => x[0] === s.when); return w ? w[1].toLowerCase() : ''; }
@@ -6228,7 +6259,7 @@ class Component extends DCLogic {
         : (plan && plan.stops.length ? this.tituloPlan('editor') : 'Plan nuevo'),
       planSubTitle: plan && plan.stops.length ? planTitle : '',
       planZero: view === 'plan' && s.planView === 'edit' && !!plan && !plan.stops.length,
-      planDateVal: s.planDate || this.todayISO(), setPlanDate: e => this.setState({ planDate: e.target.value }),
+      planDateVal: s.planDate || (s.when === 'libre' ? '' : this.todayISO()), setPlanDate: e => this.setState({ planDate: e.target.value }),
       swapMode: s.swapIdx != null, swapLabel: s.swapIdx != null && plan && plan.stops[s.swapIdx] ? `CAMBIAR "${plan.stops[s.swapIdx].n.toUpperCase()}" POR OTRA COSA · BUSCA O ELIGE UNA SUGERENCIA` : '+ AGREGAR OTRA PARADA · RESTAURANTE, BAR, EVENTO, LO QUE SEA',
       cancelSwap: () => this.setState({ swapIdx: null, planQ: '' }), swapLabelColor: s.swapIdx != null ? 'var(--color-accent)' : 'var(--color-neutral-600)',
       planFriendChips: myFr.map(f => { const sentAlready = !!(plan0Exists && (((rawPlans.find(x => x.id === this.planOptId(plan0Exists)) || {}).sharedWith || []).includes(f))); const sel = s.sendSel.includes(f);
@@ -6474,6 +6505,32 @@ class Component extends DCLogic {
     setTimeout(correr, enRes ? (corto ? 0 : 110) : (corto ? 100 : 400));
   }
 
+  // Pantalla del plan: revisión tras cada cambio (qué dejó de cuadrar + reemplazo o deshacer), fijar,
+  // alternativas para lo demás, "¿qué hacemos después?", versión compartida y borrador.
+  valsEdicion(plan, editando, view) {
+    const s = this.state; const vacio = { revOn: false, revItems: [], hayDeshacer: false, despuesOn: false, despues: [], altRestoOn: false, versionOn: false, borradorOn: false };
+    const b = view === 'home' ? this.borradorLee() : null;
+    const bor = { borradorOn: !!b && !(s.planCustom && s.planCustom.stops.length), borradorTxt: b ? 'Retomar tu borrador: ' + b.n : '', retomaBorrador: () => this.retomaBorrador(), borraBorrador: () => { this.borraBorrador(); this.toast('Borrador eliminado'); } };
+    if (view !== 'plan' || !plan || !(plan.stops || []).length || s.planReadOnly) return Object.assign(vacio, bor);
+    const rev = this.revisaPlan(plan); const hayHist = (s.planHist || []).length > 0;
+    const fij = (s.fijadas || []).filter(id => plan.stops.some(v => v.id === id)).length;
+    const desp = editando ? this.sugerirDespues() : [];
+    const sigAhora = this.comboSig(plan.stops) + '@' + this.curTimes(plan).map(t => Math.round(t * 4)).join('.');
+    const cambio = !!s.compartidoSig && s.compartidoSig !== sigAhora;
+    return Object.assign(bor, {
+      revOn: !rev.ok, revTit: rev.problemas.length === 1 ? 'Con ese cambio algo dejó de cuadrar' : 'Con ese cambio ' + rev.problemas.length + ' cosas dejaron de cuadrar',
+      revItems: rev.problemas.map(o => ({ txt: o.txt, hayAlt: !!o.reemplazo, altTxt: o.reemplazo ? 'Cambiar por ' + o.reemplazo.n.split(' ·')[0] : '',
+        alt: () => { if (o.reemplazo) { this.ev('revision_reemplazo', { tipo: o.tipo }); this.replaceStop(o.i, o.reemplazo); } } })),
+      hayDeshacer: hayHist, deshacer: () => this.deshacer(),
+      altRestoOn: editando && plan.stops.length > 1 && fij < plan.stops.length, altRestoTxt: fij ? 'Dame alternativas para lo demás' : 'Cambiar todas por alternativas',
+      altRestoNota: fij ? (fij === 1 ? 'Se queda la que fijaste; lo demás se cambia por lugares que funcionen con ella.' : 'Se quedan las ' + fij + ' que fijaste.') : 'Fija la parada que sí te gusta y pide alternativas para las otras.',
+      altResto: () => { this.ev('alternativas_resto', { fijadas: fij }); this.alternativasResto(); },
+      despuesOn: desp.length > 0,
+      despues: desp.map(d => ({ lbl: d.lbl, txt: d.v.n.split(' ·')[0] + ' · ' + this.time12(d.t) + (d.min ? ' · a ' + d.min + ' min' : '') + ' · ' + this.precioTxt(d.v), aria: d.lbl + ': ' + d.v.n,
+        add: () => { this.ev('despues_agregado', { tipo: d.k }); this.aprende('agregado', [d.v], [d.t]); this.addStopAt(d.v, d.t); } })),
+      versionOn: cambio, versionTxt: 'Cambiaste este plan después de compartirlo. Tu grupo sigue viendo y votando la versión que mandaste; comparte ésta para que voten la nueva.',
+      compartirVersion: () => this.compartirUnPlan() });
+  }
   // Lo que se ofrece debajo de las opciones: ajustes elegibles, aviso de agotado y «No quiero».
   valsOtros(view, r, rp) {
     const s = this.state; if (view !== 'results') return { ajustesOn: false, agotadoOn: false, noQuieroOpts: [], regenCls: '', regenOn: false, activosOn: false, activos: [] };
@@ -6521,7 +6578,8 @@ class Component extends DCLogic {
   // que ya está en SOBRES. Sin pasos de por medio.
   compartirUnPlan() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
     this.aprende('compartido', p.stops, p.times);
-    this.setState({ sendOpen: true, compartirTanda: false, compCopiado: false, sendSel: [], sendQ: '' }); }
+    this.setState({ sendOpen: true, compartirTanda: false, compCopiado: false, sendSel: [], sendQ: '',
+      compartidoSig: this.comboSig(p.stops) + '@' + this.curTimes(p).map(t => Math.round(t * 4)).join('.') }); }
   compartirTanda() { const r = this.state.results; if (!r || !(r.plans || []).length) { this.toast('Primero arma tus opciones'); return; }
     this.aprende('compartidoTanda', [].concat(...r.plans.slice(0, 3).map(x => x.stops || [])));
     this.setState({ sendOpen: true, compartirTanda: true, compCopiado: false, sendSel: [], sendQ: '' }); }
@@ -6695,6 +6753,9 @@ class Component extends DCLogic {
         editar: editando && st.canEdit, noEditar: !(editando && st.canEdit),
         horaAria: 'Hora de ' + st.name, hasPhoto: !!(ph && ph.src), photo: ph ? ph.src : '', noPhoto: !(ph && ph.src),
         letter: (st.name || '?')[0], manualForm: !!st.esManual && editando,
+        fijada: !!(v && (s.fijadas || []).indexOf(v.id) >= 0), fijarTxt: v && (s.fijadas || []).indexOf(v.id) >= 0 ? '📌 Fijada' : 'Fijar',
+        fijarPressed: v && (s.fijadas || []).indexOf(v.id) >= 0 ? 'true' : 'false', fijar: () => { if (v) this.fijar(v.id); },
+        cond: v ? this.condicionDe(v) : '', hayCond: !!(v && this.condicionDe(v)),
         gAviso: v ? this.googleAviso(v, s.planDate, (plan.times || [])[i]) : '' });
     });
     if (plan && plan.stops) this.pideGoogle(plan.stops);
@@ -6805,6 +6866,8 @@ class Component extends DCLogic {
       explorarZona: () => this.nav('map', s.zone !== 'all' ? { mapZone: s.zone } : {}),
       // Plan abierto
       planEstado: estado, planDatos: pd, itinerary, planEditando: editando,
+      planFechaLbl: s.when === 'libre' && !s.planDate ? '¿Qué día? (opcional)' : 'Fecha',
+      ...this.valsEdicion(plan, editando, view),
       // Cine como ALTERNATIVA pendiente de elegir: no se agenda sin función.
       ...(() => { const alt = (!editando && plan && plan.stops && plan.stops.length && !s.planReadOnly) ? this.cineCerca(plan) : null;
         return { cineAltOn: !!alt, cineAltTxt: alt ? '¿Les late una película? ' + alt.v.n + ' está a ~' + alt.min + ' min de ' + alt.de.n.split(' ·')[0] + '. No la agendamos sin función confirmada: elijan película y hora en su cartelera.' : '',
@@ -7008,7 +7071,8 @@ class Component extends DCLogic {
   curTimes(p) { return (p.times && p.times.length === p.stops.length) ? p.times.slice() : this.planTimes(p.stops.length); }
   sortPlan(stops, times) { const pairs = stops.map((v, i) => [times[i] != null ? times[i] : 12, v]).sort((a, b) => a[0] - b[0]);
     // Tocar el plan lo vuelve borrador otra vez: lo guardado deja de coincidir.
-    this.setState({ planCustom: { stops: pairs.map(x => x[1]), times: pairs.map(x => x[0]), spent: stops.reduce((a, b) => a + b.pp, 0) }, planStops: stops.length, swapSeed: 0, planLocked: false }); }
+    const hist = this.histCon();
+    this.setState({ planCustom: { stops: pairs.map(x => x[1]), times: pairs.map(x => x[0]), spent: stops.reduce((a, b) => a + b.pp, 0) }, planStops: stops.length, swapSeed: 0, planLocked: false, planHist: hist }, () => this.guardaBorrador()); }
   setStopTime(i, t) { const p = this.getPlan(); if (!p) return; const times = this.curTimes(p); times[i] = t; this.sortPlan(p.stops.slice(), times); }
   // Completar una parada manual. Hasta que tenga dirección válida no se traza
   // ruta ni se pide carro, y su costo no entra en el total como si fuera 0.
@@ -7082,7 +7146,31 @@ class Component extends DCLogic {
     this.toast('Abriendo la ruta del plan en Google Maps'); }
   copyCurPlanLink() { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; }
     this.ensureProposed(p).then(id => this.copiarTexto(this.planLink(id), 'Link del plan copiado — a quien se lo mandes le abre este plan para votar')); }
-  setPlanCustom(stops) { if (!stops.length) { this.trashPlan(); return; } this.setState({ planCustom: { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: this.planTimes(stops.length) }, planStops: stops.length, swapSeed: 0, planNone: false }); }
+  // ── EDICIÓN CON LAS MISMAS REGLAS DEL MOTOR (pasada profunda F4, 10 nov 2026) ─────────────────
+  // Antes de cada cambio se guarda una foto del plan para poder DESHACER (hasta 12 pasos).
+  fotoPlan() { const p = this.getPlan(); return p && (p.stops || []).length ? { stops: p.stops.slice(), times: this.curTimes(p), spent: p.spent } : null; }
+  histCon() { const f = this.fotoPlan(); return f ? (this.state.planHist || []).concat([f]).slice(-12) : (this.state.planHist || []); }
+  deshacer() { const h = (this.state.planHist || []).slice(); const f = h.pop(); if (!f) { this.toast('No hay cambios que deshacer'); return; }
+    this.setState({ planCustom: { stops: f.stops, times: f.times, spent: f.spent }, planStops: f.stops.length, planHist: h, swapIdx: null, planNone: false, planLocked: false }, () => this.guardaBorrador());
+    this.toast('Cambio deshecho'); }
+  // BORRADOR: el plan que se está editando se guarda en este dispositivo (mismo formato que el enlace
+  // corto) para retomarlo aunque falle una búsqueda o se cierre la pestaña.
+  guardaBorrador() { try { const p = this.getPlan(); if (!p || !(p.stops || []).length || p.stops.some(v => /^ext-/.test(v.id))) return;
+      const c = this.tandaCorta([{ stops: p.stops, times: this.curTimes(p) }]);
+      if (c) localStorage.setItem('sobres_borrador', JSON.stringify({ c, t: Date.now(), n: p.stops.map(v => v.n.split(' ·')[0]).join(' → '), fij: (this.state.fijadas || []).slice() })); } catch (e) {} }
+  borradorLee() { try { const b = JSON.parse(localStorage.getItem('sobres_borrador') || 'null'); return b && b.c && Date.now() - (b.t || 0) < 14 * 864e5 ? b : null; } catch (e) { return null; } }
+  borraBorrador() { try { localStorage.removeItem('sobres_borrador'); } catch (e) {} this.setState({ borradorTick: (this.state.borradorTick || 0) + 1 }); }
+  retomaBorrador() { const b = this.borradorLee(); if (!b) return false; let t = null; try { t = this.leeTandaCorta(b.c); } catch (e) {}
+    if (!t || !t.p || !t.p[0]) { this.borraBorrador(); return false; }
+    const C = this.cat(); const stops = (t.p[0].s || []).map(id => C.find(x => x.id === id)).filter(Boolean);
+    if (!stops.length) { this.toast('Los lugares de tu borrador ya no están en el catálogo'); this.borraBorrador(); return false; }
+    const times = (t.p[0].h && t.p[0].h.length === stops.length) ? t.p[0].h.slice() : this.planTimes(stops.length);
+    this.setState({ who: t.w, groupSize: t.g, zone: t.z, zonesSel: (t.zs || []).slice(), when: t.wh, customDate: t.d || '', planDate: t.pd || '', planFrom: t.f, planTo: t.t,
+      budget: t.b, budgetCustom: t.bc, vibes: (t.vb || []).slice(), transporte: this.modoTr(t.tr), fijadas: (b.fij || []).filter(id => stops.some(v => v.id === id)),
+      planCustom: { stops, times, spent: stops.reduce((a, v) => a + (v.ppUnknown ? 0 : v.pp), 0) }, planStops: stops.length, planNone: false, planLocked: false, planReadOnly: false,
+      planEditando: true, planHist: [], openedPlanId: null, planDesdeTanda: false });
+    this.nav('plan'); return true; }
+  setPlanCustom(stops) { if (!stops.length) { this.trashPlan(); return; } const hist = this.histCon(); this.setState({ planCustom: { stops, spent: stops.reduce((a, b) => a + b.pp, 0), times: this.planTimes(stops.length) }, planStops: stops.length, swapSeed: 0, planNone: false, planHist: hist }, () => this.guardaBorrador()); }
   trashPlan() { const s = this.state; const p = this.getPlan();
     try { if (s.syncOn && s.userName) { const ids = []; if (s.openedPlanId) ids.push(s.openedPlanId); if (p && p.stops.length) ids.push(this.planOptId(p));
       ids.filter((x, i, a) => a.indexOf(x) === i).forEach(id => { if (((s.sync && s.sync.plans) || []).some(x => x.id === id)) this.mutate('delPlan', { planId: id }, true); }); } } catch(e) {}
@@ -7092,34 +7180,96 @@ class Component extends DCLogic {
       openedPlanId: null, openedPlanBy: '', planReadOnly: false,
       aiSummary: '', aiTxt: '', aiBusy: false, focusPlanId: null });
     this._aiNotas = []; this._aiExhausted = false;
+    try { localStorage.removeItem('sobres_borrador'); } catch (e) {} this.setState({ planHist: [], fijadas: [] });
     this.toast('Plan borrado'); }
-  replaceStop(i, v) { const p = this.getPlan(); if (!p) return; if (p.stops.some((x, j) => j !== i && x.id === v.id)) { this.toast('Ese ya está en el plan'); return; } const stops = p.stops.slice(); const times = this.curTimes(p); const quitado = stops[i]; stops[i] = v; const sust = (this.state.sustituidos || []).filter(id => id !== v.id); if (quitado && quitado.id) sust.push(quitado.id); this.setState({ swapIdx: null, sustituidos: sust.slice(-12) }); this.sortPlan(stops, times); this.toast(`Cambiado por ${v.n}`); }
+  replaceStop(i, v) { const p = this.getPlan(); if (!p) return; if (p.stops.some((x, j) => j !== i && this.mismoLugar(x, v))) { this.toast('Ese lugar ya está en el plan'); return; } const stops = p.stops.slice(); const times = this.curTimes(p); const quitado = stops[i]; stops[i] = v; const sust = (this.state.sustituidos || []).filter(id => id !== v.id); if (quitado && quitado.id) sust.push(quitado.id); this.setState({ swapIdx: null, sustituidos: sust.slice(-12) }); this.sortPlan(stops, times); this.toast(`Cambiado por ${v.n}`); }
   // Sustituir una parada valida TODO el plan otra vez: horario, trayectos con
   // la parada anterior y la siguiente, presupuesto y vibra. Y no devuelve de
   // inmediato el lugar que se acaba de quitar mientras haya otro que sirva.
-  swapSuggest(i) { const p = this.getPlan(); if (!p || !p.stops[i]) return []; const cur = p.stops[i];
-    const times = this.curTimes(p); const t = times[i];
-    const prev = p.stops[i - 1], next = p.stops[i + 1];
-    const VM = this.vibeModel(); const max = this.budgetMax();
-    const sust = new Set(this.state.sustituidos || []);
-    const gk = Object.keys(this.G).find(k => this.G[k].includes(cur.cat));
-    const ok = v => v.id !== cur.id && !p.stops.some(x => x.id === v.id)
-      && (v.cat === cur.cat || (gk && this.G[gk].includes(v.cat))) && this.atHour(v, t)
-      && (this.state.zone === 'all' || v.z === cur.z || this.vecinas(cur.z).includes(v.z))
+  swapSuggest(i) { const p = this.getPlan(); if (!p || !p.stops[i]) return [];
+    return this.sustitutos(p.stops, this.curTimes(p), i, new Set(this.state.sustituidos || [])).slice(0, 5); }
+  addStop(v) { if (this.state.swapIdx != null) { this.replaceStop(this.state.swapIdx, v); return; }
+    const p = this.getPlan(); if (!p) { this.setPlanCustom([v]); return; } if (p.stops.some(x => x.id === v.id)) { this.toast('Ya está en el plan'); return; }
+    const times = this.curTimes(p); const last = p.stops[p.stops.length - 1];
+    const t = times.length ? Math.min(29, Math.ceil((times[times.length - 1] + this.duracionAct(last) + (this.minutosTramo(this.legKm(last, v)) || 10) / 60) * 4) / 4) : this.range()[0];
+    this.addStopAt(v, t); }
+  addStopAt(v, t) { const p = this.getPlan(); if (!p) { this.setPlanCustom([v]); return; } if (p.stops.some(x => this.mismoLugar(x, v))) { this.toast('Ese lugar ya está en el plan'); return; }
+    const times = this.curTimes(p); const stops = p.stops.concat([v]); times.push(t); this.sortPlan(stops, times); this.toast(`${v.n.split(' ·')[0]} agregado a las ${this.time12(t)}`); }
+  // FIJAR una parada: "ésta sí me gusta". Se queda con su hora mientras se piden alternativas para lo demás.
+  fijar(id) { const f = (this.state.fijadas || []).slice(), i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else f.push(id); this.setState({ fijadas: f }, () => this.guardaBorrador()); }
+  // Sustitutos de la parada i que funcionan para el plan COMPLETO (hora, trayectos con la anterior y la
+  // siguiente, tope con propina y traslado, «No quiero», sin repetir sede). Sirve para editar y para alternativas.
+  sustitutos(stops, times, i, evita) { const cur = stops[i]; if (!cur) return [];
+    const t = times[i], prev = stops[i - 1], next = stops[i + 1]; const VM = this.vibeModel(), max = this.budgetMax(), excl = this.exclSet();
+    const gk = Object.keys(this.G).find(k => this.G[k].includes(cur.cat)); const ev = evita || new Set();
+    const ok = v => v.id !== cur.id && !excl.has(v.id) && this.esRecomendable(v) && !stops.some((x, j) => j !== i && this.mismoLugar(x, v))
+      && (v.cat === cur.cat || (gk && this.G[gk].includes(v.cat))) && (this.funcionSinConfirmar(v) ? !!v.condicion || ['Cine', 'Taller'].indexOf(v.cat) >= 0 : this.atHour(v, t))
+      && (this.state.zone === 'all' || v.z === cur.z || this.zoneList().indexOf(v.z) >= 0 || this.vecinas(cur.z).includes(v.z))
       && this.vibeAdmite(v, VM)
       && (!prev || this.alcanzaTramo(prev, v, t - times[i - 1]))
       && (!next || this.alcanzaTramo(v, next, times[i + 1] - t))
-      && (!this.esAntro(v) || i === p.stops.length - 1)
-      && this.cabeEnTope(p.stops.map((x, j) => j === i ? v : x), max).ok;
-    let lista = this.cat().filter(ok);
-    const frescos = lista.filter(v => !sust.has(v.id));
-    if (frescos.length) lista = frescos;
-    return lista.sort((a, b) => Math.hypot(cur.x - a.x, cur.y - a.y) - Math.hypot(cur.x - b.x, cur.y - b.y)).slice(0, 5); }
-  addStop(v) { if (this.state.swapIdx != null) { this.replaceStop(this.state.swapIdx, v); return; }
-    const p = this.getPlan(); if (!p) { this.setPlanCustom([v]); return; } if (p.stops.some(x => x.id === v.id)) { this.toast('Ya está en el plan'); return; }
-    const times = this.curTimes(p); const t = times.length ? Math.min(28, times[times.length - 1] + 2) : this.range()[0];
-    const stops = p.stops.concat([v]); times.push(t); this.sortPlan(stops, times); this.toast(`${v.n} agregado al plan — muévele la hora si quieres`); }
-  removeStop(i) { const p = this.getPlan(); if (!p) return; const stops = p.stops.slice(); stops.splice(i, 1); this.setPlanCustom(stops); }
+      && (!this.esAntro(v) || i === stops.length - 1 || (stops[i + 1] && stops[i + 1].cat === 'Taquería'))
+      && this.cabeEnTope(stops.map((x, j) => j === i ? v : x), max, times).ok;
+    let lista = this.cat().filter(ok); const fr = lista.filter(v => !ev.has(v.id)); if (fr.length) lista = fr;
+    const d = v => { const k = this.legKm(cur, v); return k == null ? 9 : k; };
+    return lista.sort((a, b) => (d(a) - (a.hot ? 0.4 : 0)) - (d(b) - (b.hot ? 0.4 : 0))); }
+  // "Dame alternativas para lo demás": las fijadas se quedan; cada una de las otras se cambia por un
+  // lugar del mismo tipo que funcione con el plan completo. Si para alguna no hay, se dice.
+  alternativasResto() { const p = this.getPlan(); if (!p || !(p.stops || []).length) return;
+    const fij = new Set(this.state.fijadas || []); const stops = p.stops.slice(), times = this.curTimes(p); const hist = this.histCon();
+    const evita = new Set((this.state.sustituidos || []).concat(p.stops.map(v => v.id))); const sin = [], quit = []; let n = 0;
+    stops.forEach((v, i) => { if (fij.has(v.id) || /^ext-/.test(v.id)) return; const alt = this.sustitutos(stops, times, i, evita)[0];
+      if (alt) { quit.push(v.id); stops[i] = alt; evita.add(alt.id); n++; } else sin.push(v.n.split(' ·')[0]); });
+    if (!n) { this.toast('No encontré alternativas que funcionen con ' + (fij.size ? 'lo que fijaste' : 'este plan') + ' a esas horas y con tu presupuesto'); return; }
+    this.aprende('alternativas', stops, times);
+    this.setState({ planCustom: { stops, times, spent: stops.reduce((a, v) => a + (v.ppUnknown ? 0 : v.pp), 0) }, planStops: stops.length, planHist: hist, planLocked: false, swapIdx: null,
+      sustituidos: (this.state.sustituidos || []).concat(quit).slice(-24) }, () => this.guardaBorrador());
+    this.toast(n === 1 ? 'Cambié 1 parada' + (sin.length ? '; para ' + sin.join(' y ') + ' no hay otra que funcione' : '') : 'Cambié ' + n + ' paradas' + (sin.length ? '; para ' + sin.join(' y ') + ' no hay otra que funcione' : '')); }
+  // "¿QUÉ HACEMOS DESPUÉS?": tipos de parada que tienen sentido tras la última, a esa hora, cerca y dentro
+  // del presupuesto, cada uno con su mejor lugar y la hora a la que llegarían.
+  sugerirDespues() { const p = this.getPlan(); if (!p || !(p.stops || []).length || p.stops.length >= 5) return [];
+    const st = p.stops, ts = this.curTimes(p), last = st[st.length - 1]; if (/^ext-/.test(last.id) || last.lat == null) return [];
+    const fin = ts[ts.length - 1] + this.duracionAct(last), max = this.budgetMax(), excl = this.exclSet(), VM = this.vibeModel();
+    const fPrev = this.funcionAct((p.acts || [])[st.length - 1] || this.actsDe(last)[0] || 'visita', ts[ts.length - 1]);
+    const noche = fin >= 19, fam = this.esFamiliar(), sinAlc = !!this.state.sinAlcohol;
+    const TIPOS = [['postre', 'Algo dulce', 'cafe', v => ['Heladería', 'Churrería'].indexOf(v.cat) >= 0 || (v.cat === 'Café' && /panader|pasteler|postre|crepa|churr|chocolat|gelato|helad|nieve/i.test(v.n))],
+      ['cafe', 'Un café', 'cafe', v => v.cat === 'Café'],
+      ['paseo', 'Caminar un rato', 'paseo', v => ['Parque', 'Al aire libre'].indexOf(v.cat) >= 0],
+      ['comer', noche ? 'Cenar' : 'Comer', noche ? 'cena' : 'comida', v => this.CATS_MESA().indexOf(v.cat) >= 0 && this.sirveComida(v) && !this.esCadenaCasual(v)],
+      ['copas', 'Un trago', 'copas', v => !fam && !sinAlc && this.DRINK.indexOf(v.cat) >= 0 && !this.esAntro(v)],
+      ['baile', 'A bailar', 'baile', v => !fam && !sinAlc && this.esAntro(v)],
+      ['tacos', 'Tacos para cerrar', 'cena', v => v.cat === 'Taquería']];
+    const out = [];
+    TIPOS.forEach(([k, lbl, fb, es]) => { if (k === 'tacos' && !(fPrev === 'copas' || fPrev === 'baile')) return; if (k === 'comer' && st.some(v => this.esComidaCompleta(v))) return;
+      const cands = this.cat().filter(v => es(v) && !excl.has(v.id) && this.esRecomendable(v) && this.vibeAdmite(v, VM) && !st.some(x => this.mismoLugar(x, v)) && this.sigueBien(last, fPrev, v, fb))
+        .map(v => { const km = this.legKm(last, v); if (km == null || km > 3) return null; const min = this.minutosTramo(km) || 0; let t = Math.ceil((fin + min / 60) * 4) / 4;
+          if (this.esAntro(v)) t = Math.max(t, 22.5); if (v.oh && v.oh[0] > t && v.oh[0] - t <= 1) t = v.oh[0];
+          if (!this.atHour(v, t) || !this.alcanzaTramo(last, v, t - ts[ts.length - 1]) || !this.cabeEnTope(st.concat([v]), max, ts.concat([t])).ok) return null;
+          return { v, t, min, sc: this.rank(v, 0) - min / 5 + this.afinidad(v) }; }).filter(Boolean).sort((a, b) => b.sc - a.sc);
+      if (cands.length) out.push({ k, lbl, v: cands[0].v, t: cands[0].t, min: cands[0].min, n: cands.length, otros: cands.slice(1, 4) }); });
+    return out.slice(0, 5); }
+  // REVISIÓN tras cada cambio: qué dejó de cuadrar (horario, trayecto, tope, «No quiero», lugar repetido)
+  // y con qué se arregla. Es la misma validación que usa el motor al generar.
+  revisaPlan(p) { p = p || this.getPlan(); if (!p || !(p.stops || []).length) return { ok: true, problemas: [] };
+    const st = p.stops, ts = this.curTimes(p), max = this.budgetMax(), out = [], nm = v => v.n.split(' ·')[0];
+    st.forEach((v, i) => { if (/^ext-/.test(v.id) || v.sinUbicacion) return;
+      if (v.oh && !this.funcionSinConfirmar(v) && !this.atHour(v, ts[i])) out.push({ i, tipo: 'horario', txt: nm(v) + ' no recibe a las ' + this.time12(ts[i]) + (v.hrs ? ' (' + String(v.hrs).slice(0, 60) + ')' : '') + '.' });
+      if (!this.sinFecha() && !v.evento && !this.abreEseDia(v, this.state.planDate || undefined)) out.push({ i, tipo: 'dia', txt: nm(v) + ' no abre ese día' + (this.diasTxt(v) ? ' (abre ' + this.diasTxt(v) + ')' : '') + '.' });
+      if (v.evento && v.fechas && this.state.planDate && !this.vigenteEn(v, this.state.planDate)) out.push({ i, tipo: 'dia', txt: nm(v) + ' no es ese día (' + this.fechasTxt(v) + ').' });
+      if (this.noQuiereA(v)) out.push({ i, tipo: 'noquiero', txt: nm(v) + ' es de lo que marcaste en «No quiero».' });
+      if (st.some((x, j) => j < i && this.mismoLugar(x, v))) out.push({ i, tipo: 'repetido', txt: nm(v) + ' es el mismo lugar que otra parada del plan.' }); });
+    for (let i = 0; i + 1 < st.length; i++) if (!this.alcanzaTramo(st[i], st[i + 1], ts[i + 1] - ts[i])) { const m = this.minutosTramo(this.legKm(st[i], st[i + 1]));
+      out.push({ i: i + 1, tipo: 'trayecto', txt: 'De ' + nm(st[i]) + ' a ' + nm(st[i + 1]) + ' son ~' + m + ' min y entre las dos horas no alcanza para estar ahí y llegar.' }); }
+    const tp = this.cabeEnTope(st, max, ts);
+    if (!tp.ok && max < 90000) { if (tp.motivo === 'respaldo') (tp.pendientes || []).forEach(v => out.push({ i: st.indexOf(v), tipo: 'precio', txt: nm(v) + ' no tiene precio confirmado: con tu tope de $' + max.toLocaleString('es-MX') + ' el total ya no se puede defender.' }));
+      else { let k = 0; st.forEach((v, j) => { if (!v.ppUnknown && v.pp > (st[k].ppUnknown ? -1 : st[k].pp)) k = j; });
+        out.push({ i: k, tipo: 'tope', txt: 'El total va en $' + tp.total.toLocaleString('es-MX') + ' por persona (con propina y traslado) y tu tope es $' + max.toLocaleString('es-MX') + '.' }); } }
+    const u = st.length - 1; if (!this.cabeEnVentana(st[u], ts[u], this.range()[1]) && this.state.planTo != null) out.push({ i: u, tipo: 'ventana', txt: 'Con ' + nm(st[u]) + ' terminarían después de las ' + this.time12(this.range()[1]) + '.' });
+    out.forEach(o => { const alt = this.sustitutos(st, ts, o.i, new Set(this.state.sustituidos || []))[0]; o.reemplazo = alt || null; });
+    return { ok: !out.length, problemas: out }; }
+  removeStop(i) { const p = this.getPlan(); if (!p) return; const stops = p.stops.slice(), times = this.curTimes(p); const q = stops[i]; stops.splice(i, 1); times.splice(i, 1);
+    if (q) this.setState({ fijadas: (this.state.fijadas || []).filter(id => id !== q.id) });
+    if (!stops.length) { this.trashPlan(); return; } this.sortPlan(stops, times); }
   swapStop(i) { this.setState({ swapIdx: this.state.swapIdx === i ? null : i, planQ: '' }); }
   funcionDe(v, t) {
     const g = Object.keys(this.G).find(k => this.G[k].includes(v.cat));
