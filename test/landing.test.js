@@ -125,7 +125,8 @@ test('29.5 · "Ver otras opciones" trae TIPOS de plan distintos, no sólo otros 
     a.renderVals().resurprise();
   }
   // 7 → 6 (10 nov 2026): los lugares sin pin confirmado ya no se proponen y hay menos piezas distintas.
-  assert(tipos.size >= 6, 'sólo ' + tipos.size + ' tipos de plan en 4 tandas: ' + [...tipos].join(', '));
+  // 6 → 5 (11 nov 2026): la "cenita rápida" ya exige precio conocido, así que hay menos combinaciones con ella.
+  assert(tipos.size >= 5, 'sólo ' + tipos.size + ' tipos de plan en 4 tandas: ' + [...tipos].join(', '));
   // (10 nov 2026) La novedad ahora se garantiza por LUGAR y actividad principal (prueba 43.1); de tipo de plan
   // basta con que la mayoría de las tandas traiga alguno nuevo.
   assert(nuevasPorTanda.filter(n => n >= 1).length >= 2, 'casi ninguna tanda trajo un tipo nuevo: ' + nuevasPorTanda.join(','));
@@ -324,6 +325,7 @@ test('33.1 · se eligen máximo 2 ambientes (con 3 "se vuelve loquito")', () => 
 test('33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y con presupuesto para ellos, al menos 40% son hotspots', () => {
   // Con $600–1,000 se revisa que no haya nada básico; con $1,000–1,999 (donde caben
   // los hotspots con su precio alto) además que la mayoría sean hotspots.
+  const AC = {};
   ['juarez', 'coyoacan', 'roma', 'polanco', 'condesa'].forEach(z => [1, 2, 3].forEach(sd => ['b1000', 'b1999'].forEach(bud => {
     // Sin la revisión del 9 nov 2026: con los precios de OpenTable "por confirmar" los hotspots ya no se
     // distinguen por precio. La parte de "nada básico" se repite con la revisión en la prueba 41.9.
@@ -335,8 +337,12 @@ test('33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y 
     const com = st.filter(v => a.FOOD.includes(v.cat) || a.DRINK.includes(v.cat));
     const hot = com.filter(v => v.hot);
     // (10 nov 2026) Polanco sale de esta parte: varios de sus hotspots no tienen pin confirmado y ya no se proponen.
-    if (bud === 'b1999' && ['roma', 'condesa'].includes(z)) assert(hot.length * 5 >= com.length * 2, z + ' semilla ' + sd + ': sólo ' + hot.length + ' de ' + com.length + ' son hotspots: ' + com.map(v => v.n));
+    // (11 nov 2026) El peso del hotspot ahora ENVEJECE con su fuente (una lista de hace 2 años pesa poco): cada
+    // búsqueda trae al menos uno y, sumando las tres semillas de la zona, al menos 30% lo son.
+    if (bud === 'b1999' && ['roma', 'condesa'].includes(z)) { assert(hot.length >= 1, z + ' semilla ' + sd + ': ningún hotspot: ' + com.map(v => v.n));
+      AC[z] = AC[z] || [0, 0]; AC[z][0] += hot.length; AC[z][1] += com.length; }
   })));
+  Object.keys(AC).forEach(z => assert(AC[z][0] * 10 >= AC[z][1] * 3, z + ': sólo ' + AC[z][0] + ' de ' + AC[z][1] + ' son hotspots en las tres búsquedas'));
 });
 
 test('33.3 · "Creativo" no propone obras de teatro (ver una obra no es crear)', () => {

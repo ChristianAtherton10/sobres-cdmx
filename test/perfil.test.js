@@ -10,7 +10,8 @@ const lugar = (app, re) => app.cat().find(v => re.test(v.n));
 // Simula una recarga: la app nueva arranca con lo que quedó guardado.
 const recarga = (app, st, opts) => makeApp(Object.assign({}, BASE, st || {}), Object.assign({ storage: Object.assign({}, app._store) }, opts || {}));
 
-test('27.1 · elegir pesa más que compartir, compartir más que guardar y guardar más que buscar', () => {
+// (10 nov 2026) Guardar un plan es CONFIRMARLO: ahora pesa más que compartir (5 contra 3); elegir sigue en 4.
+test('27.1 · confirmar (guardar) y elegir pesan más que compartir, y compartir más que buscar', () => {
   const app = makeApp(BASE);
   const museo = lugar(app, /^Museo Nacional de Antropolog/), bar = lugar(app, /^Licorería Limantour/),
         cafe = app.cat().find(v => v.cat === 'Café'), helado = app.cat().find(v => v.cat === 'Heladería');
@@ -19,7 +20,7 @@ test('27.1 · elegir pesa más que compartir, compartir más que guardar y guard
   app.aprende('compartido', [bar]);
   app.aprende('elegido', [museo], [12]);
   const S = app.perfil().sen.cat;
-  assert(S[museo.cat] > S[bar.cat] && S[bar.cat] > S[cafe.cat], 'pesos: ' + JSON.stringify(S));
+  assert(S[cafe.cat] >= S[museo.cat] && S[museo.cat] > S[bar.cat] && S[bar.cat] > 1, 'pesos: ' + JSON.stringify(S));
   assert(!S[helado.cat], 'una búsqueda no inventa categorías');
   const p = app.perfil();
   assert(p.sen.franja.tarde > 0, 'no guardó el horario típico');

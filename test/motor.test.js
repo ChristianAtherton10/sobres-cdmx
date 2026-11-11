@@ -1735,9 +1735,10 @@ test('cada tanda da un enlace distinto', () => {
   const app = makeApp({ who:'amigos', groupSize:4, zone:'roma', zonesSel:['roma'], when:'noche',
     budget:'b1k', budgetCustom:null, vibes:[], planFrom:18, planTo:26, userName:'Ana' }, { dseed: 103 });
   app.runSearch();
-  const vistos = new Set();
-  for (let i = 0; i < 5; i++) { vistos.add(app.tandaLink()); app.regenerate(); }
-  assert(vistos.size >= 4, 'sólo ' + vistos.size + ' enlaces distintos en 5 tandas');
+  // (10 nov 2026) Al agotarse, la última tanda útil se queda en pantalla (y su enlace): se cuentan las tandas nuevas.
+  const vistos = new Set(); let tandas = 0;
+  for (let i = 0; i < 5; i++) { vistos.add(app.tandaLink()); tandas++; app.regenerate(); if (app.state.agotado && app.state.agotado.nuevas === 0) break; }
+  assert(vistos.size === tandas && tandas >= 2, 'sólo ' + vistos.size + ' enlaces distintos en ' + tandas + ' tandas');
 });
 
 test('un enlace roto no rompe la app', () => {

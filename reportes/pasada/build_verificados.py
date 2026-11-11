@@ -25,6 +25,9 @@ ITEMS = {
   'cdmx-3032': dict(n='Taller Experimental de Cerámica', fuente='Visit Mexico City (portal oficial de turismo de CDMX) — Taller Experimental de Cerámica Díaz de Cossío',
                     url='https://mexicocity.cdmx.gob.mx/venues/experimental-ceramics/', oh=[10, 14], dias=[1, 2, 3, 4, 5, 6], hrs='Lun a vie 10:00–17:00 · sáb 10:00–14:00',
                     addr='Centenario 63', col='Del Carmen', web='https://ceramicadiazdecossio.com.mx/', tel='55 5555 4696'),
+  # ── horario y pin de OpenStreetMap: la ficha de OSM era la misma taquería, mal clasificada como café (se da de baja abajo) ──
+  'cdmx-2028': dict(n='Taquería Los Parados', fuente='OpenStreetMap — ficha del lugar (nodo 11770329070)', url='https://www.openstreetmap.org/node/11770329070',
+                    oh=[12, 27], hrs='Diario 12:00–3:00', lat=19.40562, lng=-99.16115, addr='Monterrey 333', col='Roma Sur'),
   # ── altas del Excel del fundador: horario publicado + sesión por reservar ──
   'rv-fb39aec0d1': dict(MDT, n='Manos de Tierra · Interlomas', activar=True),
   'rv-4de0eaf5c4': dict(MDT, n='Manos de Tierra · Altavista', activar=True),
@@ -61,7 +64,8 @@ for i, p in PINES.items():
     if i in items: continue
     items[i] = dict(fecha=FECHA, lat=p['lat'], lng=p['lng'], resuelve=['ubicacion'], fuente='OpenStreetMap / Nominatim — número de la calle confirmado', url='https://nominatim.openstreetmap.org/', nota=p.get('nota', ''))
 # Duplicados que aparecieron al confirmar pines: la ficha de OSM es la misma sala que ya estaba.
-BAJAS = {'os-n11737763876': 'Duplicado de Cinépolis · Arcos Bosques, ID cdmx-4030 (mismo pin: Paseo de los Tamarindos 90).'}
+BAJAS = {'os-n11737763876': 'Duplicado de Cinépolis · Arcos Bosques, ID cdmx-4030 (mismo pin: Paseo de los Tamarindos 90).',
+         'os-n11770329070': 'Duplicado de Taquería Los Parados, ID cdmx-2028 (Monterrey 333); además estaba clasificada como café.'}
 salida = {'version': 1, 'fecha': FECHA, 'items': items, 'bajas': BAJAS, 'altas': []}
 with open(os.path.join(RAIZ, 'data', 'verificados.js'), 'w') as fh:
     fh.write('// Generado por reportes/pasada/build_verificados.py — no editar a mano.\n')

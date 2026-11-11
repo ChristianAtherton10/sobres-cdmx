@@ -173,9 +173,13 @@ test('43.1 · cinco regeneraciones con buena cobertura: ninguna actividad princi
 
 test('43.2 · al agotarse no recicla en silencio: conserva la última tanda útil, dice qué limita y ofrece ajustes o volver a empezar', () => {
   const a = nueva(NOCHE); a.runSearch({ nueva: true }); const vistos = new Set(); let ultima = null, agotado = null;
-  for (let i = 0; i < 25 && !agotado; i++) { (a.state.results.plans || []).forEach(p => { const k = prinDe(a, p);
-      if (ultima !== a.state.results) { assert(!vistos.has(k), 'tanda ' + i + ': repitió actividad principal ' + txt(p)); } });
-    if (ultima !== a.state.results) (a.state.results.plans || []).forEach(p => vistos.add(prinDe(a, p)));
+  const lug = new Set();
+  for (let i = 0; i < 25 && !agotado; i++) { if (ultima !== a.state.results) { const ag = a.state.agotado; let rep = 0;
+      (a.state.results.plans || []).forEach(p => { if (vistos.has(prinDe(a, p))) rep++;
+        if (i) assert(p.stops.some(v => !lug.has(a.actKey(v))), 'tanda ' + i + ': volvió un plan hecho sólo de lugares ya vistos: ' + txt(p)); });
+      // Repetir la actividad principal sólo se vale cuando ya no hay nuevas, y se avisa cuántas.
+      assert(rep === ((ag && ag.repitePrincipal) || 0), 'tanda ' + i + ': repitió ' + rep + ' actividades principales sin avisar');
+      (a.state.results.plans || []).forEach(p => { vistos.add(prinDe(a, p)); p.stops.forEach(v => lug.add(a.actKey(v))); }); }
     ultima = a.state.results; a.regenerate(); if (a.state.agotado && a.state.agotado.nuevas === 0) agotado = a.state.agotado; }
   assert(agotado, 'nunca avisó que se agotó');
   assert(a.state.results === ultima && (ultima.plans || []).length >= 1, 'no conservó el último resultado útil');
@@ -236,7 +240,7 @@ test('44.3 · regla de ubicación: nada sale en planes con pin aproximado; con e
   const mal = C.filter(v => a.esRecomendable(v) && v.coordAprox && !v.evento); assert(!mal.length, 'en planes con pin aproximado: ' + mal.slice(0, 4).map(v => v.n));
   const V = a._win.SOBRES_VERIFICADOS; const conPin = Object.keys(V.items).filter(id => V.items[id].lat != null); assert(conPin.length >= 25, 'pocos pines confirmados: ' + conPin.length);
   conPin.forEach(id => { const v = C.find(x => x.id === id); assert(v && !v.coordAprox && Math.abs(v.lat - V.items[id].lat) < 1e-6, id + ' no tomó el pin confirmado'); });
-  const sin = makeApp({}, { estricto: true, sinVerificados: true }).cat().find(x => x.id === conPin[0]); assert(sin && sin.coordAprox, 'la prueba supone que sin la verificación el pin era aproximado');
+  const sinV = makeApp({}, { estricto: true, sinVerificados: true }).cat(); assert(conPin.filter(id => (sinV.find(x => x.id === id) || {}).coordAprox).length >= 20, 'la prueba supone que sin la verificación esos pines eran aproximados');
   // El duplicado que apareció al confirmar el pin sale del catálogo.
   assert(!C.some(v => v.id === 'os-n11737763876') && C.some(v => v.id === 'cdmx-4030'), 'duplicado de Cinépolis Arcos Bosques');
 });
@@ -340,6 +344,82 @@ test('45.7 · el enlace de WhatsApp abre el MISMO plan (paradas, horas y costo) 
   const alt = a.swapSuggest(p.stops.length - 1)[0]; if (alt) { a.replaceStop(p.stops.length - 1, alt); const V = a.renderVals();
     assert(V.versionOn && /sigue viendo y votando la versión que mandaste/.test(V.versionTxt), 'no avisa que el grupo vota la versión anterior');
     assert(a.planOptId(a.getPlan()) !== a.planOptId({ stops: p.stops }), 'la versión nueva comparte id de votación con la anterior'); }
+});
+
+section('46 · Pasada profunda F5: hotspots con fecha y aprendizaje del usuario');
+
+test('46.1 · hotspots: cada señal tiene tipo, fuente y fecha; lo reciente se apaga y lo viejo queda para revisión', () => {
+  const a = nueva({}); const C = a.cat().filter(v => v.hot);
+  C.forEach(v => a.senalesHot(v).forEach(x => { assert(['calidad', 'reciente', 'historica'].indexOf(x.tipo) >= 0 && x.fuente && /^\d{4}-\d{2}-\d{2}$/.test(x.fecha), v.n + ': señal sin tipo, fuente o fecha'); assert(x.peso > 0 && x.peso <= 8.5, v.n + ': peso ' + x.peso); }));
+  // La misma fuente pesa menos conforme envejece.
+  const rec = C.find(v => a.senalesHot(v).some(x => x.tipo === 'reciente' && x.meses < 2)); assert(rec, 'no hay hotspot reciente para probar');
+  const hoy = a.pesoHot(rec); const real = a.todayISO; a.todayISO = () => '2027-09-10'; const enDiezMeses = a.pesoHot(rec), revisar = a.senalesHot(rec).filter(x => x.tipo === 'reciente').every(x => x.revisar); a.todayISO = real;
+  assert(enDiezMeses < hoy - 1 && revisar, 'una apertura de hace 10 meses pesa igual que hoy: ' + hoy + ' → ' + enDiezMeses);
+  // Reseñas ≠ visitas: suman muy poco y nunca vuelven hotspot a un lugar que no lo es.
+  const noHot = a.cat().find(v => !v.hot && v.otRc >= 500); if (noHot) assert(a.pesoHot(noHot) === 0, 'las reseñas solas lo volvieron hotspot');
+  const viejos = C.filter(v => a.hotRevisar(v)); assert(viejos.length >= 10 && viejos.every(v => a.pesoHot(v) < 8.5), 'lo que hay que revisar pesa como nuevo');
+  const fresco = C.find(v => a.senalesHot(v).some(x => x.tipo === 'calidad' && x.meses <= 12 && x.peso === 8.5)); assert(fresco && a.pesoHot(fresco) >= 8.5, 'un premio vigente perdió peso');
+});
+
+// Perfil que elige seguido lo mismo.
+const tipoDe = (a, v) => a.cocinasPerfil(v).join(' ') + ' ' + v.cat;
+const conHistorial = (a, re, veces, tipo) => { const vs = a.cat().filter(v => re.test(tipoDe(a, v)) && a.esRecomendable(v)).slice(0, 4); for (let i = 0; i < veces; i++) a.aprende(tipo || 'elegido', [vs[i % vs.length]], [20]); return vs; };
+const afinDe = (a, ps, re) => ps.reduce((n, p) => n + p.stops.filter(v => re.test(tipoDe(a, v))).length, 0);
+
+test('46.2 · perfil nuevo vs perfil que elige seguido mariscos, italiano o helado: más opciones afines, sin saltarse tope, zona ni «No quiero»', () => {
+  [[/mariscos/, { vibes: ['foodie'], facilOpcion: 'cenar' }], [/italiana/, { vibes: ['foodie'], facilOpcion: 'cenar' }], [/Heladería/, { vibes: ['chill'], planFrom: 13, planTo: 20 }]].forEach(([re, st]) => {
+    const base = Object.assign({ who: 'amigos', groupSize: 4, budget: 'b1999', zonas: ['roma', 'polanco'], noQuiero: ['cadena'], aceptaSinPrecio: true }, st); let nuevoN = 0, afinN = 0;
+    [1, 2, 3].forEach(sd => { const n = busca(base, { dseed: sd, rseed: sd * 3 }); nuevoN += afinDe(n.a, n.ps, re);
+      const b = nueva(base, { dseed: sd, rseed: sd * 3 }); conHistorial(b, re, 8); const r = b.runSearch({ nueva: true }); const ps = (r && r.plans) || [];
+      afinN += afinDe(b, ps, re); const tope = b.budgetMax();
+      ps.forEach(p => { assert(b.cabeEnTope(p.stops, tope, p.times).ok, re + ': el perfil se saltó el tope: ' + txt(p));
+        p.stops.forEach(v => { assert(b.zoneList().indexOf(v.z) >= 0, re + ': el perfil se salió de la zona: ' + v.n); assert(!b.esCadenaCasual(v), re + ': el perfil metió una cadena excluida: ' + v.n); }); }); });
+    assert(afinN > nuevoN, re + ': el perfil con historial no recibió más opciones afines (' + afinN + ' vs ' + nuevoN + ')');
+  });
+});
+
+test('46.3 · elegir, sustituir, agregar y confirmar enseñan más que buscar; ver no enseña; lo quitado resta poco', () => {
+  const a = nueva({ who: 'amigos' }); const C = a.cat(); const ita = C.find(v => a.cocinasPerfil(v).join() === 'italiana' && a.esRecomendable(v)), mar = C.find(v => a.cocinasPerfil(v).join() === 'mariscos' && a.esRecomendable(v)), hel = C.find(v => v.cat === 'Heladería');
+  const W = a.PESO_PERFIL(); ['elegido', 'sustituido', 'agregado', 'guardado', 'voto'].forEach(k => assert(W[k] >= 4 && W[k] > W.compartido && W[k] > W.busqueda, k + ' no pesa más que compartir y buscar'));
+  a.renderVals(); a.nav('results'); a.renderVals(); assert(!a.perfil().acciones && !Object.keys(a.perfil().sen.cat).length, 'ver pantallas enseñó algo');
+  a.setState({ planCustom: { stops: [mar], times: [20], spent: mar.pp }, planStops: 1 }); a.replaceStop(0, ita);
+  let S = a.perfil().sen; assert(S.cocina.italiana === 4 && !S.cocina.mariscos, 'sustituir no enseñó la cocina nueva: ' + JSON.stringify(S.cocina));
+  a.aprende('agregado', [hel], [21.5]); assert(a.perfil().sen.cat['Heladería'] === 4, 'agregar una heladería no enseñó');
+  a.aprende('elegido', [mar], [20]); const antes = a.perfil().sen.cocina.mariscos; a.aprende('quitado', [mar]); const des = a.perfil().sen.cocina.mariscos;
+  assert(des < antes && des > 0, 'quitar una vez borró el gusto o no restó: ' + antes + ' → ' + des);
+});
+
+test('46.4 · por compañía: lo que eliges en una cita no manda cuando sales en familia; excluir hoy no se vuelve gusto', () => {
+  const a = nueva({ who: 'date', groupSize: 2 }); const C = a.cat(); const bares = C.filter(v => v.cat === 'Bar de autor' && a.esRecomendable(v)).slice(0, 3), bar = C.find(v => v.cat === 'Bar de autor' && bares.indexOf(v) < 0), parque = C.find(v => v.cat === 'Parque');
+  for (let i = 0; i < 6; i++) a.aprende('elegido', [bares[i % bares.length]], [21]);
+  const enDate = a.afinidad(bar); a.setState({ who: 'familia', groupSize: 4 }); for (let i = 0; i < 6; i++) a.aprende('elegido', [parque], [13]);
+  const enFam = a.afinidad(bar), parqueFam = a.afinidad(parque); a.setState({ who: 'date', groupSize: 2 }); const enDate2 = a.afinidad(bar), parqueDate = a.afinidad(parque);
+  assert(enDate2 > enFam && parqueFam > parqueDate, 'la afinidad no distingue la compañía: bar date ' + enDate2 + ' / familia ' + enFam + ' · parque familia ' + parqueFam + ' / date ' + parqueDate);
+  // «No quiero» es de esta salida: no entra al perfil ni lo borra.
+  const antes = JSON.stringify(a.perfil().sen); a.toggleNoQuiero('bar'); a.runSearch({ nueva: true }); const S = a.perfil().sen;
+  assert(S.cat['Bar de autor'] === JSON.parse(antes).cat['Bar de autor'], '«No quiero bares» cambió el gusto aprendido');
+  (a.state.results.plans || []).forEach(p => p.stops.forEach(v => assert(a.DRINK.indexOf(v.cat) < 0 || a.esAntro(v), 'el gusto por los bares le ganó a «No quiero»: ' + v.n)));
+});
+
+test('46.5 · se puede reiniciar lo aprendido sin perder dieta ni edad; los votos de los amigos no son gustos propios', () => {
+  const a = nueva({ who: 'amigos' }); const C = a.cat(); const p0 = a.perfil0(); p0.edad = '25-34'; p0.dieta = ['vegetariano']; a.perfilGuarda(p0);
+  conHistorial(a, /italiana/, 6); assert(a.perfilTiene() && a.perfil().sen.cocina.italiana > 0, 'no aprendió');
+  assert(typeof a.renderVals().reiniciarGustos === 'function', 'falta el botón para reiniciar');
+  a.reiniciarGustos(); const p = a.perfil(); assert(!Object.keys(p.sen.cocina).length && !p.acciones && p.edad === '25-34' && p.dieta.join() === 'vegetariano', 'reiniciar borró de más o de menos: ' + JSON.stringify(p).slice(0, 200));
+  // Abrir un enlace con los votos de otros no enseña nada.
+  const b = nueva({}); b.runSearch({ nueva: true }); const url = b.tandaLinkDe(b.state.results.plans.slice(0, 1));
+  const c = makeApp({}, { estricto: true }); c.ev = () => {}; const antes = JSON.stringify(c.perfil().sen); c.abrirTanda(decodeURIComponent(url.split('?p=')[1]), true);
+  c.setState({ sync: { plans: [{ id: c.planOptId(c.state.results.plans[0]), votes: { Ana: 'sobres', Luis: 'sobres', Meli: 'nojalo' } }] } }); c.renderVals();
+  assert(JSON.stringify(c.perfil().sen) === antes && !c.perfil().acciones, 'abrir un plan compartido o ver votos ajenos cambió el perfil');
+});
+
+test('46.6 · con historial suficiente, una de las tres opciones es una idea distinta a lo de siempre', () => {
+  let conIdea = 0, total = 0;
+  [1, 2, 3, 4].forEach(sd => { const a = nueva({ who: 'amigos', groupSize: 4, vibes: ['foodie', 'cultural'], budget: 'any', zonas: ['roma', 'juarez'], planFrom: 12, planTo: 20 }, { dseed: sd, rseed: sd * 7 });
+    conHistorial(a, /Restaurante/, 10); const r = a.runSearch({ nueva: true }); const ps = (r && r.plans) || []; if (ps.length < 3) return; total++;
+    const top = a.top(a.perfil().sen.cat, 2); const prin = p => p.stops.find(v => v.id === a.anclaDe(p.stops, p.acts)) || p.stops[0];
+    if (ps.some(p => top.indexOf(prin(p).cat) < 0)) conIdea++; });
+  assert(total >= 2 && conIdea === total, 'con historial, las tres fueron "lo de siempre" en ' + (total - conIdea) + ' de ' + total + ' tandas');
 });
 
 if (require.main === module) report();

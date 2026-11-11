@@ -119,6 +119,13 @@
 .sb-facil-op:active,.sb-facil-op:hover{border-color:var(--ink)}
 .sb-facil-conf{padding-bottom:100px}
 .sb-regen{opacity:.4;pointer-events:none;transition:opacity .12s}
+@media (max-width:819px){ .sb-home-facil .sb-facil-conf.sb-nq{padding-bottom:120px!important} }
+.sb-q4{margin:10px 0 0;display:grid;gap:9px}
+.sb-q4>div{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;align-items:baseline}
+.sb-q4 dt{font:700 10.5px/1.3 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)}
+.sb-q4 dd{margin:0;font:500 14px/1.4 var(--font-body);color:var(--ink);overflow-wrap:anywhere}
+.sb-q4 dd b{font-weight:700}
+.sb-q4-h{display:block;font:600 12.5px/1.3 var(--font-body);color:var(--color-neutral-700);margin-top:2px}
 .sb-cta-fija{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:6;background:var(--color-bg);padding:10px 16px 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
 @media (min-width:820px){.sb-cta-fija{position:sticky;bottom:0;padding:12px 0}}
 /* ═════════════════════ Tema SOBRES ═════════════════════
@@ -617,7 +624,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </sc-if>
 <sc-if value="{{ facilP3 }}" hint-placeholder-val="{{ false }}">
-<div id="armar-facil-quien" class="sb-facil sb-facil-conf">
+<div id="armar-facil-quien" class="sb-facil sb-facil-conf {{ nqCls }}">
 <div class="sb-facil-cab"><div class="sb-facil-paso">Paso 3 de 3</div><button class="sb-btn3" onClick="{{ facilAtras }}" aria-label="Regresar al paso 2">← Atrás</button></div>
 <h2 class="sb-h2" style="margin:2px 0 12px">¿Con quién y cuánto?</h2>
 <span class="sb-label">Van</span>
@@ -625,7 +632,12 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ showSize }}" hint-placeholder-val="{{ true }}"><div class="sb-row sb-cuantos" style="margin-top:8px"><span class="sb-note" style="font-weight:600">Cuántos</span><button class="sb-x" aria-label="Quitar una persona" onClick="{{ sizeDown }}">−</button><span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--ink)" aria-live="polite">{{ groupSizeN }}</span><button class="sb-x" aria-label="Agregar una persona" onClick="{{ sizeUp }}">+</button></div></sc-if>
 <span class="sb-label sb-mt">Presupuesto por persona</span>
 <div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:40px;padding:0 14px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<p class="sb-note" style="margin:8px 0 0">Incluye comida, bebidas y una propina estimada.</p>
+<p class="sb-note" style="margin:8px 0 0">Cuenta consumo, propina y traslado. Sólo entran lugares con precio confirmado o publicado.</p>
+<sc-if value="{{ nqCerrado }}" hint-placeholder-val="{{ true }}"><button class="sb-btn3" style="margin:6px 0 0 -12px" onClick="{{ nqAbrir }}">＋ Hay algo que no quiero</button></sc-if>
+<sc-if value="{{ nqAbierto }}" hint-placeholder-val="{{ false }}">
+<span class="sb-label sb-mt">No quiero…</span>
+<div class="sb-chips" role="group" aria-label="No quiero"><sc-for list="{{ noQuieroOpts }}" as="o" hint-placeholder-count="6"><button class="sb-chip" style="min-height:38px;padding:0 12px;font-size:13.5px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+</sc-if>
 <div class="sb-cta-fija"><button class="sb-btn sb-full {{ buscarFx }}" style="min-height:56px;font-size:17px" onClick="{{ facilGo }}"><span>Ver mis 3 planes</span><span aria-hidden="true">→</span></button></div>
 </div>
 </sc-if>
@@ -836,15 +848,13 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </div>
 <div style="padding:4px 16px 16px;display:flex;flex-direction:column;flex:1">
-<div class="sb-datos">
-<div><span>Horario</span><b>{{ o.horario }}</b></div>
-<div><span>Paradas</span><b>{{ o.paradas }}</b></div>
-<div><span>Por persona</span><b>{{ o.costo }}</b></div>
-<div><span>Traslados</span><b>{{ o.traslados }}</b></div>
-</div>
-<p class="sb-note" style="margin:6px 0 0;font-size:12.5px">{{ o.costoNota }}</p>
-<sc-if value="{{ o.hayAvisoOp }}" hint-placeholder-val="{{ false }}"><p class="sb-note" role="note" style="margin:6px 0 0;font-size:12.5px">{{ o.avisoOp }}</p></sc-if>
-<sc-if value="{{ o.hayPorQue }}" hint-placeholder-val="{{ false }}"><p class="sb-note" style="margin:6px 0 0;font-size:12.5px;font-weight:600">{{ o.porQue }}</p></sc-if>
+<dl class="sb-q4">
+<div><dt>Qué hacemos</dt><dd><b>{{ o.que }}</b><span class="sb-q4-h">{{ o.horario }}</span></dd></div>
+<sc-if value="{{ o.hayGusta }}" hint-placeholder-val="{{ true }}"><div><dt>Por qué</dt><dd>{{ o.gusta }}</dd></div></sc-if>
+<div><dt>Cuánto</dt><dd>{{ o.cuanto }}</dd></div>
+<div><dt>Cómo vamos</dt><dd>{{ o.como }}</dd></div>
+</dl>
+<sc-if value="{{ o.hayAvisoOp }}" hint-placeholder-val="{{ false }}"><p class="sb-note" role="note" style="margin:8px 0 0;font-size:12.5px;color:var(--electrico);font-weight:600">{{ o.avisoOp }}</p></sc-if>
 <ol class="sb-ruta">
 <sc-for list="{{ o.stops }}" as="st" hint-placeholder-count="3"><li><span class="h">{{ st.time }}</span><span style="min-width:0"><span class="n" style="display:block">{{ st.name }}</span><span class="c" style="display:block">{{ st.sub }}</span></span></li></sc-for>
 </ol>
@@ -1526,7 +1536,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div style="margin-bottom:26px;max-width:760px">
 <div style="font:700 10px var(--font-body);letter-spacing:.16em;color:var(--color-neutral-600);margin-bottom:8px">TUS DATOS</div>
 <p class="sb-note" style="margin:0 0 10px">Tus gustos, búsquedas, guardados y respuestas viven sólo en este navegador. Para saber si regresas, Google Analytics recibe un número al azar ({{ perfilUid }}), nunca tu nombre ni tu correo. Los planes que compartiste o votaste en un link siguen en ese link.</p>
-<button class="sb-btn2" onClick="{{ borrarGo }}">{{ borrarTxt }}</button>
+<div class="sb-row" style="gap:8px"><button class="sb-btn2" onClick="{{ reiniciarGustos }}">Reiniciar lo que aprendimos de tus gustos</button><button class="sb-btn2" onClick="{{ borrarGo }}">{{ borrarTxt }}</button></div>
 </div>
 <div style="border-top:2px solid var(--color-text);padding-top:14px;margin-bottom:50px;max-width:760px">
 <h2 style="font:800 20px var(--font-heading);margin:0 0 6px">Datos y fuentes</h2>
@@ -2152,7 +2162,34 @@ class Component extends DCLogic {
   // fondas, pozolerías, tortas, pizzerías de cadena (feedback del 4 nov 2026).
   noRomantico(v) { return this.esCadenaCasual(v) || ['Taquería', 'Mercado', 'Churrería', 'Centro comercial', 'Cantina', 'Antro'].includes(v.cat)
     || /burger|hamburgues|el baj[ií]o|la polar|fishers|traficante|birri|pozol|torter|tortas|cocina econ|fonda|tacos|taquer|bisquet|buffet|wings|alitas|cervecer[ií]a de barrio|beer|sports|deportiv/i.test(v.n || ''); }
-  pesoHot(v) { return v && v.hot ? [0, 3.5, 6, 8.5][v.hot] + (v.hotNuevo ? 1.5 : 0) : 0; }
+  // HOTSPOTS (pasada profunda F5, 10 nov 2026). Cada señal tiene TIPO, fuente y fecha, y pierde peso con la edad:
+  //  · calidad   — premios y guías anuales (Michelin, 50 Best, MB100…): pleno 12 meses, baja hasta los 24.
+  //  · reciente  — aperturas y listas del mes: pleno 2 meses, se apaga a los 6 (ya no es "lo de ahorita").
+  //  · historica — lo más visitado y los clásicos: estable, peso menor.
+  // Un conteo de reseñas (OpenTable) sólo suma como popularidad histórica: no son visitas ni demanda de hoy.
+  // Una señal cuya fuente ya envejeció queda marcada para revisión y casi no pesa.
+  HOT_TIPO() { return { mich26: ['calidad', 8.5], bares26: ['calidad', 8.5], bares25: ['calidad', 8.5], latam25: ['calidad', 8.5], mg26: ['calidad', 6], bib25: ['calidad', 6], mb100: ['calidad', 6], mb100_26: ['calidad', 6],
+    to_ap26: ['reciente', 7.5], mb_bares26: ['reciente', 7.5], hap_oct26: ['reciente', 7.5], mb_nov26: ['reciente', 7.5], quien_jul26: ['reciente', 7.5], hap_nov26: ['reciente', 7.5],
+    museos24: ['historica', 6], museos26: ['historica', 8.5] }; }
+  mesesDesdeISO(iso) { if (!iso) return 99; const a = String(iso).split('-').map(Number), b = this.todayISO().split('-').map(Number); return (b[0] - a[0]) * 12 + (b[1] - a[1]) + ((b[2] || 1) - (a[2] || 1)) / 30; }
+  senalesHot(v) { if (!v || !v.hotF || !v.hotF.length) return [];
+    const H = (typeof window !== 'undefined' && window.SOBRES_HOTSPOTS) || {}, F = H.fuentes || {}, T = this.HOT_TIPO();
+    return v.hotF.map(k => { const f = F[k] || {}, t = T[k] || [(/apertura|nuevo|hotspot/i.test(f.n || '') ? 'reciente' : 'calidad'), v.hot >= 3 ? 8.5 : 6];
+      const m = this.mesesDesdeISO(f.fecha); let d;
+      if (t[0] === 'reciente') d = m <= 2 ? 1 : m >= 6 ? 0.15 : Math.max(0.15, 1 - (m - 2) * 0.2125);
+      else if (t[0] === 'calidad') d = m <= 12 ? 1 : m >= 24 ? 0.4 : 1 - (m - 12) * 0.05;
+      else d = m <= 24 ? 1 : 0.6;
+      return { k, tipo: t[0], fuente: f.n || k, url: f.url || '', fecha: f.fecha || '', meses: Math.round(m * 10) / 10, peso: Math.round(t[1] * d * 100) / 100,
+        revisar: t[0] === 'reciente' ? m >= 6 : t[0] === 'calidad' ? m >= 18 : m >= 24 }; }); }
+  pesoHot(v) { if (!v || !v.hot) return 0; const hoy = this.todayISO(); if (v._ph && v._ph.d === hoy) return v._ph.w;
+    const w = this.pesoHot0(v); try { Object.defineProperty(v, '_ph', { value: { d: hoy, w }, enumerable: false, configurable: true, writable: true }); } catch (e) {} return w; }
+  pesoHot0(v) { const S = this.senalesHot(v); if (!S.length) return [0, 3.5, 6, 8.5][v.hot] || 0;
+    const tipos = new Set(S.filter(x => !x.revisar).map(x => x.tipo));
+    let w = Math.max.apply(null, S.map(x => x.peso)) + (tipos.size >= 2 ? 1 : 0);
+    // Popularidad histórica: muchas reseñas con buena calificación suman poco (no prueban visitas ni demanda de hoy).
+    if (v.otRc >= 200 && v.otRt >= 4.5) w += Math.min(0.8, Math.log10(v.otRc) / 5);
+    return Math.round(Math.min(10, w) * 100) / 100; }
+  hotRevisar(v) { const S = this.senalesHot(v); return S.length > 0 && S.every(x => x.revisar); }
   esCadenaCasual(v) { return /chili'?s|olive garden|italianni|p\.? ?f\.? ?chang|shake shack|hard rock|\bvips\b|sanborns|\btoks\b|hello kitty|burger king|wings|hooters|applebee|tgi|domino|little caesars|carl'?s jr|mcdonald|kfc|starbucks|potzoll?calli|el portón|wings army|casa de to[ñn]o|\bgarat\b|cielito querido|punta del cielo|italian coffee|bisquets|sushi itto|sushi roll|el globo|krispy|dunkin|juan valdez|panda express|pizza hut|papa john|subway|wingstop|beer factory|la parroquia de veracruz|tacos? (el )?caminero|el farolito|taco inn|benedetti|alitas|frutifelices|fishers|traficante de pizzas/i.test(v.n || ''); }
   bailable(v) { return !!v && (this.esAntro(v) || this.actsDe(v).indexOf('baile') >= 0); }
   // La noche "cierra bailando" también si después del antro sólo hay tacos de remate.
@@ -2795,7 +2832,10 @@ class Component extends DCLogic {
   linkLugar(id) { try { return location.origin + location.pathname + '?lugar=' + encodeURIComponent(id); }
     catch(e) { return '?lugar=' + id; } }
   // Hora y fecha en America/Mexico_City, no en la zona del dispositivo.
-  ahoraCDMX() {
+  // (11 nov 2026) Con caché de 20 s: construir el formateador en cada llamada costaba miles de veces por búsqueda.
+  ahoraCDMX() { const t = Date.now(); if (this._ahoraC && t - this._ahoraC.t < 20000) return this._ahoraC.v;
+    const v = this.ahoraCDMX0(); this._ahoraC = { t, v }; return v; }
+  ahoraCDMX0() {
     try {
       const f = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City',
         year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
@@ -3006,12 +3046,15 @@ class Component extends DCLogic {
     const tramos = []; for (let i = 0; i + 1 < (stops || []).length; i++) { const km = this.legKm(stops[i], stops[i + 1]); if (km != null) tramos.push({ i, km, min: this.minutosTramo(km) || 0 }); }
     if (m === 'caminando' || !tramos.length) return { porPersona: 0, modo: m, respaldo: 'firme', nota: tramos.length ? 'a pie' : '', tramos };
     if (m === 'propio') return { porPersona: 0, modo: m, respaldo: 'firme', nota: 'en su coche (estacionamiento aparte)', tramos };
-    if (m === 'metro') { const pp = tramos.length * T.publico.porViaje; return { porPersona: pp, modo: m, respaldo: 'firme', nota: tramos.length + (tramos.length === 1 ? ' viaje' : ' viajes') + ' en transporte público', fuente: T.publico, tramos }; }
+    if (m === 'metro') { const viajes = tramos.filter(t => t.km > 0.6).length; tramos.forEach(t => { if (t.km <= 0.6) t.aPie = true; }); const pp = viajes * T.publico.porViaje;
+      if (!viajes) return { porPersona: 0, modo: m, respaldo: 'firme', nota: 'a pie (queda a unas cuadras)', tramos }; return { porPersona: pp, modo: m, respaldo: 'firme', nota: viajes + (viajes === 1 ? ' viaje' : ' viajes') + ' en transporte público', fuente: T.publico, tramos }; }
     // Servicio de transporte: referencia con el taxímetro oficial (Uber y DiDi varían con la demanda).
-    let auto = 0; tramos.forEach(t => { const u = Math.max(t.km * 1.3 * 1000 / T.taxi.metros, t.min * 60 / T.taxi.segundos);
+    let auto = 0; tramos.forEach(t => { if (t.km <= 0.6) { t.aPie = true; t.costo = 0; return; }   // 600 m se caminan: no se cobra un auto
+      const u = Math.max(t.km * 1.3 * 1000 / T.taxi.metros, t.min * 60 / T.taxi.segundos);
       const h = times && times[t.i] != null ? (times[t.i] + this.duracionAct(stops[t.i])) % 24 : null; const noche = h != null && (h >= 23 || h < 6);
       t.costo = (T.taxi.banderazo + T.taxi.unidad * u) * (noche ? T.taxi.nocturno : 1); auto += t.costo; });
     const autos = Math.ceil(n / 4);
+    if (!auto) return { porPersona: 0, modo: m, respaldo: 'firme', nota: 'a pie (queda a unas cuadras)', tramos };
     return { porPersona: Math.ceil(auto * autos / n / 5) * 5, modo: m, respaldo: 'estimado', autos, porAuto: Math.round(auto),
       nota: 'referencia en taxi libre con taxímetro, dividido entre ' + n + (autos > 1 ? ' (' + autos + ' autos)' : '') + '; en app puede costar más', fuente: T.taxi, tramos }; }
   costoPlan(stops, times) {
@@ -3148,7 +3191,12 @@ class Component extends DCLogic {
   // sesión que todavía no se eligió. Se propone diciendo qué falta elegir antes de darlo por hecho.
   diasTxt(v) { const D = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
     let ds = v.dias && v.dias.length ? v.dias.slice() : (v.cerrado && v.cerrado.length ? [0, 1, 2, 3, 4, 5, 6].filter(d => v.cerrado.indexOf(d) < 0) : null);
-    if (!ds || ds.length >= 7) return ''; return [1, 2, 3, 4, 5, 6, 0].filter(d => ds.indexOf(d) >= 0).map(d => D[d]).join(', '); }
+    if (!ds || ds.length >= 7) return '';
+    const ord = [1, 2, 3, 4, 5, 6, 0], on = ord.map(d => ds.indexOf(d) >= 0);
+    if (ds.length === 6) return 'todos los días menos ' + ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][ord[on.indexOf(false)]];
+    // Días seguidos se dicen como rango: "de mié a dom" (la semana va de lunes a domingo).
+    const tramos = []; let i = 0; while (i < 7) { if (!on[i]) { i++; continue; } let j = i; while (j + 1 < 7 && on[j + 1]) j++; tramos.push(j - i >= 2 ? 'de ' + D[ord[i]] + ' a ' + D[ord[j]] : ord.slice(i, j + 1).map(d => D[d]).join(' y ')); i = j + 1; }
+    return tramos.join(', '); }
   condicionDe(v) { if (!v) return ''; const out = [];
     if (v.evento) { if (this.sinFecha()) out.push('elige la función (' + this.fechasTxt(v) + ')'); else if (v.condicion) out.push('confirma boletos y hora'); }
     else { if (this.sinFecha()) { const d = this.diasTxt(v); if (d) out.push('abre ' + d); }
@@ -3482,7 +3530,9 @@ class Component extends DCLogic {
     if (p.nombreSiCat && p.nombreSiCat[v.cat] && !this.piezaRe(p.nombreSiCat[v.cat]).test(n)) return false;
     if (p.sinNombre && this.piezaRe(p.sinNombre).test(n)) return false;
     if (p.acts && !p.acts.some(a => this.actsDe(v).indexOf(a) >= 0)) return false;
-    if (p.maxPP != null && !v.ppUnknown && v.pp > p.maxPP) return false;
+    // Una pieza con tope de precio (cenita rápida ≤ $380) exige precio CONOCIDO: al quedar sin precio, Meroma o
+    // Sartoria contaban como "cenita rápida" y tumbaban el plan entero (11 nov 2026). Una taquería sí vale sin precio.
+    if (p.maxPP != null && (v.ppUnknown ? v.cat !== 'Taquería' : v.pp > p.maxPP)) return false;
     if (p.sinCadenas && this.esCadenaCasual(v)) return false;
     if (v.cat === 'Rooftop' && p.comida && !this.sirveComida(v)) return false;
     if (!p.porConfirmar && this.funcionSinConfirmar(v)) return false;
@@ -3560,6 +3610,8 @@ class Component extends DCLogic {
           // la nota no diga la hora, así que nunca entra a las 10 am (prueba 34.2).
           if (v.evento && (conf0 || !this.atHour(v, t)) && v.oh && v.oh[0] > t && v.oh[0] < to - 0.5 && v.oh[0] - t <= 1.5) t = v.oh[0];
           if (conf0 && v.evento && v.oh && t < v.oh[0]) continue;
+          // Función por confirmar (cine, taller): tampoco se agenda ANTES de que abra el lugar (11 nov 2026).
+          if (conf0 && !v.evento && v.oh && t < v.oh[0]) continue;
           if (!conf0 && !this.atHour(v, t)) continue;
           if (!this.cabeEnVentana(v, t, to)) continue;
           if (prev && !this.alcanzaTramo(prev, v, t - ts[ts.length - 1])) continue;
@@ -3614,7 +3666,9 @@ class Component extends DCLogic {
     cands.forEach(c => { const pid = this.anclaDe(c.stops, c.acts), pr = c.stops.find(v => v.id === pid) || c.stops[0];
       c.novedad = (yaEnPlan(pr) ? 2 : 0) + (c.stops.some(v => v !== pr && yaEnPlan(v)) ? 1 : 0);
       c.orden = c.puntaje + azar() * 6 - (avoidP.has(c.plantilla) ? 9 : 0) - c.novedad * 25; });
-    if (ctx.soloNuevos) { for (let i = cands.length - 1; i >= 0; i--) if (cands[i].novedad >= 2) cands.splice(i, 1); }
+    // En «otros 3» nunca vuelve un plan hecho SÓLO de lugares ya vistos; uno que repite la actividad principal con
+    // lo demás nuevo queda al final (se usa sólo si ya no hay actividades principales nuevas, y se avisa).
+    if (ctx.soloNuevos) { for (let i = cands.length - 1; i >= 0; i--) if (ctx.repitePrin ? cands[i].stops.every(yaEnPlan) : cands[i].novedad >= 2) cands.splice(i, 1); }
     cands.sort((a, b) => b.orden - a.orden);
     // Las tres como CONJUNTO: sin lugares (ni marcas) repetidos, plantillas y
     // arranques distintos mientras se pueda.
@@ -3644,7 +3698,11 @@ class Component extends DCLogic {
     if (amb.indexOf('social') >= 0 && elegidos.length < 3) {
       const ACT = ['karaoke', 'billar', 'boliche', 'salon_baile', 'reto'];
       const tieneAct = c => c.plantilla.split('+').some(k => ACT.indexOf(k) >= 0);
-      if (!elegidos.some(tieneAct)) { const c = cands.find(c => tieneAct(c) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c))); if (c) elegidos.push(c); }
+      // El TIPO de actividad rota con la semilla (11 nov 2026): si no, ganaba siempre el mismo (karaoke o billar).
+      if (!elegidos.some(tieneAct)) { const libre = c => tieneAct(c) && !elegidos.some(e => e.plantilla === c.plantilla || comparte(e, c));
+        const tipos = ACT.filter(k => cands.some(c => libre(c) && c.plantilla.split('+').indexOf(k) >= 0));
+        const k = tipos.length ? tipos[Math.floor(azar() * tipos.length)] : null;
+        const c = k ? cands.find(c => libre(c) && c.plantilla.split('+').indexOf(k) >= 0) : null; if (c) elegidos.push(c); }
     }
     // En familia (o bajo techo), una de las tres es la tarde completa en UNA plaza, si la hay.
     if ((amb.indexOf('familiar') >= 0 || this.state.bajoTecho) && !elegidos.some(e => e.plaza)) {
@@ -3653,6 +3711,14 @@ class Component extends DCLogic {
     // Sin fecha, a lo más UNA opción depende de un evento (hay que elegir función); las otras dos sirven cualquier día.
     const evDe = c => c.stops.some(v => v.evento);
     pasos.forEach(ok => cands.forEach(c => { if (elegidos.length < 3 && ok(c) && !(c.plaza && elegidos.some(e => e.plaza)) && !(this.sinFecha() && evDe(c) && elegidos.some(evDe)) && !elegidos.some(e => comparte(e, c))) elegidos.push(c); }));
+    // PERSONALIZACIÓN (F5): con historial suficiente, las opciones no son tres veces "lo de siempre": si las tres
+    // empiezan por los tipos o cocinas que más elige, la última se cambia por una idea nueva que cumple lo mismo.
+    { const pf = this.perfil(), S = (pf && pf.sen) || {};
+      if (!this.state.sinGustos && (pf.acciones || 0) >= 5 && elegidos.length === 3) {
+        const topC = this.top(S.cat, 2), topK = this.top(S.cocina, 2);
+        const deSiempre = c => { const pid = this.anclaDe(c.stops, c.acts), pr = c.stops.find(v => v.id === pid) || c.stops[0]; return topC.indexOf(pr.cat) >= 0 && (!pr.cocina || !topK.length || topK.indexOf(pr.cocina) >= 0); };
+        if (elegidos.every(deSiempre)) { const nueva = cands.find(c => elegidos.indexOf(c) < 0 && !deSiempre(c) && !elegidos.slice(0, 2).some(e => comparte(e, c)));
+          if (nueva) { nueva.ideaNueva = true; elegidos[2] = nueva; } } } }
     const reserva = cands.filter(c => elegidos.indexOf(c) < 0);
     // Lo que se ofrece suelto cuando no hay plan: las piezas "sueltos" de cada ambiente.
     const sueltas = []; amb.forEach(a => (R.recetas[a].sueltos || []).forEach(k => { if (sueltas.indexOf(k) < 0) sueltas.push(k); }));
@@ -4161,7 +4227,7 @@ class Component extends DCLogic {
         && (sinCopas ? (['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Antro', 'Salón de baile', 'Cantina'].indexOf(v.cat) < 0
           // ?v=facil, "Cenar rico" de noche: un trago después de cenar sí (nunca antro ni salón).
           || (copasCena && ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Cantina'].indexOf(v.cat) >= 0)) : true));
-      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida, yaEnPlan: vistoPlan.size ? yaEnPlan : null, soloNuevos: !!opts.soloNuevos && vistoPlan.size > 0,
+      const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida, yaEnPlan: vistoPlan.size ? yaEnPlan : null, soloNuevos: !!opts.soloNuevos && vistoPlan.size > 0, repitePrin: !!opts.repitePrin,
         avoidP: new Set(opts.avoidPlantillas || []) });
       // Con un horario ELEGIDO, el plan de la receta se completa hasta llenarlo
       // (o trae su explicación): una familia de 1 a 9 pm no se va a las 2:15.
@@ -4714,8 +4780,12 @@ class Component extends DCLogic {
     let agotado = null;
     if (opts.soloNuevos && vistoPlan.size) {
       const prin = p => p.stops.find(v => v.id === p.ancla) || p.stops.find(v => v.id === this.anclaDe(p.stops, p.acts)) || p.stops[0];
-      const frescos = plans.slice(0, 3).filter(p => !yaEnPlan(prin(p)));
-      if (frescos.length < 3) agotado = { nuevas: frescos.length, vistas: vistoPlan.size };
+      // Primero las que traen actividad principal nueva (A); si no alcanzan, las que la repiten pero cambian la
+      // mayoría de las paradas (B). Un plan hecho sólo de lugares ya vistos no vuelve.
+      const A = plans.filter(p => !yaEnPlan(prin(p))), B = plans.filter(p => yaEnPlan(prin(p)) && p.stops.filter(v => !yaEnPlan(v)).length * 2 >= p.stops.length);
+      // B sólo entra en la segunda pasada (opts.repitePrin), cuando ya no quedó NINGUNA actividad principal nueva.
+      const frescos = (opts.repitePrin ? A.concat(B) : A).slice(0, 3); const repite = frescos.filter(p => yaEnPlan(prin(p))).length;
+      if (frescos.length < 3 || repite) agotado = { nuevas: frescos.length, vistas: vistoPlan.size, repitePrincipal: repite };
       plans = frescos;
       if (agotado) expandNote = (expandNote || '').replace(/Algunas paradas ya las habías visto:[^.]*\.[^.]*\./, '').replace(/Sólo encontramos [^.]*\.[^.]*\./, '').replace(/Ojo: estas son combinaciones nuevas[^.]*\.[^.]*\./, '').trim();
     }
@@ -4886,6 +4956,15 @@ class Component extends DCLogic {
     const prevP = mismo ? (s.seenPlantillas || []) : [];
     const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP, ampliar: !!s.ampliarZonas, vistosPlan: prevS, soloNuevos: true,
       bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId, reqSeed: sol.reqSeed });
+    // Sin ninguna actividad principal nueva: segunda pasada que acepta repetirla si lo demás del plan es nuevo (se avisa).
+    if (r.agotado && !(r.plans || []).length) { const r2 = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, ampliar: !!s.ampliarZonas, vistosPlan: prevS, soloNuevos: true, repitePrin: true,
+        bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId + 'b', reqSeed: sol.reqSeed });
+      if ((r2.plans || []).length) { this.registrarVistos(r2); const h2 = this.histOf(r2, prevC, prevV);
+        this.setState({ results: r2, regenN: regen, seenCtx: ctx, seenCombos: h2.c, seenVenues: h2.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '', listaN: 12,
+          seenStops: prevS.concat(this.idsDePlanes(r2).filter(id => prevS.indexOf(id) < 0)),
+          agotado: { nuevas: r2.plans.length, vistas: (r2.agotado || r.agotado).vistas, repitePrincipal: (r2.agotado && r2.agotado.repitePrincipal) || 0, limita: r2.limita || null, ajustes: r2.ajustes || [] },
+          planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
+        this.persist(); return r2; } }
     // AGOTADO sin nada nuevo: se conserva la última tanda útil y se dice qué limita (con ajustes).
     if (r.agotado && !(r.plans || []).length) {
       this.setState({ regenN: regen, seenCtx: ctx, seenStops: prevS, agotado: { nuevas: 0, vistas: r.agotado.vistas, limita: r.limita || null, ajustes: r.ajustes || [] } });
@@ -4897,7 +4976,7 @@ class Component extends DCLogic {
     this.setState({ seenPlantillas: prevP.concat(nuevasP).slice(-12) });
     this.setState({ results: r, regenN: regen, seenCtx: ctx, seenCombos: h.c, seenVenues: h.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '', listaN: 12,
       seenStops: prevS.concat(this.idsDePlanes(r).filter(id => prevS.indexOf(id) < 0)),
-      agotado: r.agotado ? { nuevas: (r.plans || []).length, vistas: r.agotado.vistas, limita: r.limita || null, ajustes: r.ajustes || [] } : null,
+      agotado: r.agotado ? { nuevas: (r.plans || []).length, vistas: r.agotado.vistas, repitePrincipal: r.agotado.repitePrincipal || 0, limita: r.limita || null, ajustes: r.ajustes || [] } : null,
       planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
     this.persist(); return r;
   }
@@ -6531,9 +6610,57 @@ class Component extends DCLogic {
       versionOn: cambio, versionTxt: 'Cambiaste este plan después de compartirlo. Tu grupo sigue viendo y votando la versión que mandaste; comparte ésta para que voten la nueva.',
       compartirVersion: () => this.compartirUnPlan() });
   }
+  // LA TARJETA EN CUATRO RESPUESTAS (pasada profunda F6, 10 nov 2026): qué hacemos, por qué nos va a gustar,
+  // cuánto cuesta y cómo nos movemos. Texto de aquí, con datos del plan; nada inventado.
+  queHacemos(p) { const st = p.stops || [], ts = (p.times && p.times.length === st.length) ? p.times : this.planTimes(st.length);
+    const NOM = { mexicana: 'mexicano', tacos: 'tacos', mariscos: 'mariscos', japonesa: 'japonés', asiatica: 'asiático', italiana: 'italiano', cortes: 'cortes', francesa: 'francés', mediterranea: 'mediterráneo', latina: 'latino', hamburguesas: 'hamburguesas', vegetariana: 'vegetariano' };
+    const nm = v => { const n = v.n.split(' ·')[0].split(',')[0].split(' (')[0]; return n.length > 38 ? n.slice(0, 36).trim() + '…' : n; };
+    const fr = (v, i) => { const ak = this.funcionAct((p.acts || [])[i] || this.actsDe(v)[0] || 'visita', ts[i]), k = this.cocinasPerfil(v).find(x => NOM[x]);
+      if (v.evento) return nm(v);
+      if (ak === 'desayuno') return 'desayunar en ' + nm(v);
+      if (ak === 'comida' || ak === 'cena') return v.cat === 'Taquería' ? (i > 0 && this.esAntro(st[i - 1]) ? 'tacos de remate en ' : 'tacos en ') + nm(v) : (ak === 'cena' ? 'cenar ' : 'comer ') + (k && k !== 'tacos' ? NOM[k] + ' ' : '') + 'en ' + nm(v);
+      if (ak === 'copas') return (v.cat === 'Cantina' ? 'cantina en ' : v.cat === 'Rooftop' ? 'un trago con vista en ' : 'un trago en ') + nm(v);
+      if (ak === 'baile') return 'bailar en ' + nm(v);
+      if (ak === 'cafe') return (v.cat === 'Heladería' ? 'un helado en ' : v.cat === 'Churrería' ? 'churros en ' : 'un café en ') + nm(v);
+      if (ak === 'paseo') return 'caminar por ' + nm(v);
+      if (ak === 'taller') return 'taller en ' + nm(v);
+      if (ak === 'reto') return 'escape room en ' + nm(v);
+      if (ak === 'funcion') return (v.cat === 'Cine' ? 'una película en ' : 'función en ') + nm(v);
+      if (ak === 'juego') return (v.cat === 'Boliche' ? 'boliche en ' : v.cat === 'Billar' ? 'billar en ' : 'jugar en ') + nm(v);
+      if (ak === 'lectura') return 'curiosear en ' + nm(v);
+      if (ak === 'visita') return (['Museo', 'Galería', 'Centro cultural', 'Sitio histórico'].indexOf(v.cat) >= 0 ? 'ver ' : 'conocer ') + nm(v);
+      return nm(v); };
+    const f = st.map(fr); const txt = f.length > 1 ? f.slice(0, -1).join(', ') + ' y ' + f[f.length - 1] : (f[0] || '');
+    return (p.plaza ? 'En ' + p.plaza + ': ' + txt : txt.charAt(0).toUpperCase() + txt.slice(1)) + '.'; }
+  porQueGusta(p) { const st = p.stops || [], out = [], nm = v => v.n.split(' ·')[0].split(',')[0], MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    if (p.ideaNueva) out.push('Una idea distinta a lo que sueles elegir');
+    else { const pq = this.porQue(st); if (pq) out.push(pq.replace(/^Porque /, 'Porque ').replace(/\.$/, '')); }
+    // La señal vigente más fuerte de cualquiera de sus lugares, con su fuente y fecha.
+    let mejor = null; st.forEach(v => this.senalesHot(v).forEach(x => { if (!x.revisar && (!mejor || x.peso > mejor.x.peso)) mejor = { v, x }; }));
+    if (mejor) { const f = mejor.x.fuente.split(' — ').pop().replace(/\s*\(.*$/, ''), d = mejor.x.fecha.split('-');
+      out.push(nm(mejor.v) + (mejor.x.tipo === 'reciente' ? ' es de lo nuevo: ' : ' está en ') + (f.length > 58 ? f.slice(0, 56) + '…' : f) + ' (' + MES[+d[1] - 1] + ' ' + d[0] + ')'); }
+    else { const dv = st.find(v => v.distincion); if (dv) out.push(nm(dv) + ': ' + String(dv.distincion).replace(/\.$/, '')); }
+    if (p.plaza) out.push('todo bajo techo y sin mover el coche');
+    else if (st.length > 1 && st.every((v, i) => i === 0 || (this.legKm(st[i - 1], v) || 9) <= 0.9)) out.push('todo queda a unas cuadras');
+    if (st.some(v => v.evento && !v.concierto)) out.push('sólo pasa en estas fechas');
+    return out.length ? out.slice(0, 2).join(' · ') + '.' : ''; }
+  cuantoCuesta(p) { const st = p.stops || [], c = this.costoPlan(st, p.times); const sinP = st.filter(v => v.ppUnknown && !this.accesoLibre(v)).length;
+    if (sinP === st.length) return 'Precio por confirmar en ' + (st.length === 1 ? 'este lugar' : 'estos lugares') + '.';
+    const partes = ['consumo $' + c.consumo.toLocaleString('es-MX')]; if (c.propina) partes.push('propina ~$' + c.propina); if (c.transporte) partes.push('traslado ~$' + c.transporte);
+    const falta = []; if (sinP) falta.push(sinP === 1 ? '1 lugar sin precio' : sinP + ' lugares sin precio'); if (st.some(v => this.coverPendiente(v))) falta.push('el cover');
+    return (c.seguro ? '$' : '~$') + c.total.toLocaleString('es-MX') + ' por persona (' + partes.join(' + ') + ')' + (falta.length ? ' · falta ' + falta.join(' y ') : c.respaldado ? '' : ' · con precios sin confirmar') + '.'; }
+  comoNosMovemos(p) { const st = p.stops || []; if (st.length < 2) return 'Una sola parada: llegan y listo.';
+    const tr = this.costoTraslado(st, p.times), T = tr.tramos || []; const min = T.reduce((a, t) => a + (t.min || 0), 0), km = T.reduce((a, t) => a + t.km, 0);
+    if (p.plaza) return 'Todo dentro de ' + p.plaza + ': caminan de un lugar a otro.';
+    const todosPie = T.length && T.every(t => t.km <= 0.6); const pie = Math.max(2, Math.round(km * 1.3 * 12.5));
+    if (tr.modo === 'caminando' || todosPie) return 'A pie: ~' + pie + ' min en total entre paradas.';
+    const lejos = T.reduce((a, t) => (t.km > a.km ? t : a), T[0]);
+    const base = tr.modo === 'metro' ? '~' + min + ' min en transporte público ($6 por viaje)' : tr.modo === 'propio' ? '~' + min + ' min en su coche (estacionamiento aparte)' : '~' + min + ' min en auto por app' + (tr.porPersona ? ' (~$' + tr.porPersona + ' c/u, referencia de taxi)' : '');
+    return base + (T.length > 1 ? '; el tramo más largo es de ' + (lejos.km < 1 ? Math.round(lejos.km * 1000 / 50) * 50 + ' m' : lejos.km.toFixed(1) + ' km') : km <= 1.2 ? ' o ~' + pie + ' min caminando' : '') + '.'; }
   // Lo que se ofrece debajo de las opciones: ajustes elegibles, aviso de agotado y «No quiero».
   valsOtros(view, r, rp) {
-    const s = this.state; if (view !== 'results') return { ajustesOn: false, agotadoOn: false, noQuieroOpts: [], regenCls: '', regenOn: false, activosOn: false, activos: [] };
+    const s = this.state; if (view !== 'results') return { ajustesOn: false, agotadoOn: false, regenCls: '', regenOn: false, activosOn: false, activos: [],
+      noQuieroOpts: this.NOQUIERO().map(([k, lbl]) => { const on = (s.noQuiero || []).indexOf(k) >= 0; return { label: lbl, pressed: on ? 'true' : 'false', aria: 'No quiero ' + lbl.toLowerCase() + (on ? ' (activo)' : ''), pick: () => this.toggleNoQuiero(k) }; }) };
     const completas = (rp || []).filter(p => this.planCompleto(p)).length;
     const ag = s.agotado || null;
     let aj = []; try { aj = ag ? (ag.ajustes || []) : (completas < 3 && r ? (r.ajustes || []) : []); } catch (e) { aj = []; }
@@ -6550,8 +6677,8 @@ class Component extends DCLogic {
       ajustesTxt: 'No cambiamos nada por ti. Elige qué mover y lo volvemos a armar:',
       ajustes: aj.map(a => ({ txt: a.txt, aria: a.txt, go: () => { this.ev('ajuste_elegido', { ajuste: a.k }); this.aplicaAjuste(a); } })),
       agotadoOn: !!ag && !s.regenerando,
-      agotadoTit: ag ? (ag.nuevas === 0 ? 'Ya viste todo lo que cabe con estos filtros' : ag.nuevas === 1 ? 'Ésta es la última opción nueva' : 'Éstas son las últimas ' + ag.nuevas + ' opciones nuevas') : '',
-      agotadoTxt: ag ? ('Ya te mostramos ' + ag.vistas + ' lugares distintos y no repetimos ninguno como actividad principal.' + (ag.limita && ag.limita.txt ? ' Lo que más limita es ' + ag.limita.txt + '.' : '')
+      agotadoTit: ag ? (ag.nuevas === 0 ? 'Ya viste todo lo que cabe con estos filtros' : ag.repitePrincipal && ag.nuevas >= 3 ? 'Ya no quedan actividades principales nuevas' : ag.nuevas === 1 ? 'Ésta es la última opción nueva' : 'Éstas son las últimas ' + ag.nuevas + ' opciones nuevas') : '',
+      agotadoTxt: ag ? ('Ya te mostramos ' + ag.vistas + ' lugares distintos.' + (ag.repitePrincipal ? ' En ' + (ag.repitePrincipal === 1 ? 'una opción' : ag.repitePrincipal + ' opciones') + ' se repite la actividad principal, pero cambia lo demás.' : ' No repetimos ninguno como actividad principal.') + (ag.limita && ag.limita.txt ? ' Lo que más limita es ' + ag.limita.txt + '.' : '')
         + (ag.nuevas === 0 ? ' Dejamos en pantalla las últimas que viste.' : '')) : '',
       reiniciar: () => this.reiniciarVistos(),
       noQuieroOpts: this.NOQUIERO().map(([k, lbl]) => { const on = (s.noQuiero || []).indexOf(k) >= 0;
@@ -6593,9 +6720,11 @@ class Component extends DCLogic {
       + p.stops.map((v, i) => this.time12(ts[i]) + ' · ' + v.n.split(' ·')[0]).join('\n')
       + '\n\nCosto aproximado: ' + rs.costo + ' por persona\n\nÁbrelo aquí: ' + this.tandaLinkDe([p]); }
   // ── ?v=facil: paso 1 de un toque + "Confirma y listo" (8 nov 2026) ──
-  FACIL() { return [['cenar', '🍽️', 'Cenar rico', { vibes: ['foodie'] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'] }],
-    ['tranqui', '☕', 'Tranqui', { vibes: ['chill'] }], ['cultural', '🎭', 'Cultural', { vibes: ['cultural'] }],
-    ['romantico', '💘', 'Romántico', { vibes: ['romántico'], who: 'date', groupSize: 2 }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia', groupSize: 4 }]]; }
+  // `h`: horario que se propone en el paso 2 según lo elegido (10 nov 2026). Antes todo arrancaba de 7 pm a 2 am:
+  // "En familia" o "Cultural" salían de noche, con los museos y los parques ya cerrados.
+  FACIL() { return [['cenar', '🍽️', 'Cenar rico', { vibes: ['foodie'], h: [19, 24] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'], h: [20, 27] }],
+    ['tranqui', '☕', 'Tranqui', { vibes: ['chill'], h: [11, 18] }], ['cultural', '🎭', 'Cultural', { vibes: ['cultural'], h: [11, 18] }],
+    ['romantico', '💘', 'Romántico', { vibes: ['romántico'], who: 'date', groupSize: 2, h: [19, 25] }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia', groupSize: 4, h: [12, 19] }]]; }
   // ?v=facil en 3 pasos (8 nov 2026, 2ª versión): 1) qué se les antoja (avanza solo; con
   // "Cenar rico" sale el tipo de comida y ése avanza), 2) dónde y cuándo, 3) con quién y
   // cuánto → "Ver mis 3 planes". Pasos 2 y 3 con "← Atrás".
@@ -6610,12 +6739,13 @@ class Component extends DCLogic {
         return { emoji, label, aria: label + (on ? ' (seleccionado)' : ''), pressed: on ? 'true' : 'false',
           pick: () => { this.evPaso1(k);
             const quien = cfg.who ? { who: cfg.who, groupSize: cfg.groupSize } : (['date', 'familia'].indexOf(s.who) >= 0 ? { who: 'amigos', groupSize: 4 } : {});
-            this.setState(Object.assign({ cocinas: [], facilOpcion: k, vibes: cfg.vibes.slice() }, quien, k === 'cenar' ? {} : { facilPaso: 2 }),
+            this.setState(Object.assign({ cocinas: [], facilOpcion: k, vibes: cfg.vibes.slice(), planFrom: cfg.h[0], planTo: cfg.h[1] }, quien, k === 'cenar' ? {} : { facilPaso: 2 }),
               () => { if (k !== 'cenar') { try { window.scrollTo(0, 0); } catch(e) {} } }); } }; }),
       // "Cenar rico": el tipo de comida (como en la versión actual) y al elegirlo avanza solo.
       facilCocinaOn: enHome && paso === 1 && cenar,
       facilCocinaOpts: [['', 'Todo tipo']].concat(this.COCINAS()).map(([k, l]) => ({ label: l, aria: l,
         pick: () => { this.evPaso1('cocina_' + (k || 'todo')); this.setState({ cocinas: k ? [k] : [], facilPaso: 2 }, () => { try { window.scrollTo(0, 0); } catch(e) {} }); } })),
+      nqAbierto: !!s.nqAbierto || (s.noQuiero || []).length > 0, nqCerrado: !(s.nqAbierto || (s.noQuiero || []).length > 0), nqCls: (s.nqAbierto || (s.noQuiero || []).length > 0) ? 'sb-nq' : '', nqAbrir: () => this.setState({ nqAbierto: true }),
       facilAtras: () => ir(Math.max(1, paso - 1)),
       facilSiguiente: () => ir(3),
       facilGo: () => {
@@ -6708,14 +6838,16 @@ class Component extends DCLogic {
             ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? 'Reserva' : 'Cartelera') : this.time12(ts[j]), name: v.n, sub: (v.evento ? 'Evento ' + this.fechasTxt(v) : v.cat + ' · ' + (v.col || this.zLabel(v.z))) + (v.horaEstimada ? ' · horario por confirmar' : '') + (v.deGoogle ? ' · De Google Maps' : '')
           + (s.zone !== 'all' && !this.zoneList().includes(v.z) ? ' · fuera de tu zona (' + this.zLabel(v.z) + ')' : '')
           + ((p.cartelera || (p.porConfirmar && p.porConfirmar[j])) && !this.condicionDe(v) ? (['Taller', 'Escape room', 'Tour'].includes(v.cat) ? ' · reserva tu horario' : ' · consulta la cartelera') : '')
-          + (this.condicionDe(v) ? ' · ' + this.condicionDe(v) : '') })),
+          })),   // la condición (elige función, abre de mié a dom) se dice una vez, arriba de la ruta
         condicionada: this.condicionesPlan(st).length > 0,
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
+        que: this.queHacemos(p), gusta: this.porQueGusta(p), hayGusta: !!this.porQueGusta(p), cuanto: this.cuantoCuesta(p), como: this.comoNosMovemos(p),
         elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',
-        porQue: this.porQue(st), hayPorQue: !!this.porQue(st),
-        avisoOp: [this.condicionesPlan(st).length ? 'Para darlo por hecho — ' + this.condicionesPlan(st).join('; ') + '.' : '', p.avisoVentana, p.avisoComida, p.avisoPrecio].filter(Boolean).join(' '),
-        hayAvisoOp: !!(this.condicionesPlan(st).length || p.avisoVentana || p.avisoComida || p.avisoPrecio),
+        porQue: p.ideaNueva ? 'Una idea distinta a lo que sueles elegir; cumple lo mismo que pediste.' : this.porQue(st), hayPorQue: !!(p.ideaNueva || this.porQue(st)),
+        // (F6) Ya no se avisa "termina antes de la hora que pediste": las paradas son las que aportan, no las que llenan el horario.
+        avisoOp: [this.condicionesPlan(st).length ? 'Antes de darlo por hecho: ' + this.condicionesPlan(st).join('; ') + '.' : '', p.avisoComida].filter(Boolean).join(' '),
+        hayAvisoOp: !!(this.condicionesPlan(st).length || p.avisoComida),
         ...(() => { if (!(r && r.compartida)) return { votoOn: false };
           const pid = this.planOptId(p); const sp = ((s.sync && s.sync.plans) || []).find(x => x.id === pid);
           const vv = (sp && sp.votes) || {}; const yo = s.userName; const mio = yo ? vv[yo] : null;
@@ -7182,7 +7314,9 @@ class Component extends DCLogic {
     this._aiNotas = []; this._aiExhausted = false;
     try { localStorage.removeItem('sobres_borrador'); } catch (e) {} this.setState({ planHist: [], fijadas: [] });
     this.toast('Plan borrado'); }
-  replaceStop(i, v) { const p = this.getPlan(); if (!p) return; if (p.stops.some((x, j) => j !== i && this.mismoLugar(x, v))) { this.toast('Ese lugar ya está en el plan'); return; } const stops = p.stops.slice(); const times = this.curTimes(p); const quitado = stops[i]; stops[i] = v; const sust = (this.state.sustituidos || []).filter(id => id !== v.id); if (quitado && quitado.id) sust.push(quitado.id); this.setState({ swapIdx: null, sustituidos: sust.slice(-12) }); this.sortPlan(stops, times); this.toast(`Cambiado por ${v.n}`); }
+  replaceStop(i, v) { const p = this.getPlan(); if (!p) return; if (p.stops.some((x, j) => j !== i && this.mismoLugar(x, v))) { this.toast('Ese lugar ya está en el plan'); return; } const stops = p.stops.slice(); const times = this.curTimes(p); const quitado = stops[i]; stops[i] = v; const sust = (this.state.sustituidos || []).filter(id => id !== v.id); if (quitado && quitado.id) sust.push(quitado.id); this.setState({ swapIdx: null, sustituidos: sust.slice(-12) }); this.sortPlan(stops, times);
+    if (!/^ext-/.test(v.id)) { this.aprende('sustituido', [v], [times[i]]); if (quitado && quitado.cat !== v.cat) this.aprende('quitado', [quitado]); }
+    this.toast(`Cambiado por ${v.n}`); }
   // Sustituir una parada valida TODO el plan otra vez: horario, trayectos con
   // la parada anterior y la siguiente, presupuesto y vibra. Y no devuelve de
   // inmediato el lugar que se acaba de quitar mientras haya otro que sirva.
@@ -7245,7 +7379,7 @@ class Component extends DCLogic {
         .map(v => { const km = this.legKm(last, v); if (km == null || km > 3) return null; const min = this.minutosTramo(km) || 0; let t = Math.ceil((fin + min / 60) * 4) / 4;
           if (this.esAntro(v)) t = Math.max(t, 22.5); if (v.oh && v.oh[0] > t && v.oh[0] - t <= 1) t = v.oh[0];
           if (!this.atHour(v, t) || !this.alcanzaTramo(last, v, t - ts[ts.length - 1]) || !this.cabeEnTope(st.concat([v]), max, ts.concat([t])).ok) return null;
-          return { v, t, min, sc: this.rank(v, 0) - min / 5 + this.afinidad(v) }; }).filter(Boolean).sort((a, b) => b.sc - a.sc);
+          return { v, t, min, sc: this.rank(v, 0) - min / 5 }; }).filter(Boolean).sort((a, b) => b.sc - a.sc);
       if (cands.length) out.push({ k, lbl, v: cands[0].v, t: cands[0].t, min: cands[0].min, n: cands.length, otros: cands.slice(1, 4) }); });
     return out.slice(0, 5); }
   // REVISIÓN tras cada cambio: qué dejó de cuadrar (horario, trayecto, tope, «No quiero», lugar repetido)
@@ -7398,6 +7532,7 @@ class Component extends DCLogic {
       fbAhoraNo: () => { const q = JSON.parse(JSON.stringify(this.perfil())); q.pendiente = null; this.perfilGuarda(q); },
       borrarTxt: s.borrarArmado ? 'Toca otra vez para borrar todo' : 'Borrar mis datos',
       borrarGo: () => { if (!s.borrarArmado) { this.setState({ borrarArmado: true }); return; } this.borrarMisDatos(); },
+      reiniciarGustos: () => this.reiniciarGustos(),
       perfilCorreo: p.correo || '', irPerfil: () => this.nav('profile'),
       // Búsqueda de lugares desde el inicio (además de Explorar).
       homeQ: s.homeQ || '', homeHasQ: !!s.homeQ,
@@ -7417,7 +7552,9 @@ class Component extends DCLogic {
   // búsqueda (1). Guarda categorías, cocinas, zonas, rango de precio, horario
   // típico y con quién sale.
   // ============================================================
-  PESO_PERFIL() { return { elegido: 4, voto: 4, compartido: 3, compartidoTanda: 1, guardado: 2, busqueda: 1 }; }
+  // Lo que la persona HACE enseña más que lo que ve: elegir, sustituir, agregar y confirmar (guardar) pesan 4–5;
+  // compartir 3; una búsqueda 1; ver una tarjeta, nada. Lo que quita de un plan resta poco (puede ser cosa de hoy).
+  PESO_PERFIL() { return { elegido: 4, voto: 4, sustituido: 4, agregado: 4, guardado: 5, confirmado: 5, compartido: 3, compartidoTanda: 1, alternativas: 0, busqueda: 1, quitado: -1.5 }; }
   perfil0() { return { v: 1, edad: null, dieta: [], ninos: null, preguntado: false, acciones: 0, busquedas: 0,
     sen: { cat: {}, cocina: {}, zona: {}, who: {}, franja: {}, vibe: {} }, precio: { n: 0, sum: 0 },
     pendiente: null, feedback: [], correo: '', ajustes: {} }; }
@@ -7438,10 +7575,16 @@ class Component extends DCLogic {
   franjaDe(h) { return h < 12 ? 'manana' : h < 18 ? 'tarde' : 'noche'; }
   // Suma una acción al perfil. `stops` son lugares; `extra` trae lo de la búsqueda.
   aprende(tipo, stops, times, extra) {
-    const w = this.PESO_PERFIL()[tipo] || 1; const p = JSON.parse(JSON.stringify(this.perfil())); const S = p.sen; const s = this.state;
-    const suma = (o, k, n) => { if (k) o[k] = Math.round(((o[k] || 0) + n) * 100) / 100; };
+    const W = this.PESO_PERFIL(); const w = W[tipo] != null ? W[tipo] : 1; if (!w) return this.perfil();
+    const p = JSON.parse(JSON.stringify(this.perfil())); const S = p.sen; const s = this.state;
+    const suma = (o, k, n) => { if (k) o[k] = Math.max(0, Math.round(((o[k] || 0) + n) * 100) / 100); };
+    // Por COMPAÑÍA: lo que eliges con amigos no es lo que eliges en familia, en una cita o solo.
+    S.por = S.por || {}; const P = S.por[s.who] = S.por[s.who] || { cat: {}, cocina: {} };
+    if (w < 0) { (stops || []).forEach(v => { if (!v || !v.id) return; suma(S.cat, v.cat, w); suma(P.cat, v.cat, w); this.cocinasPerfil(v).forEach(k => { suma(S.cocina, k, w); suma(P.cocina, k, w); }); });
+      this.perfilGuarda(p); return p; }
     (stops || []).forEach((v, i) => { if (!v || !v.id) return;
-      suma(S.cat, v.cat, w); if (v.cocina) suma(S.cocina, v.cocina, w); suma(S.zona, v.z, w);
+      suma(P.cat, v.cat, w); this.cocinasPerfil(v).forEach(k => suma(P.cocina, k, w));
+      suma(S.cat, v.cat, w); this.cocinasPerfil(v).forEach(k => suma(S.cocina, k, w)); suma(S.zona, v.z, w);
       if (times && times[i] != null) suma(S.franja, this.franjaDe(times[i]), w);
       if (!v.ppUnknown && v.pp > 0 && (this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))) { p.precio.n += w; p.precio.sum += v.pp * w; } });
     if (tipo !== 'busqueda') { suma(S.who, s.who, w); p.acciones++; (s.vibes || []).forEach(vb => suma(S.vibe, vb, w / 2)); }
@@ -7450,6 +7593,11 @@ class Component extends DCLogic {
     this.perfilGuarda(p);
     return p;
   }
+  // Reiniciar SÓLO lo aprendido de lo que eliges (conserva edad, dieta, niños y tus planes).
+  reiniciarGustos() { const p = JSON.parse(JSON.stringify(this.perfil())), b = this.perfil0(); p.sen = b.sen; p.precio = b.precio; p.acciones = 0; p.busquedas = 0;
+    this.perfilGuarda(p); this.toast('Listo: empezamos de cero con tus gustos'); }
+  // Cocina NORMALIZADA de un lugar para el perfil: "Pescados y Mariscos", "Mariscos" y "Marisquería" son el mismo gusto.
+  cocinasPerfil(v) { if (!v) return []; let t = []; try { t = this.tiposCocina(v) || []; } catch (e) {} return t.length ? t : (v.cocina ? [v.cocina] : []); }
   // ¿Hay algo aprendido de verdad? Una búsqueda sola no es un gusto.
   perfilTiene() { const p = this.perfil(); return p.acciones >= 1 || p.busquedas >= 2; }
   top(o, n) { return Object.keys(o || {}).sort((a, b) => o[b] - o[a]).slice(0, n || 1); }
@@ -7475,8 +7623,10 @@ class Component extends DCLogic {
   afinidad(v) {
     const s = this.state; if (s.sinGustos || !this.perfilTiene()) return this.ajusteEdad(v);
     const p = this.perfil(), S = p.sen; let sc = 0;
-    sc += 6 * this.share(S.cat, v.cat);
-    if (v.cocina) sc += 4 * this.share(S.cocina, v.cocina);
+    // Con suficiente historial en ESTA compañía (date, familia…), manda eso; si no, lo general.
+    const P = (S.por || {})[s.who], nP = P ? Object.values(P.cat || {}).reduce((a, b) => a + b, 0) : 0, k = nP >= 8 ? 0.7 : nP >= 4 ? 0.4 : 0;
+    sc += 6 * ((1 - k) * this.share(S.cat, v.cat) + k * this.share(P && P.cat, v.cat));
+    { const ks = this.cocinasPerfil(v); if (ks.length) sc += 6 * Math.max.apply(null, ks.map(c => (1 - k) * this.share(S.cocina, c) + k * this.share(P && P.cocina, c))); }
     sc += 1.5 * this.share(S.zona, v.z);
     const veg = (p.dieta || []).some(d => d === 'vegetariano' || d === 'vegano');
     if (veg && this.dietaDe(v).length && (this.FOOD.includes(v.cat) || v.cat === 'Café')) sc += 8;   // la dieta pesa más que el gusto
@@ -7503,8 +7653,11 @@ class Component extends DCLogic {
     const p = this.perfil(), S = p.sen, PL = this.CAT_PLURAL(); const partes = [];
     const cats = []; stops.forEach(v => { if (this.share(S.cat, v.cat) >= 0.15 && PL[v.cat] && cats.indexOf(v.cat) < 0) cats.push(v.cat); });
     if (cats.length) partes.push('te gustaron ' + cats.slice(0, 2).map(c => PL[c]).join(' y '));
-    const coc = stops.find(v => v.cocina && this.share(S.cocina, v.cocina) >= 0.2);
-    if (coc && !cats.includes(coc.cat)) partes.push('te gusta la comida ' + this.strip(coc.cocina).toLowerCase());
+    // Cocina normalizada: "mariscos", "italiana"… (10 nov 2026). Se dice aunque también se nombre el tipo de lugar.
+    const NOM = { mexicana: 'la comida mexicana', tacos: 'los tacos', mariscos: 'los mariscos', japonesa: 'la comida japonesa', asiatica: 'la comida asiática', italiana: 'la comida italiana', cortes: 'los cortes',
+      francesa: 'la comida francesa', mediterranea: 'la comida mediterránea', latina: 'la comida latina', hamburguesas: 'las hamburguesas', vegetariana: 'la comida vegetariana', internacional: '' };
+    let cocK = ''; stops.forEach(v => this.cocinasPerfil(v).forEach(k => { if (!cocK && this.share(S.cocina, k) >= 0.2 && NOM[k]) cocK = k; }));
+    if (cocK) { const i = partes.findIndex(x => /los restaurantes|los tacos/.test(x)); const fr = 'sueles elegir ' + NOM[cocK]; if (i >= 0 && cats.length === 1) partes[i] = fr; else partes.push(fr); }
     const veg = (p.dieta || []).find(d => d === 'vegano' || d === 'vegetariano');
     if (veg && stops.some(v => this.dietaDe(v).length)) partes.push(veg === 'vegano' ? 'comes vegano' : 'comes vegetariano');
     if ((p.dieta || []).includes('sinalcohol') && s.sinAlcohol) partes.push('prefieres sin alcohol');
