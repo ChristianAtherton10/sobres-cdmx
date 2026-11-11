@@ -19,10 +19,10 @@ Producción sólo con «aprobado». Se conserva el paso 2 aprobado (10 zonas, si
       lag (1.05 s fijo + Google por regeneración), clics rápidos, cambio de filtro mientras carga.
 - [x] F3 Catálogo (mecanismo y conciliación hechos; la verificación masiva queda en el Excel de pendientes): conciliación por ID, motivos de pausa estructurados + reactivación, cobertura por
       zona × intención × presupuesto, huecos (Creativo, Del Valle) con actividades verificadas.
-- [ ] F4 Editar / compartir / votar / confirmar (versión del plan votado).
-- [ ] F5 Hotspots con fecha y envejecimiento; aprendizaje por elección/sustitución/confirmación, por compañía.
-- [ ] F6 Tarjeta móvil (qué, por qué, cuánto, cómo nos movemos).
-- [ ] F7 Aceptación con el catálogo de la preview, rendimiento antes/después, preview, reporte.
+- [x] F4 Editar / compartir / votar / confirmar (versión del plan votado).
+- [x] F5 Hotspots con fecha y envejecimiento; aprendizaje por elección/sustitución/confirmación, por compañía.
+- [x] F6 Tarjeta móvil (qué, por qué, cuánto, cómo nos movemos).
+- [x] F7 Aceptación con el catálogo de la preview, rendimiento antes/después, preview, reporte.
 
 ## Hallazgos de la línea base (10 nov, catálogo con revisión del 9 nov)
 - 705 «Estimado» del Excel = fichas que CONSERVAN precio (703 intactas + 2 bajas). Aparte, 696 fichas quedaron
@@ -82,3 +82,12 @@ salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pau
 ## Bitácora de decisiones
 - Tope estricto: entran firme + estimado + libre; 'debil' y 'pendiente' quedan fuera salvo ajuste elegido.
 - Traslado en app: referencia con taxímetro oficial (defendible), con nota de que Uber/DiDi puede costar más.
+
+## Cierre (11 nov 2026) — rama `pasada-profunda`, commit dd1992e, SIN merge
+- Preview: https://sobres-cdmx-fzixzdxtu-sobres-33f0.vercel.app  (3 pasos: /?v=facil)
+- Pruebas: 326 (motor.test.js, incluye test/pasada.test.js 42.x–46.x con tope estricto y catálogo de la preview) + servidor.
+- Rendimiento en navegador: primera 1,121 → ~500 ms; «Ver otras opciones» ~1,070 → 160–210 ms.
+- Entregables en `Claude outputs/pasada-profunda/`: Pendientes_por_verificar (1,379 fichas), Casos_de_aceptacion.txt, Conciliacion_por_ID.md.
+- Decisiones para el fundador: (1) tope estricto por defecto (89% de búsquedas < 3 salidas completas hasta verificar precios);
+  (2) ¿respaldar horario y rango de precio en vivo con Google Places para las paradas que se muestran? (~3× llamadas);
+  (3) las pruebas de lógica anteriores corren con «precio por confirmar» aceptado.
