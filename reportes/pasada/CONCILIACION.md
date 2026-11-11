@@ -1,12 +1,12 @@
 # Conciliación por ID — Excel del 9 nov ↔ importador ↔ catálogo de la preview
 
-Generado por `reportes/pasada/concilia.py`. Excel: 2952 filas (2918 con ID, 34 sin ID). Catálogo de la preview: 2825 fichas.
+Generado por `reportes/pasada/concilia.py`. Excel: 2952 filas (2918 con ID, 34 sin ID). Catálogo de la preview: 2823 fichas.
 
 ## 1. IDs
 
 - IDs del Excel que no existían en la exportación: **0**.
 - IDs de la exportación que ya no vienen en el Excel (filas borradas): **0**.
-- IDs que el Excel conserva y no están en el catálogo de la preview: **1** (0 son eventos ya vencidos, que no se cargan). Otros: os-n11737763876
+- IDs que el Excel conserva y no están en el catálogo de la preview: **3** (1 son eventos ya vencidos, que no se cargan). Otros: os-n11770329070, os-n11737763876
 - Ninguna corrección cambió un ID: los cambios viajan por ID en `data/revision.js` y `data/verificados.js`.
 
 ## 2. Bajas
@@ -53,8 +53,8 @@ Generado por `reportes/pasada/concilia.py`. Excel: 2952 filas (2918 con ID, 34 s
 
 - **705 «Estimado»** en el Excel: todas conservan su número (no se tocaron).
 - **693 «Por confirmar»** sin número: 213 venían de la banda de OpenTable; las demás eran estimaciones o inferencias por categoría. El dato «705 precios de OpenTable» de mi reporte del 9 nov era incorrecto.
-- En la preview: sin precio · por_confirmar: 1399 · con precio · estimado: 703 · con precio · inferido: 492 · con precio · rango: 81 · con precio · verificado: 56 · sin precio · rango: 2.
-- Verificados con fuente en la pasada profunda: **42** fichas.
+- En la preview: sin precio · por_confirmar: 1398 · con precio · estimado: 703 · con precio · inferido: 492 · con precio · rango: 81 · con precio · verificado: 56 · sin precio · rango: 2.
+- Verificados con fuente en la pasada profunda: **43** fichas.
 
 ## 6. Ubicación
 

@@ -3193,13 +3193,14 @@ class Component extends DCLogic {
     let ds = v.dias && v.dias.length ? v.dias.slice() : (v.cerrado && v.cerrado.length ? [0, 1, 2, 3, 4, 5, 6].filter(d => v.cerrado.indexOf(d) < 0) : null);
     if (!ds || ds.length >= 7) return '';
     const ord = [1, 2, 3, 4, 5, 6, 0], on = ord.map(d => ds.indexOf(d) >= 0);
+    if (ds.length === 1) return 'sólo los ' + ['domingos', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábados'][ds[0]];
     if (ds.length === 6) return 'todos los días menos ' + ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][ord[on.indexOf(false)]];
     // Días seguidos se dicen como rango: "de mié a dom" (la semana va de lunes a domingo).
     const tramos = []; let i = 0; while (i < 7) { if (!on[i]) { i++; continue; } let j = i; while (j + 1 < 7 && on[j + 1]) j++; tramos.push(j - i >= 2 ? 'de ' + D[ord[i]] + ' a ' + D[ord[j]] : ord.slice(i, j + 1).map(d => D[d]).join(' y ')); i = j + 1; }
     return tramos.join(', '); }
   condicionDe(v) { if (!v) return ''; const out = [];
     if (v.evento) { if (this.sinFecha()) out.push('elige la función (' + this.fechasTxt(v) + ')'); else if (v.condicion) out.push('confirma boletos y hora'); }
-    else { if (this.sinFecha()) { const d = this.diasTxt(v); if (d) out.push('abre ' + d); }
+    else { if (this.sinFecha()) { const d = this.diasTxt(v); if (d) out.push(/^sólo/.test(d) ? 'abre ' + d : 'abre ' + d); }
       if (v.condicion) out.push(['Taller', 'Escape room', 'Tour'].indexOf(v.cat) >= 0 ? 'reserva tu sesión' : 'elige función'); }
     return out.join(' · '); }
   condicionesPlan(stops) { return (stops || []).map(v => { const c = this.condicionDe(v); return c ? v.n.split(' ·')[0] + ': ' + c : ''; }).filter(Boolean); }
@@ -3654,7 +3655,8 @@ class Component extends DCLogic {
     plantillas.forEach(pl => { let fallas = 0; for (let i = 0; i < 10 && fallas < 6; i++) { const c = llenar(pl); if (!c) { fallas++; continue; }
       c.stops.forEach(v => usoCand.set(v.id, (usoCand.get(v.id) || 0) + 1));
       if (c.sigs.some(f => avoidC.has(f) || bloq.has(f))) continue;
-      if (!cands.some(x => x.sig === c.sig)) cands.push(c); } });
+      // Mismos lugares en otro orden (tacos antes o después del antro): se queda la versión con mejor puntaje.
+      const ya = cands.findIndex(x => x.sig === c.sig); if (ya < 0) cands.push(c); else if (c.puntaje > cands[ya].puntaje) cands[ya] = c; } });
     // Un poco de azar (con la semilla de la búsqueda) en el orden: si no, las
     // plantillas con lugares de puntaje alto (restaurantes, bares) tapaban
     // siempre al karaoke, al billar o al salón de baile de la misma receta.
@@ -3745,6 +3747,7 @@ class Component extends DCLogic {
     if (s.zone !== 'all' && !(opts && opts.ampliar)) { const sel = this.zoneList(); const vec = [];
       sel.forEach(z => this.vecinas(z, 2).forEach(k => { if (sel.indexOf(k) < 0 && vec.indexOf(k) < 0) vec.push(k); }));
       if (vec.length) pon('zona', 'Sumar zonas vecinas (' + vec.slice(0, 2).map(z => this.zLabel(z)).join(' y ') + ')', { ampliarZonas: true }, prueba({}, { ampliar: true }), { ampliar: true }); }
+    if (s.zone !== 'all') pon('ciudad', 'Buscar en toda la ciudad', { zone: 'all', zonesSel: [], ampliarZonas: false }, prueba({ zone: 'all', zonesSel: [] }));
     const iB = this.BUD.findIndex(b => b[0] === s.budget);
     if (s.budgetCustom == null && iB >= 0 && iB < this.BUD.length - 1 && s.budget !== 'any') { const sig = this.BUD[iB + 1];
       pon('presupuesto', sig[0] === 'any' ? 'Buscar sin tope de presupuesto' : 'Subir el presupuesto a ' + sig[1].replace(/^Hasta /, 'hasta '), { budget: sig[0], budgetCustom: null }, prueba({ budget: sig[0], budgetCustom: null })); }
@@ -4552,7 +4555,8 @@ class Component extends DCLogic {
     const tipoS = usarRecetas ? recetaSuelto : tipoSuelto;
     // ?v=facil (8 nov 2026): antes que un lugar suelto, otro plan COMPLETO de la receta
     // (aunque repita tipo): la meta es 3 planes para votar, no lugares de 1 parada.
-    if (s.facil && usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
+    const evDeP = c => (c.stops || []).some(v => v.evento), unEvento = c => !(this.sinFecha() && evDeP(c) && plans.some(evDeP));
+    if (s.facil && usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && unEvento(c) && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
     if (tipoS && plans.length < 3 && !opts.subBusqueda) {
       const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));
       const llegada = v => this.esAntro(v) ? Math.max(from, Math.min(this.ANTRO_IDEAL, to + this.MARGEN() / 60 - this.duracionAct(v))) : Math.max(from, v.oh[0]);
@@ -4584,7 +4588,7 @@ class Component extends DCLogic {
           cartelera: this.funcionSinConfirmar(v) }); }
     }
     // Sin más lugares sueltos, se repite plantilla con otros lugares.
-    if (usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
+    if (usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && unEvento(c) && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
     // Cada opción dice, si aplica, por qué no llena la ventana, por qué no trae
     // dónde comer o por qué cuesta menos que el rango elegido.
     plans.forEach(p => { califica(p);
@@ -6620,7 +6624,8 @@ class Component extends DCLogic {
       if (ak === 'desayuno') return 'desayunar en ' + nm(v);
       if (ak === 'comida' || ak === 'cena') return v.cat === 'Taquería' ? (i > 0 && this.esAntro(st[i - 1]) ? 'tacos de remate en ' : 'tacos en ') + nm(v) : (ak === 'cena' ? 'cenar ' : 'comer ') + (k && k !== 'tacos' ? NOM[k] + ' ' : '') + 'en ' + nm(v);
       if (ak === 'copas') return (v.cat === 'Cantina' ? 'cantina en ' : v.cat === 'Rooftop' ? 'un trago con vista en ' : 'un trago en ') + nm(v);
-      if (ak === 'baile') return 'bailar en ' + nm(v);
+      if (ak === 'baile' || this.esAntro(v)) return 'bailar en ' + nm(v);
+      if (v.cat === 'Tour' || ak === 'recorrido') return 'recorrido: ' + nm(v);
       if (ak === 'cafe') return (v.cat === 'Heladería' ? 'un helado en ' : v.cat === 'Churrería' ? 'churros en ' : 'un café en ') + nm(v);
       if (ak === 'paseo') return 'caminar por ' + nm(v);
       if (ak === 'taller') return 'taller en ' + nm(v);

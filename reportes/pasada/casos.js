@@ -58,8 +58,8 @@ const CASOS = {
     pinta(a, a.runSearch({ nueva: true }), 'Solo · museo · Juárez·Centro · 11am–6pm · hasta $600');
     const b = app({ who: 'solo', groupSize: 1, vibes: ['chill'], facilOpcion: 'tranqui', budget: 'b600', zonas: ['roma'], planFrom: 11, planTo: 18 });
     pinta(b, b.runSearch({ nueva: true }), 'Solo · tranqui/café · Roma·Condesa · 11am–6pm · hasta $600'); },
-  'regen': () => { [['Buena cobertura: amigos, noche, Roma·Condesa, $600–1,000', { who: 'amigos', groupSize: 4, vibes: ['nightlife'], facilOpcion: 'fiesta', budget: 'b1000', zonas: ['roma'] }],
-      ['Se agota: creativo en Del Valle, $600–1,000, 11am–8pm', { who: 'amigos', groupSize: 4, vibes: ['creativo'], budget: 'b1000', zonas: ['delvalle'], planFrom: 11, planTo: 20 }]].forEach(([t, st]) => {
+  'regen': () => { [['Buena cobertura: amigos, noche, Roma·Condesa, sin presupuesto', { who: 'amigos', groupSize: 4, vibes: ['nightlife'], facilOpcion: 'fiesta', budget: 'any', zonas: ['roma'] }],
+      ['Se agota: amigos, noche, Roma·Condesa, $600–1,000 con tope estricto', { who: 'amigos', groupSize: 4, vibes: ['nightlife'], facilOpcion: 'fiesta', budget: 'b1000', zonas: ['roma'] }]].forEach(([t, st]) => {
       const a = app(st); const vistos = new Set(), sedes = new Set(), prin = new Set(); const tiempos = []; let rep = 0, repPrin = 0, total = 0;
       console.log('  ' + t);
       for (let i = 0; i <= 5; i++) {
@@ -89,7 +89,7 @@ CASOS['editar'] = () => {
   const i = a.getPlan().stops.length - 1, alt = a.swapSuggest(i); console.log('  Sustitutos que funcionan para la última parada: ' + alt.map(v => v.n).join(' | '));
   if (alt[0]) { a.replaceStop(i, alt[0]); ver('Sustituí la última por ' + alt[0].n.split(' ·')[0]); }
   a.setStopTime(0, a.curTimes(a.getPlan())[0] - 1); ver('Moví la primera una hora antes');
-  a.setStopTime(a.getPlan().stops.length - 1, 9); ver('Moví la última a las 9 am (a propósito)');
+  a.setStopTime(0, 9); ver('Moví la cena a las 9 am (a propósito)');
   a.deshacer(); ver('Deshacer');
   const D = a.sugerirDespues(); console.log('  ¿Qué hacemos después?: ' + (D.map(d => d.lbl + ' → ' + d.v.n.split(' ·')[0] + ' ' + a.time12(d.t) + ' (a ' + d.min + ' min, ' + a.precioTxt(d.v) + ')').join(' | ') || 'nada que tenga sentido a esa hora'));
   if (D[0]) { a.addStopAt(D[0].v, D[0].t); ver('Agregué «' + D[0].lbl + '»'); }

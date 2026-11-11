@@ -138,7 +138,7 @@ test('42.11 · con menos de tres salidas completas no amplía la zona sola: ofre
   ps.forEach(p => p.stops.forEach(v => assert(a.zoneList().indexOf(v.z) >= 0, 'se salió de la zona sin preguntar: ' + v.n + ' (' + v.z + ')')));
   if (ps.filter(p => a.planCompleto(p)).length < 3) { const aj = r.ajustes || [];
     assert(aj.length >= 1 && aj.length <= 4, 'sin ajustes concretos: ' + aj.length);
-    aj.forEach(x => assert(['zona', 'presupuesto', 'precio', 'horario', 'noquiero'].indexOf(x.k) >= 0 && x.gana > 0, 'ajuste raro: ' + JSON.stringify(x))); }
+    aj.forEach(x => assert(['zona', 'ciudad', 'presupuesto', 'precio', 'horario', 'noquiero'].indexOf(x.k) >= 0 && x.gana > 0, 'ajuste raro: ' + JSON.stringify(x))); }
   // El ajuste de zona, una vez elegido, sí suma las vecinas y lo dice.
   const c = busca({ who: 'amigos', groupSize: 6, vibes: ['nightlife'], budget: 'b1000', zonas: ['coyoacan'], planFrom: 21, planTo: 27, aceptaSinPrecio: true, ampliarZonas: true });
   if (c.ps.some(p => p.stops.some(v => c.a.zoneList().indexOf(v.z) < 0))) assert(/zonas vecinas/.test(c.r.expandNote || ''), 'sumó zonas sin decirlo');
