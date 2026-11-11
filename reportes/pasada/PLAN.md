@@ -17,7 +17,7 @@ Producción sólo con «aprobado». Se conserva el paso 2 aprobado (10 zonas, si
       cocina, remate de tacos tras antro, «No quiero», <3 opciones con ajustes concretos, sin fecha = condicionado.
 - [x] F2 «Dame otros 3»: historial por sede, novedad de actividad principal, agotado con filtro que limita,
       lag (1.05 s fijo + Google por regeneración), clics rápidos, cambio de filtro mientras carga.
-- [ ] F3 Catálogo: conciliación por ID, motivos de pausa estructurados + reactivación, cobertura por
+- [x] F3 Catálogo (mecanismo y conciliación hechos; la verificación masiva queda en el Excel de pendientes): conciliación por ID, motivos de pausa estructurados + reactivación, cobertura por
       zona × intención × presupuesto, huecos (Creativo, Del Valle) con actividades verificadas.
 - [ ] F4 Editar / compartir / votar / confirmar (versión del plan votado).
 - [ ] F5 Hotspots con fecha y envejecimiento; aprendizaje por elección/sustitución/confirmación, por compañía.
@@ -66,6 +66,18 @@ salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pau
 - seenStops por búsqueda → opts.vistosPlan/soloNuevos; novedad por actKey (sede); comboSig por actKey.
 - state.agotado {nuevas, vistas, limita, ajustes}; reiniciarVistos(); limita mide cada filtro por separado.
 - UI: chips activos (✕), panel de ajustes, panel de agotado, «No quiero…» en resultados. Pruebas 43.1–43.4.
+
+## F3 hecho
+- data/verificados.js (build_verificados.py): items por ID con fuente+fecha, `resuelve` por motivo, `activar`, bajas por duplicado.
+- motivosPausa(): horario / ubicacion / sesion; se reactiva sólo con TODOS resueltos (prueba 44.1).
+- esRecomendable: pin aproximado fuera de planes (regla de ubicación). 27 pines confirmados con Nominatim (+3 de altas).
+- CONCILIACION.md (concilia.py), cobertura.js (antes/después), pendientes.py → Excel de 1,380 pendientes priorizados.
+- Verificación web: rinde poco (sitios sin precios o bloqueados). Confirmado: Acuario Inbursa $260/10–18, Adamanta Del Valle
+  horario, Taller Experimental horario, Manos de Tierra horario, Vive Cerámica $499. Tarifas INAH 2026: I $105, II $85, III $80.
+- COBERTURA con tope estricto: 89% de las búsquedas < 3 salidas completas (53% aceptando precio por confirmar).
+  El cuello es el dato: 741 sin precio, 410 con cifra sin fuente, 423 sin horario confirmado, 307 sin pin.
+- Opción a decidir con el fundador: respaldar horario y rango de precio EN VIVO con Google Places (/api/lugar ya existe,
+  1,955 fichas tienen place_id) sólo para las ≤9 paradas que se van a mostrar; cuesta ~3× más llamadas a Places.
 
 ## Bitácora de decisiones
 - Tope estricto: entran firme + estimado + libre; 'debil' y 'pendiente' quedan fuera salvo ajuste elegido.

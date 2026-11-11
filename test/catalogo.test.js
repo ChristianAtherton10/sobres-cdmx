@@ -253,7 +253,7 @@ test('26h · huecos de cobertura (4 nov 2026): cada lugar nuevo trae fuente ofic
     'Ruffian Wine Bar', 'Mitemaki · Polanco', 'Mitemaki · Bosques', 'Baltra'];
   N.forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && /^iv-/.test(v.id) && /^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente oficial');
-    assert(app.esRecomendable(v) || v.pausa, n + ' no es recomendable'); });   // o en pausa por la revisión del fundador (9 nov 2026)
+    assert(app.esRecomendable(v) || v.pausa || v.coordAprox, n + ' no es recomendable'); });   // o en pausa por la revisión (9 nov) o sin pin confirmado (regla de ubicación, 10 nov 2026)
   // Regresión: OpenStreetMap ubicó "Av. Chapultepec 606" en la Roma; el sitio dice San Miguel Chapultepec.
   const m = app.cat().find(x => x.n === 'Cantina El Mirador');
   assert(m.z === 'chapultepec' && km(m, 'chapultepec') < 1.5, 'El Mirador quedó en ' + m.z + ' a ' + km(m, 'chapultepec').toFixed(1) + ' km');
@@ -268,7 +268,7 @@ test('26i · bares de San Ángel, Coyoacán y CU (4 nov 2026): fuente que no es 
   Object.keys(Z).forEach(n => { const v = app.cat().find(x => x.n === n);
     assert(v && v.z === Z[n], n + ' en ' + (v && v.z));
     assert(/^https?:\/\//.test(v.pUrl || '') && !/google/i.test(v.pUrl), n + ' sin fuente o con fuente de Google');
-    assert(app.esRecomendable(v) || v.pausa, n + ' no es recomendable'); });   // o en pausa por la revisión del fundador (9 nov 2026)
+    assert(app.esRecomendable(v) || v.pausa || v.coordAprox, n + ' no es recomendable'); });   // o en pausa por la revisión (9 nov) o sin pin confirmado (regla de ubicación, 10 nov 2026)
   const t = app.cat().find(x => x.n === 'Terral Agrobar · San Ángel');
   assert(t.pp === 200 && t.pEstado === 'rango' && t.dias.indexOf(1) < 0, 'Terral: $' + t.pp + ' ' + t.pEstado + ' días ' + t.dias);
   // En San Ángel ya hay dónde tomar algo de noche (antes: 0).

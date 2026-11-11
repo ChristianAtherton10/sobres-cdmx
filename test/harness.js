@@ -92,6 +92,11 @@ function makeApp(stateOverrides = {}, opts = {}) {
   const rvp = path.join(ROOT, 'data', 'revision.js');
   if (fs.existsSync(rvp) && !opts.sinRevision) new Function('window', fs.readFileSync(rvp, 'utf8'))(win);
   if (opts.revision && win.SOBRES_REVISION) Object.assign(win.SOBRES_REVISION, opts.revision);
+  // Verificados de la pasada profunda, 10 nov 2026 (define window.SOBRES_VERIFICADOS)
+  const vfp = path.join(ROOT, 'data', 'verificados.js');
+  if (fs.existsSync(vfp) && !opts.sinVerificados) new Function('window', fs.readFileSync(vfp, 'utf8'))(win);
+  // opts.verificados: verificaciones extra para probar la reactivación de pausas.
+  if (opts.verificados) { win.SOBRES_VERIFICADOS = win.SOBRES_VERIFICADOS || { items: {}, altas: [] }; win.SOBRES_VERIFICADOS = Object.assign({}, win.SOBRES_VERIFICADOS, { items: Object.assign({}, win.SOBRES_VERIFICADOS.items, opts.verificados) }); }
   // Recetas por ambiente (define window.SOBRES_RECETAS)
   const rc = path.join(ROOT, 'data', 'recetas.js');
   if (fs.existsSync(rc) && !opts.sinRecetas) new Function('window', fs.readFileSync(rc, 'utf8'))(win);

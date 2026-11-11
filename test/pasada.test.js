@@ -208,4 +208,45 @@ test('43.4 · generar: toques repetidos no encolan tandas, un error conserva lo 
   assert(/if \(this\._genTk !== tk\) return;/.test(src) && !/setTimeout\(correr, corto \? 180 : 1050\)/.test(src), 'volvió la espera fija de 1,050 ms o falta la ficha de solicitud');
 });
 
+section('44 · Pasada profunda F3: catálogo verificado, pausas por motivo y ubicación');
+
+test('44.1 · una pausa se levanta sólo cuando se resuelven TODOS sus motivos; el ID no cambia', () => {
+  const a0 = nueva({}); const C0 = a0.cat();
+  assert(a0.motivosPausa('Confirmar días y horario. Confirmar dirección o acceso específico.').join() === 'horario,ubicacion', 'motivos: ' + a0.motivosPausa('Confirmar días y horario. Confirmar dirección o acceso específico.'));
+  assert(a0.motivosPausa('Seleccionar función de la cartelera.').join() === 'sesion' && a0.motivosPausa('Geocodificar la dirección porque el pin previo se compartía entre calles.').join() === 'ubicacion', 'motivos de sesión/ubicación');
+  const dos = C0.find(v => v.pausa && a0.motivosPausa(v.pausa).join() === 'horario,ubicacion'), uno = C0.find(v => v.pausa && a0.motivosPausa(v.pausa).join() === 'horario' && !v.coordAprox && v.cat === 'Restaurante');
+  assert(dos && uno, 'faltan fichas en pausa para la prueba');
+  const base = { fecha: '2026-11-10', fuente: 'Fuente de prueba', url: 'https://ejemplo.test/', oh: [13, 23], hrs: 'Diario 13:00–23:00' };
+  const ver = {}; ver[dos.id] = Object.assign({ resuelve: ['horario'] }, base); ver[uno.id] = Object.assign({ resuelve: ['horario'] }, base);
+  const a = nueva({}, { verificados: ver }); const C = a.cat(); const d2 = C.find(v => v.id === dos.id), u2 = C.find(v => v.id === uno.id);
+  assert(d2 && d2.pausa && !a.esRecomendable(d2), 'se reactivó con un motivo pendiente (ubicación): ' + d2.n);
+  assert(u2 && !u2.pausa && u2.reactivado && a.esRecomendable(u2), 'no se reactivó con todos los motivos resueltos: ' + u2.n);
+  assert(/Reactivado: Fuente de prueba \(2026-11-10\)/.test(u2.pNotaLugar) && u2.oh[0] === 13 && u2.hrs === 'Diario 13:00–23:00' && !u2.horaEstimada, 'no quedó el dato verificado con su fuente: ' + u2.pNotaLugar);
+});
+
+test('44.2 · lo verificado trae fuente y fecha y entra al tope: Acuario Inbursa $260 en línea', () => {
+  const a = nueva({}); const v = a.cat().find(x => x.id === 'cdmx-2047');
+  assert(v && v.n === 'Acuario Inbursa' && v.pp === 260 && a.respaldoDe(v) === 'firme', 'Acuario: $' + v.pp + ' ' + a.respaldoDe(v));
+  assert(/^https:/.test(v.pUrl) && v.pFecha === '2026-11-10' && /en línea/.test(v.pCanasta) && v.oh.join() === '10,18', 'sin fuente, fecha o canasta');
+  const V = a._win.SOBRES_VERIFICADOS; Object.keys(V.items).forEach(id => { const x = V.items[id]; assert(x.fecha && (x.url || x.fuente), id + ' sin fuente o fecha'); assert(a.cat().some(c => c.id === id), id + ' no existe: una verificación no puede cambiar el ID'); });
+});
+
+test('44.3 · regla de ubicación: nada sale en planes con pin aproximado; con el número confirmado, vuelve', () => {
+  const a = nueva({}); const C = a.cat();
+  const mal = C.filter(v => a.esRecomendable(v) && v.coordAprox && !v.evento); assert(!mal.length, 'en planes con pin aproximado: ' + mal.slice(0, 4).map(v => v.n));
+  const V = a._win.SOBRES_VERIFICADOS; const conPin = Object.keys(V.items).filter(id => V.items[id].lat != null); assert(conPin.length >= 25, 'pocos pines confirmados: ' + conPin.length);
+  conPin.forEach(id => { const v = C.find(x => x.id === id); assert(v && !v.coordAprox && Math.abs(v.lat - V.items[id].lat) < 1e-6, id + ' no tomó el pin confirmado'); });
+  const sin = makeApp({}, { estricto: true, sinVerificados: true }).cat().find(x => x.id === conPin[0]); assert(sin && sin.coordAprox, 'la prueba supone que sin la verificación el pin era aproximado');
+  // El duplicado que apareció al confirmar el pin sale del catálogo.
+  assert(!C.some(v => v.id === 'os-n11737763876') && C.some(v => v.id === 'cdmx-4030'), 'duplicado de Cinépolis Arcos Bosques');
+});
+
+test('44.4 · un alta del Excel sólo se activa con pin confirmado y horario publicado; el taller sale con sesión por reservar', () => {
+  const a = nueva({}); const C = a.cat();
+  const pepes = C.find(v => v.id === 'rv-af01b608aa'), mdt = C.find(v => v.id === 'rv-fb39aec0d1'), ada = C.find(v => v.id === 'rv-611785805c');
+  assert(a.esRecomendable(pepes) && !pepes.coordAprox && pepes.oh.join() === '11,15' && /reserva tu sesión/.test(a.condicionDe(pepes)), 'Pepes: ' + pepes.pNotaLugar);
+  assert(a.esRecomendable(mdt) && mdt.condicion && mdt.duracionMin === 120 && a.atHour(mdt, 10.5) && !a.atHour(mdt, 12), 'Manos de Tierra: sesión de 2 h entre 10 y 13');
+  assert(!a.esRecomendable(ada) && ada.coordAprox, 'Adamanta Del Valle se activó sin pin confirmado');
+});
+
 if (require.main === module) report();

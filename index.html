@@ -1717,7 +1717,8 @@ class Component extends DCLogic {
     // Revisión del catálogo del fundador en Excel (9 nov 2026, data/revision.js): bajas,
     // pausas, correcciones, altas y funciones nuevas. Es la capa de más arriba: gana a todas.
     const REV = (typeof window !== 'undefined' && window.SOBRES_REVISION) || null;
-    const RB = (REV && REV.bajas) || {};
+    // + bajas por duplicado detectadas al confirmar pines (data/verificados.js).
+    const RB = Object.assign({}, (REV && REV.bajas) || {}, (typeof window !== 'undefined' && window.SOBRES_VERIFICADOS && window.SOBRES_VERIFICADOS.bajas) || {});
     const out = [];
     for (const v0 of lista) {
       if (A.BAJA[v0.id] || RB[v0.id]) continue;          // identidad fabricada / baja en la revisión
@@ -1795,6 +1796,8 @@ class Component extends DCLogic {
         .concat(((window.SOBRES_EVENTOS && window.SOBRES_EVENTOS.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())))
         // + altas y funciones nuevas de la revisión del fundador (9 nov 2026).
         .concat((REV && REV.altas) || [])
+        // + altas verificadas en la pasada profunda (10 nov 2026, data/verificados.js).
+        .concat((typeof window !== 'undefined' && window.SOBRES_VERIFICADOS && window.SOBRES_VERIFICADOS.altas) || [])
         .concat(((REV && REV.eventos) || []).filter(e => !(e.fechas && e.fechas.hasta && e.fechas.hasta < this.todayISO())));
       const yaEsta = new Set(out.map(x => x.id));
       for (const r0 of A.NUEVOS.concat(XL)) {
@@ -1852,6 +1855,7 @@ class Component extends DCLogic {
       }
       v.confirmado = c; });
     if (REV) out.forEach(v => this.aplicaRevision(v, REV));
+    out.forEach(v => this.aplicaVerificado(v));
     // Hotspots (data/hotspots.js): nivel 3 = Michelin / 50 Best / museos top;
     // 2 = guías del año y aperturas del mes. Una apertura pesa como "nueva" 4 meses.
     let HS = (typeof window !== 'undefined' && window.SOBRES_HOTSPOTS && window.SOBRES_HOTSPOTS.ids) || {};
@@ -1911,7 +1915,14 @@ class Component extends DCLogic {
       }
       v.revisado = REV.fecha;
     }
-    const p = (REV.pausas || {})[v.id];
+    const p0 = (REV.pausas || {})[v.id];
+    // VERIFICADOS (data/verificados.js, 10 nov 2026): una verificación con fuente vigente resuelve
+    // motivos concretos de la pausa (horario, ubicación, sesión). El lugar se reactiva SÓLO cuando
+    // quedan resueltos todos; si falta alguno, sigue en pausa por lo que falta.
+    const ver = this.verificadoDe(v);
+    const mot = p0 ? this.motivosPausa(p0) : [], falta = mot.filter(m => !(ver && (ver.resuelve || []).indexOf(m) >= 0));
+    const p = (p0 && !falta.length) ? null : p0;
+    if (p0 && !p) { v.reactivado = { fecha: ver.fecha, fuente: ver.fuente || '', motivos: mot }; v.pausaAnterior = p0; }
     if (p && REV.pausasActivas !== false) {
       // (10 nov 2026) Una pausa que sólo pide ELEGIR función, sesión o boletos no es un dato que
       // falte en la ficha: el lugar se propone "condicionado" y se pide reservar antes de darlo
@@ -1927,6 +1938,29 @@ class Component extends DCLogic {
     }
     if ((REV.activar || []).indexOf(v.id) >= 0) v.recomendable = true;
   }
+  // Motivos de una pausa, por tipo: lo que hay que resolver para reactivar la ficha.
+  motivosPausa(p) { const t = this.strip(p || ''), m = [];
+    if (/horario/.test(t)) m.push('horario');
+    if (/direccion|geocodificar|\bpin\b|acceso especifico|ubicacion/.test(t)) m.push('ubicacion');
+    if (/funcion|sesion|cupo|reserv|taquilla|boleto|disponibilidad|cartelera|turno/.test(t)) m.push('sesion');
+    if (!m.length) m.push('otro'); return m; }
+  verificadoDe(v) { const V = (typeof window !== 'undefined' && window.SOBRES_VERIFICADOS) || null; return (V && V.items && v && V.items[v.id]) || null; }
+  // Datos verificados con fuente y fecha (precio, cover, horario, cocina, último acceso). Conserva el ID.
+  aplicaVerificado(v) { const x = this.verificadoDe(v); if (!x) return;
+    if (x.oh) { v.oh = x.oh.slice(); v.horaEstimada = false; }
+    if (x.hrs) { v.hrs = x.hrs; v.hrsFuente = x.fuente || v.hrsFuente; }
+    if (x.dias) { v.dias = x.dias.length ? x.dias.slice() : null; v.cerrado = null; }
+    ['cocinaCierra', 'ultimoAcceso', 'duracionMin', 'web', 'tel', 'grupoMin', 'grupoMax'].forEach(k => { if (x[k] != null) v[k] = x[k]; });
+    if (x.addr) v.addr = x.addr; if (x.col) v.col = x.col;
+    if (x.lat != null) { v.lat = x.lat; v.lng = x.lng; v.coordAprox = false; }
+    if (x.sesiones) { v.sesiones = x.sesiones.slice(); v.sesion = true; }
+    if (x.precio || x.estado) { const pi = v.propinaIncluida, ant = v.ppUnknown ? v.ppAnterior : v.pp;
+      this.ponPrecio(v, { precio: x.precio, estado: x.estado || 'verificado', fuente: x.fuente, url: x.url, fecha: x.fecha, ppAnterior: ant, nota: x.nota || '' });
+      if (pi && !x.precio) v.propinaIncluida = true; }
+    if (x.activar) { v.recomendable = undefined; v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
+    if (x.condicion != null) { v.condicion = x.condicion || undefined; if (x.condicion) { v.sesion = true; v.sesionPorConfirmar = true; } }
+    if (v.reactivado) v.pNotaLugar = ('Reactivado: ' + (x.fuente || 'fuente vigente') + ' (' + x.fecha + ') confirmó ' + v.reactivado.motivos.join(' y ') + '. ' + (v.pNotaLugar || '')).trim();
+    v.verificado = x.fecha; }
   // Precio AUDITADO: guarda el rango, la unidad, la moneda y la canasta.
   // `pp` (lo que usa el presupuesto) pasa a ser el consumo REPRESENTATIVO,
   // no el mínimo: el plato más barato no es lo que cuesta hacer el plan.
@@ -2809,6 +2843,9 @@ class Component extends DCLogic {
   esRecomendable(v) {
     if (!v) return false;
     if (this.esSede(v)) return false;   // un recinto sólo sale con su evento
+    // Regla de ubicación de SOBRES: sin pin confirmado (número de la calle o esquina) no se propone,
+    // porque los trayectos saldrían de un punto inventado. Vuelve cuando se confirma (pendientes).
+    if (v.coordAprox && !v.evento && !v.deGoogle) return false;
     if (v.recomendable === true) return true;
     if (v.recomendable === false) return false;
     const n = this.strip(v.n);
@@ -3172,7 +3209,7 @@ class Component extends DCLogic {
   // FASE 3 · LLEGADA DESDE UN ANUNCIO (4 nov 2026)
   // ============================================================
   catalogoListo() { const w = typeof window !== 'undefined' ? window : {};
-    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS', 'SOBRES_HOTSPOTS', 'SOBRES_REVISION'].every(k => !!w[k]); }
+    return ['SOBRES_LUGARES', 'SOBRES_AUDITORIA', 'SOBRES_EXCEL', 'SOBRES_PAQUETE', 'SOBRES_INVESTIGADOS', 'SOBRES_EVENTOS', 'SOBRES_OSM', 'SOBRES_RECETAS', 'SOBRES_HOTSPOTS', 'SOBRES_REVISION', 'SOBRES_VERIFICADOS'].every(k => !!w[k]); }
   // Primero se pinta el inicio (lo útil); los catálogos (~1.9 MB, ~210 KB
   // comprimidos) llegan después, en orden, sin pelearle la red al marco.
   // ── Google Places en vivo (4 nov 2026) ──
@@ -3315,7 +3352,7 @@ class Component extends DCLogic {
   cargaCatalogo() {
     if (this._cargaCat || typeof document === 'undefined' || !document.createElement) return; this._cargaCat = true;
     const lista = [['SOBRES_LUGARES', 'data/lugares.js'], ['SOBRES_AUDITORIA', 'data/auditoria.js'], ['SOBRES_EXCEL', 'data/excel.js'],
-      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js'], ['SOBRES_HOTSPOTS', 'data/hotspots.js'], ['SOBRES_REVISION', 'data/revision.js']];
+      ['SOBRES_PAQUETE', 'data/paquete.js'], ['SOBRES_INVESTIGADOS', 'data/investigados.js'], ['SOBRES_EVENTOS', 'data/eventos.js'], ['SOBRES_OSM', 'data/osm.js'], ['SOBRES_RECETAS', 'data/recetas.js'], ['SOBRES_HOTSPOTS', 'data/hotspots.js'], ['SOBRES_REVISION', 'data/revision.js'], ['SOBRES_VERIFICADOS', 'data/verificados.js']];
     lista.forEach(([g, src]) => { if (window[g]) return; const el = document.createElement('script'); el.src = src; el.async = false; document.head.appendChild(el); });
     if (!window.SOBRES_GID) { const el = document.createElement('script'); el.src = 'data/google_ids.js'; el.async = true; document.head.appendChild(el); }
   }

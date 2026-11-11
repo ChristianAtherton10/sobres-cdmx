@@ -1,0 +1,15 @@
+Salidas COMPLETAS por búsqueda (mejor de 2 semillas; 3 = llena) · tope estricto
+zona                    Cenar ric  Noche y f  Tranqui    Cultural   Romántico  En famili  Creativo   Con amigo    (cada celda: $600 / $1,000 / $1,999)
+Roma · Condesa          2/2/3      0/3/3      3/3/3      2/2/2      0/0/3      2/3/3      0/1/2      0/3/3      
+Polanco · Chapultepec   0/0/1      0/0/2      0/1/3      3/3/3      0/0/0      2/3/3      0/0/0      0/1/1      
+Juárez · Centro         0/0/3      0/1/2      1/1/1      3/3/3      2/1/2      2/2/3      0/0/0      0/0/3      
+Del Valle · Nápoles     0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      
+Coyoacán · CU           0/0/0      0/0/1      2/3/3      1/2/3      0/1/3      1/3/3      0/0/0      0/0/0      
+San Ángel               0/1/2      0/1/1      0/0/0      1/2/3      0/0/0      0/0/0      0/0/0      0/0/0      
+Santa Fe · Poniente     0/0/2      0/0/2      1/1/1      1/1/1      0/0/0      3/2/2      0/0/0      1/1/2      
+Lomas · Tecamachalco    0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      
+Satélite · Naucalpan    0/1/3      0/1/2      0/0/0      2/2/2      0/0/0      1/1/1      0/0/0      0/0/1      
+Xochimilco              0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      0/0/0      
+
+Búsquedas con menos de 3 salidas completas: 208 de 240 (87%)
+Sin ninguna salida completa en los tres presupuestos: 40 → Romántico en Polanco · Chapultepec; Creativo en Polanco · Chapultepec; Creativo en Juárez · Centro; Cenar rico en Del Valle · Nápoles; Noche y fiesta en Del Valle · Nápoles; Tranqui en Del Valle · Nápoles; Cultural en Del Valle · Nápoles; Romántico en Del Valle · Nápoles; En familia en Del Valle · Nápoles; Creativo en Del Valle · Nápoles; Con amigos en Del Valle · Nápoles; Cenar rico en Coyoacán · CU; Creativo en Coyoacán · CU; Con amigos en Coyoacán · CU; Tranqui en San Ángel; Romántico en San Ángel; En familia en San Ángel; Creativo en San Ángel; Con amigos en San Ángel; Romántico en Santa Fe · Poniente; Creativo en Santa Fe · Poniente; Cenar rico en Lomas · Tecamachalco; Noche y fiesta en Lomas · Tecamachalco; Tranqui en Lomas · Tecamachalco; Cultural en Lomas · Tecamachalco; Romántico en Lomas · Tecamachalco; En familia en Lomas · Tecamachalco; Creativo en Lomas · Tecamachalco; Con amigos en Lomas · Tecamachalco; Tranqui en Satélite · Naucalpan; Romántico en Satélite · Naucalpan; Creativo en Satélite · Naucalpan; Cenar rico en Xochimilco; Noche y fiesta en Xochimilco; Tranqui en Xochimilco; Cultural en Xochimilco; Romántico en Xochimilco; En familia en Xochimilco; Creativo en Xochimilco; Con amigos en Xochimilco

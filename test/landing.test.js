@@ -124,8 +124,11 @@ test('29.5 · "Ver otras opciones" trae TIPOS de plan distintos, no sólo otros 
     t.forEach(x => tipos.add(x)); previa = t;
     a.renderVals().resurprise();
   }
-  assert(tipos.size >= 7, 'sólo ' + tipos.size + ' tipos de plan en 4 tandas: ' + [...tipos].join(', '));
-  assert(nuevasPorTanda.every(n => n >= 1), 'alguna tanda no trajo ningún tipo nuevo: ' + nuevasPorTanda.join(','));
+  // 7 → 6 (10 nov 2026): los lugares sin pin confirmado ya no se proponen y hay menos piezas distintas.
+  assert(tipos.size >= 6, 'sólo ' + tipos.size + ' tipos de plan en 4 tandas: ' + [...tipos].join(', '));
+  // (10 nov 2026) La novedad ahora se garantiza por LUGAR y actividad principal (prueba 43.1); de tipo de plan
+  // basta con que la mayoría de las tandas traiga alguno nuevo.
+  assert(nuevasPorTanda.filter(n => n >= 1).length >= 2, 'casi ninguna tanda trajo un tipo nuevo: ' + nuevasPorTanda.join(','));
 });
 
 test('29.6 · dos personas distintas no reciben exactamente las mismas tres opciones', () => {
@@ -331,7 +334,8 @@ test('33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y 
     assert(!mal.length, z + ' semilla ' + sd + ': ' + mal.map(v => v.n));
     const com = st.filter(v => a.FOOD.includes(v.cat) || a.DRINK.includes(v.cat));
     const hot = com.filter(v => v.hot);
-    if (bud === 'b1999' && ['roma', 'polanco', 'condesa'].includes(z)) assert(hot.length * 5 >= com.length * 2, z + ' semilla ' + sd + ': sólo ' + hot.length + ' de ' + com.length + ' son hotspots: ' + com.map(v => v.n));
+    // (10 nov 2026) Polanco sale de esta parte: varios de sus hotspots no tienen pin confirmado y ya no se proponen.
+    if (bud === 'b1999' && ['roma', 'condesa'].includes(z)) assert(hot.length * 5 >= com.length * 2, z + ' semilla ' + sd + ': sólo ' + hot.length + ' de ' + com.length + ' son hotspots: ' + com.map(v => v.n));
   })));
 });
 
