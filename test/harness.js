@@ -30,7 +30,7 @@ function makeApp(stateOverrides = {}, opts = {}) {
   const azar = () => { semilla = (Math.imul(semilla, 1664525) + 1013904223) >>> 0; return semilla / 4294967296; };
   const MathS = Object.create(Math); MathS.random = azar;
   const cryptoS = { getRandomValues: a => { for (let i = 0; i < a.length; i++) a[i] = Math.floor(azar() * 4294967296); return a; } };
-  const win = { innerWidth: 1200, localStorage, crypto: cryptoS, addEventListener() {}, removeEventListener() {} };
+  const win = { innerWidth: opts.ancho || 1200, localStorage, crypto: cryptoS, addEventListener() {}, removeEventListener() {} };
   const doc = { hidden: false, addEventListener() {}, removeEventListener() {}, querySelectorAll: () => [] };
 
   class DCLogic {

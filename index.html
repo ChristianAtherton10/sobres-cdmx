@@ -3522,9 +3522,13 @@ class Component extends DCLogic {
     if (q.get('v') === 'rapido') out.rapido = true;
     // A/B "paso 1 fácil" (8 nov 2026): ?v=facil se queda toda la sesión (sessionStorage,
     // como los UTM) aunque naveguen o recarguen. Sin parámetro: la versión actual.
-    let facil = q.get('v') === 'facil';
-    try { if (facil) sessionStorage.setItem('sobres_v', 'facil');
-      else if (!q.get('v') && sessionStorage.getItem('sobres_v') === 'facil') facil = true; } catch(e) {}
+    // (13 nov 2026, fundador) En CELULAR la versión de 3 pasos es la actual: abre sin parámetro. En computadora
+    // sigue la versión de siempre. ?v=clasica (o ?v=rapido) la evita; ?v=facil la fuerza en cualquier pantalla.
+    // El ancho se mira una sola vez, al llegar: girar el teléfono a media búsqueda no cambia de versión.
+    const vq = q.get('v'); let facil = vq === 'facil';
+    const celular = typeof window !== 'undefined' && typeof window.innerWidth === 'number' && window.innerWidth < 820;
+    try { if (vq === 'facil' || vq === 'clasica') sessionStorage.setItem('sobres_v', vq);
+      else if (!vq) { const g = sessionStorage.getItem('sobres_v'); facil = g === 'facil' || (g !== 'clasica' && celular); } } catch(e) { if (!vq) facil = celular; }
     // Sin "Día" en el paso 2 (9 nov 2026): el plan NO tiene fecha (when 'libre'), sólo horario.
     if (facil) { out.facil = true; out.facilPaso = 1; out.when = 'libre'; out.customDate = '';
       if (!z) { out.zone = 'roma'; out.zonesSel = this.conGrupos(['roma', 'juarez']); } }   // Roma · Condesa y Juárez · Centro

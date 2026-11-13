@@ -716,4 +716,16 @@ test('40.4 · en ?v=facil "Hasta" no lleva "(+1 día)" (se cortaba en celular); 
   assert(makeApp({}).renderVals().toOpts.some(o => /\+1 día/.test(o.label)), 'la actual perdió +1 día');
 });
 
+test('38.9 · en celular la versión de 3 pasos es la actual (sin parámetro); en computadora sigue la de siempre; ?v=clasica la evita (13 nov 2026)', () => {
+  const cel = makeApp({}, { ancho: 375 });
+  assert(cel.state.facil && cel.state.facilPaso === 1 && cel.state.when === 'libre' && cel.versionAB() === 'facil', 'celular sin parámetro no abrió los 3 pasos');
+  assert(cel.facilVals('home', () => {}).facilOpts.length === 6, 'paso 1 sin sus 6 opciones');
+  const compu = makeApp({}, { ancho: 1280 });
+  assert(!compu.state.facil && compu.versionAB() === 'actual', 'en computadora cambió la versión');
+  const clasica = makeApp({}, { ancho: 375, search: '?v=clasica' });
+  assert(!clasica.state.facil, '?v=clasica debe dejar la versión de siempre en celular');
+  assert(!makeApp({}, { ancho: 375, search: '?v=rapido' }).state.facil, '?v=rapido no debe abrir los 3 pasos');
+  assert(makeApp({}, { ancho: 1280, search: '?v=facil' }).state.facil, '?v=facil debe seguir forzándola en computadora');
+});
+
 if (require.main === module) report();
