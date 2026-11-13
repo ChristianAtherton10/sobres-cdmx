@@ -91,3 +91,13 @@ salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pau
 - Decisiones para el fundador: (1) tope estricto por defecto (89% de búsquedas < 3 salidas completas hasta verificar precios);
   (2) ¿respaldar horario y rango de precio en vivo con Google Places para las paradas que se muestran? (~3× llamadas);
   (3) las pruebas de lógica anteriores corren con «precio por confirmar» aceptado.
+
+## 13 nov 2026 — ajustes del fundador tras ver la preview
+- Paso 1: «Cenar rico» → «Foodie». Tarjeta de la tanda: sólo horario · precio (fuera las 4 respuestas y el aviso rojo;
+  condiciones y desglose se ven al elegir el plan).
+- Decisión: respaldar HORARIO en vivo con Google, NO rango de precio (SOBRES usa un precio, aunque sea estimado).
+  Fichas en pausa sólo por horario (237; 157 con place_id y pin; 68 con precio respaldado) entran «a prueba» y se
+  muestran sólo si Google confirma horario. Máx. 3 rondas; `generar` espera a Google (≤1.5 s por ronda).
+- Medido en local con Google real (375×812): primera 1,076 ms; «Ver otras opciones» 660–1,450 ms (antes sin respaldo 160–210).
+- La llave de Google en Vercel sólo existe en Production y en Preview de `feat/places`: en la preview de
+  `pasada-profunda` /api/lugar da 503 y el respaldo se apaga solo. Pruebas 47.1–47.6. Suite: 332.

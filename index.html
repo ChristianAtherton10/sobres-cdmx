@@ -3383,7 +3383,8 @@ class Component extends DCLogic {
     const ids = (lista || []).map(v => v.id).slice(0, 16); if (!ids.length || typeof fetch === 'undefined') return Promise.resolve(false);
     ids.forEach(i => { this._gPedidos[i] = 1; });
     const lotes = []; for (let i = 0; i < ids.length; i += 8) lotes.push(ids.slice(i, i + 8));
-    const pide = L => fetch('/api/lugar?ids=' + encodeURIComponent(L.join(','))).then(r => r.ok ? r.json() : null)
+    // 503 = este despliegue no tiene la llave de Google: no se vuelve a intentar en esta visita.
+    const pide = L => fetch('/api/lugar?ids=' + encodeURIComponent(L.join(','))).then(r => { if (r.status === 503) this._sinRespaldoG = true; return r.ok ? r.json() : null; })
       .then(j => { if (!j || !j.lugares) return; L.forEach(i => { if (j.lugares[i]) this._g[i] = j.lugares[i]; }); }).catch(() => {});
     return Promise.race([Promise.all(lotes.map(pide)).then(() => true), new Promise(ok => setTimeout(() => ok(false), ms || 1500))]);
   }
