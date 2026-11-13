@@ -1977,6 +1977,9 @@ class Component extends DCLogic {
   // Datos verificados con fuente y fecha (precio, cover, horario, cocina, último acceso). Conserva el ID.
   aplicaVerificado(v) { const x = this.verificadoDe(v); if (!x) return;
     if (x.oh) { v.oh = x.oh.slice(); v.horaEstimada = false; }
+    // Horario distinto por día (Excel de pendientes): la ventana del día se pone al armar cada búsqueda.
+    if (x.ohDia) { v.ohDia = x.ohDia; v.ohBase = (x.oh || v.oh).slice(); (this._porBusqueda = this._porBusqueda || []).push(v); }
+    if (x.hrsFuente) v.hrsFuente = x.hrsFuente;
     if (x.hrs) { v.hrs = x.hrs; v.hrsFuente = x.fuente || v.hrsFuente; }
     if (x.dias) { v.dias = x.dias.length ? x.dias.slice() : null; v.cerrado = null; }
     ['cocinaCierra', 'ultimoAcceso', 'duracionMin', 'web', 'tel', 'grupoMin', 'grupoMax'].forEach(k => { if (x[k] != null) v[k] = x[k]; });
@@ -1986,10 +1989,19 @@ class Component extends DCLogic {
     if (x.precio || x.estado) { const pi = v.propinaIncluida, ant = v.ppUnknown ? v.ppAnterior : v.pp;
       this.ponPrecio(v, { precio: x.precio, estado: x.estado || 'verificado', fuente: x.fuente, url: x.url, fecha: x.fecha, ppAnterior: ant, nota: x.nota || '' });
       if (pi && !x.precio) v.propinaIncluida = true; }
+    // Precio por GRUPO (mesa, lancha, cuarto): se divide una sola vez entre quienes van, en cada búsqueda.
+    if (x.precio && x.precio.unidad === 'grupo' && x.precio.rep > 0) { v.pGrupo = x.precio.rep; (this._porBusqueda = this._porBusqueda || []).push(v); }
     if (x.activar) { v.recomendable = undefined; v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
     if (x.condicion != null) { v.condicion = x.condicion || undefined; if (x.condicion) { v.sesion = true; v.sesionPorConfirmar = true; } }
     if (v.reactivado) v.pNotaLugar = ('Reactivado: ' + (x.fuente || 'fuente vigente') + ' (' + x.fecha + ') confirmó ' + v.reactivado.motivos.join(' y ') + '. ' + (v.pNotaLugar || '')).trim();
     v.verificado = x.fecha; }
+  // Datos de una ficha que dependen de la búsqueda: la ventana del día (horario distinto por día) y el
+  // precio por persona de una tarifa por grupo. Con Google en vivo ya aplicado, manda Google.
+  ajustaPorBusqueda() { const L = this._porBusqueda; if (!L || !L.length) return;
+    const iso = this.sinFecha() ? '' : this.fechaPlanISO(), dia = iso ? this.diaSemana(iso) : null, n = Math.max(1, this.state.groupSize || 1);
+    L.forEach(v => {
+      if (v.ohDia && !v.gHoras) { const w = dia != null ? v.ohDia[dia] : null; v.oh = (w || v.ohBase).slice(); }
+      if (v.pGrupo) { v.pp = Math.ceil(v.pGrupo / n); v.ppUnknown = false; v.pOtraUnidad = undefined; v.pFalta = ''; v.pCanasta = ((v.pCanasta || '').replace(/ ?\(\$[\d,]+ por grupo, entre \d+\)$/, '') + ' ($' + v.pGrupo.toLocaleString('es-MX') + ' por grupo, entre ' + n + ')').trim(); } }); }
   // Precio AUDITADO: guarda el rango, la unidad, la moneda y la canasta.
   // `pp` (lo que usa el presupuesto) pasa a ser el consumo REPRESENTATIVO,
   // no el mínimo: el plato más barato no es lo que cuesta hacer el plan.
@@ -3827,6 +3839,7 @@ class Component extends DCLogic {
     const v = p.stops[0]; return !!(v.evento || (p.plantilla && p.plantilla.indexOf('+') < 0 && !p.suelto) || this.actsDe(v).indexOf('atraccion') >= 0); }
   aplicaAjuste(a) { if (!a) return; this.setState(Object.assign({ agotado: null }, a.patch), () => this.generar(() => this.runSearch({ nueva: true }))); }
   engine(seed, opts) {
+    this.ajustaPorBusqueda();
     this.refrescaGoogle();   // horario en vivo ya recibido, para la fecha y el horario de esta búsqueda
     const r0 = this.engine0(seed, opts);
     // Perezoso: los ajustes se calculan cuando la pantalla los pide (son hasta 6 búsquedas de prueba).

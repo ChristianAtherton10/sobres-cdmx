@@ -66,6 +66,13 @@ for i, p in PINES.items():
 # Duplicados que aparecieron al confirmar pines: la ficha de OSM es la misma sala que ya estaba.
 BAJAS = {'os-n11737763876': 'Duplicado de Cinépolis · Arcos Bosques, ID cdmx-4030 (mismo pin: Paseo de los Tamarindos 90).',
          'os-n11770329070': 'Duplicado de Taquería Los Parados, ID cdmx-2028 (Monterrey 333); además estaba clasificada como café.'}
+# Lo que el fundador llenó en el Excel de pendientes (importa_pendientes.py). Se suma a lo anterior por ID;
+# si una ficha ya tenía datos de esta pasada, lo del Excel manda en los campos que trae.
+EXCEL = os.path.join(AQUI, 'verificados_excel.json')
+if os.path.exists(EXCEL):
+    for i, x in json.load(open(EXCEL))['items'].items():
+        base = dict(items.get(i, {})); res = sorted(set(base.get('resuelve', [])) | set(x.get('resuelve', [])))
+        base.update(x); base['resuelve'] = res; items[i] = base
 salida = {'version': 1, 'fecha': FECHA, 'items': items, 'bajas': BAJAS, 'altas': []}
 with open(os.path.join(RAIZ, 'data', 'verificados.js'), 'w') as fh:
     fh.write('// Generado por reportes/pasada/build_verificados.py — no editar a mano.\n')

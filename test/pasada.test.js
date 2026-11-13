@@ -504,4 +504,34 @@ test('47.6 · tarjeta de la tanda: una sola línea con horario y un precio (sin 
   assert(a.FACIL()[0][2] === 'Foodie', 'la primera opción del paso 1 debe decir «Foodie»');
 });
 
+section('48 · Excel de pendientes: lo que llena el fundador entra por ID (13 nov 2026)');
+
+test('48.1 · horario distinto por día: la ventana es la del día del plan; sin fecha, la que se cumple todos los días', () => {
+  const base = nueva({}); const v0 = soloHor(base)[0];
+  const ver = { [v0.id]: { fecha: '2026-11-12', fuente: 'Fundador (Excel de pendientes)', oh: [13, 23], dias: [1, 2, 3, 4, 5, 6], hrs: 'Lun–jue 13:00–23:00. Vie–sáb 13:00–01:00. Dom cerrado',
+    ohDia: { 1: [13, 23], 2: [13, 23], 3: [13, 23], 4: [13, 23], 5: [13, 25], 6: [13, 25] }, resuelve: ['horario'] } };
+  const a = nueva({ when: 'fecha', customDate: '2026-11-20' }, { verificados: ver }); const v = a.cat().find(x => x.id === v0.id);   // viernes
+  assert(a.esRecomendable(v) && v.reactivado && !v.horaEstimada, 'con el horario resuelto la ficha debe reactivarse');
+  a.engine(0, {}); assert(v.oh.join() === '13,25' && a.atHour(v, 23.5), 'viernes cierra a la 1 am: ' + v.oh);
+  a.setState({ customDate: '2026-11-18' }); a.engine(0, {}); assert(v.oh.join() === '13,23' && !a.atHour(v, 23.5), 'miércoles cierra a las 11 pm: ' + v.oh);
+  a.setState({ customDate: '2026-11-22' }); assert(!a.abreEseDia(v), 'domingo cerrado');
+  a.setState({ when: 'libre', customDate: '', planDate: '' }); a.engine(0, {}); assert(v.oh.join() === '13,23', 'sin fecha: la ventana que se cumple cualquier día que abre');
+});
+
+test('48.2 · precio por grupo: se divide UNA vez entre quienes van y cambia con el tamaño del grupo', () => {
+  const base = nueva({}); const v0 = base.cat().find(x => x.cat === 'Boliche' && base.esRecomendable(x)) || base.cat().find(x => base.esRecomendable(x) && x.ppUnknown && !x.evento);
+  const ver = { [v0.id]: { fecha: '2026-11-12', fuente: 'Sitio del lugar', url: 'https://ejemplo.mx/pistas', estado: 'verificado', precio: { min: 800, rep: 800, max: 800, unidad: 'grupo', moneda: 'MXN', canasta: 'Pista por hora' } } };
+  const a = nueva({ groupSize: 4 }, { verificados: ver }); const v = a.cat().find(x => x.id === v0.id);
+  a.engine(0, {}); assert(v.pp === 200 && !v.ppUnknown && a.respaldoDe(v) === 'firme', '4 personas: $200 c/u, salió ' + v.pp + ' ' + a.respaldoDe(v));
+  a.setState({ groupSize: 3 }); a.engine(0, {}); assert(v.pp === 267, '3 personas: $267 c/u, salió ' + v.pp);
+  assert(/\$800 por grupo, entre 3/.test(v.pCanasta) && !/entre 4/.test(v.pCanasta), 'la ficha debe decir cómo se repartió: ' + v.pCanasta);
+});
+
+test('48.3 · un precio sin liga entra como ESTIMADO: cuenta para el tope y la app no lo presenta como verificado', () => {
+  const base = nueva({}); const v0 = base.cat().find(x => base.esRecomendable(x) && x.ppUnknown && x.cat === 'Restaurante');
+  const ver = { [v0.id]: { fecha: '2026-11-13', fuente: 'Fundador (Excel de pendientes)', url: '', estado: 'estimado', precio: { min: 450, rep: 450, max: 450, unidad: 'persona', moneda: 'MXN', canasta: '' } } };
+  const a = nueva({}, { verificados: ver }); const v = a.cat().find(x => x.id === v0.id);
+  assert(v.pp === 450 && v.pEstado === 'estimado' && a.respaldoDe(v) === 'estimado' && !a.sinRespaldo(v), 'estimado: ' + v.pp + ' ' + v.pEstado);
+});
+
 if (require.main === module) report();
