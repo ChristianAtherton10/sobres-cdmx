@@ -120,12 +120,7 @@
 .sb-facil-conf{padding-bottom:100px}
 .sb-regen{opacity:.4;pointer-events:none;transition:opacity .12s}
 @media (max-width:819px){ .sb-home-facil .sb-facil-conf.sb-nq{padding-bottom:120px!important} }
-.sb-q4{margin:10px 0 0;display:grid;gap:9px}
-.sb-q4>div{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;align-items:baseline}
-.sb-q4 dt{font:700 10.5px/1.3 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)}
-.sb-q4 dd{margin:0;font:500 14px/1.4 var(--font-body);color:var(--ink);overflow-wrap:anywhere}
-.sb-q4 dd b{font-weight:700}
-.sb-q4-h{display:block;font:600 12.5px/1.3 var(--font-body);color:var(--color-neutral-700);margin-top:2px}
+.sb-q1{margin:10px 0 0;font:600 13.5px/1.35 var(--font-body);color:var(--color-neutral-700)}
 .sb-cta-fija{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:6;background:var(--color-bg);padding:10px 16px 12px;box-shadow:0 -10px 14px -12px rgba(0,0,0,.25)}
 @media (min-width:820px){.sb-cta-fija{position:sticky;bottom:0;padding:12px 0}}
 /* ═════════════════════ Tema SOBRES ═════════════════════
@@ -848,13 +843,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 </div>
 <div style="padding:4px 16px 16px;display:flex;flex-direction:column;flex:1">
-<dl class="sb-q4">
-<div><dt>Qué hacemos</dt><dd><b>{{ o.que }}</b><span class="sb-q4-h">{{ o.horario }}</span></dd></div>
-<sc-if value="{{ o.hayGusta }}" hint-placeholder-val="{{ true }}"><div><dt>Por qué</dt><dd>{{ o.gusta }}</dd></div></sc-if>
-<div><dt>Cuánto</dt><dd>{{ o.cuanto }}</dd></div>
-<div><dt>Cómo vamos</dt><dd>{{ o.como }}</dd></div>
-</dl>
-<sc-if value="{{ o.hayAvisoOp }}" hint-placeholder-val="{{ false }}"><p class="sb-note" role="note" style="margin:8px 0 0;font-size:12.5px;color:var(--electrico);font-weight:600">{{ o.avisoOp }}</p></sc-if>
+<p class="sb-q1">{{ o.resumen }}</p>
 <ol class="sb-ruta">
 <sc-for list="{{ o.stops }}" as="st" hint-placeholder-count="3"><li><span class="h">{{ st.time }}</span><span style="min-width:0"><span class="n" style="display:block">{{ st.name }}</span><span class="c" style="display:block">{{ st.sub }}</span></span></li></sc-for>
 </ol>
@@ -2917,7 +2906,9 @@ class Component extends DCLogic {
     // porque los trayectos saldrían de un punto inventado. Vuelve cuando se confirma (pendientes).
     if (v.coordAprox && !v.evento && !v.deGoogle) return false;
     if (v.recomendable === true) return true;
-    if (v.recomendable === false) return false;
+    // «A prueba» (13 nov 2026): una ficha en pausa SÓLO por horario y con identificador de Google puede ser
+    // candidata mientras se arma la tanda; antes de mostrarse, Google confirma su horario en vivo o se descarta.
+    if (v.recomendable === false) return !!(this._aPrueba && v.pausa && !v.gCerrado && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && this.soloHorario(v));
     const n = this.strip(v.n);
     // Un lugar cerrado (remodelación, cierre temporal) no se propone.
     if (v.cerradoTemporal || /\bcerrad[oa]\b|cierre temporal/.test(n)) return false;
@@ -3339,6 +3330,73 @@ class Component extends DCLogic {
     const ab = this.googleAbierto(g, fecha, h);
     return ab === false ? 'Según Google, a esa hora está cerrado. Cambia la hora o el lugar.' : '';
   }
+  // ── Horario respaldado EN VIVO con Google (13 nov 2026; decisión del fundador: horario sí, rango de precio no) ──
+  // Sólo para las paradas que se van a mostrar. Queda en memoria de esta visita (términos de Google).
+  soloHorario(v) { if (v._soloH === undefined) { const m = this.motivosPausa(v.pausa || v.pausaAnterior || ''); v._soloH = m.length === 1 && m[0] === 'horario'; } return v._soloH; }
+  // Ventana [abre, cierra] de un día (0 = domingo) con los periodos de Google; dia null = plan sin fecha
+  // (la ventana más común de la semana). Con turno partido se toma el que más cubre el horario pedido.
+  // Devuelve { oh, dias } (oh null si ese día no abre) o null si Google no da horario.
+  ohGoogle(g, dia, rango) {
+    const P = (g && g.periodos) || []; if (!P.length) return null;
+    if (P.some(p => p.open && !p.close)) return { oh: [0, 30], dias: [0, 1, 2, 3, 4, 5, 6] };
+    const porDia = {};
+    P.forEach(p => { if (!p.open || !p.close) return; const a = p.open.hour + (p.open.minute || 0) / 60;
+      let c = p.close.hour + (p.close.minute || 0) / 60 + 24 * ((p.close.day - p.open.day + 7) % 7); if (c <= a) c += 24;
+      (porDia[p.open.day] = porDia[p.open.day] || []).push([a, Math.min(c, 30)]); });
+    const elige = L => { const M = [];
+      L.slice().sort((x, y) => x[0] - y[0]).forEach(w => { const u = M[M.length - 1]; if (u && w[0] - u[1] <= 1) u[1] = Math.max(u[1], w[1]); else M.push(w.slice()); });
+      const sol = w => rango ? Math.max(0, Math.min(w[1], rango[1]) - Math.max(w[0], rango[0])) : 0;
+      return M.sort((x, y) => (sol(y) - sol(x)) || ((y[1] - y[0]) - (x[1] - x[0])))[0]; };
+    const dias = Object.keys(porDia).map(Number).sort((x, y) => x - y); if (!dias.length) return null;
+    if (dia != null) return { oh: porDia[dia] ? elige(porDia[dia]) : null, dias };
+    const cuenta = {}; let mejor = null;
+    dias.forEach(d => { const w = elige(porDia[d]), k = w.join('-'); (cuenta[k] = cuenta[k] || { w, n: 0 }).n++; });
+    Object.keys(cuenta).forEach(k => { const c = cuenta[k]; if (!mejor || c.n > mejor.n || (c.n === mejor.n && c.w[1] > mejor.w[1])) mejor = c; });
+    return { oh: mejor.w, dias };
+  }
+  // Pone en la ficha (sólo en esta visita) el horario que Google da en vivo. Una ficha en pausa únicamente
+  // por horario vuelve a ser recomendable; si Google dice que cerró, sale. El precio no se toca.
+  aplicaGoogleHoras(v) {
+    const g = this.googleDe(v); if (!g || !v || v.evento || (v.sesiones && v.sesiones.length)) return false;
+    this._gV = this._gV || {}; this._gV[v.id] = v;
+    if (g.estado === 'CLOSED_PERMANENTLY' || g.estado === 'CLOSED_TEMPORARILY') { v.recomendable = false; v.gCerrado = true; return true; }
+    const iso = this.sinFecha() ? '' : this.fechaPlanISO(), dia = iso ? this.diaSemana(iso) : null, rg = this.range();
+    const k = (dia == null ? 'x' : dia) + '|' + rg.join('-'); if (v._gk === k) return true;
+    const x = this.ohGoogle(g, dia, rg);
+    if (!x) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; return false; }
+    if (x.oh) v.oh = x.oh.slice();
+    v.dias = x.dias.length >= 7 ? null : x.dias.slice(); v.cerrado = null; v.horaEstimada = false;
+    if ((g.horario || []).length) v.hrs = g.horario.join(' · ');
+    v.hrsFuente = 'Google Maps (en vivo)'; v.gHoras = true; v._gk = k;
+    if (v.pausa && v.recomendable === false && this.soloHorario(v)) { v.pausaAnterior = v.pausa; v.pausa = ''; v.recomendable = undefined; v.reactivadoG = true;
+      v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
+    return true;
+  }
+  // Si cambian la fecha o el horario pedido, la ventana del día se vuelve a calcular con lo ya recibido.
+  refrescaGoogle() { const M = this._gV; if (!M) return; for (const id in M) this.aplicaGoogleHoras(M[id]); }
+  hayRespaldo() { return typeof fetch !== 'undefined' && typeof window !== 'undefined' && !!(window.SOBRES_GID && window.SOBRES_GID.ids) && !this._sinRespaldoG; }
+  // Paradas de la tanda que Google puede respaldar y todavía no se piden en esta visita.
+  porRespaldar(r) { const out = []; ((r && r.plans) || []).forEach(p => (p.stops || []).forEach(v => {
+    if (this.tieneGoogle(v) && !v.evento && !(this._g && this._g[v.id]) && !(this._gNo && this._gNo[v.id]) && out.indexOf(v) < 0) out.push(v); })); return out; }
+  traeHoras(lista, ms) {
+    this._g = this._g || {}; this._gNo = this._gNo || {}; this._gPedidos = this._gPedidos || {};
+    const ids = (lista || []).map(v => v.id).slice(0, 16); if (!ids.length || typeof fetch === 'undefined') return Promise.resolve(false);
+    ids.forEach(i => { this._gPedidos[i] = 1; });
+    const lotes = []; for (let i = 0; i < ids.length; i += 8) lotes.push(ids.slice(i, i + 8));
+    const pide = L => fetch('/api/lugar?ids=' + encodeURIComponent(L.join(','))).then(r => r.ok ? r.json() : null)
+      .then(j => { if (!j || !j.lugares) return; L.forEach(i => { if (j.lugares[i]) this._g[i] = j.lugares[i]; }); }).catch(() => {});
+    return Promise.race([Promise.all(lotes.map(pide)).then(() => true), new Promise(ok => setTimeout(() => ok(false), ms || 1500))]);
+  }
+  // ¿La tanda se sostiene con el horario en vivo? Aplica lo recibido y revisa cada parada a su hora.
+  respaldoOk(r) { let ok = true; ((r && r.plans) || []).forEach(p => (p.stops || []).forEach((v, i) => {
+    this.aplicaGoogleHoras(v);
+    if (!this.esRecomendable(v)) { ok = false; return; }
+    if (!v.gHoras) return;
+    if (!this.abreEseDia(v)) { ok = false; return; }
+    const pc = p.cartelera || (p.porConfirmar && p.porConfirmar[i]), t = (p.times || [])[i];
+    if (!pc && t != null && !this.atHour(v, t)) ok = false; })); return ok; }
+  fotoGen() { const s = this.state, o = {}; ['surpriseN', 'surpriseOn', 'seenStops', 'seenCombos', 'seenVenues', 'seenPlantillas', 'seenCtx', 'regenN', 'agotado', 'results', 'aiCtx', 'aiN', 'counters'].forEach(k => { o[k] = s[k]; });
+    return { st: o, ses: Array.isArray(this._sesionVistos) ? this._sesionVistos.slice() : this._sesionVistos }; }
   // ── Más lugares para armar el plan: Google Places EN VIVO (4 nov 2026) ──
   // Según lo que pidió la persona (zona, ambiente, tipo de comida) se piden a
   // /api/buscar hasta 3 listas; esos lugares entran al motor con las mismas
@@ -3563,7 +3621,7 @@ class Component extends DCLogic {
     amb.forEach(a => franjas.forEach(f => (R.recetas[a][f] || []).forEach(t => {
       const mezcla = amb.filter(b => t.some(x => piezasDe[b].has(x))).length;
       if (!plantillas.some(p => p.t.join() === t.join())) plantillas.push({ t, a, f, peso: mezcla }); })));
-    // ?v=facil: "Cenar rico" de noche también puede ser cena y luego un trago (como
+    // ?v=facil: "Foodie" de noche también puede ser cena y luego un trago (como
     // "Cena y speakeasy"): de postre o café abiertos de noche hay muy pocos.
     if (this.state.facil && amb.indexOf('foodie') >= 0 && franjas.indexOf('noche') >= 0 && !this.state.sinAlcohol && !this.esFamiliar() && R.piezas.bar)
       [['cena_rica', 'bar'], ['cena_rapida', 'bar']].forEach(t => { if (!plantillas.some(p => p.t.join() === t.join())) plantillas.push({ t, a: 'foodie', f: 'noche', peso: 1 }); });
@@ -3764,6 +3822,7 @@ class Component extends DCLogic {
     const v = p.stops[0]; return !!(v.evento || (p.plantilla && p.plantilla.indexOf('+') < 0 && !p.suelto) || this.actsDe(v).indexOf('atraccion') >= 0); }
   aplicaAjuste(a) { if (!a) return; this.setState(Object.assign({ agotado: null }, a.patch), () => this.generar(() => this.runSearch({ nueva: true }))); }
   engine(seed, opts) {
+    this.refrescaGoogle();   // horario en vivo ya recibido, para la fecha y el horario de esta búsqueda
     const r0 = this.engine0(seed, opts);
     // Perezoso: los ajustes se calculan cuando la pantalla los pide (son hasta 6 búsquedas de prueba).
     if (r0 && !(opts && (opts.subBusqueda || opts.sinAjustes)) && (r0.plans || []).filter(p => this.planCompleto(p)).length < 3) {
@@ -4228,7 +4287,7 @@ class Component extends DCLogic {
         // Sin un ambiente de copas (fiesta, romántico, amigos o "lo que sea"), ni bares ni
         // rooftops ni antros: "Tranqui + Cultural" no termina en un rooftop.
         && (sinCopas ? (['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Antro', 'Salón de baile', 'Cantina'].indexOf(v.cat) < 0
-          // ?v=facil, "Cenar rico" de noche: un trago después de cenar sí (nunca antro ni salón).
+          // ?v=facil, "Foodie" de noche: un trago después de cenar sí (nunca antro ni salón).
           || (copasCena && ['Bar', 'Bar de autor', 'Speakeasy', 'Mezcalería', 'Rooftop', 'Cantina'].indexOf(v.cat) >= 0)) : true));
       const rr = this.armarConRecetas({ pool: poolReceta, from, to, max, dseed, nivel, rk, firmasDe, avoidC, bloq, exigeBaile, pideComida, yaEnPlan: vistoPlan.size ? yaEnPlan : null, soloNuevos: !!opts.soloNuevos && vistoPlan.size > 0, repitePrin: !!opts.repitePrin,
         avoidP: new Set(opts.avoidPlantillas || []) });
@@ -5710,7 +5769,7 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state;
     const view = s.view;
-    const r = s.results || ((view === 'results' || view === 'plan' || view === 'group') ? this.engine() : null);
+    const r = (this._holdR && s.regenerando && view === 'results') ? this._holdR : (s.results || ((view === 'results' || view === 'plan' || view === 'group') ? this.engine() : null));
     const sOn = s.syncOn && !!s.userName;
     const navDef = [['home','Hoy'],['map','Mapa'],['plan','Mis planes'],['saved','Guardados'],['profile','Perfil']];
     const goPlan = () => { this.setState({ planView: 'list', sendOpen: false, swapIdx: null, results: r || this.engine() }); this.nav('plan'); };
@@ -6579,11 +6638,32 @@ class Component extends DCLogic {
       if (this._genTk !== tk) return;   // llegó una solicitud más nueva: ésta ya no pinta nada
       // Si el catálogo todavía no llega (celular lento), se espera hasta 20 s.
       if ((!this.state.catLoaded || !gListo) && espera++ < 200) { setTimeout(correr, 100); return; }
-      try { fn(); }
-      catch (e) { try { console.error('[SOBRES generar]', e); } catch (_) {} this.toast('No pudimos armar otras opciones. Te dejamos las que ya tenías.'); }
-      finally { if (this._genTk === tk) { this._gen = null;
+      const fin = () => { if (this._genTk !== tk) return; this._gen = null; this._holdR = null;
         this._genMs = Math.round(((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - t0);
-        this.setState({ generando: false, regenerando: false, genFase: 0, planEditando: false }); } }
+        this.setState({ generando: false, regenerando: false, genFase: 0, planEditando: false }); };
+      // Horario en vivo (13 nov 2026): la tanda se arma admitiendo «a prueba» fichas en pausa sólo por horario; se pide
+      // a Google el horario de las paradas que saldrían y, si alguna no se sostiene, se vuelve a armar (máx. 3 rondas;
+      // la última ya no admite nada a prueba). Mientras tanto se queda a la vista la tanda anterior o «Un momento…».
+      const red = this.hayRespaldo(); const foto = red ? this.fotoGen() : null;
+      if (red && enRes) this._holdR = this.state.results;
+      const ronda = n => {
+        if (this._genTk !== tk) return;
+        this._aPrueba = red && n < 2;
+        try { fn(); }
+        catch (e) { this._aPrueba = false; try { console.error('[SOBRES generar]', e); } catch (_) {} this.toast('No pudimos armar otras opciones. Te dejamos las que ya tenías.'); fin(); return; }
+        this._aPrueba = false;
+        if (!red) { fin(); return; }
+        this.setState({ gTick: (this.state.gTick || 0) + 1 }, () => {
+          if (this._genTk !== tk) return;
+          const r = this.state.results, pedir = this.porRespaldar(r);
+          const sigue = () => { if (this._genTk !== tk) return;
+            pedir.forEach(v => { if (!this._g[v.id]) this._gNo[v.id] = 1; });
+            if (this.respaldoOk(r) || n >= 3) { fin(); return; }
+            this._sesionVistos = foto.ses; this.setState(foto.st, () => ronda(n + 1)); };
+          if (pedir.length) this.traeHoras(pedir, 1500).then(sigue, sigue); else sigue();
+        });
+      };
+      ronda(0);
     };
     setTimeout(correr, enRes ? (corto ? 0 : 110) : (corto ? 100 : 400));
   }
@@ -6649,6 +6729,10 @@ class Component extends DCLogic {
     else if (st.length > 1 && st.every((v, i) => i === 0 || (this.legKm(st[i - 1], v) || 9) <= 0.9)) out.push('todo queda a unas cuadras');
     if (st.some(v => v.evento && !v.concierto)) out.push('sólo pasa en estas fechas');
     return out.length ? out.slice(0, 2).join(' · ') + '.' : ''; }
+  // Una sola línea para la tarjeta de la tanda: horario y lo que cuesta por persona (un precio, no un rango).
+  resumenTarjeta(p, horario) { const st = p.stops || [], c = this.costoPlan(st, p.times); const sinP = st.filter(v => v.ppUnknown && !this.accesoLibre(v)).length;
+    const costo = sinP === st.length ? 'precio por confirmar' : (c.seguro ? '$' : '~$') + c.total.toLocaleString('es-MX') + ' por persona' + (sinP ? ' + ' + (sinP === 1 ? '1 lugar' : sinP + ' lugares') + ' por confirmar' : '');
+    return [horario, costo].filter(Boolean).join(' · '); }
   cuantoCuesta(p) { const st = p.stops || [], c = this.costoPlan(st, p.times); const sinP = st.filter(v => v.ppUnknown && !this.accesoLibre(v)).length;
     if (sinP === st.length) return 'Precio por confirmar en ' + (st.length === 1 ? 'este lugar' : 'estos lugares') + '.';
     const partes = ['consumo $' + c.consumo.toLocaleString('es-MX')]; if (c.propina) partes.push('propina ~$' + c.propina); if (c.transporte) partes.push('traslado ~$' + c.transporte);
@@ -6727,11 +6811,11 @@ class Component extends DCLogic {
   // ── ?v=facil: paso 1 de un toque + "Confirma y listo" (8 nov 2026) ──
   // `h`: horario que se propone en el paso 2 según lo elegido (10 nov 2026). Antes todo arrancaba de 7 pm a 2 am:
   // "En familia" o "Cultural" salían de noche, con los museos y los parques ya cerrados.
-  FACIL() { return [['cenar', '🍽️', 'Cenar rico', { vibes: ['foodie'], h: [19, 24] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'], h: [20, 27] }],
+  FACIL() { return [['cenar', '🍽️', 'Foodie', { vibes: ['foodie'], h: [19, 24] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'], h: [20, 27] }],
     ['tranqui', '☕', 'Tranqui', { vibes: ['chill'], h: [11, 18] }], ['cultural', '🎭', 'Cultural', { vibes: ['cultural'], h: [11, 18] }],
     ['romantico', '💘', 'Romántico', { vibes: ['romántico'], who: 'date', groupSize: 2, h: [19, 25] }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia', groupSize: 4, h: [12, 19] }]]; }
   // ?v=facil en 3 pasos (8 nov 2026, 2ª versión): 1) qué se les antoja (avanza solo; con
-  // "Cenar rico" sale el tipo de comida y ése avanza), 2) dónde y cuándo, 3) con quién y
+  // "Foodie" sale el tipo de comida y ése avanza), 2) dónde y cuándo, 3) con quién y
   // cuánto → "Ver mis 3 planes". Pasos 2 y 3 con "← Atrás".
   facilVals(view, lanzar) {
     const s = this.state; if (!s.facil) return { facilP1: false, facilP2: false, facilP3: false };
@@ -6746,7 +6830,7 @@ class Component extends DCLogic {
             const quien = cfg.who ? { who: cfg.who, groupSize: cfg.groupSize } : (['date', 'familia'].indexOf(s.who) >= 0 ? { who: 'amigos', groupSize: 4 } : {});
             this.setState(Object.assign({ cocinas: [], facilOpcion: k, vibes: cfg.vibes.slice(), planFrom: cfg.h[0], planTo: cfg.h[1] }, quien, k === 'cenar' ? {} : { facilPaso: 2 }),
               () => { if (k !== 'cenar') { try { window.scrollTo(0, 0); } catch(e) {} } }); } }; }),
-      // "Cenar rico": el tipo de comida (como en la versión actual) y al elegirlo avanza solo.
+      // "Foodie": el tipo de comida (como en la versión actual) y al elegirlo avanza solo.
       facilCocinaOn: enHome && paso === 1 && cenar,
       facilCocinaOpts: [['', 'Todo tipo']].concat(this.COCINAS()).map(([k, l]) => ({ label: l, aria: l,
         pick: () => { this.evPaso1('cocina_' + (k || 'todo')); this.setState({ cocinas: k ? [k] : [], facilPaso: 2 }, () => { try { window.scrollTo(0, 0); } catch(e) {} }); } })),
@@ -6847,7 +6931,9 @@ class Component extends DCLogic {
         condicionada: this.condicionesPlan(st).length > 0,
         // Por qué esta opción no llena la ventana, no trae comida o cuesta menos
         // que el rango (reglas del 3 nov 2026). Vacío si cumple todo.
-        que: this.queHacemos(p), gusta: this.porQueGusta(p), hayGusta: !!this.porQueGusta(p), cuanto: this.cuantoCuesta(p), como: this.comoNosMovemos(p),
+        // (13 nov 2026, fundador: «es demasiado texto») La tarjeta de la tanda sólo lleva horario y costo; el desglose,
+        // el porqué y las condiciones se ven al elegir el plan.
+        resumen: this.resumenTarjeta(p, p.cartelera ? 'Según cartelera' : rs.horario),
         elegirTxt: st.length === 1 ? 'Elegir este lugar' : 'Elegir este plan',
         porQue: p.ideaNueva ? 'Una idea distinta a lo que sueles elegir; cumple lo mismo que pediste.' : this.porQue(st), hayPorQue: !!(p.ideaNueva || this.porQue(st)),
         // (F6) Ya no se avisa "termina antes de la hora que pediste": las paradas son las que aportan, no las que llenan el horario.

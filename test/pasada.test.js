@@ -422,4 +422,86 @@ test('46.6 · con historial suficiente, una de las tres opciones es una idea dis
   assert(total >= 2 && conIdea === total, 'con historial, las tres fueron "lo de siempre" en ' + (total - conIdea) + ' de ' + total + ' tandas');
 });
 
+section('47 · Horario respaldado en vivo con Google (13 nov 2026): horario sí, rango de precio no');
+
+const PER = (d, h1, m1, d2, h2, m2) => ({ open: { day: d, hour: h1, minute: m1 || 0 }, close: { day: d2, hour: h2, minute: m2 || 0 } });
+const SEMANA = (h1, h2) => [0, 1, 2, 3, 4, 5, 6].map(d => PER(d, h1, 0, h2 >= 24 ? (d + 1) % 7 : d, h2 % 24, 0));
+const soloHor = a => a.cat().filter(v => v.pausa && v.recomendable === false && !v.coordAprox && !v.evento && a.motivosPausa(v.pausa).join() === 'horario');
+
+test('47.1 · la ventana del día sale de los periodos de Google: pasada la medianoche, 24 horas, turno partido, día cerrado y sin fecha', () => {
+  const a = nueva({});
+  const bar = { periodos: [PER(4, 18, 0, 5, 2, 0), PER(5, 18, 0, 6, 2, 30), PER(6, 18, 0, 0, 2, 30), PER(3, 18, 0, 3, 23, 0)] };
+  assert(a.ohGoogle(bar, 5).oh.join() === '18,26.5', 'viernes 6 pm–2:30 am: ' + JSON.stringify(a.ohGoogle(bar, 5)));
+  assert(a.ohGoogle(bar, 1).oh === null && a.ohGoogle(bar, 1).dias.join() === '3,4,5,6', 'lunes cerrado, abre de mié a sáb');
+  assert(a.ohGoogle(bar, null).oh.join() === '18,26.5', 'sin fecha: la ventana más común');
+  assert(a.ohGoogle({ periodos: [{ open: { day: 0, hour: 0, minute: 0 } }] }, 2).oh.join() === '0,30', '24 horas');
+  const partido = { periodos: [PER(2, 13, 0, 2, 17, 0), PER(2, 19, 30, 2, 23, 0)] };
+  assert(a.ohGoogle(partido, 2, [19, 24]).oh.join() === '19.5,23' && a.ohGoogle(partido, 2, [12, 16]).oh.join() === '13,17', 'turno partido: el que cubre el horario pedido');
+  assert(a.ohGoogle({ periodos: [] }, 2) === null && a.ohGoogle(null, 2) === null, 'sin periodos no se inventa horario');
+});
+
+test('47.2 · una ficha en pausa SÓLO por horario se reactiva con el horario de Google; su precio no cambia aunque Google dé un rango', () => {
+  const a = nueva({ when: 'fecha', customDate: '2026-11-20' }); const L = soloHor(a); assert(L.length >= 50, 'faltan fichas en pausa sólo por horario: ' + L.length);
+  const v = L[0], pp = v.pp, ppU = v.ppUnknown, est = v.pEstado;
+  assert(!a.esRecomendable(v), 'en pausa debe estar fuera');
+  a._g = { [v.id]: { estado: 'OPERATIONAL', periodos: SEMANA(13, 23), horario: ['lunes: 13:00–23:00'], precio: [300, 500] } };
+  assert(a.aplicaGoogleHoras(v) && a.esRecomendable(v), 'no se reactivó');
+  assert(v.oh.join() === '13,23' && v.horaEstimada === false && v.gHoras && v.hrsFuente === 'Google Maps (en vivo)', 'horario mal aplicado: ' + JSON.stringify(v.oh));
+  assert(v.pp === pp && v.ppUnknown === ppU && v.pEstado === est, 'el rango de precio de Google no debe tocar el precio de SOBRES');
+  // Con pausa por horario Y ubicación, el horario de Google no basta.
+  const m = a.cat().find(x => x.pausa && a.motivosPausa(x.pausa).join() === 'horario,ubicacion');
+  if (m) { a._g[m.id] = { estado: 'OPERATIONAL', periodos: SEMANA(13, 23) }; a.aplicaGoogleHoras(m); assert(!a.esRecomendable(m), m.n + ' se reactivó con la ubicación pendiente'); }
+});
+
+test('47.3 · «a prueba»: sólo mientras se arma la tanda, sólo con identificador de Google, y nunca si Google no dio horario o dice que cerró', () => {
+  const a = nueva({}); const [v, w, x] = soloHor(a); a.tieneGoogle = z => z.id !== w.id;
+  assert(!a.esRecomendable(v), 'fuera de la generación no es candidata');
+  a._aPrueba = true;
+  assert(a.esRecomendable(v), 'con identificador de Google debe poder probarse');
+  assert(!a.esRecomendable(w), 'sin identificador de Google no hay con qué respaldarla');
+  a._gNo = { [v.id]: 1 }; assert(!a.esRecomendable(v), 'Google no dio horario: fuera');
+  a._g = { [x.id]: { estado: 'CLOSED_PERMANENTLY', periodos: SEMANA(13, 23) } }; a.aplicaGoogleHoras(x);
+  assert(!a.esRecomendable(x), 'Google dice que cerró: fuera');
+  a._aPrueba = false;
+});
+
+test('47.4 · con el horario de Google un lugar deja de proponerse a una hora en que está cerrado (y el día que no abre)', () => {
+  const a = nueva({ when: 'fecha', customDate: '2026-11-16', planFrom: 19, planTo: 24 });   // lunes
+  const v = a.cat().find(z => a.esRecomendable(z) && !z.evento && !z.sesiones && z.cat === 'Restaurante' && a.atHour(z, 21));
+  a._g = { [v.id]: { estado: 'OPERATIONAL', periodos: [2, 3, 4, 5, 6, 0].map(d => PER(d, 8, 0, d, 17, 0)) } };
+  a.aplicaGoogleHoras(v);
+  assert(!a.abreEseDia(v), 'Google: los lunes no abre');
+  a.setState({ customDate: '2026-11-17' }); a.refrescaGoogle();
+  assert(a.abreEseDia(v) && !a.atHour(v, 21) && a.atHour(v, 13), 'martes 8–17: a las 9 pm está cerrado');
+  assert(!a.respaldoOk({ plans: [{ stops: [v], times: [21] }] }) && a.respaldoOk({ plans: [{ stops: [v], times: [13] }] }), 'la tanda con esa parada a las 9 pm no se sostiene');
+});
+
+test('47.5 · al generar: lo que Google no respalda no llega a la tanda, y la búsqueda no se cuenta dos veces', () => {
+  const corre = dato => { const a = nueva(Object.assign({}, NOCHE, { aceptaSinPrecio: true, planFrom: 20, planTo: 26 })); a.setState({ catLoaded: true });
+    a.traeGoogle = () => Promise.resolve(); a.hayRespaldo = () => true; a.tieneGoogle = () => true; let pedidos = 0;
+    a.traeHoras = lista => { pedidos += lista.length; a._g = a._g || {}; a._gNo = a._gNo || {}; a._gPedidos = a._gPedidos || {};
+      lista.forEach(v => { const g = dato(v); if (g) a._g[v.id] = g; }); return { then: f => f(true) }; };
+    a.generar(() => a.runSearch({ nueva: true })); return { a, pedidos, ps: (a.state.results && a.state.results.plans) || [] }; };
+  // Google no responde nada: ninguna ficha en pausa puede salir.
+  const sin = corre(() => null);
+  assert(sin.ps.length >= 1 && sin.pedidos > 0, 'no generó o no pidió respaldo');
+  sin.ps.forEach(p => p.stops.forEach(v => assert(v.recomendable !== false && !v.pausa, v.n + ' salió en pausa sin respaldo')));
+  assert(sin.a.state.generando === false && sin.a.state.counters.searches === 1 && (sin.a.state.regenN || 0) === 0, 'la búsqueda se contó ' + sin.a.state.counters.searches + ' veces');
+  // Google respalda todo de 6 pm a 3 am: lo mostrado tiene horario confirmado y cabe a su hora.
+  const con = corre(() => ({ estado: 'OPERATIONAL', periodos: SEMANA(18, 27) }));
+  assert(con.ps.length >= 1, 'no generó con respaldo');
+  con.ps.forEach(p => p.stops.forEach((v, i) => { if (v.evento) return; assert(v.gHoras && !v.horaEstimada, v.n + ' sin horario respaldado');
+    assert(p.cartelera || (p.porConfirmar && p.porConfirmar[i]) || con.a.atHour(v, p.times[i]), v.n + ' fuera de horario a las ' + p.times[i]); }));
+  assert(con.a.state.counters.searches === 1, 'con rondas de respaldo la búsqueda se contó ' + con.a.state.counters.searches + ' veces');
+});
+
+test('47.6 · tarjeta de la tanda: una sola línea con horario y un precio (sin «qué hacemos / por qué / cuánto / cómo vamos» ni aviso rojo)', () => {
+  const { a, ps } = busca(Object.assign({}, NOCHE, { aceptaSinPrecio: true })); assert(ps.length >= 1, 'sin opciones');
+  const t = a.resumenTarjeta(ps[0], '8:00 pm–1:00 am');
+  assert(/^8:00 pm–1:00 am · (~?\$[\d,]+ por persona|precio por confirmar)/.test(t) && !/\$\d+\s*[–-]\s*\$?\d+/.test(t), 'línea de la tarjeta: ' + t);
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert(!/sb-q4|Qué hacemos<\/dt>|o\.avisoOp/.test(html), 'la tarjeta todavía trae el bloque de cuatro respuestas o el aviso');
+  assert(a.FACIL()[0][2] === 'Foodie', 'la primera opción del paso 1 debe decir «Foodie»');
+});
+
 if (require.main === module) report();

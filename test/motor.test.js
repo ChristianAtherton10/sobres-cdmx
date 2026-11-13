@@ -989,8 +989,13 @@ test('todas las combinaciones producen un plan válido (o lo explican)', () => {
     const r = app.engine(0);
     r.plans.forEach(p => {
       if (p.spent > max) problemas.push([w, g, z, when].join('/') + ' excede: $' + p.spent);
-      p.stops.forEach((v, i) => { if (p.times && p.times[i] != null && !app.atHour(v, p.times[i]))
-        problemas.push([w, g, z, when].join('/') + ' ' + v.n + ' cerrado'); });
+      // (13 nov 2026) Una parada «por confirmar» (cine: se elige la función en cartelera) no promete esa hora exacta:
+      // sólo debe caer con el lugar abierto y al menos una hora antes del cierre. Falló un viernes con ventana hasta
+      // las 3 am: el cine quedaba a las 10:45 pm con cierre a las 12 y la prueba le exigía una función completa.
+      p.stops.forEach((v, i) => { if (!p.times || p.times[i] == null) return;
+        const conf = p.cartelera || (p.porConfirmar && p.porConfirmar[i]);
+        const ok = conf ? (!v.oh || (p.times[i] >= v.oh[0] && p.times[i] <= v.oh[1] - 1)) : app.atHour(v, p.times[i]);
+        if (!ok) problemas.push([w, g, z, when].join('/') + ' ' + v.n + ' cerrado'); });
     });
   }))));
   assert(problemas.length === 0, n + ' combinaciones, ' + problemas.length + ' problemas: ' + problemas.slice(0, 5).join(' | '));

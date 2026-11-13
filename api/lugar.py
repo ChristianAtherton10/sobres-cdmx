@@ -5,6 +5,7 @@
 import json, os, sys, re
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
+from concurrent.futures import ThreadPoolExecutor
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(AQUI, '..', 'lib'))
@@ -47,19 +48,29 @@ class handler(BaseHTTPRequestHandler):
             return self.responde(503, {'error': 'sin llave'})
         ids = [x for x in (parse_qs(urlparse(self.path).query).get('ids', [''])[0]).split(',') if re.match(r'^[\w-]{3,80}$', x)][:8]
         G = gid(); out = {}
-        for i in ids:
-            # 'gp-<place_id>' = lugar que SOBRES encontró en vivo en Google (viene
-            # en un enlace compartido): se pide con nombre y ubicación para
-            # reconstruirlo. Igual sólo responde si está dentro de CDMX.
+        # 'gp-<place_id>' = lugar que SOBRES encontró en vivo en Google (viene en un enlace compartido): se pide
+        # con nombre y ubicación para reconstruirlo. Igual sólo responde si está dentro de CDMX.
+        # Las consultas van en paralelo (13 nov 2026): la app espera esta respuesta antes de mostrar la tanda.
+        def uno(i):
             vivo = i.startswith('gp-')
             pid = i[3:] if vivo else G.get(i)
             if not pid:
-                continue                      # no es del catálogo: no se consulta
-            d = P.detalle(pid, extra=vivo)
-            if 'error' not in d:
-                out[i] = resumen(d)
-                if vivo:
-                    loc = d.get('location') or {}
-                    out[i].update({'pid': pid, 'n': (d.get('displayName') or {}).get('text', ''), 'lat': loc.get('latitude'), 'lng': loc.get('longitude'),
-                                   'tipo': d.get('primaryType', ''), 'types': d.get('types', [])[:8], 'addr': d.get('formattedAddress', '')})
+                return None                   # no es del catálogo: no se consulta
+            try:
+                d = P.detalle(pid, extra=vivo)
+            except Exception:
+                return None               # red o tiempo agotado: ese lugar se queda sin dato en vivo
+            if 'error' in d:
+                return None
+            o = resumen(d)
+            if vivo:
+                loc = d.get('location') or {}
+                o.update({'pid': pid, 'n': (d.get('displayName') or {}).get('text', ''), 'lat': loc.get('latitude'), 'lng': loc.get('longitude'),
+                          'tipo': d.get('primaryType', ''), 'types': d.get('types', [])[:8], 'addr': d.get('formattedAddress', '')})
+            return o
+        if ids:
+            with ThreadPoolExecutor(max_workers=8) as ex:
+                for i, o in zip(ids, ex.map(uno, ids)):
+                    if o is not None:
+                        out[i] = o
         self.responde(200, {'fuente': 'Datos de Google Maps', 'lugares': out})

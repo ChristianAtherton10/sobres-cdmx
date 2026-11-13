@@ -571,16 +571,16 @@ test('38.2 · ?v=facil se activa, preselecciona Roma · Condesa y Juárez · Cen
   const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan,cu', 'pisó la zona del anuncio: ' + c.state.zonesSel);
 });
 
-test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Cenar rico" pide el tipo de comida y ése avanza', () => {
+test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Foodie" pide el tipo de comida y ése avanza', () => {
   const a = makeApp({}, { search: '?v=facil' }); const L = conEv(a);
   const u = a.facilVals('home', () => {}); assert(u.facilP1 && u.facilOpts.length === 6, 'opciones: ' + u.facilOpts.length);
-  assert(u.facilOpts.map(o => o.label).join('|') === 'Cenar rico|Noche y fiesta|Tranqui|Cultural|Romántico|En familia', u.facilOpts.map(o => o.label));
+  assert(u.facilOpts.map(o => o.label).join('|') === 'Foodie|Noche y fiesta|Tranqui|Cultural|Romántico|En familia', u.facilOpts.map(o => o.label));
   u.facilOpts[4].pick();   // Romántico: avanza solo y van en pareja
   assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'romántico' && a.state.who === 'date', JSON.stringify([a.state.facilPaso, a.state.vibes, a.state.who]));
   a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 1, 'el paso 2 no regresa al 1');
-  a.facilVals('home', () => {}).facilOpts[0].pick();   // Cenar rico: NO avanza, sale el tipo de comida
+  a.facilVals('home', () => {}).facilOpts[0].pick();   // Foodie: NO avanza, sale el tipo de comida
   let v = a.facilVals('home', () => {});
-  assert(a.state.facilPaso === 1 && v.facilCocinaOn && v.facilCocinaOpts[0].label === 'Todo tipo' && a.state.who === 'amigos', 'Cenar rico no mostró el tipo de comida');
+  assert(a.state.facilPaso === 1 && v.facilCocinaOn && v.facilCocinaOpts[0].label === 'Todo tipo' && a.state.who === 'amigos', 'Foodie no mostró el tipo de comida');
   v.facilCocinaOpts.find(o => o.label === 'China y otras asiáticas').pick();
   assert(a.state.facilPaso === 2 && a.state.cocinas.join() === 'asiatica', 'el tipo de comida no avanzó: ' + JSON.stringify([a.state.facilPaso, a.state.cocinas]));
   const e = L.filter(x => x[0] === 'paso_1_elegido'); assert(e.length === 1 && e[0][1].opcion === 'romantico' && e[0][1].version === 'facil', JSON.stringify(e));
