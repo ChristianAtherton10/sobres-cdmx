@@ -153,5 +153,17 @@
   "lat": 19.374653,
   "lng": -99.17773,
   "nota": ""
+ },
+ "cdmx-0098": {
+  "lat": 19.38015,
+  "lng": -99.176955,
+  "nota": "Parque sin número: pin en la esquina de acceso Avenida Insurgentes Sur y Avenida Porfirio Díaz (OpenStreetMap, nodo 3573226156; 14-nov-2026).",
+  "esquina": true
+ },
+ "cdmx-0094": {
+  "lat": 19.370332,
+  "lng": -99.156788,
+  "nota": "Parque sin número: pin en la esquina de acceso Avenida División del Norte y Avenida Municipio Libre (OpenStreetMap, nodo 2060916607; 14-nov-2026).",
+  "esquina": true
  }
 }
