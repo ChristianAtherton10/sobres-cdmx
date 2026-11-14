@@ -130,6 +130,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   // `aceptaSinPrecio`, que es el ajuste que la persona puede elegir en pantalla. Las pruebas
   // nuevas (test/pasada.test.js) usan { estricto: true }: el comportamiento por defecto.
   if (!opts.estricto && !('aceptaSinPrecio' in stateOverrides)) app.state.aceptaSinPrecio = true;
+  // (14 nov 2026) En producción TODO el catálogo entra a los planes. Las pruebas de las reglas estrictas (pausas, pin,
+  // acervos) corren con `soloVerificado`; las del comportamiento por defecto usan { todo: true }.
+  if (!opts.todo && !('soloVerificado' in stateOverrides)) app.state.soloVerificado = true;
   Object.assign(app.state, stateOverrides);
   app._store = store;
   app._win = win; app._sstore = sstore;

@@ -178,7 +178,8 @@ test('43.2 · al agotarse no recicla en silencio: conserva la última tanda úti
       (a.state.results.plans || []).forEach(p => { if (vistos.has(prinDe(a, p))) rep++;
         if (i) assert(p.stops.some(v => !lug.has(a.actKey(v))), 'tanda ' + i + ': volvió un plan hecho sólo de lugares ya vistos: ' + txt(p)); });
       // Repetir la actividad principal sólo se vale cuando ya no hay nuevas, y se avisa cuántas.
-      assert(rep === ((ag && ag.repitePrincipal) || 0), 'tanda ' + i + ': repitió ' + rep + ' actividades principales sin avisar');
+      // (14 nov 2026) El aviso cuenta también la actividad principal que antes salió como parada secundaria: puede avisar de más, nunca de menos.
+      assert(rep <= ((ag && ag.repitePrincipal) || 0), 'tanda ' + i + ': repitió ' + rep + ' actividades principales sin avisar');
       (a.state.results.plans || []).forEach(p => { vistos.add(prinDe(a, p)); p.stops.forEach(v => lug.add(a.actKey(v))); }); }
     ultima = a.state.results; a.regenerate(); if (a.state.agotado && a.state.agotado.nuevas === 0) agotado = a.state.agotado; }
   assert(agotado, 'nunca avisó que se agotó');
@@ -571,6 +572,60 @@ test('48.3 · un precio sin liga entra como ESTIMADO: cuenta para el tope y la a
   const ver = { [v0.id]: { fecha: '2026-11-13', fuente: 'Fundador (Excel de pendientes)', url: '', estado: 'estimado', precio: { min: 450, rep: 450, max: 450, unidad: 'persona', moneda: 'MXN', canasta: '' } } };
   const a = nueva({}, { verificados: ver }); const v = a.cat().find(x => x.id === v0.id);
   assert(v.pp === 450 && v.pEstado === 'estimado' && a.respaldoDe(v) === 'estimado' && !a.sinRespaldo(v), 'estimado: ' + v.pp + ' ' + v.pEstado);
+});
+
+section('49 · Todo el catálogo entra a los planes (14 nov 2026, decisión del fundador)');
+
+const todo = (st, opts) => nueva(st, Object.assign({ todo: true }, opts || {}));
+
+test('49.1 · por defecto las fichas del catálogo son candidatas; sólo quedan fuera los recintos sin evento y lo que está cerrado', () => {
+  const a = todo({}); const C = a.cat().filter(v => !v.evento); const fuera = C.filter(v => !a.esRecomendable(v));
+  assert(!a.topeEstricto() && a.todoEntra(), 'el modo por defecto debe ser «todo entra»');
+  assert(C.length >= 2700 && fuera.length <= 80, 'fuera de los planes: ' + fuera.length + ' de ' + C.length);
+  fuera.forEach(v => assert(a.esSede(v) || /cerrad|cierre temporal/i.test(v.n) || v.cerradoTemporal || v.gCerrado, v.n + ' quedó fuera sin ser recinto ni estar cerrado'));
+  // Lo que antes quedaba fuera: en pausa, con pin aproximado, sin precio, librerías y acervos.
+  [v => v.pausa, v => v.coordAprox, v => v.ppUnknown, v => v.cat === 'Librería', v => v.recomendable === false].forEach((f, i) => { const L = C.filter(v => f(v) && !a.esSede(v) && !/cerrad|cierre temporal/i.test(v.n)); assert(L.length > 20 && L.every(v => a.esRecomendable(v)), 'grupo ' + i + ' no entró completo'); });
+  // El modo estricto sigue existiendo para quien lo quiera.
+  const e = nueva({}); const Ce = e.cat().filter(v => !v.evento); assert(e.topeEstricto() && Ce.filter(v => e.esRecomendable(v)).length < 1500, 'el modo «sólo verificado» dejó de filtrar');
+});
+
+test('49.2 · lo confirmado va primero: una ficha con datos por confirmar pierde frente a una igual pero confirmada, y el plan dice qué confirmar', () => {
+  const a = todo({}); const C = a.cat();
+  const pau = C.find(v => v.pausa && v.recomendable === false && !v.coordAprox), apx = C.find(v => v.coordAprox && !v.evento && !v.pausa), lib = C.find(v => v.cat === 'Librería' && a.noEsSalida(v)), ok = C.find(v => !v.evento && v.recomendable !== false && !v.coordAprox && !a.noEsSalida(v) && !a.esSede(v));
+  assert(a.dudoso(pau) >= 4 && a.dudoso(apx) >= 3 && a.dudoso(lib) >= 6 && a.dudoso(ok) === 0, 'relegación: ' + [pau, apx, lib, ok].map(v => a.dudoso(v)));
+  assert(/confirma que esté abierto y su horario/.test(a.condicionDe(pau)), 'pausa sin aviso: ' + a.condicionDe(pau));
+  assert(/ubicación aproximada/.test(a.condicionDe(apx)), 'pin aproximado sin aviso: ' + a.condicionDe(apx));
+  // Con horario confirmado en vivo por Google, el aviso de horario desaparece.
+  a._g = { [pau.id]: { estado: 'OPERATIONAL', periodos: SEMANA(13, 23) } }; a.aplicaGoogleHoras(pau);
+  assert(!/confirma que esté abierto/.test(a.condicionDe(pau)), 'con horario de Google no debe pedir confirmarlo');
+  // En el modo estricto esos avisos no aplican (esas fichas ni entran).
+  const e = nueva({}); const pe = e.cat().find(v => v.id === apx.id); assert(!e.esRecomendable(pe) && !/ubicación aproximada/.test(e.condicionDe(pe)), 'modo estricto alterado');
+});
+
+test('49.3 · precios: lo estimado cuenta para el presupuesto; lo que el Excel dejó «por confirmar» recupera su precio anterior como estimado; sin número entra y se dice', () => {
+  const a = todo({}); const C = a.cat();
+  const rec = C.filter(v => v.pRecuperado); assert(rec.length >= 150, 'recuperados: ' + rec.length);
+  rec.slice(0, 40).forEach(v => assert(v.pp === v.ppAnterior && v.pp > 0 && !v.ppUnknown && v.pEstado === 'estimado' && a.respaldoDe(v) === 'estimado' && /estimado/.test(v.pNota), v.n + ': ' + v.pp + ' ' + v.pEstado));
+  const inf = C.find(v => v.pEstado === 'inferido' && v.pp > 0); assert(inf && a.respaldoDe(inf) === 'estimado' && !a.sinRespaldo(inf), 'una cifra inferida debe contar como estimada');
+  // Un estimado que pasa del tope NO entra (ya no se cuela como «por confirmar»).
+  a.setState({ budget: 'b600' }); const caro = rec.find(v => v.pp > 1500); if (caro) assert(!a.budgetOk(caro), caro.n + ' ($' + caro.pp + ') entró en ≤$600');
+  // Sin número: entra con presupuesto y la tarjeta lo dice.
+  const sin = C.find(v => v.ppUnknown && !a.accesoLibre(v) && !v.evento && a.esRecomendable(v)); assert(a.budgetOk(sin), sin.n + ' sin precio debe poder entrar');
+  const conP = C.find(v => !v.ppUnknown && v.pp > 0 && v.pp < 500 && a.esRecomendable(v));
+  assert(/1 lugar por confirmar/.test(a.resumenTarjeta({ stops: [conP, sin], times: [13, 15] }, '1:00 pm–4:00 pm')), 'la tarjeta no dice que falta un precio');
+  // Las verificadas con fuente no se tocan.
+  const ver = C.find(v => v.id === 'cdmx-2047'); assert(ver.pp === 260 && a.respaldoDe(ver) === 'firme', 'Acuario Inbursa cambió');
+});
+
+test('49.4 · con todo el catálogo hay muchas más salidas completas y lo confirmado domina cuando hay de dónde', () => {
+  let tres = 0, tot = 0, dud = 0, st = 0;
+  [['roma'], ['polanco'], ['delvalle'], ['coyoacan'], ['santafe']].forEach(z => [['cenar', ['foodie'], [19, 24]], ['cultural', ['cultural'], [11, 18]], ['familia', ['familiar'], [12, 19]]].forEach(([op, vb, h]) => {
+    const { a, ps } = (() => { const x = todo({ who: op === 'familia' ? 'familia' : 'amigos', groupSize: 4, vibes: vb, facilOpcion: op, budget: 'b1000', zonas: z, planFrom: h[0], planTo: h[1] }); const r = x.runSearch({ nueva: true }); return { a: x, ps: (r && r.plans) || [] }; })();
+    tot++; if (ps.filter(p => p.stops.length > 1).length >= 3) tres++;
+    ps.forEach(p => p.stops.forEach((v, i) => { st++; if (a.dudoso(v)) dud++; assert(!a.esSede(v) && !/cerrad/i.test(v.n), v.n + ' no debía salir');
+      if (!(p.cartelera || (p.porConfirmar && p.porConfirmar[i]))) assert(a.atHour(v, p.times[i]), v.n + ' fuera de su horario'); })); }));
+  assert(tres >= 10, 'sólo ' + tres + ' de ' + tot + ' búsquedas con 3 salidas completas');
+  assert(dud / st < 0.6, 'demasiadas paradas con datos por confirmar: ' + dud + '/' + st);
 });
 
 if (require.main === module) report();

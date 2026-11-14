@@ -530,7 +530,8 @@ test('37.3 · la colonia de la ficha manda entre Juárez, Roma y Condesa (sin to
 test('37.4 · debajo de las 3 opciones salen TODOS los que cumplen: zona, cocina, horario, sin repetir los del plan', () => {
   const a = makeApp(ASIA, { dseed: 1, rseed: 5 }); a.runSearch({ nueva: true });
   const L = a.listaFiltros(), enPlan = new Set(a.state.results.plans.flatMap(p => p.stops.map(v => v.id)));
-  assert(L.length >= 4, 'sólo ' + L.length + ' en la lista');
+  // (14 nov 2026) Con el precio anterior recuperado como estimado, los que pasan del presupuesto ya no entran «por confirmar».
+  assert(L.length >= 3, 'sólo ' + L.length + ' en la lista');
   L.forEach(v => { assert(['roma', 'romasur', 'condesa'].includes(v.z), v.n + ' fuera de zona: ' + v.z); assert(a.tiposCocina(v).includes('asiatica'), v.n + ' no es asiático');
     assert(!enPlan.has(v.id), v.n + ' ya está en un plan'); });
   const b = makeApp(Object.assign({}, ASIA, { budget: 'any' }), { dseed: 1, rseed: 5 }); b.runSearch({ nueva: true });

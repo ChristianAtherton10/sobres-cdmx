@@ -627,7 +627,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ showSize }}" hint-placeholder-val="{{ true }}"><div class="sb-row sb-cuantos" style="margin-top:8px"><span class="sb-note" style="font-weight:600">Cuántos</span><button class="sb-x" aria-label="Quitar una persona" onClick="{{ sizeDown }}">−</button><span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--ink)" aria-live="polite">{{ groupSizeN }}</span><button class="sb-x" aria-label="Agregar una persona" onClick="{{ sizeUp }}">+</button></div></sc-if>
 <span class="sb-label sb-mt">Presupuesto por persona</span>
 <div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:40px;padding:0 14px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<p class="sb-note" style="margin:8px 0 0">Cuenta consumo, propina y traslado. Sólo entran lugares con precio confirmado o publicado.</p>
+<p class="sb-note" style="margin:8px 0 0">Cuenta consumo, propina y traslado. Si un lugar no tiene precio, te lo decimos como «por confirmar».</p>
 <sc-if value="{{ nqCerrado }}" hint-placeholder-val="{{ true }}"><button class="sb-btn3" style="margin:6px 0 0 -12px" onClick="{{ nqAbrir }}">＋ Hay algo que no quiero</button></sc-if>
 <sc-if value="{{ nqAbierto }}" hint-placeholder-val="{{ false }}">
 <span class="sb-label sb-mt">No quiero…</span>
@@ -1884,6 +1884,12 @@ class Component extends DCLogic {
       }
       v.confirmado = c; });
     if (REV) out.forEach(v => this.aplicaRevision(v, REV));
+    // (14 nov 2026, decisión del fundador) Las fichas que su Excel del 9 nov dejó «Por confirmar» y que tenían precio lo
+    // recuperan como ESTIMADO (no verificado): vuelven a poder entrar en planes con presupuesto. Lo verificado manda después.
+    out.forEach(v => { if (v.ppUnknown && v.pEstado === 'por_confirmar' && v.ppAnterior > 0 && !v.pOtraUnidad && !v.cursoCerrado && !v.evento) {
+      v.pp = v.ppAnterior; v.ppUnknown = false; v.pEstado = 'estimado'; v.pRecuperado = true;
+      v.pMin = v.pRep = v.pMax = v.ppAnterior; v.pFalta = '';
+      v.pNota = ('Precio anterior de la ficha, usado como estimado mientras se confirma. ' + (v.pNota || '')).trim(); } });
     out.forEach(v => this.aplicaVerificado(v));
     // Hotspots (data/hotspots.js): nivel 3 = Michelin / 50 Best / museos top;
     // 2 = guías del año y aperturas del mes. Una apertura pesa como "nueva" 4 meses.
@@ -2911,24 +2917,43 @@ class Component extends DCLogic {
   // misma sede son dos salidas); todo lo demás es su sede.
   actKey(v) { return v ? (v.evento ? v.id : this.sedeDe(v)) : ''; }
   mismoLugar(a, b) { return !!a && !!b && (a.id === b.id || this.marcaDe(a) === this.marcaDe(b) || this.sedeDe(a) === this.sedeDe(b)); }
+  // (14 nov 2026, decisión del fundador: «quiero que las 2,732 fichas entren a armar planes. TODOS»)
+  // Por defecto TODO el catálogo es candidato. Lo que antes dejaba fuera a una ficha (pausa, fuente vieja, pin
+  // aproximado, precio sin número, acervo o librería) ahora sólo la manda DESPUÉS de lo confirmado y se dice como
+  // condición en el plan («confirma el horario», «ubicación aproximada», «precio por confirmar»).
+  // Siguen fuera: un recinto sin evento, lo que está cerrado y lo que Google dice que cerró.
+  // `soloVerificado: true` conserva el modo estricto anterior (y es lo que ejercitan las pruebas de esas reglas).
+  todoEntra() { return this.state.soloVerificado !== true; }
+  topeEstricto() { const a = this.state.aceptaSinPrecio; return a === false ? true : a ? false : !this.todoEntra(); }
+  // Fichas que no son, en principio, un lugar para salir (acervos, escuelas, tiendas de museo, bibliotecas, librerías).
+  noEsSalida(v) { const n = this.strip(v.n);
+    // (Un restaurante o bar llamado "Archivo" sí es lugar para ir; el filtro es para acervos.)
+    if (!this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat) && /(^|\b)(tienda|libreria|cafeteria) del museo|centro de documentacion|archivo |archivo$|hemeroteca|fototeca|mapoteca|fonoteca|videoteca|^auditorio |sala de lectura|fondo (reservado|antiguo|historico)|casa de (la )?cultura|centro comunitario|cultural comunitario|^pilares|^faro |escuela |instituto |facultad |coordinacion |direccion general/.test(n)) return true;
+    if (v.cat === 'Biblioteca') return !/vasconcelos|biblioteca de mexico|la ciudadela|biblioteca central/.test(n);
+    if (v.cat === 'Librería') return !/rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria|99 records/.test(n);   // 99 Records: tienda de vinilos (The Happening / Time Out)
+    return false; }
+  // Cuánto se relega una ficha con datos por confirmar frente a una confirmada (0 = nada).
+  dudoso(v) { if (!v) return 0; let d = 0;
+    if (v.recomendable === false && !v.gHoras) d += 4;
+    if (v.coordAprox && !v.evento && !v.deGoogle) d += 3;
+    if (v._noSal === undefined) v._noSal = this.noEsSalida(v);
+    if (v._noSal) d += 6;
+    return d; }
   esRecomendable(v) {
     if (!v) return false;
     if (this.esSede(v)) return false;   // un recinto sólo sale con su evento
-    // Regla de ubicación de SOBRES: sin pin confirmado (número de la calle o esquina) no se propone,
-    // porque los trayectos saldrían de un punto inventado. Vuelve cuando se confirma (pendientes).
-    if (v.coordAprox && !v.evento && !v.deGoogle) return false;
-    if (v.recomendable === true) return true;
-    // «A prueba» (13 nov 2026): una ficha en pausa SÓLO por horario y con identificador de Google puede ser
-    // candidata mientras se arma la tanda; antes de mostrarse, Google confirma su horario en vivo o se descarta.
-    if (v.recomendable === false) return !!(this._aPrueba && v.pausa && !v.gCerrado && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && this.soloHorario(v));
+    const todo = this.todoEntra();
+    // Regla de ubicación (modo estricto): sin pin confirmado no se propone. Con todo el catálogo, entra relegada y con aviso.
+    if (v.coordAprox && !v.evento && !v.deGoogle && !todo) return false;
+    if (v.gCerrado) return false;
     const n = this.strip(v.n);
     // Un lugar cerrado (remodelación, cierre temporal) no se propone.
     if (v.cerradoTemporal || /\bcerrad[oa]\b|cierre temporal/.test(n)) return false;
-    // (Un restaurante o bar llamado "Archivo" sí es lugar para ir; el filtro es para acervos.)
-    if (!this.FOOD.includes(v.cat) && !this.DRINK.includes(v.cat) && /(^|\b)(tienda|libreria|cafeteria) del museo|centro de documentacion|archivo |archivo$|hemeroteca|fototeca|mapoteca|fonoteca|videoteca|^auditorio |sala de lectura|fondo (reservado|antiguo|historico)|casa de (la )?cultura|centro comunitario|cultural comunitario|^pilares|^faro |escuela |instituto |facultad |coordinacion |direccion general/.test(n)) return false;
-    if (v.cat === 'Biblioteca') return /vasconcelos|biblioteca de mexico|la ciudadela|biblioteca central/.test(n);
-    if (v.cat === 'Librería') return /rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria|99 records/.test(n);   // 99 Records: tienda de vinilos (The Happening / Time Out)
-    return true;
+    if (v.recomendable === true) return true;
+    // «A prueba» (modo estricto): en pausa SÓLO por horario y con identificador de Google, mientras se arma la tanda.
+    if (v.recomendable === false) return todo || !!(this._aPrueba && v.pausa && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && this.soloHorario(v));
+    if (todo) return true;
+    return !this.noEsSalida(v);
   }
 
   // Desglose honesto del costo. Nunca presenta la suma como total completo si
@@ -3029,7 +3054,9 @@ class Component extends DCLogic {
     if (v.pEstado === 'verificado' || v.pEstado === 'rango') return 'firme';
     if (v.pEstado === 'estimado') return 'estimado';
     if (!(v.pp > 0) && this.accesoLibre(v)) return 'libre';
-    return 'debil'; }
+    // (14 nov 2026, decisión del fundador) Una cifra estimada por tipo de lugar SÍ cuenta para el tope: SOBRES se basa en
+    // un precio aunque sea estimado; se muestra con «~» y «estimado». Sin número alguno sigue pendiente.
+    return v.pp > 0 ? 'estimado' : 'debil'; }
   // Con tope, un gasto OBLIGATORIO sin respaldo deja la combinación fuera: no se puede
   // defender "cabe en $600" si falta el boleto o si el precio es una cifra sin fuente.
   sinRespaldo(v) { const r = this.respaldoDe(v); return r === 'pendiente' || r === 'debil'; }
@@ -3114,7 +3141,7 @@ class Component extends DCLogic {
     const conocido = c.consumo + c.propina + c.transporte;   // consumo + entradas + propina + traslado
     // TOPE ESTRICTO: con presupuesto elegido, lo que no tiene costo respaldado queda fuera
     // (salvo que la persona acepte ver lugares con precio por confirmar).
-    const estricto = t < 90000 && !this.state.aceptaSinPrecio;
+    const estricto = t < 90000 && this.topeEstricto();
     // Un bar o restaurante SIN precio publicado no cuesta $0: para decidir si cabe
     // en el presupuesto se toma un gasto típico de su tipo (no se muestra como
     // precio). Sin esto, los lugares sin precio "cabían" en todo y se repetían.
@@ -3204,7 +3231,10 @@ class Component extends DCLogic {
   condicionDe(v) { if (!v) return ''; const out = [];
     if (v.evento) { if (this.sinFecha()) out.push('elige la función (' + this.fechasTxt(v) + ')'); else if (v.condicion) out.push('confirma boletos y hora'); }
     else { if (this.sinFecha()) { const d = this.diasTxt(v); if (d) out.push(/^sólo/.test(d) ? 'abre ' + d : 'abre ' + d); }
-      if (v.condicion) out.push(['Taller', 'Escape room', 'Tour'].indexOf(v.cat) >= 0 ? 'reserva tu sesión' : 'elige función'); }
+      if (v.condicion) out.push(['Taller', 'Escape room', 'Tour'].indexOf(v.cat) >= 0 ? 'reserva tu sesión' : 'elige función');
+      // Datos por confirmar de una ficha que antes quedaba fuera (14 nov 2026).
+      if (this.todoEntra()) { if ((v.recomendable === false || v.horaEstimada) && !v.gHoras) out.push('confirma que esté abierto y su horario');
+        if (v.coordAprox && !v.deGoogle) out.push('ubicación aproximada: confirma la dirección'); } }
     return out.join(' · '); }
   condicionesPlan(stops) { return (stops || []).map(v => { const c = this.condicionDe(v); return c ? v.n.split(' ·')[0] + ': ' + c : ''; }).filter(Boolean); }
   vigenteEn(v, iso) { const f = v && v.fechas; if (!f) return true;
@@ -3241,7 +3271,7 @@ class Component extends DCLogic {
     // Tope estricto (10 nov 2026): con presupuesto elegido sólo entra lo que tiene costo
     // respaldado o acceso libre. Sin presupuesto, o si la persona acepta "precio por
     // confirmar", lo sin precio entra y el total nunca se declara completo.
-    const estricto = max < 90000 && !this.state.aceptaSinPrecio;
+    const estricto = max < 90000 && this.topeEstricto();
     if (v.ppUnknown) return estricto ? this.accesoLibre(v) : true;
     if (estricto && this.respaldoDe(v) === 'debil') return false;
     return v.pp <= max;
@@ -3654,7 +3684,7 @@ class Component extends DCLogic {
     let semilla = (dseed * 2654435761 + 97 + uidH) >>> 0;
     const azar = () => { semilla = (Math.imul(semilla ^ (semilla >>> 15), 2246822519) + 0x9e3779b9) >>> 0; return semilla / 4294967296; };
     const { exigeBaile, pideComida } = ctx;
-    const puntaje = v => rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0) + (joya && (v.tags || []).indexOf('joyita') >= 0 ? 4 : 0);
+    const puntaje = v => rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0) - this.dudoso(v) + (joya && (v.tags || []).indexOf('joyita') >= 0 ? 4 : 0);
     const porPieza = {}; const candDe = k => porPieza[k] || (porPieza[k] = pool.filter(v => this.esPieza(v, R.piezas[k])).sort((a, b) => puntaje(b) - puntaje(a)));
     const llenar = pl => {
       const st = [], ts = [], ac = [], conf = [];
@@ -3826,7 +3856,7 @@ class Component extends DCLogic {
     const iB = this.BUD.findIndex(b => b[0] === s.budget);
     if (s.budgetCustom == null && iB >= 0 && iB < this.BUD.length - 1 && s.budget !== 'any') { const sig = this.BUD[iB + 1];
       pon('presupuesto', sig[0] === 'any' ? 'Buscar sin tope de presupuesto' : 'Subir el presupuesto a ' + sig[1].replace(/^Hasta /, 'hasta '), { budget: sig[0], budgetCustom: null }, prueba({ budget: sig[0], budgetCustom: null })); }
-    if (this.budgetMax() < 90000 && !s.aceptaSinPrecio) pon('precio', 'Incluir lugares con precio por confirmar', { aceptaSinPrecio: true }, prueba({ aceptaSinPrecio: true }));
+    if (this.budgetMax() < 90000 && this.topeEstricto()) pon('precio', 'Incluir lugares con precio por confirmar', { aceptaSinPrecio: true }, prueba({ aceptaSinPrecio: true }));
     const rg = this.range();
     if (rg[0] > 9) pon('horario', 'Empezar a las ' + this.time12(rg[0] - 2), { planFrom: rg[0] - 2, planTo: rg[1] }, prueba({ planFrom: rg[0] - 2, planTo: rg[1] }));
     if (rg[1] < 27) pon('horario', 'Terminar a las ' + this.time12(rg[1] + 2), { planFrom: rg[0], planTo: rg[1] + 2 }, prueba({ planFrom: rg[0], planTo: rg[1] + 2 }));
@@ -4632,7 +4662,7 @@ class Component extends DCLogic {
     const tipoS = usarRecetas ? recetaSuelto : tipoSuelto;
     // ?v=facil (8 nov 2026): antes que un lugar suelto, otro plan COMPLETO de la receta
     // (aunque repita tipo): la meta es 3 planes para votar, no lugares de 1 parada.
-    const evDeP = c => (c.stops || []).some(v => v.evento), unEvento = c => !(this.sinFecha() && evDeP(c) && plans.some(evDeP));
+    const evDeP = c => (c.stops || []).some(v => v.evento), unEvento = c => !(this.sinFecha() && evDeP(c) && plans.some(evDeP)) && !(c.plaza && plans.some(h => h.plaza));   // y a lo más UNA opción de plaza (14 nov 2026: el relleno de reserva metía una segunda)
     if (s.facil && usarRecetas && plans.length < 3) recetaReserva.forEach(c => { if (plans.length < 3 && unEvento(c) && !plans.some(h => comparte(h, c))) { califica(c); plans.push(c); } });
     if (tipoS && plans.length < 3 && !opts.subBusqueda) {
       const marcas = new Set(); plans.forEach(p => p.stops.forEach(v => marcas.add(this.marcaDe(v))));

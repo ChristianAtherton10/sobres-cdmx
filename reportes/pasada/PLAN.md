@@ -113,3 +113,12 @@ salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pau
   Los Consentidos del Barrio. Respaldados 12 → 15; «Cultural ≤$600» pasó de 0 a 2 salidas completas.
 - Pines: `confirma_pines.py` confirmó 1 de 12 (Nominatim no tiene esos números); esquinas de parques: Overpass falló dos veces.
 - Sin hacer: revisión de los 48 hotspots marcados.
+
+## 14 nov 2026 — «quiero que las 2,732 fichas entren a armar planes. TODOS» (rama `precios-estimados`)
+- Diagnóstico: sólo 342 de 2,732 entraban con presupuesto (precio sin respaldo 735, pausas 637, fuente vieja/horario ~500, pin 123, acervos/librerías ~130, recintos 74).
+- Decisiones del fundador: cifras estimadas por tipo SÍ cuentan (`respaldoDe` → estimado); lo que su Excel dejó «por confirmar»
+  recupera el precio anterior como estimado (202 fichas, `pRecuperado`); y después: TODO el catálogo entra.
+- `todoEntra()` (por defecto) / `soloVerificado` (modo estricto, lo que ejercitan las pruebas anteriores). Candidatas: 2,655 de 2,732.
+  Fuera: 74 recintos sin evento y 3 marcados como cerrados. Lo dudoso se relega (`dudoso`) y se avisa en el plan (`condicionDe`).
+- Cobertura (120 búsquedas, 10 zonas × 6 antojos × $600/$1,000): 3 opciones 86%; 3 salidas completas 59% (antes 11%); 3 búsquedas en 0.
+- Arreglo: el relleno de reserva podía meter una segunda opción de plaza. Pruebas 49.1–49.4; suite 342.
