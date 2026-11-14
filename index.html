@@ -6339,7 +6339,7 @@ class Component extends DCLogic {
       sendOpen: s.sendOpen && !!plan0Exists, toggleSend: () => this.setState({ sendOpen: !s.sendOpen, sendSel: [] }), closeSend: () => this.setState({ sendOpen: false, qrPlanUrl: '', sendSel: [] }),
       sendPlanName: plan0Exists ? plan0Exists.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → ') : '',
       sendGoFriends: () => { this.setState({ sendOpen: false }); this.nav('profile'); this.toast('Busca a tus amigos por su nombre y agrégalos'); },
-      hasPlanNow: view === 'plan' && s.planView === 'edit' && !!plan && plan.stops.length > 0, planEmpty: view === 'plan' && s.planView !== 'edit' && !rawPlans.some(p => p.by === me || (p.sharedWith || []).includes(me)),
+      hasPlanNow: view === 'plan' && s.planView === 'edit' && !!plan && plan.stops.length > 0, planEmpty: view === 'plan' && s.planView !== 'edit' && !rawPlans.some(p => p.by === me || this.meLlego(p, me)),
       trashPlan: () => this.trashPlan(),
       newPlanAuto: () => { this._aiNotas = []; this._aiExhausted = false;
         this.setState({ planCustom: { stops: [], times: [], spent: 0 }, planStops: 1, planNone: false,
@@ -6436,9 +6436,9 @@ class Component extends DCLogic {
       qrPlanOn: !!s.qrPlanUrl, qrPlanSrc: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(s.qrPlanUrl || ''),
       planQResults: (s.swapIdx != null && s.planQ.length < 2 ? this.swapSuggest(s.swapIdx) : this.searchIn(s.planQ, 6)).map(v => ({ name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, add: () => { this.setState({ planQ: '' }); this.addStop(v); } })),
       sentPlans: rawPlans.filter(p => p.by === me && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · ${Object.values(p.votes || {}).filter(x => x === 'sobres').length} sobres · enviado a ${(p.sharedWith || []).length ? (p.sharedWith || []).join(', ') : 'nadie aún'}`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }), del: () => { if (sOn) this.mutate('delPlan', { planId: p.id }); else this.setState({ gPlans: s.gPlans.filter(x => x.id !== p.id) }, () => this.persist()); this.toast('Plan borrado'); } })),
-      recvPlans: rawPlans.filter(p => p.by !== me && (p.sharedWith || []).includes(me) && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · te lo envió ${p.by}`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
+      recvPlans: rawPlans.filter(p => this.meLlego(p, me) && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · te lo envió ${p.by}` + (p.votes && p.votes[me] ? (p.votes[me] === 'sobres' ? ' · votaste ✓' : ' · votaste ✕') : ''), open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
       confPlans: rawPlans.filter(p => (p.by === me || (p.sharedWith || []).includes(me)) && this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · ${[p.by].concat(p.sharedWith || []).filter((x, i, a) => a.indexOf(x) === i).join(', ')} dijeron que sí 🎉`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
-      hasSentPlans: rawPlans.some(p => p.by === me && !this.planConfirmed(p)), hasRecvPlans: rawPlans.some(p => p.by !== me && (p.sharedWith || []).includes(me) && !this.planConfirmed(p)),
+      hasSentPlans: rawPlans.some(p => p.by === me && !this.planConfirmed(p)), hasRecvPlans: rawPlans.some(p => this.meLlego(p, me) && !this.planConfirmed(p)),
       hasConfPlans: rawPlans.some(p => (p.by === me || (p.sharedWith || []).includes(me)) && this.planConfirmed(p)),
       hasAnyPlans: rawPlans.some(p => p.by === me || (p.sharedWith || []).includes(me)),
       // Guardar hace una COPIA COMPLETA E INDEPENDIENTE: ids de las paradas,
@@ -7169,6 +7169,9 @@ class Component extends DCLogic {
     if (s.syncOn && s.userName) { const opts = (s.sync && s.sync.votesOpts) || []; if (opts.some(o => o.id === v.id)) { this.toast('Ya está en la votación'); return; } this.mutate('addOpt', { user: s.userName, opt }).then(() => this.toast(`${v.n} propuesto al grupo — lo ven todos`)); return; }
     if (s.gOpts.some(o => o.id === v.id)) { this.toast('Ya está en la votación'); return; } this.setState({ gOpts: s.gOpts.concat([opt]) }, () => this.persist()); this.toast(`${v.n} propuesto al grupo`); }
   planOptId(p) { return 'plan-' + (this.state.planDate || this.todayISO()) + '-' + p.stops.map(v => v.id).join('~').slice(0, 100); }
+  // Un plan «me llegó» si me lo mandaron por nombre O si lo abrí por enlace y voté (14 nov 2026: quien votaba
+  // desde un enlace no veía ese plan en «Mis planes», aunque la pantalla dice «cuando te manden uno, aparece aquí»).
+  meLlego(p, me) { return !!p && !!me && p.by !== me && ((p.sharedWith || []).includes(me) || (this.followedPlans().includes(p.id) && !!(p.votes && p.votes[me]))); }
   followedPlans() { try { return JSON.parse(localStorage.getItem('sobres_follow') || '[]'); } catch(e) { return []; } }
   followPlan(id) { try { const f = this.followedPlans(); if (!f.includes(id)) { f.push(id); localStorage.setItem('sobres_follow', JSON.stringify(f.slice(-40))); } } catch(e) {} }
   planLink(id) { try { return location.origin + location.pathname + '?plan=' + encodeURIComponent(id); } catch(e) { return id; } }

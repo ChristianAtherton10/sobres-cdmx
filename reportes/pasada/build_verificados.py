@@ -45,10 +45,25 @@ ITEMS = {
   'rv-68d8b1cf0e': dict(n='Odette · Lomas', fuente='CDMX365 — Odette', url='https://cdmx365.com/es/odette', activar=True),
   'rv-8712b60b44': dict(n='Exploradores Club de Café · Santa Fe', fuente='Exploradores — ubicaciones (sitio del lugar)', url='https://www.exploradores.cafe/pages/ubicaciones', activar=True),
   'rv-37c448c785': dict(n='Vive Cerámica · Satélite', fuente='Vive Cerámica — sitio del lugar (clase suelta $499)', url='https://www.viveceramica.com/'),
+  # ── 14 nov 2026: Del Valle · museos con sitio oficial ──
+  'cdmx-0753': dict(n='Sala Introductoria a la Zona Arqueológica de Mixcoac', fecha='2026-11-14', estado='verificado',
+                    precio=dict(min=0, rep=0, max=0, unidad='persona', moneda='MXN', canasta='Entrada gratuita (INAH).'),
+                    fuente='INAH — Zona Arqueológica de Mixcoac (sitio oficial)', url='https://www.inah.gob.mx/zonas/zona-arqueologica-de-mixcoac',
+                    oh=[9, 17], dias=[0, 2, 3, 4, 5, 6], hrs='Martes a domingo 9:00–17:00', addr='Calle Pirámide 7', col='San Pedro de los Pinos'),
+  'cdmx-0761': dict(n='Museo Estelar', fecha='2026-11-14', estado='verificado',
+                    precio=dict(min=0, rep=0, max=0, unidad='persona', moneda='MXN', canasta='Entrada sin costo, con reservación y cita previa.'),
+                    fuente='Museo Estelar — sitio oficial', url='https://museoestelar.com/',
+                    # El sitio se contradice sobre el martes; sólo se toman los días en que coincide.
+                    oh=[12, 17], dias=[0, 3, 4, 5, 6], ohDia={'0': [12, 17], '3': [10, 18], '4': [10, 18], '5': [10, 18], '6': [10, 18]},
+                    hrs='Mié a sáb 10:00–18:00 · dom 12:00–17:00 · con cita', condicion='Reserva tu cita: la entrada es sin costo pero sólo con reservación.',
+                    addr='Santa Margarita 519', col='Insurgentes San Borja'),
+  'cdmx-0759': dict(n='Museo del Metro', fecha='2026-11-14', fuente='Metro CDMX — Museo del Metro (sitio oficial)', url='https://www.metro.cdmx.gob.mx/museo-del-metro',
+                    oh=[11, 14], dias=[0, 2, 3, 4, 5, 6], ohDia={'0': [11, 14], '2': [10, 18], '3': [10, 18], '4': [10, 18], '5': [10, 18], '6': [11, 14]},
+                    hrs='Mar a vie 10:00–18:00 · sáb y dom 11:00–14:00 · estación Mixcoac (Línea 12)'),
 }
 items, sin_pin = {}, []
 for i, x in ITEMS.items():
-    x = dict(x); x['fecha'] = FECHA
+    x = dict(x); x.setdefault('fecha', FECHA)
     p = PINES.get(i)
     if p:
         x['lat'], x['lng'] = p['lat'], p['lng']

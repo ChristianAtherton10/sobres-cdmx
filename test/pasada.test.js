@@ -346,6 +346,17 @@ test('45.7 · el enlace de WhatsApp abre el MISMO plan (paradas, horas y costo) 
     assert(a.planOptId(a.getPlan()) !== a.planOptId({ stops: p.stops }), 'la versión nueva comparte id de votación con la anterior'); }
 });
 
+test('45.8 · quien abre un enlace y vota ve ese plan en «Mis planes» (antes salía «Todavía no tienes planes»); el que no votó no se le cuelga', () => {
+  const a = makeApp({}, { search: '?v=facil', storage: { sobres_follow: JSON.stringify(['p-voto', 'p-visto']) } }); a.ev = () => {};
+  const ids = a.cat().filter(v => a.esRecomendable(v)).slice(0, 2).map(v => v.id);
+  const plan = (id, votes) => ({ id, by: 'Ana', name: 'Plan: ' + id, meta: '2 paradas', stops: ids, times: [20, 22], votes, stopVotes: {} });
+  a.setState({ userName: 'Beto', syncOn: true, view: 'plan', planView: 'list', sync: { users: { Ana: {}, Beto: {} }, plans: [plan('p-voto', { Ana: 'sobres', Beto: 'nojalo' }), plan('p-visto', { Ana: 'sobres' }), plan('p-ajeno', { Ana: 'sobres', Beto: 'sobres' })] } });
+  const v = a.renderVals();
+  assert(v.hasRecvPlans && v.recvPlans.length === 1 && v.recvPlans[0].name === 'Plan: p-voto', 'recibidos: ' + JSON.stringify((v.recvPlans || []).map(x => x.name)));
+  assert(/te lo envió Ana · votaste ✕/.test(v.recvPlans[0].meta) && !v.planEmpty, 'debe decir quién lo mandó y qué votó: ' + v.recvPlans[0].meta);
+  assert(!v.hasConfPlans, 'votar desde un enlace no da el plan por confirmado');
+});
+
 section('46 · Pasada profunda F5: hotspots con fecha y aprendizaje del usuario');
 
 test('46.1 · hotspots: cada señal tiene tipo, fuente y fecha; lo reciente se apaga y lo viejo queda para revisión', () => {

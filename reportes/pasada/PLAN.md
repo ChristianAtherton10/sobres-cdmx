@@ -101,3 +101,15 @@ salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pau
 - Medido en local con Google real (375×812): primera 1,076 ms; «Ver otras opciones» 660–1,450 ms (antes sin respaldo 160–210).
 - La llave de Google en Vercel sólo existe en Production y en Preview de `feat/places`: en la preview de
   `pasada-profunda` /api/lugar da 503 y el respaldo se apaga solo. Pruebas 47.1–47.6. Suite: 332.
+
+## 14 nov 2026 — pendientes (rama `pendientes-catalogo`, sin merge)
+- Importador del Excel de pendientes: `importa_pendientes.py <xlsx>` → `verificados_excel.json` → `build_verificados.py`.
+  Precio sin liga = estimado; horario que no se entiende no se aplica; dirección sólo con número confirmado. Pruebas: test/importa.test.py.
+- Motor: horario distinto por día (`ohDia`) y precio por grupo (`pGrupo`, se divide una vez), ajustados en cada búsqueda.
+- Voto por enlace probado contra el servidor (local, estado aislado): funciona. Arreglo: quien vota desde un enlace ya ve el plan
+  en «Mis planes» (45.8). Abierto: por enlace nunca hay «¡SE ARMÓ!» (la audiencia sólo cuenta envíos por nombre); quien comparte
+  queda con voto ✓ automático en las 3 opciones; el plan compartido guarda la fecha del día aunque se armó sin fecha.
+- Del Valle: Zona Arqueológica de Mixcoac (gratis, INAH), Museo Estelar (gratis con cita), horario del Museo del Metro, pin de
+  Los Consentidos del Barrio. Respaldados 12 → 15; «Cultural ≤$600» pasó de 0 a 2 salidas completas.
+- Pines: `confirma_pines.py` confirmó 1 de 12 (Nominatim no tiene esos números); esquinas de parques: Overpass falló dos veces.
+- Sin hacer: revisión de los 48 hotspots marcados.
