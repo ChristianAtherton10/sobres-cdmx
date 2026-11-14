@@ -22,7 +22,9 @@ test('cada lugar nuevo trae fuente (URL), fecha de consulta y precio con su esta
 // Mismo nombre a menos de 300 m pero lugares distintos (revisados a mano, 9 nov 2026):
 // · La Cava de la Docena (Obregón 23, apertura de oct 2026 según The Happening) ≠ La Docena (Obregón 31).
 // · Boicot Café es un café DENTRO de Plaza Satélite (alta de la revisión del fundador), no el centro comercial.
-const DISTINTOS = ['La Cava de la Docena|La Docena · Roma', 'Boicot Café Plaza Satélite|Plaza Satélite'];
+const DISTINTOS = [
+  // (14 nov 2026) El restaurante Daruma frente al parque no es el parque: quedaron a <300 m al fijar el pin del parque en su esquina de acceso.
+  'Daruma Parque Hundido|Parque Hundido','La Cava de la Docena|La Docena · Roma', 'Boicot Café Plaza Satélite|Plaza Satélite'];
 test('ningún lugar nuevo repite uno que ya estaba (mismo nombre a menos de 300 m)', () => {
   const app = makeApp({});
   const n = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
