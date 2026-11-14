@@ -357,6 +357,27 @@ test('45.8 · quien abre un enlace y vota ve ese plan en «Mis planes» (antes s
   assert(!v.hasConfPlans, 'votar desde un enlace no da el plan por confirmado');
 });
 
+test('45.9 · compartir por enlace: quien mandó confirma la opción ganadora, quien votó la ve confirmada, y un plan sin fecha no guarda la de hoy', () => {
+  const mk = yo => { const a = makeApp({}, { search: '?v=facil', storage: { sobres_follow: JSON.stringify(['p-1', 'p-2']) } }); a.ev = () => {};
+    const ids = a.cat().filter(v => a.esRecomendable(v)).slice(0, 2).map(v => v.id);
+    const plan = (id, votes, extra) => Object.assign({ id, by: 'Ana', name: 'Plan: ' + id, meta: '2 paradas', stops: ids, times: [20, 22], votes, stopVotes: {} }, extra || {});
+    a.setState({ userName: yo, syncOn: true, view: 'plan', planView: 'list', sync: { users: { Ana: {}, Beto: {} }, plans: [plan('p-1', { Beto: 'sobres' }), plan('p-2', { Beto: 'nojalo' })] } });
+    return { a, plan }; };
+  const ana = mk('Ana'); let v = ana.a.renderVals();
+  const s1 = v.sentPlans.find(x => x.name === 'Plan: p-1'), s2 = v.sentPlans.find(x => x.name === 'Plan: p-2');
+  assert(s1 && s1.puedeConfirmar && /1 ✓ · 0 ✕ · compartido por enlace/.test(s1.meta), 'con un ✓ de otra persona se puede confirmar: ' + (s1 && s1.meta));
+  assert(s2 && !s2.puedeConfirmar, 'sin ningún ✓ de otra persona no se ofrece confirmar');
+  let op = null; ana.a.mutate = (o, p) => { op = [o, p]; return Promise.resolve(); }; s1.confirmar();
+  assert(op && op[0] === 'confirmPlan' && op[1].planId === 'p-1' && op[1].user === 'Ana', 'confirmar debe pedir confirmPlan al servidor: ' + JSON.stringify(op));
+  // El servidor marcó el plan: Ana y Beto lo ven en «Confirmados».
+  [['Ana', /lo confirmaste/], ['Beto', /Ana lo confirmó/]].forEach(([yo, re]) => { const x = mk(yo);
+    x.a.setState({ sync: { users: { Ana: {}, Beto: {} }, plans: [x.plan('p-1', { Beto: 'sobres' }, { confirmado: { by: 'Ana', ts: 1 } }), x.plan('p-2', { Beto: 'nojalo' })] } });
+    const w = x.a.renderVals(); assert(w.hasConfPlans && w.confPlans.length === 1 && re.test(w.confPlans[0].meta), yo + ' no ve el plan confirmado: ' + JSON.stringify((w.confPlans || []).map(c => c.meta))); });
+  // Sin fecha: el plan compartido no lleva fecha ni «vie 13 de nov».
+  const { a, ps } = busca(Object.assign({}, NOCHE, { aceptaSinPrecio: true })); const pay = a.buildPlanPayload(ps[0]);
+  assert(a.sinFecha() && pay.date === '' && /^\d+ paradas? · desde/.test(pay.meta), 'plan sin fecha con fecha pegada: ' + pay.date + ' | ' + pay.meta);
+});
+
 section('46 · Pasada profunda F5: hotspots con fecha y aprendizaje del usuario');
 
 test('46.1 · hotspots: cada señal tiene tipo, fuente y fecha; lo reciente se apaga y lo viejo queda para revisión', () => {
@@ -368,7 +389,14 @@ test('46.1 · hotspots: cada señal tiene tipo, fuente y fecha; lo reciente se a
   assert(enDiezMeses < hoy - 1 && revisar, 'una apertura de hace 10 meses pesa igual que hoy: ' + hoy + ' → ' + enDiezMeses);
   // Reseñas ≠ visitas: suman muy poco y nunca vuelven hotspot a un lugar que no lo es.
   const noHot = a.cat().find(v => !v.hot && v.otRc >= 500); if (noHot) assert(a.pesoHot(noHot) === 0, 'las reseñas solas lo volvieron hotspot');
-  const viejos = C.filter(v => a.hotRevisar(v)); assert(viejos.length >= 10 && viejos.every(v => a.pesoHot(v) < 8.5), 'lo que hay que revisar pesa como nuevo');
+  // (14 nov 2026) Los 48 marcados se revisaron contra la edición vigente de su lista: sólo quedan los clásicos de la guía
+  // de 2024 que ya no salen en la edición 2026 (decisión del fundador).
+  // El mecanismo se prueba adelantando el reloj: lo que envejece vuelve a quedar «por revisar» y deja de pesar como nuevo.
+  { const pend = C.filter(v => a.hotRevisar(v)); assert(pend.length <= 10 && pend.every(v => (v.hotF || []).join() === 'mb100'), 'tras la revisión del 14 nov sólo deben quedar por revisar los clásicos de la guía de 2024: ' + pend.map(v => v.n).join(', ')); }
+  a.todayISO = () => '2027-12-10'; C.forEach(v => { delete v._ph; });
+  const viejos = C.filter(v => a.hotRevisar(v)); const okV = viejos.length >= 10 && viejos.every(v => a.pesoHot(v) < 8.5);
+  a.todayISO = real; C.forEach(v => { delete v._ph; });
+  assert(okV, 'lo que hay que revisar pesa como nuevo (' + viejos.length + ' por revisar en dic 2027)');
   const fresco = C.find(v => a.senalesHot(v).some(x => x.tipo === 'calidad' && x.meses <= 12 && x.peso === 8.5)); assert(fresco && a.pesoHot(fresco) >= 8.5, 'un premio vigente perdió peso');
 });
 

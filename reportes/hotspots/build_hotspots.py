@@ -14,7 +14,7 @@ con los nombres que todavía no están en el catálogo.
 """
 import json, os, re, unicodedata
 AQUI = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(os.path.dirname(AQUI))
-HOY = '2026-11-05'; MES = '2026-11'
+HOY = '2026-11-14'; MES = '2026-11'
 
 FUENTES = {
  'mich26':  ('Time Out México — restaurantes de la CDMX con estrella Michelin (Guía Michelin 2026)', 'https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/restaurantes-de-la-cdmx-que-tienen-estrella-michelin', '2026-05-20'),
@@ -28,6 +28,8 @@ FUENTES = {
  'mb_bares26': ('Marco Beteta — 20 bares de reciente apertura en CDMX', 'https://mbmarcobeteta.com/nuevos-bares-cdmx/', '2026-08-04'),
  'hap_oct26': ('The Happening — nuevos hotspots de octubre 2026 en CDMX', 'https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/', '2026-10-06'),
  'mb_nov26': ('Marco Beteta — restaurantes nuevos para visitar en noviembre en CDMX', 'https://mbmarcobeteta.com/restaurantes-nuevos-cdmx/', '2026-11-03'),
+ 'bares26_100': ("The World's 50 Best — North America's 50 Best Bars 2026, lugares 51–100", 'https://www.the50.com/stories/News/north-americas-50-best-bars-2026-51-100-list.html', '2026-03-31'),
+ 'mb_clasicos26': ('Marco Beteta — MB100 2026: los 30 clásicos (restaurantes de CDMX)', 'https://mbmarcobeteta.com/los-100-mejores-restaurantes-de-mexico-mb100/', '2025-11-19'),
  'mb100_26': ('Marco Beteta — Los 100 mejores restaurantes de México, MB100 2026 (restaurantes de CDMX)', 'https://mbmarcobeteta.com/los-100-mejores-restaurantes-de-mexico-mb100/', '2025-11-19'),
  'quien_jul26': ('Quién — Los nuevos hotspots de CDMX que ya están en todos los planes', 'https://www.quien.com/estilo-de-vida/2026/07/01/los-nuevos-hotspots-de-cdmx-que-ya-estan-en-todos-los-planes', '2026-07-01'),
  'hap_nov26': ('The Happening — nuevos hotspots para conocer en noviembre 2026', 'https://thehappening.com/nuevos-hotspots-para-conocer-en-noviembre-2026/', '2026-10-30'),
@@ -79,6 +81,22 @@ LISTAS = [
    'Taquería El Cuadrilátero|Taqueria El Cuadrilátero', 'Moré', 'Parla Juárez', "Chico's Café|Chico’s Cafe", 'Atlantis', 'Archivo', 'Grulla', 'Bar de Verano']),
 ]
 
+# ── Revisión del 14 nov 2026: listas que ya envejecieron (marcadas «revisar» por la app) ──
+# Se cotejó cada lugar contra la edición vigente de su lista. Lo que se renovó entra por la lista nueva;
+# la lista vieja deja de dar la marca de hotspot por sí sola (el lugar sigue en el catálogo).
+RETIRADAS = {
+ 'bares25': "50 Best Bars 2025 (18 meses). En 2026 sólo Café de Nadie sigue (No. 60, lista 51–100); Rayo, Ticuchi, Bijou, Casa Prunes y Brujas no están ni en 1–50 ni en 51–100.",
+# 'mb100' (Chilango, nov 2024) NO se retira: son los clásicos que el fundador pidió destacar (pruebas 35.x). En la edición 2026
+ # siguen San Ángel Inn, Hunan y Suntory (lista mb_clasicos26); Bakea, Deigo, La Barra de Fran, La Taberna del León, Loma Linda,
+ # Morton's, Gruta Ehden, Danubio y Cantina del Bosque ya no aparecen: quedan «por revisar» hasta que el fundador decida.
+ 'to_ap26': "Aperturas de abril de 2026: a los 6 meses dejan de contar como «nuevo».",
+}
+LISTAS = [l for l in LISTAS if l[0] not in RETIRADAS] + [
+ ('bares26_100', 2, False, ['Café de Nadie']),
+ ('mb_clasicos26', 2, False, ['San Ángel Inn', 'Hunan', 'Suntory']),
+]
+FUENTES = {f: v for f, v in FUENTES.items() if f not in RETIRADAS}
+
 def k(s):
     s = unicodedata.normalize('NFD', (s or '').lower()); s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
     return re.sub(r'[^a-z0-9]', '', s.replace('&', 'y'))
@@ -122,6 +140,7 @@ js = ('/* SOBRES — Hotspots (reportes/hotspots/build_hotspots.py). Cada lugar 
         'fuentes': {k2: {'n': v[0], 'url': v[1], 'fecha': v[2]} for k2, v in FUENTES.items()}, 'ids': out}, ensure_ascii=False, separators=(',', ':')) + ';\n')
 open(os.path.join(REPO, 'data', 'hotspots.js'), 'w').write(js)
 L = ['# Hotspots — ' + HOY, '', f'{len(out)} lugares del catálogo marcados como hotspot.', '', '## Faltan en el catálogo', '']
+L = L[:4] + ['## Listas retiradas en la revisión del 14 nov 2026', ''] + [f'- `{f}`: {m}' for f, m in RETIRADAS.items()] + [''] + L[4:]
 for f, n in faltan: L.append(f'- {n} ({FUENTES[f][0]})')
 open(os.path.join(AQUI, 'REPORTE.md'), 'w').write('\n'.join(L) + '\n')
 print(len(out), 'hotspots en catálogo;', len(faltan), 'faltan')

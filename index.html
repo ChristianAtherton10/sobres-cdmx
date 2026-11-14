@@ -1248,7 +1248,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-for list="{{ sentPlans }}" as="sp2" hint-placeholder-count="2">
 <div class="sb-card" style="padding:14px 16px;margin-bottom:10px">
 <div style="font:700 15px/1.3 var(--font-body);color:var(--ink)">{{ sp2.name }}</div><div class="sb-note" style="font-size:12.5px;margin-top:3px">{{ sp2.meta }}</div>
-<div class="sb-row" style="margin-top:10px"><button class="sb-btn2" style="min-height:40px" onClick="{{ sp2.open }}">Abrir</button><button class="sb-btn3" onClick="{{ sp2.goVote }}">Ver votos</button><button class="sb-btn3" style="color:var(--color-neutral-700)" onClick="{{ sp2.del }}" aria-label="Borrar plan">Borrar</button></div>
+<div class="sb-row" style="margin-top:10px"><button class="sb-btn2" style="min-height:40px" onClick="{{ sp2.open }}">Abrir</button><button class="sb-btn3" onClick="{{ sp2.goVote }}">Ver votos</button><sc-if value="{{ sp2.puedeConfirmar }}" hint-placeholder-val="{{ false }}"><button class="sb-btn3" onClick="{{ sp2.confirmar }}">Confirmar este</button></sc-if><button class="sb-btn3" style="color:var(--color-neutral-700)" onClick="{{ sp2.del }}" aria-label="Borrar plan">Borrar</button></div>
 </div>
 </sc-for>
 </div>
@@ -1406,7 +1406,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-for list="{{ gPlans }}" as="o" hint-placeholder-count="2">
 <div style="{{ o.rowStyle }}">
 <sc-if value="{{ o.isConf }}" hint-placeholder-val="{{ false }}">
-<div style="background:var(--color-accent);color:var(--on-accent);margin:-16px -18px 12px;padding:10px 18px;font:800 14px var(--font-heading);letter-spacing:.02em">🎉 ¡SE ARMÓ! Todos dijeron que sí — este plan está confirmado</div>
+<div style="background:var(--color-accent);color:var(--on-accent);margin:-16px -18px 12px;padding:10px 18px;font:800 14px var(--font-heading);letter-spacing:.02em">{{ o.confTxt }}</div>
 </sc-if>
 <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
 <span style="min-width:200px;flex:1"><span style="display:block;font:800 17px var(--font-heading)">{{ o.name }}</span><span style="display:block;font:500 12px var(--font-body);color:var(--color-neutral-600);margin-top:2px">{{ o.byLine }}</span></span>
@@ -2815,14 +2815,14 @@ class Component extends DCLogic {
   // compartió ve los votos en Mis planes.
   registrarParaVotar(planes, by, intento) {
     if (!this.state.syncOn) { if ((intento || 0) < 25) setTimeout(() => this.registrarParaVotar(planes, by, (intento || 0) + 1), 300); return; }
-    planes.forEach(p => this.ensureProposed(p, (by || '').trim() || 'Un amigo'));
+    planes.forEach(p => this.ensureProposed(p, (by || '').trim() || 'Un amigo', true));
   }
   votarOpcion(p, kind) {
     if (kind === 'sobres') this.aprende('voto', p.stops || [], p.times);
     const go = () => { const yo = this.state.userName; if (!yo) return;
       const pid = this.planOptId(p); const ya = ((this.state.sync && this.state.sync.plans) || []).find(x => x.id === pid);
       const actual = ya && ya.votes ? ya.votes[yo] : null; const k2 = actual === kind ? null : kind;
-      this.ensureProposed(p, this.state.tandaDe || yo).then(id => this.mutate('votePlan', { user: yo, planId: id, kind: k2 }))
+      this.ensureProposed(p, this.state.tandaDe || yo, true).then(id => this.mutate('votePlan', { user: yo, planId: id, kind: k2 }))
         .then(() => { if (k2) this.toast(k2 === 'sobres' ? '¡Sobres! ' + (this.state.tandaDe ? this.state.tandaDe + ' ya ve tu voto' : 'Tu voto quedó') : 'Listo: votaste que no jala'); }); };
     if (!this.state.userName) { this.pedirCuenta('votar', go); return; }
     go();
@@ -3127,7 +3127,7 @@ class Component extends DCLogic {
       faltan: c.faltan, techo: c.techo, seguro: c.seguro, c };
   }
 
-  planConfirmed(p) { const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
+  planConfirmed(p) { if (p && p.confirmado) return true; const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
   chip(on) { return `padding:9px 14px;min-height:40px;border-radius:999px;border:1.5px solid ${on?'var(--fill)':'var(--color-neutral-300)'};background:${on?'var(--fill)':'var(--card)'};color:${on?'var(--on-fill)':'var(--ink)'};font:600 13.5px var(--font-body);cursor:pointer;white-space:nowrap`; }
   strip(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
   budgetMax() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const id = s.budget === 'b300' ? 'b600' : s.budget; const b = this.BUD.find(x => x[0] === id); return b ? b[2] : 99999; }
@@ -6045,7 +6045,7 @@ class Component extends DCLogic {
         return { name: v ? v.n : ((p.ext && p.ext[id]) || 'Opción externa'), meta: v ? `${v.cat} · ${v.col} · ${this.precioTxt(v)}` : 'Agregado a mano · fuera del catálogo', up: String(upN), down: String(dnN), upStyle: sb(myS === 'up'), downStyle: sb(myS === 'down'), voteUp: voteS('up'), voteDown: voteS('down'), open: () => { if (v) openV(v.id); } }; });
       const shareChips = myFr.map(f => { const sent = (p.sharedWith || []).includes(f); return { label: sent ? '✓ ' + f : '→ ' + f, style: `padding:6px 11px;border:1.5px solid ${sent ? 'var(--color-accent)' : 'var(--color-neutral-300)'};background:${sent ? 'var(--color-accent)' : 'var(--card)'};color:${sent ? 'var(--on-fill)' : 'var(--color-text)'};font:700 12px var(--font-body);cursor:${sent ? 'default' : 'pointer'}`, send: () => { if (sent) return; if (!sOn) { this.toast('El envío en vivo funciona con el link del salón'); return; } this.mutate('sharePlan', { user: me, planId: p.id, to: [f] }).then(() => this.toast(`Enviado a ${f} — le llega a su dispositivo`)); } }; });
       const voterNames = Object.keys(votes);
-      return { letter: (p.name || 'P').replace('Plan: ', '')[0], name: p.name, byLine: `${p.date && !(p.meta || '').includes('·') ? this.fmtDate(p.date) + ' · ' : ''}${p.meta ? p.meta + ' · ' : ''}propone ${p.by}`, isConf: conf,
+      return { letter: (p.name || 'P').replace('Plan: ', '')[0], name: p.name, byLine: `${p.date && !(p.meta || '').includes('·') ? this.fmtDate(p.date) + ' · ' : ''}${p.meta ? p.meta + ' · ' : ''}propone ${p.by}`, isConf: conf, confTxt: p.confirmado ? '🎉 ¡SE ARMÓ! ' + (p.by === me ? 'Confirmaste este plan' : p.by + ' confirmó este plan') : '🎉 ¡SE ARMÓ! Todos dijeron que sí — este plan está confirmado',
         stops: stopRows, hasStops: stopRows.length > 0,
         sobres: String(sob), nojalo: String(noj), sobStyle: vb('sobres', mine === 'sobres'), nojStyle: vb('nojalo', mine === 'nojalo'), voteSobres: votePl('sobres'), voteNojalo: votePl('nojalo'),
         // El voto puesto se nota: el botón late una vez y el icono salta.
@@ -6435,11 +6435,11 @@ class Component extends DCLogic {
       qrPlanGo: () => { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; } this.ensureProposed(p).then(id => this.setState({ qrPlanUrl: this.planLink(id) })); },
       qrPlanOn: !!s.qrPlanUrl, qrPlanSrc: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(s.qrPlanUrl || ''),
       planQResults: (s.swapIdx != null && s.planQ.length < 2 ? this.swapSuggest(s.swapIdx) : this.searchIn(s.planQ, 6)).map(v => ({ name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, add: () => { this.setState({ planQ: '' }); this.addStop(v); } })),
-      sentPlans: rawPlans.filter(p => p.by === me && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · ${Object.values(p.votes || {}).filter(x => x === 'sobres').length} sobres · enviado a ${(p.sharedWith || []).length ? (p.sharedWith || []).join(', ') : 'nadie aún'}`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }), del: () => { if (sOn) this.mutate('delPlan', { planId: p.id }); else this.setState({ gPlans: s.gPlans.filter(x => x.id !== p.id) }, () => this.persist()); this.toast('Plan borrado'); } })),
+      sentPlans: rawPlans.filter(p => p.by === me && !this.planConfirmed(p)).map(p => ({ name: p.name, puedeConfirmar: Object.keys(p.votes || {}).some(u => u !== me && p.votes[u] === 'sobres'), confirmar: () => this.confirmaPlan(p), meta: `${p.meta || ''} · ${Object.values(p.votes || {}).filter(x => x === 'sobres').length} ✓ · ${Object.values(p.votes || {}).filter(x => x === 'nojalo').length} ✕${(p.sharedWith || []).length ? ' · enviado a ' + (p.sharedWith || []).join(', ') : ' · compartido por enlace'}`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }), del: () => { if (sOn) this.mutate('delPlan', { planId: p.id }); else this.setState({ gPlans: s.gPlans.filter(x => x.id !== p.id) }, () => this.persist()); this.toast('Plan borrado'); } })),
       recvPlans: rawPlans.filter(p => this.meLlego(p, me) && !this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · te lo envió ${p.by}` + (p.votes && p.votes[me] ? (p.votes[me] === 'sobres' ? ' · votaste ✓' : ' · votaste ✕') : ''), open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
-      confPlans: rawPlans.filter(p => (p.by === me || (p.sharedWith || []).includes(me)) && this.planConfirmed(p)).map(p => ({ name: p.name, meta: `${p.meta || ''} · ${[p.by].concat(p.sharedWith || []).filter((x, i, a) => a.indexOf(x) === i).join(', ')} dijeron que sí 🎉`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
+      confPlans: rawPlans.filter(p => (p.by === me || this.meLlego(p, me)) && this.planConfirmed(p)).map(p => ({ name: p.name, meta: p.confirmado ? `${p.meta || ''} · ${p.by === me ? 'lo confirmaste' : p.by + ' lo confirmó'} 🎉` : `${p.meta || ''} · ${[p.by].concat(p.sharedWith || []).filter((x, i, a) => a.indexOf(x) === i).join(', ')} dijeron que sí 🎉`, open: () => this.openPlanOpt({ plan: p }), goVote: () => this.nav('group', { focusPlanId: p.id }) })),
       hasSentPlans: rawPlans.some(p => p.by === me && !this.planConfirmed(p)), hasRecvPlans: rawPlans.some(p => this.meLlego(p, me) && !this.planConfirmed(p)),
-      hasConfPlans: rawPlans.some(p => (p.by === me || (p.sharedWith || []).includes(me)) && this.planConfirmed(p)),
+      hasConfPlans: rawPlans.some(p => (p.by === me || this.meLlego(p, me)) && this.planConfirmed(p)),
       hasAnyPlans: rawPlans.some(p => p.by === me || (p.sharedWith || []).includes(me)),
       // Guardar hace una COPIA COMPLETA E INDEPENDIENTE: ids de las paradas,
       // horas, fecha, personas, transporte, zona y costo. Antes sólo se
@@ -7168,6 +7168,10 @@ class Component extends DCLogic {
   addGOpt(v) { const s = this.state; const opt = { id: v.id, name: v.n, meta: `${v.cat} · ${v.col} · ${this.precioTxt(v)}`, vid: v.id };
     if (s.syncOn && s.userName) { const opts = (s.sync && s.sync.votesOpts) || []; if (opts.some(o => o.id === v.id)) { this.toast('Ya está en la votación'); return; } this.mutate('addOpt', { user: s.userName, opt }).then(() => this.toast(`${v.n} propuesto al grupo — lo ven todos`)); return; }
     if (s.gOpts.some(o => o.id === v.id)) { this.toast('Ya está en la votación'); return; } this.setState({ gOpts: s.gOpts.concat([opt]) }, () => this.persist()); this.toast(`${v.n} propuesto al grupo`); }
+  // Quien mandó las opciones da una por confirmada (por enlace no hay lista de invitados que deban decir que sí).
+  confirmaPlan(p) { const yo = this.state.userName; if (!p || !yo || p.by !== yo) return;
+    const C = this.cat(), st = (p.stops || []).map(id => C.find(v => v.id === id)).filter(Boolean); if (st.length) this.aprende('confirmado', st, p.times);
+    this.mutate('confirmPlan', { user: yo, planId: p.id }).then(() => this.toast('¡Se armó! Quien votó ya lo ve confirmado')); }
   planOptId(p) { return 'plan-' + (this.state.planDate || this.todayISO()) + '-' + p.stops.map(v => v.id).join('~').slice(0, 100); }
   // Un plan «me llegó» si me lo mandaron por nombre O si lo abrí por enlace y voté (14 nov 2026: quien votaba
   // desde un enlace no veía ese plan en «Mis planes», aunque la pantalla dice «cuando te manden uno, aparece aquí»).
@@ -7211,12 +7215,12 @@ class Component extends DCLogic {
   // sólo en buildPlanPayload: estaban los dos caminos.
   buildPlanPayload(p) { const s = this.state; const rng = this.range(); const id = this.planOptId(p);
     const ext = {}; p.stops.forEach(v => { if (String(v.id).indexOf('ext-') === 0) ext[v.id] = v.n; });
-    const date = s.planDate || this.todayISO();
+    const date = this.sinFecha() ? '' : (s.planDate || this.todayISO());   // (14 nov 2026) armado sin fecha: no se le pega la de hoy
     const c = this.costoPlan(p.stops || []);
     const conocido = c.consumo + c.propina;
     return { id,
       name: (p.stops.length === 1 ? '' : 'Plan: ') + p.stops.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '),
-      meta: `${this.fmtDate(date)} · ${p.stops.length} parada${p.stops.length > 1 ? 's' : ''} · desde $${conocido} pp`,
+      meta: `${date ? this.fmtDate(date) + ' · ' : ''}${p.stops.length} parada${p.stops.length > 1 ? 's' : ''} · desde $${conocido} pp`,
       stops: p.stops.map(v => v.id), times: (p.times || []).slice(0, p.stops.length),
       from: rng[0], to: rng[1], spent: p.spent, date, ext,
       // Contexto completo, para que el receptor vea el plan del emisor.
@@ -7359,11 +7363,12 @@ class Component extends DCLogic {
     if (this.state.swapIdx != null) { const i = this.state.swapIdx; const p = this.getPlan(); if (p) { const stops = p.stops.slice(); const times = this.curTimes(p); stops[i] = v; times[i] = t; this.setState({ swapIdx: null }); this.sortPlan(stops, times); this.toast(`Cambiado por "${name}" a las ${this.time12(t)}`); return; } }
     const p = this.getPlan(); const stops = p ? p.stops.slice() : []; const times = p ? this.curTimes(p) : [];
     stops.push(v); times.push(t); this.sortPlan(stops, times); this.toast(`"${name}" agregado a las ${this.time12(t)}`); }
-  ensureProposed(p, quien) { const s = this.state; const yo = quien || s.userName; const plan = this.buildPlanPayload(p); this.followPlan(plan.id);
+  // tanda = true: opción de una tanda compartida; se propone a nombre de quien compartió, SIN su voto automático.
+  ensureProposed(p, quien, tanda) { const s = this.state; const yo = quien || s.userName; const plan = this.buildPlanPayload(p); this.followPlan(plan.id);
     if (s.syncOn && yo) { const ex = ((s.sync && s.sync.plans) || []).some(x => x.id === plan.id);
       if (ex) return Promise.resolve(plan.id);
-      return this.mutate('proposePlan', { user: yo, plan }).then(() => plan.id); }
-    if (!s.gPlans.some(x => x.id === plan.id)) { const gp = Object.assign({}, plan, { by: s.userName || 'Tú', ts: Date.now(), votes: {}, stopVotes: {} }); gp.votes[gp.by] = 'sobres'; this.setState({ gPlans: s.gPlans.concat([gp]) }, () => this.persist()); }
+      return this.mutate('proposePlan', tanda ? { user: yo, plan, sinVoto: true } : { user: yo, plan }).then(() => plan.id); }
+    if (!s.gPlans.some(x => x.id === plan.id)) { const gp = Object.assign({}, plan, { by: s.userName || 'Tú', ts: Date.now(), votes: {}, stopVotes: {} }); if (!tanda) gp.votes[gp.by] = 'sobres'; this.setState({ gPlans: s.gPlans.concat([gp]) }, () => this.persist()); }
     return Promise.resolve(plan.id); }
   sendPlanTo(f) { const p = this.getPlan(); if (!p || !p.stops.length) { this.toast('Primero arma un plan'); return; } const s = this.state;
     if (!(s.syncOn && s.userName)) { this.toast('El envío en vivo funciona con el link del salón'); return; }

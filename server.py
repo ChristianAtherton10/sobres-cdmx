@@ -190,9 +190,19 @@ def apply_op(op, p):
                       for k2, v4 in list((pl.get('costo') or {}).items())[:8]
                       if isinstance(v4, (int, float, bool, list))},
             'ext': {str(k)[:64]: str(v2)[:80] for k, v2 in list((pl.get('ext') or {}).items())[:8] if str(k).startswith('ext-')},
-            'votes': {by: 'sobres'}, 'stopVotes': {}})
+            # (14 nov 2026) Las 3 opciones de una tanda se proponen a nombre de quien compartió SIN su voto:
+            # compartir tres opciones no es votar por las tres.
+            'votes': ({} if p.get('sinVoto') else {by: 'sobres'}), 'stopVotes': {}})
         STATE['plans'] = STATE['plans'][-80:]
         for sid in (pl.get('stops') or [])[:8]: bump(sid, 'a')
+    elif op == 'confirmPlan':
+        # Quien propuso el plan lo da por confirmado (p. ej. la opción ganadora de las que mandó por enlace).
+        u, pid = p.get('user'), p.get('planId')
+        pl = find_plan(pid)
+        if not u or not pl: return 'datos'
+        if pl.get('by') != u: return 'sólo quien lo propuso puede confirmarlo'
+        if p.get('quitar'): pl.pop('confirmado', None)
+        else: pl['confirmado'] = {'by': str(u)[:24], 'ts': now}
     elif op == 'votePlan':
         u, pid, kind = p.get('user'), p.get('planId'), p.get('kind')
         pl = find_plan(pid)
