@@ -52,14 +52,14 @@ def buscar(texto, lat=None, lng=None, campos='places.id,places.displayName,place
     r = _pide('https://places.googleapis.com/v1/places:searchText', campos, cuerpo)
     return r.get('places', []) if 'error' not in r else r
 
-CAMPOS_DETALLE = ('id,location,businessStatus,currentOpeningHours.openNow,regularOpeningHours.periods,'
+CAMPOS_DETALLE = ('id,location,formattedAddress,businessStatus,currentOpeningHours.openNow,regularOpeningHours.periods,'
                   'regularOpeningHours.weekdayDescriptions,priceRange,priceLevel,rating,userRatingCount,googleMapsUri')
 
 def detalle(place_id, extra=False):
     if not place_id or not place_id.replace('_', '').replace('-', '').isalnum():
         return {'error': 400}
     r = _pide('https://places.googleapis.com/v1/places/' + place_id + '?languageCode=es&regionCode=MX',
-              CAMPOS_DETALLE + (',displayName,primaryType,types,formattedAddress' if extra else ''))
+              CAMPOS_DETALLE + (',displayName,primaryType,types' if extra else ''))
     loc = r.get('location') or {}
     if 'error' not in r and not en_cdmx(loc.get('latitude', 0), loc.get('longitude', 0)):
         return {'error': 'fuera de CDMX'}

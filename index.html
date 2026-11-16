@@ -627,7 +627,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ showSize }}" hint-placeholder-val="{{ true }}"><div class="sb-row sb-cuantos" style="margin-top:8px"><span class="sb-note" style="font-weight:600">Cuántos</span><button class="sb-x" aria-label="Quitar una persona" onClick="{{ sizeDown }}">−</button><span style="font:800 17px var(--font-body);min-width:26px;text-align:center;color:var(--ink)" aria-live="polite">{{ groupSizeN }}</span><button class="sb-x" aria-label="Agregar una persona" onClick="{{ sizeUp }}">+</button></div></sc-if>
 <span class="sb-label sb-mt">Presupuesto por persona</span>
 <div class="sb-chips" role="group" aria-label="Presupuesto"><sc-for list="{{ budgetOpts }}" as="o" hint-placeholder-count="5"><button class="sb-chip" style="min-height:40px;padding:0 14px;font-size:14px" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
-<p class="sb-note" style="margin:8px 0 0">Cuenta consumo, propina y traslado. Si un lugar no tiene precio, te lo decimos como «por confirmar».</p>
+<p class="sb-note" style="margin:8px 0 0">Cuenta consumo, propina y traslado. Los precios pueden ser estimados (van con «~»).</p>
 <sc-if value="{{ nqCerrado }}" hint-placeholder-val="{{ true }}"><button class="sb-btn3" style="margin:6px 0 0 -12px" onClick="{{ nqAbrir }}">＋ Hay algo que no quiero</button></sc-if>
 <sc-if value="{{ nqAbierto }}" hint-placeholder-val="{{ false }}">
 <span class="sb-label sb-mt">No quiero…</span>
@@ -2917,14 +2917,6 @@ class Component extends DCLogic {
   // misma sede son dos salidas); todo lo demás es su sede.
   actKey(v) { return v ? (v.evento ? v.id : this.sedeDe(v)) : ''; }
   mismoLugar(a, b) { return !!a && !!b && (a.id === b.id || this.marcaDe(a) === this.marcaDe(b) || this.sedeDe(a) === this.sedeDe(b)); }
-  // (14 nov 2026, decisión del fundador: «quiero que las 2,732 fichas entren a armar planes. TODOS»)
-  // Por defecto TODO el catálogo es candidato. Lo que antes dejaba fuera a una ficha (pausa, fuente vieja, pin
-  // aproximado, precio sin número, acervo o librería) ahora sólo la manda DESPUÉS de lo confirmado y se dice como
-  // condición en el plan («confirma el horario», «ubicación aproximada», «precio por confirmar»).
-  // Siguen fuera: un recinto sin evento, lo que está cerrado y lo que Google dice que cerró.
-  // `soloVerificado: true` conserva el modo estricto anterior (y es lo que ejercitan las pruebas de esas reglas).
-  todoEntra() { return this.state.soloVerificado !== true; }
-  topeEstricto() { const a = this.state.aceptaSinPrecio; return a === false ? true : a ? false : !this.todoEntra(); }
   // Fichas que no son, en principio, un lugar para salir (acervos, escuelas, tiendas de museo, bibliotecas, librerías).
   noEsSalida(v) { const n = this.strip(v.n);
     // (Un restaurante o bar llamado "Archivo" sí es lugar para ir; el filtro es para acervos.)
@@ -2932,27 +2924,21 @@ class Component extends DCLogic {
     if (v.cat === 'Biblioteca') return !/vasconcelos|biblioteca de mexico|la ciudadela|biblioteca central/.test(n);
     if (v.cat === 'Librería') return !/rosario castellanos|pendulo|bajo el volcan|under the volcano|cafebreria|99 records/.test(n);   // 99 Records: tienda de vinilos (The Happening / Time Out)
     return false; }
-  // Cuánto se relega una ficha con datos por confirmar frente a una confirmada (0 = nada).
-  dudoso(v) { if (!v) return 0; let d = 0;
-    if (v.recomendable === false && !v.gHoras) d += 4;
-    if (v.coordAprox && !v.evento && !v.deGoogle) d += 3;
-    if (v._noSal === undefined) v._noSal = this.noEsSalida(v);
-    if (v._noSal) d += 6;
-    return d; }
+  // (16 nov 2026, fundador) SOBRES es de lo bueno, lo popular y lo famoso: NO entra todo el catálogo. Siguen fuera lo
+  // cotidiano o que no es salida (librerías, tiendas de museo, acervos), lo que está en pausa, lo de fuente vieja sin
+  // confirmar y lo que no tiene pin confirmado. Lo que sí se abrió fue el PRECIO de los restaurantes (ver respaldoDe).
   esRecomendable(v) {
     if (!v) return false;
     if (this.esSede(v)) return false;   // un recinto sólo sale con su evento
-    const todo = this.todoEntra();
-    // Regla de ubicación (modo estricto): sin pin confirmado no se propone. Con todo el catálogo, entra relegada y con aviso.
-    if (v.coordAprox && !v.evento && !v.deGoogle && !todo) return false;
+    // Regla de ubicación de SOBRES: sin pin confirmado (número de la calle o esquina) no se propone.
     if (v.gCerrado) return false;
+    if (v.coordAprox && !v.evento && !v.deGoogle) { if (!this.aPruebaG(v)) return false; if (!v.pausa && v.recomendable !== false) return true; }
+    if (v.recomendable === true) return true;
+    // «A prueba»: en pausa SÓLO por horario y con identificador de Google, mientras se arma la tanda (Google lo confirma o se descarta).
+    if (v.recomendable === false) return !!v.pausa && this.pausaGoogle(v) && this.aPruebaG(v);
     const n = this.strip(v.n);
     // Un lugar cerrado (remodelación, cierre temporal) no se propone.
     if (v.cerradoTemporal || /\bcerrad[oa]\b|cierre temporal/.test(n)) return false;
-    if (v.recomendable === true) return true;
-    // «A prueba» (modo estricto): en pausa SÓLO por horario y con identificador de Google, mientras se arma la tanda.
-    if (v.recomendable === false) return todo || !!(this._aPrueba && v.pausa && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && this.soloHorario(v));
-    if (todo) return true;
     return !this.noEsSalida(v);
   }
 
@@ -3141,7 +3127,7 @@ class Component extends DCLogic {
     const conocido = c.consumo + c.propina + c.transporte;   // consumo + entradas + propina + traslado
     // TOPE ESTRICTO: con presupuesto elegido, lo que no tiene costo respaldado queda fuera
     // (salvo que la persona acepte ver lugares con precio por confirmar).
-    const estricto = t < 90000 && this.topeEstricto();
+    const estricto = t < 90000 && !this.state.aceptaSinPrecio;
     // Un bar o restaurante SIN precio publicado no cuesta $0: para decidir si cabe
     // en el presupuesto se toma un gasto típico de su tipo (no se muestra como
     // precio). Sin esto, los lugares sin precio "cabían" en todo y se repetían.
@@ -3157,7 +3143,8 @@ class Component extends DCLogic {
   planConfirmed(p) { if (p && p.confirmado) return true; const aud = [p.by].concat(p.sharedWith || []).filter((x, i, a) => x && a.indexOf(x) === i); if (aud.length < 2) return false; const v = p.votes || {}; return aud.every(u => v[u] === 'sobres'); }
   chip(on) { return `padding:9px 14px;min-height:40px;border-radius:999px;border:1.5px solid ${on?'var(--fill)':'var(--color-neutral-300)'};background:${on?'var(--fill)':'var(--card)'};color:${on?'var(--on-fill)':'var(--ink)'};font:600 13.5px var(--font-body);cursor:pointer;white-space:nowrap`; }
   strip(s) { return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
-  budgetMax() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const id = s.budget === 'b300' ? 'b600' : s.budget; const b = this.BUD.find(x => x[0] === id); return b ? b[2] : 99999; }
+  budgetMax() { const m = this.budgetMax0(), x = this._topeExtra; return (x && m > 0 && m < 90000) ? Math.round(m * x / 10) * 10 : m; }
+  budgetMax0() { const s = this.state; if (s.budgetCustom) return s.budgetCustom; const id = s.budget === 'b300' ? 'b600' : s.budget; const b = this.BUD.find(x => x[0] === id); return b ? b[2] : 99999; }
   // Zonas en pantalla (8 nov 2026, pedido del fundador): 10 zonas. El motor, las distancias y
   // las zonas vecinas siguen con las 15 zonas; elegir un grupo elige todas sus zonas.
   ZGRUPOS() { return [['Roma · Condesa', ['roma', 'romasur', 'condesa']], ['Polanco · Chapultepec', ['polanco', 'chapultepec']],
@@ -3231,10 +3218,7 @@ class Component extends DCLogic {
   condicionDe(v) { if (!v) return ''; const out = [];
     if (v.evento) { if (this.sinFecha()) out.push('elige la función (' + this.fechasTxt(v) + ')'); else if (v.condicion) out.push('confirma boletos y hora'); }
     else { if (this.sinFecha()) { const d = this.diasTxt(v); if (d) out.push(/^sólo/.test(d) ? 'abre ' + d : 'abre ' + d); }
-      if (v.condicion) out.push(['Taller', 'Escape room', 'Tour'].indexOf(v.cat) >= 0 ? 'reserva tu sesión' : 'elige función');
-      // Datos por confirmar de una ficha que antes quedaba fuera (14 nov 2026).
-      if (this.todoEntra()) { if ((v.recomendable === false || v.horaEstimada) && !v.gHoras) out.push('confirma que esté abierto y su horario');
-        if (v.coordAprox && !v.deGoogle) out.push('ubicación aproximada: confirma la dirección'); } }
+      if (v.condicion) out.push(['Taller', 'Escape room', 'Tour'].indexOf(v.cat) >= 0 ? 'reserva tu sesión' : 'elige función'); }
     return out.join(' · '); }
   condicionesPlan(stops) { return (stops || []).map(v => { const c = this.condicionDe(v); return c ? v.n.split(' ·')[0] + ': ' + c : ''; }).filter(Boolean); }
   vigenteEn(v, iso) { const f = v && v.fechas; if (!f) return true;
@@ -3271,7 +3255,7 @@ class Component extends DCLogic {
     // Tope estricto (10 nov 2026): con presupuesto elegido sólo entra lo que tiene costo
     // respaldado o acceso libre. Sin presupuesto, o si la persona acepta "precio por
     // confirmar", lo sin precio entra y el total nunca se declara completo.
-    const estricto = max < 90000 && this.topeEstricto();
+    const estricto = max < 90000 && !this.state.aceptaSinPrecio;
     if (v.ppUnknown) return estricto ? this.accesoLibre(v) : true;
     if (estricto && this.respaldoDe(v) === 'debil') return false;
     return v.pp <= max;
@@ -3374,6 +3358,12 @@ class Component extends DCLogic {
   }
   // ── Horario respaldado EN VIVO con Google (13 nov 2026; decisión del fundador: horario sí, rango de precio no) ──
   // Sólo para las paradas que se van a mostrar. Queda en memoria de esta visita (términos de Google).
+  // (16 nov 2026) «A prueba» ampliado: la mitad de los hotspots (Pujol, Quintonil, Handshake…) estaba fuera porque su ficha
+  // no trae pin u horario confirmados. Si la ficha es un hotspot o un lugar de comida o copas y tiene identificador de Google,
+  // puede ser candidata mientras se arma la tanda; se muestra sólo si Google confirma en vivo lo que faltaba.
+  aPruebaG(v) { return !!(this._aPrueba && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && (v.hot || this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))); }
+  // ¿Todos los motivos de la pausa son cosas que Google puede confirmar en vivo (horario, ubicación)?
+  pausaGoogle(v) { if (v._pG === undefined) { const m = this.motivosPausa(v.pausa || v.pausaAnterior || ''); v._pG = m.length > 0 && m.every(x => x === 'horario' || x === 'ubicacion'); } return v._pG; }
   soloHorario(v) { if (v._soloH === undefined) { const m = this.motivosPausa(v.pausa || v.pausaAnterior || ''); v._soloH = m.length === 1 && m[0] === 'horario'; } return v._soloH; }
   // Ventana [abre, cierra] de un día (0 = domingo) con los periodos de Google; dia null = plan sin fecha
   // (la ventana más común de la semana). Con turno partido se toma el que más cubre el horario pedido.
@@ -3402,16 +3392,24 @@ class Component extends DCLogic {
     const g = this.googleDe(v); if (!g || !v || v.evento || (v.sesiones && v.sesiones.length)) return false;
     this._gV = this._gV || {}; this._gV[v.id] = v;
     if (g.estado === 'CLOSED_PERMANENTLY' || g.estado === 'CLOSED_TEMPORARILY') { v.recomendable = false; v.gCerrado = true; return true; }
+    // Pin en vivo: sólo si el del catálogo es aproximado o la pausa pide confirmar la ubicación, y Google lo ubica
+    // en la misma zona de la ficha (a ≤ 4 km de su pin del catálogo): si no, no es el mismo lugar.
+    const mot = v.pausa ? this.motivosPausa(v.pausa) : [];
+    if (!v.gPin && g.lat != null && (v.coordAprox || mot.indexOf('ubicacion') >= 0)) {
+      if (v.lat == null || this.kmEntre([v.lat, v.lng], [g.lat, g.lng]) <= 4) { v.lat = g.lat; v.lng = g.lng; v.coordAprox = false; v.gPin = true; if (g.addr) { v.addr = g.addr.split(',').slice(0, 2).join(',').trim(); } } }
     const iso = this.sinFecha() ? '' : this.fechaPlanISO(), dia = iso ? this.diaSemana(iso) : null, rg = this.range();
     const k = (dia == null ? 'x' : dia) + '|' + rg.join('-'); if (v._gk === k) return true;
     const x = this.ohGoogle(g, dia, rg);
-    if (!x) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; return false; }
-    if (x.oh) v.oh = x.oh.slice();
-    v.dias = x.dias.length >= 7 ? null : x.dias.slice(); v.cerrado = null; v.horaEstimada = false;
-    if ((g.horario || []).length) v.hrs = g.horario.join(' · ');
-    v.hrsFuente = 'Google Maps (en vivo)'; v.gHoras = true; v._gk = k;
-    if (v.pausa && v.recomendable === false && this.soloHorario(v)) { v.pausaAnterior = v.pausa; v.pausa = ''; v.recomendable = undefined; v.reactivadoG = true;
+    if (x) { if (x.oh) v.oh = x.oh.slice();
+      v.dias = x.dias.length >= 7 ? null : x.dias.slice(); v.cerrado = null; v.horaEstimada = false;
+      if ((g.horario || []).length) v.hrs = g.horario.join(' · ');
+      v.hrsFuente = 'Google Maps (en vivo)'; v.gHoras = true; v._gk = k; }
+    // La pausa se levanta (sólo en esta visita) cuando Google resolvió TODO lo que pedía: horario y/o ubicación.
+    if (v.pausa && v.recomendable === false && this.pausaGoogle(v) && mot.every(m => m === 'horario' ? !!v.gHoras : !!v.gPin)) {
+      v.pausaAnterior = v.pausa; v.pausa = ''; v.recomendable = undefined; v.reactivadoG = true;
       v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
+    if (!x && !v.gPin) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; return false; }
+    if (v.pausa || (v.coordAprox && !v.deGoogle)) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; }   // Google no alcanzó a resolverla: fuera en esta visita
     return true;
   }
   // Si cambian la fecha o el horario pedido, la ventana del día se vuelve a calcular con lo ya recibido.
@@ -3684,7 +3682,7 @@ class Component extends DCLogic {
     let semilla = (dseed * 2654435761 + 97 + uidH) >>> 0;
     const azar = () => { semilla = (Math.imul(semilla ^ (semilla >>> 15), 2246822519) + 0x9e3779b9) >>> 0; return semilla / 4294967296; };
     const { exigeBaile, pideComida } = ctx;
-    const puntaje = v => rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0) - this.dudoso(v) + (joya && (v.tags || []).indexOf('joyita') >= 0 ? 4 : 0);
+    const puntaje = v => rk(v) - nivel(v) * 6 - (v.ppUnknown ? 2 : 0) + (joya && (v.tags || []).indexOf('joyita') >= 0 ? 4 : 0);
     const porPieza = {}; const candDe = k => porPieza[k] || (porPieza[k] = pool.filter(v => this.esPieza(v, R.piezas[k])).sort((a, b) => puntaje(b) - puntaje(a)));
     const llenar = pl => {
       const st = [], ts = [], ac = [], conf = [];
@@ -3856,7 +3854,7 @@ class Component extends DCLogic {
     const iB = this.BUD.findIndex(b => b[0] === s.budget);
     if (s.budgetCustom == null && iB >= 0 && iB < this.BUD.length - 1 && s.budget !== 'any') { const sig = this.BUD[iB + 1];
       pon('presupuesto', sig[0] === 'any' ? 'Buscar sin tope de presupuesto' : 'Subir el presupuesto a ' + sig[1].replace(/^Hasta /, 'hasta '), { budget: sig[0], budgetCustom: null }, prueba({ budget: sig[0], budgetCustom: null })); }
-    if (this.budgetMax() < 90000 && this.topeEstricto()) pon('precio', 'Incluir lugares con precio por confirmar', { aceptaSinPrecio: true }, prueba({ aceptaSinPrecio: true }));
+    if (this.budgetMax() < 90000 && !this.state.aceptaSinPrecio) pon('precio', 'Incluir lugares con precio por confirmar', { aceptaSinPrecio: true }, prueba({ aceptaSinPrecio: true }));
     const rg = this.range();
     if (rg[0] > 9) pon('horario', 'Empezar a las ' + this.time12(rg[0] - 2), { planFrom: rg[0] - 2, planTo: rg[1] }, prueba({ planFrom: rg[0] - 2, planTo: rg[1] }));
     if (rg[1] < 27) pon('horario', 'Terminar a las ' + this.time12(rg[1] + 2), { planFrom: rg[0], planTo: rg[1] + 2 }, prueba({ planFrom: rg[0], planTo: rg[1] + 2 }));
@@ -3877,14 +3875,32 @@ class Component extends DCLogic {
       let memo = null; const o2 = Object.assign({}, opts || {});
       try { Object.defineProperty(r0, 'ajustes', { enumerable: false, configurable: true, get: () => { if (memo) return memo; try { memo = this.calculaAjustes(seed, o2, r0); } catch (e) { memo = []; } return memo; } }); } catch (e) {} }
     return r0; }
+  // Marca qué opciones se salen de la zona o del presupuesto elegidos (las que salieron de una búsqueda ampliada).
+  marcaAmpliadas(plans) { const s = this.state, Z = this.zoneList(), tope0 = this.budgetMax0(); let fz = 0, fp = 0;
+    (plans || []).forEach(p => { p.ampliada = true; const c = this.costoPlan(p.stops, p.times);
+      if (s.zone !== 'all' && p.stops.some(v => Z.indexOf(v.z) < 0)) { p.fueraZona = true; fz++; }
+      if (tope0 < 90000 && c.total > tope0) { p.sobreTope = c.total - tope0; fp++; } });
+    return { n: (plans || []).length, zona: fz, tope: fp, hasta: Math.round(tope0 * 1.25 / 10) * 10 }; }
+  ampliadoTxt(a) { return [a.zona ? 'zonas a unos 5 km' : '', a.tope ? 'hasta $' + a.hasta.toLocaleString('es-MX') + ' por persona' : ''].filter(Boolean).join(' y '); }
   engine0(seed, opts) {
     this._cocinaForzada = false;
-    const r = this.engineBase(seed, opts);
-    if (this.cocinasSel().length && !this._cocinaLibre && r && !(r.plans || []).length) {
+    // (16 nov 2026, fundador) El tipo de comida que pidieron NO se cambia mientras exista más lejos o un poco más caro:
+    // primero dentro de la zona y el presupuesto; si no hay, a ~5 km y hasta 25% arriba (se avisa); otras cocinas sólo
+    // en la primera búsqueda y cuando ni así hay. Al pedir «otras opciones» nunca se cambia de cocina.
+    const firme = this.cocinasSel().length > 0;
+    const r = this.engineBase(seed, firme ? Object.assign({}, opts || {}, { cocinaFirme: true }) : opts);
+    if (firme && r && !(r.plans || []).length) {
+      if (!(opts && opts.radioKm) && !this._topeExtra) {
+        this._topeExtra = 1.25; let rx;
+        try { rx = this.engineBase(seed, Object.assign({}, opts || {}, { cocinaFirme: true, radioKm: 5 })); } finally { this._topeExtra = 0; }
+        if (rx && (rx.plans || []).length) { rx.ampliado = this.marcaAmpliadas(rx.plans);
+          rx.expandNote = ('No encontré comida ' + this.cocinasTxt() + ' en ' + this.zonesLabel() + ' con ese presupuesto, así que amplié un poco (' + (this.ampliadoTxt(rx.ampliado) || 'otra combinación') + ') sin cambiar lo que pediste.').trim();
+          return rx; } }
+      if (opts && (opts.soloNuevos || opts.radioKm)) return r;   // al regenerar: mejor decir que se acabó que cambiar de cocina
       this._cocinaForzada = true;
       const r2 = this.engineBase(seed, opts); this._cocinaForzada = false;
       if (r2 && (r2.plans || []).length) {
-        const nota = 'No encontré comida ' + this.cocinasTxt() + ' en ' + this.zonesLabel() + ' a esa hora y con ese presupuesto; te muestro otras cocinas.';
+        const nota = 'No encontré comida ' + this.cocinasTxt() + ' en ' + this.zonesLabel() + ' ni cerca a esa hora y con ese presupuesto; te muestro otras cocinas.';
         r2.expandNote = r2.expandNote && r2.expandNote.indexOf('No encontré comida') < 0 ? nota + ' ' + r2.expandNote : (r2.expandNote || nota);
         return r2;
       }
@@ -3952,7 +3968,7 @@ class Component extends DCLogic {
       if (cs.length && !this._cocinaLibre) { const zs = s.zone === 'all' ? null : this.zoneList();
         const hay = this.cat().some(v => this.esComidaFiltrable(v) && this.esRecomendable(v) && this.budgetOk(v) && (!zs || zs.indexOf(v.z) >= 0)
           && this.tiposCocina(v).some(k => cs.indexOf(k) >= 0));
-        if (!hay) { this._cocinaLibre = true; notaCocina = 'No encontré comida ' + this.cocinasTxt(cs) + ' en ' + this.zonesLabel() + ' con ese presupuesto; te muestro otras cocinas.'; } } }
+        if (!hay && !(opts && opts.cocinaFirme)) { this._cocinaLibre = true; notaCocina = 'No encontré comida ' + this.cocinasTxt(cs) + ' en ' + this.zonesLabel() + ' con ese presupuesto; te muestro otras cocinas.'; } } }
     const all = this.cat().filter(v => !excl.has(v.id) && this.budgetOk(v) && this.timingOk(v) && this.vibeAdmite(v, VM) && this.cocinaOk(v)
       && !v.cursoCerrado      // un curso de 6 semanas no es el plan de una tarde
       && this.esRecomendable(v) && !this.funcionSinConfirmar(v));
@@ -3979,6 +3995,11 @@ class Component extends DCLogic {
     const pistas = () => new Set(pool.filter(v => this.bailable(v)).map(v => this.marcaDe(v))).size;
     // (10 nov 2026) La zona ya NO se amplía sola: si salen menos de tres opciones se ofrece
     // como ajuste ("Sumar zonas vecinas") y la persona decide. opts.ampliar = lo eligió.
+    // (16 nov 2026, fundador) «Ver otras opciones» sin nada nuevo en tu zona: se suman las zonas a ~5 km (centro a centro).
+    if (!cityWide && opts.radioKm) { const G = Object.assign({}, this.ZGEO_EXTRA || {}, this.ZGEO || {}); const added = [];
+      this.ZONES.map(z => z[0]).forEach(k => { if (sel.includes(k) || zones.includes(k) || !G[k]) return;
+        if (sel.some(z => G[z] && this.kmEntre(G[z], G[k]) <= opts.radioKm)) { zones.push(k); added.push(k); pool = pool.concat(all.filter(v => v.z === k && !v.lejos)); } });
+      if (added.length) expandNote = (notaCocina ? notaCocina + ' ' : '') + 'Sumamos zonas a unos ' + opts.radioKm + ' km: ' + added.map(z => this.zLabel(z)).join(', ') + ' (marcado en cada lugar).'; }
     if (!cityWide && opts.ampliar) {
       const added = [];
       for (const az of vecinasSel(2)) { zones.push(az); added.push(az); pool = pool.concat(all.filter(v => v.z === az && !v.lejos)); }
@@ -5067,6 +5088,27 @@ class Component extends DCLogic {
     const prevP = mismo ? (s.seenPlantillas || []) : [];
     const r = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, avoidPlantillas: prevP, ampliar: !!s.ampliarZonas, vistosPlan: prevS, soloNuevos: true,
       bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId, reqSeed: sol.reqSeed });
+    // (16 nov 2026, fundador) Si ya no salen 3 opciones nuevas dentro de la zona y el presupuesto, ANTES de repetir o de
+    // rendirse se amplía un poco: zonas a ~5 km y hasta 25% arriba del presupuesto. Lo pedido (tipo de comida, antojo,
+    // «No quiero», horario) NO cambia. Las opciones dentro del rango van primero; las ampliadas completan y se avisa.
+    if ((r.plans || []).length < 3 && prevS.length) {
+      const dentro = r.plans || []; const idsD = this.idsDePlanes(r); const tope0 = this.budgetMax0();
+      this._topeExtra = 1.25; let rx;
+      try { rx = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, vistosPlan: prevS.concat(idsD), soloNuevos: true, radioKm: 5, ampliar: !!s.ampliarZonas,
+        bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId + 'x', reqSeed: sol.reqSeed }); } finally { this._topeExtra = 0; }
+      let extra = ((rx && rx.plans) || []).filter(p => !p.stops.some(v => idsD.indexOf(v.id) >= 0));
+      if (extra.length) { this.marcaAmpliadas(extra);
+        // Primero lo que menos se sale: dentro de zona y tope, luego sólo una de las dos cosas, al final ambas.
+        extra = extra.map((p, k) => ({ p, k, w: (p.fueraZona ? 1 : 0) + (p.sobreTope ? 1 : 0) })).sort((x, y) => (x.w - y.w) || (x.k - y.k)).map(x => x.p).slice(0, 3 - dentro.length);
+        const am = { n: extra.length, zona: extra.filter(p => p.fueraZona).length, tope: extra.filter(p => p.sobreTope).length, hasta: Math.round(tope0 * 1.25 / 10) * 10 };
+        rx.plans = dentro.concat(extra); rx.ampliado = am;
+        rx.expandNote = 'Ya no había ' + (dentro.length ? 'más ' : '') + 'opciones nuevas dentro de tu zona y presupuesto, así que ' + (extra.length === 1 ? 'una opción amplía' : extra.length + ' opciones amplían') + ' un poco'
+          + (this.ampliadoTxt(am) ? ': ' + this.ampliadoTxt(am) : '') + '. Lo que pediste no cambia.';
+        this.registrarVistos(rx); const hx = this.histOf(rx, prevC, prevV);
+        this.setState({ results: rx, regenN: regen, seenCtx: ctx, seenCombos: hx.c, seenVenues: hx.v, tandaDe: '', planDesdeTanda: false, tandaUrl: '', listaN: 12,
+          seenStops: prevS.concat(this.idsDePlanes(rx).filter(id => prevS.indexOf(id) < 0)), agotado: null,
+          planCustom: null, planCustomFrom: null, planIdx: 0, swapSeed: 0, planNone: false, planLocked: false });
+        this.persist(); return rx; } }
     // Sin ninguna actividad principal nueva: segunda pasada que acepta repetirla si lo demás del plan es nuevo (se avisa).
     if (r.agotado && !(r.plans || []).length) { const r2 = this.engine(s.surpriseOn ? (s.surpriseN || 0) : 0, { regen, avoidCombos: prevC, avoidVenues: prevV, ampliar: !!s.ampliarZonas, vistosPlan: prevS, soloNuevos: true, repitePrin: true,
         bloquear: ho.bloquear, penalizar: ho.penalizar, reqId: sol.reqId + 'b', reqSeed: sol.reqSeed });
@@ -6780,7 +6822,7 @@ class Component extends DCLogic {
   // Una sola línea para la tarjeta de la tanda: horario y lo que cuesta por persona (un precio, no un rango).
   resumenTarjeta(p, horario) { const st = p.stops || [], c = this.costoPlan(st, p.times); const sinP = st.filter(v => v.ppUnknown && !this.accesoLibre(v)).length;
     const costo = sinP === st.length ? 'precio por confirmar' : (c.seguro ? '$' : '~$') + c.total.toLocaleString('es-MX') + ' por persona' + (sinP ? ' + ' + (sinP === 1 ? '1 lugar' : sinP + ' lugares') + ' por confirmar' : '');
-    return [horario, costo].filter(Boolean).join(' · '); }
+    return [horario, costo + (p.sobreTope ? ' (pasa tu presupuesto por ~$' + p.sobreTope.toLocaleString('es-MX') + ')' : '')].filter(Boolean).join(' · '); }
   cuantoCuesta(p) { const st = p.stops || [], c = this.costoPlan(st, p.times); const sinP = st.filter(v => v.ppUnknown && !this.accesoLibre(v)).length;
     if (sinP === st.length) return 'Precio por confirmar en ' + (st.length === 1 ? 'este lugar' : 'estos lugares') + '.';
     const partes = ['consumo $' + c.consumo.toLocaleString('es-MX')]; if (c.propina) partes.push('propina ~$' + c.propina); if (c.transporte) partes.push('traslado ~$' + c.transporte);

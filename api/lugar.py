@@ -30,7 +30,9 @@ def resumen(d):
             'horario': (d.get('regularOpeningHours') or {}).get('weekdayDescriptions', []),
             'precio': [int(lo) if lo else None, int(hi) if hi else None] if (lo or hi) else None,
             'nivel': d.get('priceLevel', ''), 'rating': d.get('rating'), 'resenas': d.get('userRatingCount'),
-            'maps': d.get('googleMapsUri', '')}
+            'maps': d.get('googleMapsUri', ''),
+            # Ubicación y dirección EN VIVO (16 nov 2026): confirman el pin de fichas cuyo pin del catálogo es aproximado. No se guardan.
+            'lat': (d.get('location') or {}).get('latitude'), 'lng': (d.get('location') or {}).get('longitude'), 'addr': d.get('formattedAddress', '')}
 
 class handler(BaseHTTPRequestHandler):
     def log_message(self, *a):

@@ -122,3 +122,15 @@ salgan plaza, remate y date $600 completos. Creativo sigue en 0 (talleres en pau
   Fuera: 74 recintos sin evento y 3 marcados como cerrados. Lo dudoso se relega (`dudoso`) y se avisa en el plan (`condicionDe`).
 - Cobertura (120 búsquedas, 10 zonas × 6 antojos × $600/$1,000): 3 opciones 86%; 3 salidas completas 59% (antes 11%); 3 búsquedas en 0.
 - Arreglo: el relleno de reserva podía meter una segunda opción de plaza. Pruebas 49.1–49.4; suite 342.
+
+## 16 nov 2026 — corrección del fundador: «lo bueno, lo popular, lo famoso», no todo (misma rama)
+- Se QUITÓ el modo «todo entra» (bajó la calidad: salía «Librería Sanborns»). Siguen fuera lo cotidiano / no-salida, pausas, fuente vieja, pin sin confirmar.
+- Se queda: precio estimado cuenta para el tope; lo que el Excel dejó «por confirmar» recupera el precio anterior como estimado (202).
+  Con presupuesto entran 814 fichas (antes 342); de comida y copas 581.
+- Hallazgo: 99 de 198 hotspots estaban fuera (Pujol, Quintonil, Handshake…) por pausa de horario/ubicación o pin aproximado.
+  Arreglo: `asignar_hotspots.py` (place_id por nombre, +57 hotspots; sólo se guarda el id) y pin EN VIVO de Google (/api/lugar da lat/lng/addr):
+  hotspots y lugares de comida o copas con place_id entran «a prueba» y se muestran sólo si Google confirma horario y/o ubicación (≤ 4 km del pin de la ficha).
+  Probado en local con Google real: Quintonil y Pujol ya salen en Polanco. En previews sin llave no se ve.
+- «Ver otras opciones»: si ya no hay 3 nuevas en zona y presupuesto, se amplía a zonas a ~5 km y hasta +25% (marcado y avisado; lo de adentro va primero).
+- Cocina firme: si piden mariscos nunca se cambia de cocina al regenerar; en la primera búsqueda se amplía antes de ofrecer otras cocinas.
+- Pruebas 47.7, 49.1–49.4; la de eventos ya no depende de un concierto vencido. Suite 343.

@@ -61,6 +61,7 @@ for sid, n, lat, lng, cat in L:
     time.sleep(0.05)
 json.dump(prog, open(prog_p, 'w'), ensure_ascii=False)
 vivos = {r[0] for r in L}   # sólo lugares que siguen en el catálogo
+if os.path.exists(os.path.join(AQUI, 'vivos.json')): vivos |= set(json.load(open(os.path.join(AQUI, 'vivos.json'))))
 ids = {k: v[0] for k, v in prog.items() if v and k in vivos}
 open(os.path.join(REPO, 'data', 'google_ids.js'), 'w').write(
     '/* SOBRES — place_id de Google para cada lugar (reportes/places/asignar_ids.py). Sólo ids: horario,\n'

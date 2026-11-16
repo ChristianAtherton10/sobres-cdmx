@@ -4,4 +4,6 @@ const app = makeApp({ who: 'amigos', zone: 'roma', zonesSel: ['roma'], vibes: ['
 const L = app.cat().filter(v => v.lat != null && !v.coordAprox && !v.evento && !v.sedeVariable)
   .map(v => [v.id, v.n, +v.lat.toFixed(5), +v.lng.toFixed(5), v.cat]);
 require('fs').writeFileSync(__dirname + '/lista.json', JSON.stringify(L));
+// Todas las fichas vivas (incluye las de pin aproximado: un hotspot puede tener place_id por nombre, ver asignar_hotspots.py).
+require('fs').writeFileSync(__dirname + '/vivos.json', JSON.stringify(app.cat().filter(v => !v.evento).map(v => v.id)));
 console.log(L.length, 'lugares');

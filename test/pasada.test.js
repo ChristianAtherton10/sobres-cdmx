@@ -544,6 +544,31 @@ test('47.6 · tarjeta de la tanda: una sola línea con horario y un precio (sin 
   assert(a.FACIL()[0][2] === 'Foodie', 'la primera opción del paso 1 debe decir «Foodie»');
 });
 
+test('47.7 · pin en vivo: un hotspot o restaurante en pausa por ubicación (u horario y ubicación) vuelve sólo si Google confirma TODO lo que faltaba y lo ubica cerca', () => {
+  const a = nueva({}); const C = a.cat(); a.tieneGoogle = () => true;
+  const esFD = v => v.hot || a.FOOD.includes(v.cat) || a.DRINK.includes(v.cat);
+  const ubi = C.filter(v => v.pausa && v.recomendable === false && esFD(v) && a.motivosPausa(v.pausa).join() === 'ubicacion' && v.lat != null);
+  const amb = C.filter(v => v.pausa && v.recomendable === false && esFD(v) && a.motivosPausa(v.pausa).join() === 'horario,ubicacion' && v.lat != null);
+  assert(ubi.length >= 3 && amb.length >= 2, 'faltan fichas para probar: ' + ubi.length + ', ' + amb.length);
+  const [u1, u2] = ubi, [b1, b2] = amb;
+  assert(!a.esRecomendable(u1), 'fuera de la generación no es candidata');
+  a._aPrueba = true; assert(a.esRecomendable(u1) && a.esRecomendable(b1), 'con identificador de Google debe poder probarse'); a._aPrueba = false;
+  // Google la ubica a 300 m del pin del catálogo: pin confirmado y vuelve.
+  a._g = { [u1.id]: { estado: 'OPERATIONAL', periodos: SEMANA(13, 23), lat: u1.lat + 0.0027, lng: u1.lng, addr: 'Calle de Prueba 133, Polanco, Ciudad de México' } };
+  a.aplicaGoogleHoras(u1); assert(a.esRecomendable(u1) && u1.gPin && !u1.coordAprox && /Calle de Prueba 133/.test(u1.addr), 'no se reactivó con el pin de Google');
+  // Google la ubica a 9 km: no es el mismo lugar; sigue fuera.
+  a._g[u2.id] = { estado: 'OPERATIONAL', periodos: SEMANA(13, 23), lat: u2.lat + 0.081, lng: u2.lng, addr: 'Lejos 1' };
+  a.aplicaGoogleHoras(u2); a._aPrueba = true; assert(!a.esRecomendable(u2) && !u2.gPin, 'aceptó un pin a 9 km'); a._aPrueba = false;
+  // Pausa por horario Y ubicación: con sólo el pin (Google sin horario) no basta; con las dos cosas sí.
+  a._g[b1.id] = { estado: 'OPERATIONAL', periodos: [], lat: b1.lat, lng: b1.lng + 0.001, addr: 'X 1' }; a.aplicaGoogleHoras(b1);
+  a._aPrueba = true; assert(!a.esRecomendable(b1), 'se reactivó sin horario'); a._aPrueba = false;
+  a._g[b2.id] = { estado: 'OPERATIONAL', periodos: SEMANA(13, 23), lat: b2.lat, lng: b2.lng + 0.001, addr: 'X 2' }; a.aplicaGoogleHoras(b2);
+  assert(a.esRecomendable(b2) && b2.gPin && b2.gHoras, 'con horario y pin debe volver');
+  // Lo que no es hotspot ni de comida o copas no entra «a prueba».
+  const otro = C.find(v => v.pausa && v.recomendable === false && !esFD(v) && a.motivosPausa(v.pausa).join() === 'ubicacion');
+  if (otro) { a._aPrueba = true; assert(!a.esRecomendable(otro), otro.n + ' entró a prueba sin ser hotspot ni restaurante'); a._aPrueba = false; }
+});
+
 section('48 · Excel de pendientes: lo que llena el fundador entra por ID (13 nov 2026)');
 
 test('48.1 · horario distinto por día: la ventana es la del día del plan; sin fecha, la que se cumple todos los días', () => {
@@ -574,58 +599,58 @@ test('48.3 · un precio sin liga entra como ESTIMADO: cuenta para el tope y la a
   assert(v.pp === 450 && v.pEstado === 'estimado' && a.respaldoDe(v) === 'estimado' && !a.sinRespaldo(v), 'estimado: ' + v.pp + ' ' + v.pEstado);
 });
 
-section('49 · Todo el catálogo entra a los planes (14 nov 2026, decisión del fundador)');
+section('49 · Lo bueno, no todo; más restaurantes por precio estimado; ampliar al pedir otras opciones (16 nov 2026)');
 
-const todo = (st, opts) => nueva(st, Object.assign({ todo: true }, opts || {}));
-
-test('49.1 · por defecto las fichas del catálogo son candidatas; sólo quedan fuera los recintos sin evento y lo que está cerrado', () => {
-  const a = todo({}); const C = a.cat().filter(v => !v.evento); const fuera = C.filter(v => !a.esRecomendable(v));
-  assert(!a.topeEstricto() && a.todoEntra(), 'el modo por defecto debe ser «todo entra»');
-  assert(C.length >= 2700 && fuera.length <= 80, 'fuera de los planes: ' + fuera.length + ' de ' + C.length);
-  fuera.forEach(v => assert(a.esSede(v) || /cerrad|cierre temporal/i.test(v.n) || v.cerradoTemporal || v.gCerrado, v.n + ' quedó fuera sin ser recinto ni estar cerrado'));
-  // Lo que antes quedaba fuera: en pausa, con pin aproximado, sin precio, librerías y acervos.
-  [v => v.pausa, v => v.coordAprox, v => v.ppUnknown, v => v.cat === 'Librería', v => v.recomendable === false].forEach((f, i) => { const L = C.filter(v => f(v) && !a.esSede(v) && !/cerrad|cierre temporal/i.test(v.n)); assert(L.length > 20 && L.every(v => a.esRecomendable(v)), 'grupo ' + i + ' no entró completo'); });
-  // El modo estricto sigue existiendo para quien lo quiera.
-  const e = nueva({}); const Ce = e.cat().filter(v => !v.evento); assert(e.topeEstricto() && Ce.filter(v => e.esRecomendable(v)).length < 1500, 'el modo «sólo verificado» dejó de filtrar');
+test('49.1 · SOBRES no propone lo cotidiano ni lo que no es salida: librerías, tiendas de museo y acervos siguen fuera, igual que pausas y pines sin confirmar', () => {
+  const a = nueva({}); const C = a.cat().filter(v => !v.evento);
+  const san = C.filter(v => /libreria sanborns|librerias gandhi|tienda del museo/.test(a.strip(v.n))); assert(san.length >= 3 && san.every(v => !a.esRecomendable(v)), 'una librería o tienda de museo volvió a entrar');
+  assert(C.filter(v => v.pausa && v.recomendable === false).every(v => !a.esRecomendable(v)), 'una ficha en pausa entró');
+  assert(C.filter(v => v.coordAprox && !v.deGoogle).every(v => !a.esRecomendable(v)), 'una ficha sin pin confirmado entró');
+  [1, 2, 3].forEach(sd => { const { a: x, ps } = busca({ who: 'amigos', groupSize: 4, vibes: ['cultural'], facilOpcion: 'cultural', budget: 'b600', zonas: ['delvalle'], planFrom: 11, planTo: 18 }, { dseed: sd, rseed: sd });
+    ps.forEach(p => p.stops.forEach(v => assert(v.cat !== 'Librería' || !x.noEsSalida(v), 'salió ' + v.n + ' en un plan'))); });
 });
 
-test('49.2 · lo confirmado va primero: una ficha con datos por confirmar pierde frente a una igual pero confirmada, y el plan dice qué confirmar', () => {
-  const a = todo({}); const C = a.cat();
-  const pau = C.find(v => v.pausa && v.recomendable === false && !v.coordAprox), apx = C.find(v => v.coordAprox && !v.evento && !v.pausa), lib = C.find(v => v.cat === 'Librería' && a.noEsSalida(v)), ok = C.find(v => !v.evento && v.recomendable !== false && !v.coordAprox && !a.noEsSalida(v) && !a.esSede(v));
-  assert(a.dudoso(pau) >= 4 && a.dudoso(apx) >= 3 && a.dudoso(lib) >= 6 && a.dudoso(ok) === 0, 'relegación: ' + [pau, apx, lib, ok].map(v => a.dudoso(v)));
-  assert(/confirma que esté abierto y su horario/.test(a.condicionDe(pau)), 'pausa sin aviso: ' + a.condicionDe(pau));
-  assert(/ubicación aproximada/.test(a.condicionDe(apx)), 'pin aproximado sin aviso: ' + a.condicionDe(apx));
-  // Con horario confirmado en vivo por Google, el aviso de horario desaparece.
-  a._g = { [pau.id]: { estado: 'OPERATIONAL', periodos: SEMANA(13, 23) } }; a.aplicaGoogleHoras(pau);
-  assert(!/confirma que esté abierto/.test(a.condicionDe(pau)), 'con horario de Google no debe pedir confirmarlo');
-  // En el modo estricto esos avisos no aplican (esas fichas ni entran).
-  const e = nueva({}); const pe = e.cat().find(v => v.id === apx.id); assert(!e.esRecomendable(pe) && !/ubicación aproximada/.test(e.condicionDe(pe)), 'modo estricto alterado');
-});
-
-test('49.3 · precios: lo estimado cuenta para el presupuesto; lo que el Excel dejó «por confirmar» recupera su precio anterior como estimado; sin número entra y se dice', () => {
-  const a = todo({}); const C = a.cat();
-  const rec = C.filter(v => v.pRecuperado); assert(rec.length >= 150, 'recuperados: ' + rec.length);
+test('49.2 · más restaurantes: el precio estimado cuenta para el presupuesto y lo que el Excel dejó «por confirmar» recupera su precio anterior como estimado', () => {
+  const a = nueva({}); const C = a.cat();
+  const rec = C.filter(v => v.pRecuperado); assert(rec.length >= 150 && rec.filter(v => a.FOOD.includes(v.cat) || a.DRINK.includes(v.cat)).length >= 120, 'recuperados: ' + rec.length);
   rec.slice(0, 40).forEach(v => assert(v.pp === v.ppAnterior && v.pp > 0 && !v.ppUnknown && v.pEstado === 'estimado' && a.respaldoDe(v) === 'estimado' && /estimado/.test(v.pNota), v.n + ': ' + v.pp + ' ' + v.pEstado));
   const inf = C.find(v => v.pEstado === 'inferido' && v.pp > 0); assert(inf && a.respaldoDe(inf) === 'estimado' && !a.sinRespaldo(inf), 'una cifra inferida debe contar como estimada');
-  // Un estimado que pasa del tope NO entra (ya no se cuela como «por confirmar»).
   a.setState({ budget: 'b600' }); const caro = rec.find(v => v.pp > 1500); if (caro) assert(!a.budgetOk(caro), caro.n + ' ($' + caro.pp + ') entró en ≤$600');
-  // Sin número: entra con presupuesto y la tarjeta lo dice.
-  const sin = C.find(v => v.ppUnknown && !a.accesoLibre(v) && !v.evento && a.esRecomendable(v)); assert(a.budgetOk(sin), sin.n + ' sin precio debe poder entrar');
-  const conP = C.find(v => !v.ppUnknown && v.pp > 0 && v.pp < 500 && a.esRecomendable(v));
-  assert(/1 lugar por confirmar/.test(a.resumenTarjeta({ stops: [conP, sin], times: [13, 15] }, '1:00 pm–4:00 pm')), 'la tarjeta no dice que falta un precio');
-  // Las verificadas con fuente no se tocan.
+  const sin = C.find(v => v.ppUnknown && !a.accesoLibre(v) && !v.evento && a.esRecomendable(v)); if (sin) assert(!a.budgetOk(sin), 'sin número no entra con presupuesto: ' + sin.n);
   const ver = C.find(v => v.id === 'cdmx-2047'); assert(ver.pp === 260 && a.respaldoDe(ver) === 'firme', 'Acuario Inbursa cambió');
+  const conPrecio = C.filter(v => !v.evento && a.esRecomendable(v) && !a.sinRespaldo(v)); assert(conPrecio.length >= 550, 'lugares que entran con presupuesto: ' + conPrecio.length);
 });
 
-test('49.4 · con todo el catálogo hay muchas más salidas completas y lo confirmado domina cuando hay de dónde', () => {
-  let tres = 0, tot = 0, dud = 0, st = 0;
-  [['roma'], ['polanco'], ['delvalle'], ['coyoacan'], ['santafe']].forEach(z => [['cenar', ['foodie'], [19, 24]], ['cultural', ['cultural'], [11, 18]], ['familia', ['familiar'], [12, 19]]].forEach(([op, vb, h]) => {
-    const { a, ps } = (() => { const x = todo({ who: op === 'familia' ? 'familia' : 'amigos', groupSize: 4, vibes: vb, facilOpcion: op, budget: 'b1000', zonas: z, planFrom: h[0], planTo: h[1] }); const r = x.runSearch({ nueva: true }); return { a: x, ps: (r && r.plans) || [] }; })();
-    tot++; if (ps.filter(p => p.stops.length > 1).length >= 3) tres++;
-    ps.forEach(p => p.stops.forEach((v, i) => { st++; if (a.dudoso(v)) dud++; assert(!a.esSede(v) && !/cerrad/i.test(v.n), v.n + ' no debía salir');
-      if (!(p.cartelera || (p.porConfirmar && p.porConfirmar[i]))) assert(a.atHour(v, p.times[i]), v.n + ' fuera de su horario'); })); }));
-  assert(tres >= 10, 'sólo ' + tres + ' de ' + tot + ' búsquedas con 3 salidas completas');
-  assert(dud / st < 0.6, 'demasiadas paradas con datos por confirmar: ' + dud + '/' + st);
+test('49.3 · «Ver otras opciones»: sólo cuando ya no hay 3 nuevas dentro de la zona y el presupuesto se amplía (~5 km y hasta 25% más), se marca y se avisa', () => {
+  const a = nueva(Object.assign({}, NOCHE, { budget: 'b600' })); a.runSearch({ nueva: true });
+  const G = Object.assign({}, a.ZGEO_EXTRA || {}, a.ZGEO || {}), Z = a.zoneList(), tope = a.budgetMax0(); let amp = null, antes = 0;
+  for (let i = 0; i < 30 && !amp; i++) { const r = a.state.results;
+    if (r.ampliado) { amp = r; break; }
+    (r.plans || []).forEach(p => { antes++; assert(!p.ampliada && p.stops.every(v => Z.includes(v.z)) && a.costoPlan(p.stops, p.times).total <= tope, 'tanda ' + i + ': se salió del rango sin avisar: ' + txt(p)); });
+    if (a.state.agotado && a.state.agotado.nuevas === 0) break; a.regenerate(); }
+  assert(amp && antes >= 6, 'nunca amplió (o amplió demasiado pronto): ' + antes + ' opciones antes');
+  const ext = amp.plans.filter(p => p.ampliada); assert(ext.length >= 1 && amp.ampliado.n === ext.length, 'no marcó las opciones ampliadas');
+  assert(amp.plans.findIndex(p => p.ampliada) >= amp.plans.filter(p => !p.ampliada).length, 'las opciones dentro del rango deben ir primero');
+  ext.forEach(p => { const c = a.costoPlan(p.stops, p.times).total; assert(c <= Math.round(tope * 1.25 / 10) * 10 + 1, txt(p) + ' pasa del 25%: $' + c);
+    assert(!!p.sobreTope === (c > tope) && !!p.fueraZona === p.stops.some(v => !Z.includes(v.z)), 'marcas mal puestas en ' + txt(p));
+    p.stops.forEach(v => assert(Z.includes(v.z) || Z.some(z => G[z] && G[v.z] && a.kmEntre(G[z], G[v.z]) <= 5), v.n + ' está a más de 5 km (' + v.z + ')'));
+    if (p.sobreTope) assert(/pasa tu presupuesto por ~\$/.test(a.resumenTarjeta(p, 'x')), 'la tarjeta no dice que se pasa del presupuesto'); });
+  assert(/Ya no había (más )?opciones nuevas dentro de tu zona y presupuesto/.test(amp.expandNote) && /Lo que pediste no cambia/.test(amp.expandNote), 'no avisa: ' + amp.expandNote);
+  assert(a.budgetMax() === tope && !a._topeExtra, 'el presupuesto ampliado se quedó pegado');
+});
+
+test('49.4 · si piden mariscos, todas las tandas son de mariscos: primero se amplía zona y presupuesto, nunca se cambia de cocina al pedir otras opciones', () => {
+  const a = nueva({ who: 'amigos', groupSize: 4, vibes: ['foodie'], facilOpcion: 'cenar', cocinas: ['mariscos'], budget: 'b600', zonas: ['roma'], planFrom: 14, planTo: 19 });
+  assert(a.cocinasSel().join() === 'mariscos', 'la prueba supone que se puede elegir mariscos');
+  const r0 = a.runSearch({ nueva: true }); let tandas = 0, ultima = null;
+  for (let i = 0; i < 8; i++) { const r = a.state.results; if (r === ultima) break; ultima = r; tandas++;
+    assert((r.plans || []).length >= 1 || i > 0, 'la primera búsqueda no dio nada');
+    (r.plans || []).forEach(p => { assert(p.stops.some(v => a.tiposCocina(v).includes('mariscos')), 'tanda ' + i + ': plan sin mariscos: ' + txt(p));
+      p.stops.forEach(v => { if (a.esComidaFiltrable(v)) assert(a.tiposCocina(v).includes('mariscos'), 'tanda ' + i + ': ' + v.n + ' no es de mariscos'); }); });
+    assert(!/otras cocinas/.test(r.expandNote || ''), 'tanda ' + i + ': cambió de cocina: ' + r.expandNote);
+    a.regenerate(); }
+  assert(tandas >= 2, 'no hubo tandas que revisar');
+  if (r0.ampliado) assert(/sin cambiar lo que pediste/.test(r0.expandNote), 'la primera búsqueda amplió sin avisar');
 });
 
 if (require.main === module) report();
