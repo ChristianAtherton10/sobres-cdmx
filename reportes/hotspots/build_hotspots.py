@@ -88,7 +88,8 @@ RETIRADAS = {
  'bares25': "50 Best Bars 2025 (18 meses). En 2026 sólo Café de Nadie sigue (No. 60, lista 51–100); Rayo, Ticuchi, Bijou, Casa Prunes y Brujas no están ni en 1–50 ni en 51–100.",
 # 'mb100' (Chilango, nov 2024) NO se retira: son los clásicos que el fundador pidió destacar (pruebas 35.x). En la edición 2026
  # siguen San Ángel Inn, Hunan y Suntory (lista mb_clasicos26); Bakea, Deigo, La Barra de Fran, La Taberna del León, Loma Linda,
- # Morton's, Gruta Ehden, Danubio y Cantina del Bosque ya no aparecen: quedan «por revisar» hasta que el fundador decida.
+ # Morton's, Gruta Ehden, Danubio y Cantina del Bosque ya no aparecen en la edición 2026, pero el fundador decidió (16 nov 2026)
+ # que las 10 SIGUEN siendo hotspots: no se quitan (prueba 50.4).
  'to_ap26': "Aperturas de abril de 2026: a los 6 meses dejan de contar como «nuevo».",
 }
 LISTAS = [l for l in LISTAS if l[0] not in RETIRADAS] + [

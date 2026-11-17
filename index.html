@@ -1994,9 +1994,10 @@ class Component extends DCLogic {
     if (x.sesiones) { v.sesiones = x.sesiones.slice(); v.sesion = true; }
     if (x.precio || x.estado) { const pi = v.propinaIncluida, ant = v.ppUnknown ? v.ppAnterior : v.pp;
       this.ponPrecio(v, { precio: x.precio, estado: x.estado || 'verificado', fuente: x.fuente, url: x.url, fecha: x.fecha, ppAnterior: ant, nota: x.nota || '' });
-      if (pi && !x.precio) v.propinaIncluida = true; }
+      if ((pi && !x.precio) || x.propinaIncluida) v.propinaIncluida = true; }
     // Precio por GRUPO (mesa, lancha, cuarto): se divide una sola vez entre quienes van, en cada búsqueda.
     if (x.precio && x.precio.unidad === 'grupo' && x.precio.rep > 0) { v.pGrupo = x.precio.rep; (this._porBusqueda = this._porBusqueda || []).push(v); }
+    if (x.activarConPin && v.recomendable === false) v.activaPin = true;
     if (x.activar) { v.recomendable = undefined; v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
     if (x.condicion != null) { v.condicion = x.condicion || undefined; if (x.condicion) { v.sesion = true; v.sesionPorConfirmar = true; } }
     if (v.reactivado) v.pNotaLugar = ('Reactivado: ' + (x.fuente || 'fuente vigente') + ' (' + x.fecha + ') confirmó ' + v.reactivado.motivos.join(' y ') + '. ' + (v.pNotaLugar || '')).trim();
@@ -2935,7 +2936,8 @@ class Component extends DCLogic {
     if (v.coordAprox && !v.evento && !v.deGoogle) { if (!this.aPruebaG(v)) return false; if (!v.pausa && v.recomendable !== false) return true; }
     if (v.recomendable === true) return true;
     // «A prueba»: en pausa SÓLO por horario y con identificador de Google, mientras se arma la tanda (Google lo confirma o se descarta).
-    if (v.recomendable === false) return !!v.pausa && this.pausaGoogle(v) && this.aPruebaG(v);
+    // (16 nov 2026) Alta del fundador a la que sólo le falta el pin (activaPin): también a prueba; Google la ubica o se descarta.
+    if (v.recomendable === false) return ((!!v.pausa && this.pausaGoogle(v)) || !!v.activaPin) && this.aPruebaG(v);
     const n = this.strip(v.n);
     // Un lugar cerrado (remodelación, cierre temporal) no se propone.
     if (v.cerradoTemporal || /\bcerrad[oa]\b|cierre temporal/.test(n)) return false;
@@ -3361,7 +3363,7 @@ class Component extends DCLogic {
   // (16 nov 2026) «A prueba» ampliado: la mitad de los hotspots (Pujol, Quintonil, Handshake…) estaba fuera porque su ficha
   // no trae pin u horario confirmados. Si la ficha es un hotspot o un lugar de comida o copas y tiene identificador de Google,
   // puede ser candidata mientras se arma la tanda; se muestra sólo si Google confirma en vivo lo que faltaba.
-  aPruebaG(v) { return !!(this._aPrueba && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && (v.hot || this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat))); }
+  aPruebaG(v) { return !!(this._aPrueba && this.tieneGoogle(v) && !(this._gNo && this._gNo[v.id]) && (v.hot || this.FOOD.includes(v.cat) || this.DRINK.includes(v.cat) || /^rv-/.test(v.id))); }   // rv-: altas del fundador (16 nov 2026), sin pin confirmado en OSM
   // ¿Todos los motivos de la pausa son cosas que Google puede confirmar en vivo (horario, ubicación)?
   pausaGoogle(v) { if (v._pG === undefined) { const m = this.motivosPausa(v.pausa || v.pausaAnterior || ''); v._pG = m.length > 0 && m.every(x => x === 'horario' || x === 'ubicacion'); } return v._pG; }
   soloHorario(v) { if (v._soloH === undefined) { const m = this.motivosPausa(v.pausa || v.pausaAnterior || ''); v._soloH = m.length === 1 && m[0] === 'horario'; } return v._soloH; }
@@ -3408,6 +3410,8 @@ class Component extends DCLogic {
     if (v.pausa && v.recomendable === false && this.pausaGoogle(v) && mot.every(m => m === 'horario' ? !!v.gHoras : !!v.gPin)) {
       v.pausaAnterior = v.pausa; v.pausa = ''; v.recomendable = undefined; v.reactivadoG = true;
       v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
+    if (v.activaPin && v.gPin && v.recomendable === false && !v.pausa) { v.recomendable = undefined; v.activaPin = false; v.reactivadoG = true; v.pNotaLugar = (v.pNotaLugar || '').replace(/^En pausa:[^]*$/, '').trim(); }
+    if (v.activaPin) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; return false; }   // Google no la ubicó cerca de su ficha: sigue fuera
     if (!x && !v.gPin) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; return false; }
     if (v.pausa || (v.coordAprox && !v.deGoogle)) { this._gNo = this._gNo || {}; this._gNo[v.id] = 1; }   // Google no alcanzó a resolverla: fuera en esta visita
     return true;

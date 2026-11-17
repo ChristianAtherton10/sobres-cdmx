@@ -2229,7 +2229,8 @@ test('Sala de Despecho: Masaryk y Bosques, ~$1,500 por persona con propina', () 
 test('precios: Quintonil, PANEM, Casa San Juan, Ryoshi y museos con su cifra real', () => {
   const app = makeApp(BASE, { dseed: 7 });
   const v = id => app.cat().find(x => x.id === id);
-  assert(v('cdmx-0001').pMin === 5610, 'Quintonil: el menú solo cuesta $5,610');
+  // (16 nov 2026) Decisión del fundador: Quintonil va en $6,500 por persona (no el más alto del rango, $13,310), propina incluida.
+  assert(v('cdmx-0001').pp === 6500 && v('cdmx-0001').pEstado === 'estimado' && v('cdmx-0001').propinaIncluida === true, 'Quintonil: $6,500 por persona, estimado, con propina incluida');
   assert(v('cdmx-3001').pp === 1800 && v('cdmx-2229').pp === 1800, 'PANEM y Casa San Juan ~$2,000 con propina');
   assert(v('cdmx-2001').pp === 1100, 'Ryoshi ~$1,200 con propina');
   assert(v('tamayo').pp === 95 && v('cdmx-0005').pp === 105 && v('cdmx-0162').pp === 160, 'taquillas 2026 (tarifa para mexicanos)');

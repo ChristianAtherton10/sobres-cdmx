@@ -258,7 +258,8 @@ section('45 · Pasada profunda F4: editar, deshacer, borrador y compartir');
 
 // Un plan de noche en la Roma, ya en el editor.
 const enEditor = (extra, opts) => { const a = nueva(Object.assign({}, NOCHE, { budget: 'any' }, extra || {}), Object.assign({ dseed: 2, rseed: 5 }, opts || {}));
-  a.runSearch({ nueva: true }); const p0 = a.state.results.plans.find(p => p.stops.length >= 2) || a.state.results.plans[0];
+  a.runSearch({ nueva: true }); // (16 nov 2026) sin eventos: un concierto tiene hora fija y no sirve para probar cambios de hora (la prueba dependía de la cartelera de la semana)
+  const p0 = a.state.results.plans.find(p => p.stops.length >= 2 && !p.stops.some(v => v.evento)) || a.state.results.plans.find(p => p.stops.length >= 2) || a.state.results.plans[0];
   a.setState({ planCustom: { stops: p0.stops.slice(), times: p0.times.slice(), spent: p0.spent }, planStops: p0.stops.length, planEditando: true, planView: 'edit', planHist: [] }); a.nav('plan'); return a; };
 const ids = p => p.stops.map(v => v.id).join(',');
 
@@ -651,6 +652,56 @@ test('49.4 · si piden mariscos, todas las tandas son de mariscos: primero se am
     a.regenerate(); }
   assert(tandas >= 2, 'no hubo tandas que revisar');
   if (r0.ampliado) assert(/sin cambiar lo que pediste/.test(r0.expandNote), 'la primera búsqueda amplió sin avisar');
+});
+
+section('50 · Decisiones del fundador y precios nuevos (16 nov 2026)');
+
+test('50.1 · Salón Covadonga ya no está en SOBRES: ni en el catálogo ni en los identificadores de Google', () => {
+  const a = nueva({}); const C = a.cat();
+  assert(!C.some(v => v.id === 'cdmx-2019' || /covadonga/i.test(v.n)), 'Salón Covadonga sigue en el catálogo');
+  const gid = require('fs').readFileSync(require('path').join(__dirname, '..', 'data', 'google_ids.js'), 'utf8');
+  assert(!/"cdmx-2019"/.test(gid), 'Salón Covadonga sigue en google_ids.js');
+});
+
+test('50.2 · Quintonil cuesta $6,500 por persona (decisión del fundador): un solo precio, estimado, y no se le suma propina', () => {
+  const a = nueva({ groupSize: 2 }); const q = a.cat().find(v => v.id === 'cdmx-0001');
+  assert(q && q.pp === 6500 && q.pEstado === 'estimado' && q.propinaIncluida === true && !q.ppUnknown, 'Quintonil: ' + (q && q.pp) + ' ' + (q && q.pEstado));
+  assert(/^https:\/\//.test(q.pUrl) && q.pFecha === '2026-11-16', 'Quintonil sin fuente o fecha');
+  const c = a.costoPlan([q], [14]); assert(c.total === 6500, 'el total por persona debe ser $6,500, no $' + c.total);
+});
+
+test('50.3 · precios nuevos de hotspots: cada uno con liga, fecha, una sola cifra y marcado como estimado; Raíz además con pin confirmado', () => {
+  const a = nueva({}); const C = a.cat(), V = a._win.SOBRES_VERIFICADOS.items;
+  const ESP = { 'iv-f2b54ca0c5': 350, 'iv-3b9983ef0a': 900, 'cdmx-4020': 2300, 'iv-ec77f95f10': 350, 'os-n7295812691': 400, 'os-n4675558750': 400, 'iv-d99c0ee47a': 500, 'iv-8c464a284d': 600,
+    'iv-5a6df611a9': 1000, 'iv-7f18572e2e': 700, 'iv-9fe82dac0b': 500, 'iv-efc0913747': 500, 'iv-69b2eb280d': 200, 'iv-7d9130fd5a': 750, 'iv-d7ca8242a0': 700, 'iv-ada353af3c': 700, 'cdmx-0404': 100 };
+  Object.keys(ESP).forEach(id => { const v = C.find(x => x.id === id), x = V[id]; assert(v && x, id + ' no está');
+    assert(v.pp === ESP[id] && !v.ppUnknown && v.pEstado === 'estimado', v.n + ': $' + v.pp + ' ' + v.pEstado);
+    assert(x.precio.min === x.precio.max && x.precio.rep === x.precio.max, v.n + ': debe ser una sola cifra, no un rango');
+    assert(/^https:\/\//.test(v.pUrl || '') && /^\d{4}-\d{2}-\d{2}$/.test(v.pFecha || '') && (v.pFuente || '').length > 8, v.n + ' sin fuente, liga o fecha'); });
+  const r = C.find(x => x.id === 'cdmx-4020'); assert(!r.coordAprox && /Schiller 331/.test(r.addr) && Math.abs(r.lat - 19.432) < 0.001, 'Raíz sin pin confirmado');
+  // Fuentes de 2017 y 2018 no se usaron: esos dos siguen sin precio en vez de llevar uno viejo.
+  ['iv-5d8b6e4e31', 'iv-42ab61966a'].forEach(id => { const v = C.find(x => x.id === id); assert(v && v.ppUnknown, v.n + ' no debería tener precio'); });
+});
+
+test('50.4 · los 10 clásicos de la guía de 2024 siguen siendo hotspots (decisión del fundador)', () => {
+  const a = nueva({}); const C = a.cat();
+  ['xl-R0320', 'xl-R0226', 'xl-R0268', 'xl-R0269', 'xl-R0121', 'iv-3b9983ef0a', 'xl-R0031', 'xl-R0255', 'iv-b883f695ea', 'iv-9fe82dac0b'].forEach(id => {
+    const v = C.find(x => x.id === id); assert(v && v.hot >= 1 && (v.hotF || []).includes('mb100'), id + ' dejó de ser hotspot'); });
+});
+
+test('50.5 · un alta del fundador a la que sólo le falta el pin entra si Google la ubica en vivo cerca de su ficha; lejos o sin Google sigue fuera', () => {
+  const a = nueva({}); const C = a.cat();
+  const L = C.filter(x => /^rv-/.test(x.id) && x.activaPin && x.coordAprox && x.recomendable === false);
+  assert(L.length >= 3, 'faltan altas pendientes sólo de pin: ' + L.length); const [v, w] = L;
+  a.tieneGoogle = () => false; a._aPrueba = true; assert(!a.esRecomendable(v), 'sin identificador de Google no debe entrar'); a._aPrueba = false;
+  a.tieneGoogle = () => true; assert(!a.esRecomendable(v), 'fuera de la generación no es candidata');
+  a._aPrueba = true; assert(a.esRecomendable(v) && a.esRecomendable(w), 'con identificador de Google debe poder probarse'); a._aPrueba = false;
+  a._g = { [v.id]: { estado: 'OPERATIONAL', periodos: SEMANA(10, 20), lat: v.lat + 0.0027, lng: v.lng, addr: 'Calle de Prueba 55, Ciudad de México' },
+           [w.id]: { estado: 'OPERATIONAL', periodos: SEMANA(10, 20), lat: w.lat + 0.081, lng: w.lng, addr: 'Lejos 1' } };
+  a.aplicaGoogleHoras(v); assert(v.gPin && !v.coordAprox && a.esRecomendable(v), 'no tomó el pin en vivo de Google');
+  a.aplicaGoogleHoras(w); a._aPrueba = true; assert(!w.gPin && !a.esRecomendable(w), 'aceptó un pin a 9 km'); a._aPrueba = false;
+  // Las altas en pausa por turno o cupo (algo que Google no confirma) no se activan por esta vía.
+  const t = C.find(x => x.id === 'rv-37c448c785'); assert(t && !t.activaPin, 'Vive Cerámica no debe activarse sólo con pin');
 });
 
 if (require.main === module) report();

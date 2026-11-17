@@ -175,6 +175,8 @@ test('cada lugar de OSM trae su ficha (URL), fecha de última edición y precio 
   const L = app.cat().filter(v => /^os-/.test(v.id));
   assert(L.length >= 600, 'sólo ' + L.length + ' lugares de OSM');
   L.forEach(v => {
+    // (16 nov 2026) Un lugar de OSM puede traer precio ESTIMADO de la capa de verificados: entonces su fuente es la de ese precio (liga + fecha).
+    if (v.verificado && v.pEstado === 'estimado') { assert(/^https:\/\//.test(v.pUrl || '') && /^\d{4}-\d{2}-\d{2}$/.test(v.pFecha || '') && v.pp > 0, v.n + ': precio estimado sin fuente o fecha'); return; }
     assert(/^https:\/\/(www\.openstreetmap\.org|es\.wikipedia\.org)\//.test(v.pUrl || ''), v.n + ' sin ficha');
     assert(/^\d{4}-\d{2}-\d{2}$/.test(v.consultado || ''), v.n + ' sin fecha de consulta');
     assert(v.pEstado === 'por_confirmar', v.n + ' con precio "' + v.pEstado + '" (OSM no publica precios)');

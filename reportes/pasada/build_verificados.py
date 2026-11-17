@@ -60,7 +60,44 @@ ITEMS = {
   'cdmx-0759': dict(n='Museo del Metro', fecha='2026-11-14', fuente='Metro CDMX — Museo del Metro (sitio oficial)', url='https://www.metro.cdmx.gob.mx/museo-del-metro',
                     oh=[11, 14], dias=[0, 2, 3, 4, 5, 6], ohDia={'0': [11, 14], '2': [10, 18], '3': [10, 18], '4': [10, 18], '5': [10, 18], '6': [11, 14]},
                     hrs='Mar a vie 10:00–18:00 · sáb y dom 11:00–14:00 · estación Mixcoac (Línea 12)'),
+  # ── 16 nov 2026: precio fijado por el fundador. La regla del más alto del rango daba $13,310 (menú + maridaje más
+  #    caro); el fundador lo deja en $6,500 por persona (menú degustación de $5,610 más bebida), propina incluida. ──
+  'cdmx-0001': dict(n='Quintonil', fecha='2026-11-16', estado='estimado', propinaIncluida=True,
+                    precio=dict(min=6500, rep=6500, max=6500, unidad='persona', moneda='MXN',
+                                canasta='Menú degustación de $5,610 por persona sin bebidas (UnoTV, 4-dic-2025) más bebida: ~$6,500 por persona, cifra fijada por el fundador de SOBRES el 16-nov-2026. Con maridaje sube.'),
+                    fuente='UnoTV — "Ocho restaurantes mexicanos entre los 50 mejores del mundo: cuánto cuesta comer ahí" (4-dic-2025); cifra por persona fijada por el fundador',
+                    url='https://www.unotv.com/estilo-de-vida/gastronomia/ocho-restaurantes-mexicanos-lograron-un-lugar-entre-los-50-mejores-del-mundo-cuanto-cuesta-comer-ahi/'),
 }
+# ── 16 nov 2026: precios de hotspots que no tenían ninguno. Cada uno con su fuente (liga) y la fecha de consulta.
+#    Son consumos promedio de guías (no la carta del lugar), así que entran como "estimado". Cuando la fuente da
+#    un rango se toma el más alto (regla de SOBRES). Fuentes de más de 5 años no se usaron (El Mirador 2017, Dante 2018).
+TO = 'https://www.timeoutmexico.mx/ciudad-de-mexico/'
+def est(n, pp, fuente, url, canasta, **k):
+    return dict(k, n=n, fecha='2026-11-16', estado='estimado', fuente=fuente, url=url,
+                precio=dict(min=pp, rep=pp, max=pp, unidad='persona', moneda='MXN', canasta=canasta))
+PRECIOS_1116 = {
+  'iv-f2b54ca0c5': est('Baltra', 350, 'Time Out México — Baltra (ficha del bar)', TO + 'bares-y-cantinas/baltra', 'Consumo promedio por persona: $350 (ficha de Time Out, sin fecha).'),
+  'iv-3b9983ef0a': est('Danubio', 900, 'El Financiero — "¿Cuánto cuesta comer en Danubio?" (7-oct-2025)', 'https://www.elfinanciero.com.mx/food-and-drink/2025/10/07/cuanto-cuesta-comer-en-danubio-restaurante-que-visitado-por-carlos-slim-helu-y-los-presidentes/', 'Cheque promedio de $850 a $900 por persona sin propina (entrada, plato fuerte, bebida y postre); se toma el más alto.'),
+  'cdmx-4020': est('Raíz', 2300, 'OpenTable — Raíz (menús de degustación)', 'https://www.opentable.co.uk/r/raiz-mexico', 'Menú de seis tiempos $1,900 y de nueve tiempos $2,300 por persona, sin bebidas; se toma el más alto.',
+                   addr='Schiller 331', col='Polanco', lat=19.4320047, lng=-99.1866349, resuelve=['ubicacion'],
+                   nota='Pin de OpenStreetMap/Nominatim: nodo del restaurante con número 331 en la calle Schiller.'),
+  'iv-ec77f95f10': est('Ehden · Centro Histórico', 350, 'Chilango — "Ehden: el restaurante libanés más antiguo de CDMX" (16-ago-2024)', 'https://www.chilango.com/comida-y-tragos/restaurantes/ehden-restaurante-libanes-mas-antiguo-centro-cdmx/', 'Consumo promedio: $350 por persona.'),
+  'os-n7295812691': est('El Bajío · Satélite', 400, 'Time Out México — El Bajío (ficha de la sucursal Cuitláhuac)', TO + 'restaurantes/el-bajio', 'Consumo promedio por persona: $400 en la sucursal Cuitláhuac; se usa como referencia de la cadena para esta sucursal.'),
+  'os-n4675558750': est('El Bajío · Insurgentes Sur', 400, 'Time Out México — El Bajío (ficha de la sucursal Cuitláhuac)', TO + 'restaurantes/el-bajio', 'Consumo promedio por persona: $400 en la sucursal Cuitláhuac; se usa como referencia de la cadena para esta sucursal.'),
+  'iv-d99c0ee47a': est('La Cocina del Bizco', 500, 'Time Out México — La Cocina del Bizco (ficha)', TO + 'restaurantes/la-cocina-del-bizco', 'Precio de la ficha de Time Out: $500 (OpenTable lo pone en "$500 o más").'),
+  'iv-8c464a284d': est('Chapulín', 600, 'Time Out México — Chapulín (ficha)', TO + 'restaurantes-cafes/chapulin', 'Consumo promedio por persona: $600 (ficha de Time Out, sin fecha).'),
+  'iv-5a6df611a9': est('Rocasal', 1000, 'Reservándonos — Rocasal Pedregal', 'https://www.reservandonos.com/en/place/restaurante-rocasal-pedregal/', 'Precio por persona: $500 a $1,000; se toma el más alto (Time Out da $700 de consumo promedio).'),
+  'iv-7f18572e2e': est('Cachava', 700, 'Time Out México — Cachava (ficha)', TO + 'restaurantes/cachava', 'Consumo promedio por persona: $700 (ficha de Time Out, sin fecha).'),
+  'iv-9fe82dac0b': est('Cantina del Bosque', 500, 'OpenTable — Cantina del Bosque', 'https://www.opentable.ie/r/cantina-del-bosque-ciudad-de-mexico', 'Rango de OpenTable: $310 a $500; se toma el más alto.'),
+  'iv-efc0913747': est('Almara', 500, 'Time Out México — Almara (ficha)', TO + 'restaurantes/almara', 'Consumo promedio por persona: $500 (ficha de Time Out, sin fecha).'),
+  'iv-69b2eb280d': est('Tierra Adentro Cocina', 200, 'Time Out México — Tierra Adentro (ficha)', TO + 'restaurantes/tierra-adentro', 'Consumo promedio por persona: $200 (ficha de Time Out, sin fecha).'),
+  'iv-7d9130fd5a': est('Somsaa', 750, 'Time Out México — Somsaa (reseña del 15-feb-2023)', TO + 'restaurantes/somsaa', 'Precio de la ficha de Time Out: $750.'),
+  'iv-d7ca8242a0': est('The Lamb', 700, 'Time Out México — The Lamb (ficha)', TO + 'restaurantes/the-lamb', 'Precio de la ficha de Time Out: $700.'),
+  'iv-ada353af3c': est('Marea · Restaurante de Mar', 700, 'Time Out México — Marea, restaurante de mar (ficha; Publimetro dio el mismo ticket en feb-2022)', TO + 'restaurantes/marea-restaurante-de-mar', 'Consumo promedio por persona: $700.'),
+  'cdmx-0404': est('Museo Mexicano del Diseño (MUMEDI)', 100, 'Chilango — "8 museos en CDMX que tienes que visitar; dónde están y cuánto cuesta la entrada"', 'https://www.chilango.com/que-hacer/arte-y-cultura/museos-imperdibles-cdmx-mundial-2026-direccion-costo/', 'Entrada: $100 en la sede de Bucareli 35.'),
+}
+for _i, _x in PRECIOS_1116.items():
+    assert _i not in ITEMS, _i; ITEMS[_i] = _x
 items, sin_pin = {}, []
 for i, x in ITEMS.items():
     x = dict(x); x.setdefault('fecha', FECHA)
@@ -72,6 +109,7 @@ for i, x in ITEMS.items():
     # Un alta sólo se activa con pin confirmado (regla de ubicación de SOBRES) y horario publicado.
     if x.get('activar') and i.startswith('rv-') and not p and i not in ('rv-fb39aec0d1',):   # Manos de Tierra Interlomas ya traía pin con número
         x.pop('activar'); sin_pin.append(x['n'])
+        x['activarConPin'] = True   # (16 nov 2026) se activa si Google la ubica en vivo cerca de su ficha (sólo se guarda su place_id)
     if x.get('activar') and not x.get('oh') and i in ('rv-c00b52193d', 'rv-366c6dacff', 'rv-37c448c785'): x.pop('activar')
     items[i] = x
 # Pines confirmados de fichas que salían en planes con pin aproximado (o que el Excel dejó sin pin).
@@ -80,7 +118,8 @@ for i, p in PINES.items():
     items[i] = dict(fecha=FECHA, lat=p['lat'], lng=p['lng'], resuelve=['ubicacion'], fuente='OpenStreetMap / Nominatim — número de la calle confirmado', url='https://nominatim.openstreetmap.org/', nota=p.get('nota', ''))
 # Duplicados que aparecieron al confirmar pines: la ficha de OSM es la misma sala que ya estaba.
 BAJAS = {'os-n11737763876': 'Duplicado de Cinépolis · Arcos Bosques, ID cdmx-4030 (mismo pin: Paseo de los Tamarindos 90).',
-         'os-n11770329070': 'Duplicado de Taquería Los Parados, ID cdmx-2028 (Monterrey 333); además estaba clasificada como café.'}
+         'os-n11770329070': 'Duplicado de Taquería Los Parados, ID cdmx-2028 (Monterrey 333); además estaba clasificada como café.',
+         'cdmx-2019': 'Salón Covadonga: retirado de SOBRES por decisión del fundador (16-nov-2026).'}
 # Lo que el fundador llenó en el Excel de pendientes (importa_pendientes.py). Se suma a lo anterior por ID;
 # si una ficha ya tenía datos de esta pasada, lo del Excel manda en los campos que trae.
 EXCEL = os.path.join(AQUI, 'verificados_excel.json')

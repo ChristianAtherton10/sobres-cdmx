@@ -165,5 +165,15 @@
   "lng": -99.156788,
   "nota": "Parque sin número: pin en la esquina de acceso Avenida División del Norte y Avenida Municipio Libre (OpenStreetMap, nodo 2060916607; 14-nov-2026).",
   "esquina": true
+ },
+ "pq-68529377f9": {
+  "lat": 19.407232,
+  "lng": -99.1743429,
+  "nota": "Nominatim (16-nov-2026): Calle Alfonso Reyes 203, Hipódromo — número confirmado."
+ },
+ "iv-50c9e9930a": {
+  "lat": 19.4351439,
+  "lng": -99.1328504,
+  "nota": "Nominatim (16-nov-2026): República de Guatemala 20 (hotel Círculo Mexicano) — número confirmado."
  }
 }
