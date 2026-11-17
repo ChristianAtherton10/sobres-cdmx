@@ -704,4 +704,22 @@ test('50.5 · un alta del fundador a la que sólo le falta el pin entra si Googl
   const t = C.find(x => x.id === 'rv-37c448c785'); assert(t && !t.activaPin, 'Vive Cerámica no debe activarse sólo con pin');
 });
 
+section('51 · Portada con fotos (16 nov 2026)');
+
+test('51.1 · cada antojo de la portada trae foto (Wikimedia) y bajada; la franja «Con lugares como» sólo usa nombres y cuentas reales del catálogo', () => {
+  const a = nueva({}); a.setState({ facilPaso: 1, facilOpcion: '', vibes: [] }); a.nav('home');
+  const V = a.renderVals(), C = a.cat();
+  assert(V.facilP1 && V.facilOpts.length === 6, 'no está en el paso 1 con 6 antojos');
+  V.facilOpts.forEach(o => { assert(/url\('https:\/\/thumb\.wikimedia\.org\/wikipedia\/commons\/thumb\/[^']+\/500px-[^']+'\)/.test(o.fotoCss), o.label + ' sin foto');
+    assert(o.sub && o.sub.length > 5 && o.label, o.label + ' sin bajada'); });
+  assert(V.facilFamOn, 'no salió la franja de lugares famosos');
+  const N = V.facilFamTxt.split(' · '); assert(N.length >= 4, 'pocos nombres: ' + V.facilFamTxt);
+  N.forEach(n => { const v = C.find(x => String(x.n).split(/ · | — /)[0].trim() === n && x.hot >= 3); assert(v && v.recomendable !== false && !v.coordAprox, n + ' no es un hotspot activo del catálogo'); });
+  const tot = C.filter(v => !v.evento).length, hot = C.filter(v => v.hot).length;
+  const m = V.facilFamCuenta.match(/Más de ([\d,]+) lugares de la CDMX · (\d+) hotspots/); assert(m, 'cuenta rara: ' + V.facilFamCuenta);
+  assert(+m[1].replace(/,/g, '') <= tot && +m[2] === hot, 'la cuenta no coincide con el catálogo: ' + V.facilFamCuenta + ' vs ' + tot + '/' + hot);
+  // Elegir un antojo sigue avanzando al paso 2.
+  V.facilOpts.find(o => o.label === 'Cultural').pick(); assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'cultural', 'elegir un antojo ya no avanza');
+});
+
 if (require.main === module) report();
