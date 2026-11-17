@@ -257,7 +257,8 @@ section('45 · Pasada profunda F4: editar, deshacer, borrador y compartir');
 
 // Un plan de noche en la Roma, ya en el editor.
 const enEditor = (extra, opts) => { const a = nueva(Object.assign({}, NOCHE, { budget: 'any' }, extra || {}), Object.assign({ dseed: 2, rseed: 5 }, opts || {}));
-  a.runSearch({ nueva: true }); const p0 = a.state.results.plans.find(p => p.stops.length >= 2) || a.state.results.plans[0];
+  a.runSearch({ nueva: true }); // (16 nov 2026) sin eventos: un concierto tiene hora fija y no sirve para probar cambios de hora (la prueba dependía de la cartelera de la semana)
+  const p0 = a.state.results.plans.find(p => p.stops.length >= 2 && !p.stops.some(v => v.evento)) || a.state.results.plans.find(p => p.stops.length >= 2) || a.state.results.plans[0];
   a.setState({ planCustom: { stops: p0.stops.slice(), times: p0.times.slice(), spent: p0.spent }, planStops: p0.stops.length, planEditando: true, planView: 'edit', planHist: [] }); a.nav('plan'); return a; };
 const ids = p => p.stops.map(v => v.id).join(',');
 
@@ -572,5 +573,24 @@ test('48.3 · un precio sin liga entra como ESTIMADO: cuenta para el tope y la a
   const a = nueva({}, { verificados: ver }); const v = a.cat().find(x => x.id === v0.id);
   assert(v.pp === 450 && v.pEstado === 'estimado' && a.respaldoDe(v) === 'estimado' && !a.sinRespaldo(v), 'estimado: ' + v.pp + ' ' + v.pEstado);
 });
+
+section('51 · Portada con fotos (16 nov 2026)');
+
+test('51.1 · cada antojo de la portada trae foto (Wikimedia) y bajada; la franja «Con lugares como» sólo usa nombres y cuentas reales del catálogo', () => {
+  const a = nueva({}); a.setState({ facilPaso: 1, facilOpcion: '', vibes: [] }); a.nav('home');
+  const V = a.renderVals(), C = a.cat();
+  assert(V.facilP1 && V.facilOpts.length === 6, 'no está en el paso 1 con 6 antojos');
+  V.facilOpts.forEach(o => { assert(/url\('https:\/\/thumb\.wikimedia\.org\/wikipedia\/commons\/thumb\/[^']+\/500px-[^']+'\)/.test(o.fotoCss), o.label + ' sin foto');
+    assert(o.sub && o.sub.length > 5 && o.label, o.label + ' sin bajada'); });
+  assert(V.facilFamOn, 'no salió la franja de lugares famosos');
+  const N = V.facilFamTxt.split(' · '); assert(N.length >= 4, 'pocos nombres: ' + V.facilFamTxt);
+  N.forEach(n => { const v = C.find(x => String(x.n).split(/ · | — /)[0].trim() === n && x.hot >= 3); assert(v && v.recomendable !== false && !v.coordAprox, n + ' no es un hotspot activo del catálogo'); });
+  const tot = C.filter(v => !v.evento).length, hot = C.filter(v => v.hot).length;
+  const m = V.facilFamCuenta.match(/Más de ([\d,]+) lugares de la CDMX · (\d+) hotspots/); assert(m, 'cuenta rara: ' + V.facilFamCuenta);
+  assert(+m[1].replace(/,/g, '') <= tot && +m[2] === hot, 'la cuenta no coincide con el catálogo: ' + V.facilFamCuenta + ' vs ' + tot + '/' + hot);
+  // Elegir un antojo sigue avanzando al paso 2.
+  V.facilOpts.find(o => o.label === 'Cultural').pick(); assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'cultural', 'elegir un antojo ya no avanza');
+});
+
 
 if (require.main === module) report();

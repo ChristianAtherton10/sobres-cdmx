@@ -102,6 +102,20 @@
 .sb-facil-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .sb-facil-op{display:flex;align-items:center;gap:10px;min-height:64px;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--card);color:var(--ink);font:700 16px/1.2 var(--font-body);text-align:left;cursor:pointer}
 .sb-facil-op .e{font-size:24px;line-height:1}
+/* Portada con fotos (16 nov 2026): cada antojo es una tarjeta con foto real de la ciudad (Wikimedia Commons), no un emoji. */
+.sb-fop{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:2px;min-height:104px;padding:12px 13px;border:0;border-radius:16px;background-color:var(--fill);background-size:cover;background-position:center;color:#fff;overflow:hidden;box-shadow:0 10px 22px -14px rgba(15,24,45,.55);transition:transform .13s cubic-bezier(.34,1.3,.64,1)}
+.sb-fop:active{transform:scale(.97)}
+.sb-fop .t{font:800 18px/1.1 var(--font-body);letter-spacing:-.01em;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.sb-fop .s{font:500 12.5px/1.25 var(--font-body);opacity:.92;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.sb-facil-op.sb-fop[aria-pressed="true"]{background-color:var(--fill);background-size:cover;background-position:center;color:#fff;outline:3px solid var(--electrico,#c63d31);outline-offset:2px}
+.sb-facil-lead{font:400 15.5px/1.45 var(--font-body);color:var(--color-neutral-700);margin:0 0 16px;max-width:34em}
+.sb-facil-lead b{color:var(--ink);font-weight:700}
+.sb-fam{margin-top:18px;padding:14px 16px;border-radius:16px;background:var(--lila,#f3f5f9)}
+.sb-fam .k{font:700 11.5px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)}
+.sb-fam .n{font:500 19px/1.3 var(--font-heading);color:var(--ink);margin-top:7px}
+.sb-fam .c{font:500 12.5px/1.3 var(--font-body);color:var(--color-neutral-700);margin-top:8px}
+@media (max-width:819px){ .sb-facil .sb-facil-titulo{font-size:35px;margin-bottom:10px} }
+@media (max-width:380px){ .sb-facil .sb-facil-titulo{font-size:31px} .sb-fop{min-height:94px} .sb-fop .t{font-size:16.5px} }
 .sb-facil-op[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
 .sb-facil-paso{font:700 12px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--electrico,#b8432f);margin-top:4px}
 /* ?v=facil en computadora: una tarjeta centrada (antes quedaba angosta y pegada a la izquierda). */
@@ -588,11 +602,15 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ facilP1 }}" hint-placeholder-val="{{ false }}">
 <div id="armar-facil" class="sb-facil">
 <h1 class="sb-facil-titulo">Arma tu próxima salida en 3 pasos.</h1>
+<p class="sb-facil-lead">Dinos qué se les antoja y te damos <b>3 planes listos</b>: lugares, horario y precio por persona. Gratis y sin registrarte.</p>
 <div class="sb-facil-paso">Paso 1 de 3</div>
 <h2 class="sb-h3" style="margin:4px 0 10px">¿Qué se les antoja?</h2>
 <div class="sb-facil-grid" role="group" aria-label="Qué se les antoja">
-<sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="e" aria-hidden="true">{{ o.emoji }}</span><span>{{ o.label }}</span></button></sc-for>
+<sc-for list="{{ facilOpts }}" as="o" hint-placeholder-count="6"><button class="sb-facil-op sb-fop" style="{{ o.fotoCss }}" aria-pressed="{{ o.pressed }}" aria-label="{{ o.aria }}" onClick="{{ o.pick }}"><span class="t">{{ o.label }}</span><span class="s">{{ o.sub }}</span></button></sc-for>
 </div>
+<sc-if value="{{ facilFamOn }}" hint-placeholder-val="{{ false }}">
+<div class="sb-fam"><div class="k">Con lugares como</div><div class="n">{{ facilFamTxt }}</div><div class="c">{{ facilFamCuenta }}</div></div>
+</sc-if>
 <sc-if value="{{ borradorOn }}" hint-placeholder-val="{{ false }}">
 <div class="sb-row" style="margin-top:14px;gap:4px;flex-wrap:nowrap"><button class="sb-btn3" style="margin-left:-12px;text-align:left;min-width:0;flex:1" onClick="{{ retomaBorrador }}">{{ borradorTxt }} →</button><button class="sb-btn3" style="flex:none;color:var(--color-neutral-700)" onClick="{{ borraBorrador }}" aria-label="Borrar el borrador">Borrar</button></div>
 </sc-if>
@@ -6829,6 +6847,21 @@ class Component extends DCLogic {
   // ── ?v=facil: paso 1 de un toque + "Confirma y listo" (8 nov 2026) ──
   // `h`: horario que se propone en el paso 2 según lo elegido (10 nov 2026). Antes todo arrancaba de 7 pm a 2 am:
   // "En familia" o "Cultural" salían de noche, con los museos y los parques ya cerrados.
+  // Foto y bajada de cada antojo en la portada. Fotos de Wikimedia Commons (licencias abiertas; crédito en «Acerca de»).
+  FACIL_FOTO() { const W = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/'; return {
+    cenar: [W + '4/4e/Penca_de_pl%C3%A1tanos_en_el_Mercado_Medell%C3%ADn%2C_Colonia_Condesa.jpg/500px-Penca_de_pl%C3%A1tanos_en_el_Mercado_Medell%C3%ADn%2C_Colonia_Condesa.jpg', 'Restaurantes y antojos'],
+    fiesta: [W + '5/52/Sal%C3%B3n_Los_%C3%81ngeles.jpg/500px-Sal%C3%B3n_Los_%C3%81ngeles.jpg', 'Bares, baile y desvelo'],
+    tranqui: [W + '0/0f/Puente_Parque_Masayoshi_%C5%8Chira.jpg/500px-Puente_Parque_Masayoshi_%C5%8Chira.jpg', 'Café, parque y calma'],
+    cultural: [W + '9/97/Bellas_Artes_01.jpg/500px-Bellas_Artes_01.jpg', 'Museos, cine y teatro'],
+    romantico: [W + '4/4f/Chapultepec_castle_in_Mexico_city.jpg/500px-Chapultepec_castle_in_Mexico_city.jpg', 'Para una cita'],
+    familia: [W + '9/95/Vista_a%C3%A9rea_de_la_Ciudad_de_M%C3%A9xico_desde_el_Parque_Aztl%C3%A1n_02.jpg/500px-Vista_a%C3%A9rea_de_la_Ciudad_de_M%C3%A9xico_desde_el_Parque_Aztl%C3%A1n_02.jpg', 'Con niños o con todos'] }; }
+  // Franja «Con lugares como»: nombres REALES del catálogo (hotspots de nivel más alto que sí se proponen) y la cuenta real de lugares.
+  facilFamosos() { if (this._famosos) return this._famosos; let C = []; try { C = this.cat() || []; } catch (e) {}
+    const top = C.filter(v => v.hot >= 3 && !v.evento && v.recomendable !== false && !v.coordAprox && !v.ppUnknown).sort((a, b) => (b.score || 0) - (a.score || 0));
+    const vistos = {}, n = []; top.forEach(v => { const k = String(v.n || '').split(/ · | — /)[0].trim(); if (k && k.length <= 22 && !vistos[k] && n.length < 6) { vistos[k] = 1; n.push(k); } });
+    const hot = C.filter(v => v.hot).length, tot = Math.floor(C.filter(v => !v.evento).length / 100) * 100;
+    const r = { on: n.length >= 4, txt: n.join(' · '), cuenta: 'Más de ' + tot.toLocaleString('es-MX') + ' lugares de la CDMX · ' + hot + ' hotspots del momento' };
+    if (r.on && hot > 50) this._famosos = r; return r; }   // sólo se guarda con el catálogo completo ya cargado (los hotspots llegan después)
   FACIL() { return [['cenar', '🍽️', 'Foodie', { vibes: ['foodie'], h: [19, 24] }], ['fiesta', '🪩', 'Noche y fiesta', { vibes: ['nightlife'], h: [20, 27] }],
     ['tranqui', '☕', 'Tranqui', { vibes: ['chill'], h: [11, 18] }], ['cultural', '🎭', 'Cultural', { vibes: ['cultural'], h: [11, 18] }],
     ['romantico', '💘', 'Romántico', { vibes: ['romántico'], who: 'date', groupSize: 2, h: [19, 25] }], ['familia', '👨‍👩‍👧', 'En familia', { vibes: ['familiar'], who: 'familia', groupSize: 4, h: [12, 19] }]]; }
@@ -6842,8 +6875,11 @@ class Component extends DCLogic {
     const cenar = s.facilOpcion === 'cenar' && (s.vibes || []).indexOf('foodie') >= 0;
     return {
       facilP1: enHome && paso === 1, facilP2: enHome && paso === 2, facilP3: enHome && paso === 3,
+      facilFamOn: enHome && paso === 1 && !cenar && this.facilFamosos().on, facilFamTxt: this.facilFamosos().txt, facilFamCuenta: this.facilFamosos().cuenta,
       facilOpts: this.FACIL().map(([k, emoji, label, cfg]) => { const on = s.facilOpcion === k;
-        return { emoji, label, aria: label + (on ? ' (seleccionado)' : ''), pressed: on ? 'true' : 'false',
+        const ft = this.FACIL_FOTO()[k] || ['', ''];
+        return { emoji, label, sub: ft[1], fotoCss: ft[0] ? "background-image:linear-gradient(180deg,rgba(15,24,45,.08) 0%,rgba(15,24,45,.30) 45%,rgba(15,24,45,.86) 100%),url('" + ft[0] + "')" : '',
+          aria: label + (on ? ' (seleccionado)' : ''), pressed: on ? 'true' : 'false',
           pick: () => { this.evPaso1(k);
             const quien = cfg.who ? { who: cfg.who, groupSize: cfg.groupSize } : (['date', 'familia'].indexOf(s.who) >= 0 ? { who: 'amigos', groupSize: 4 } : {});
             this.setState(Object.assign({ cocinas: [], facilOpcion: k, vibes: cfg.vibes.slice(), planFrom: cfg.h[0], planTo: cfg.h[1] }, quien, k === 'cenar' ? {} : { facilPaso: 2 }),

@@ -116,6 +116,7 @@ test('29.5 · "Ver otras opciones" trae TIPOS de plan distintos, no sólo otros 
   // Lógica del motor (variedad de tipos): corre sobre el catálogo sin la revisión del 9 nov 2026,
   // que pausó buena parte de la noche de la Roma. Con la revisión: prueba 41.9.
   const a = makeApp({ who: 'amigos', groupSize: 4, zone: 'roma', zonesSel: ['roma'], when: 'noche', vibes: ['nightlife'], budget: 'b1000', budgetCustom: null }, { dseed: 5, rseed: 36, sinRevision: true });
+  a.ahoraCDMX = () => ({ iso: '2026-11-14', hora: 12 });   // (16 nov 2026) sábado fijo: en lunes hay menos lugares abiertos y menos tipos
   a.runSearch({ nueva: true });
   const tipos = new Set(); let previa = null; let nuevasPorTanda = [];
   for (let i = 0; i < 4; i++) {
@@ -330,6 +331,9 @@ test('33.2 · "Comer rico + Romántico" nunca da La Casa de Toño ni cadenas, y 
     // Sin la revisión del 9 nov 2026: con los precios de OpenTable "por confirmar" los hotspots ya no se
     // distinguen por precio. La parte de "nada básico" se repite con la revisión en la prueba 41.9.
     const a = makeApp(Object.assign({}, COM, { who: 'date', groupSize: 2, zone: z, zonesSel: [z], budget: bud, vibes: ['foodie', 'romántico'] }), { dseed: sd, rseed: sd * 3 + 1, sinRevision: true });
+    // (16 nov 2026) Sin fecha fija la búsqueda es "hoy": un lunes cierran muchos hotspots y la prueba fallaba
+    // sola según el día en que se corriera. Se fija un sábado (14 nov 2026).
+    a.ahoraCDMX = () => ({ iso: '2026-11-14', hora: 12 });
     a.runSearch({ nueva: true });
     const st = (a.state.results.plans || []).flatMap(pl => pl.stops);
     const mal = st.filter(v => a.esCadenaCasual(v) || /casa de to[ñn]o|garat/i.test(v.n));
