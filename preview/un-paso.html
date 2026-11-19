@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>SOBRES · Preview de portada en un paso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* PREVIEW de diseño (18 nov 2026). No arma planes: sólo muestra cómo se vería la portada con los 3 pasos en una pantalla. */
+:root{--ink:#1b2a4a;--ink2:#2a3c63;--red:#c63d31;--red2:#ad3328;--bg:#fff;--soft:#f3f5f9;--line:#dfe3ea;--mut:#5b6678;
+  --serif:"Instrument Serif",Georgia,serif;--sans:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+button{font:inherit;color:inherit;cursor:pointer}
+.app{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;position:relative;overflow:hidden}
+header{flex:none;display:flex;align-items:center;justify-content:space-between;height:50px;padding:0 16px;border-bottom:1px solid var(--line)}
+.marca{display:flex;align-items:center;gap:8px;font:400 26px/1 var(--serif);letter-spacing:-.01em}
+.marca i{width:20px;height:20px;border-radius:5px;background:var(--red);display:block}
+.marca small{font:700 13px/1 var(--sans);letter-spacing:.12em;color:var(--red);margin-left:2px}
+.sw{display:flex;gap:4px;background:var(--soft);border-radius:999px;padding:3px}
+.sw button{border:0;background:transparent;min-width:30px;height:26px;border-radius:999px;font:700 12.5px/1 var(--sans);color:var(--mut)}
+.sw button[aria-pressed="true"]{background:var(--ink);color:#fff}
+main{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 10px;-webkit-overflow-scrolling:touch}
+.pie{flex:none;padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#fff}
+.resumen{display:block;font:500 12.5px/1.3 var(--sans);color:var(--mut);margin:0 0 7px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;border:0;border-radius:999px;background:var(--red);color:#fff;font:700 17px/1 var(--sans);box-shadow:0 10px 22px -12px rgba(198,61,49,.8);transition:transform .12s,opacity .2s}
+.cta:active{transform:scale(.98)}
+.cta[disabled]{background:#c9cfd9;box-shadow:none}
+h1{font:400 29px/1.02 var(--serif);letter-spacing:-.015em;margin:0 0 2px}
+.lead{font:400 13px/1.35 var(--sans);color:var(--mut);margin:0 0 4px}
+.lab{display:flex;justify-content:space-between;align-items:baseline;font:700 11px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:10px 0 5px}
+.lab b{font:600 13px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink)}
+/* antojos con foto */
+.antojos{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ant{position:relative;height:54px;border:0;border-radius:12px;padding:0 9px 7px;display:flex;align-items:flex-end;background:var(--ink) center/cover;color:#fff;font:700 13.5px/1.1 var(--sans);text-align:left;text-shadow:0 1px 6px rgba(0,0,0,.55);overflow:hidden;transition:transform .12s}
+.ant::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,24,45,.05),rgba(15,24,45,.78))}
+.ant span{position:relative}
+.ant small{display:block;font:600 11px/1.2 var(--sans);opacity:.95;margin-top:2px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ant[aria-pressed="true"]{outline:3px solid var(--red);outline-offset:2px}
+.ant[aria-pressed="true"]::after{content:"✓";position:absolute;top:6px;right:7px;width:20px;height:20px;border-radius:50%;background:var(--red);font:800 12px/20px var(--sans);text-align:center;text-shadow:none}
+.ant:active{transform:scale(.97)}
+/* chips en una fila que se desliza */
+.fila{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px 2px;scroll-snap-type:x proximity}
+.fila::-webkit-scrollbar{display:none}
+.chip{flex:none;height:32px;padding:0 13px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:600 13.5px/1 var(--sans);white-space:nowrap;scroll-snap-align:start}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--soft);border-radius:12px;padding:3px;gap:3px}
+.seg button{height:31px;border:0;border-radius:9px;background:transparent;font:600 13px/1 var(--sans);color:var(--ink);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 4px rgba(27,42,74,.18);color:var(--ink)}
+.quien{display:flex;gap:8px;align-items:center}
+.quien .seg{flex:1}
+.step{flex:none;display:flex;align-items:center;gap:2px;background:var(--soft);border-radius:12px;padding:3px}
+.step button{width:30px;height:31px;border:0;border-radius:9px;background:#fff;font:700 17px/1 var(--sans)}
+.step span{min-width:22px;text-align:center;font:700 15px/1 var(--sans)}
+/* presupuesto: barra que se arrastra */
+.pres{background:var(--soft);border-radius:14px;padding:8px 12px 6px}
+.pres .v{display:flex;justify-content:space-between;align-items:baseline;gap:10px;white-space:nowrap}
+.pres .v b{font:400 25px/1 var(--serif)}
+.pres .v span{font:500 12px/1 var(--sans);color:var(--mut)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;margin:2px 0 0}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--red) var(--p,40%),#d3d8e1 var(--p,40%))}
+input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--red) var(--p,40%),#d3d8e1 var(--p,40%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:#fff;border:2px solid var(--red);box-shadow:0 2px 8px rgba(27,42,74,.3)}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--red)}
+.marcas{display:flex;justify-content:space-between;font:600 10.5px/1 var(--sans);color:var(--mut);padding:0 2px}
+/* B: aparecen poco a poco */
+.revela{animation:sube .32s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sube{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.b-grande .antojos{grid-template-columns:repeat(2,1fr);gap:9px}
+.b-grande .ant{height:96px;font-size:16.5px;padding:0 12px 10px}
+.mini{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:2px 16px 4px;scrollbar-width:none}
+.mini::-webkit-scrollbar{display:none}
+.mini .ant{flex:none;width:96px;height:44px;font-size:12.5px;border-radius:10px;padding:0 8px 6px}
+.ok{display:flex;align-items:center;gap:6px;font:600 12.5px/1 var(--sans);color:#1d7a4e;margin-top:10px}
+/* C: una frase */
+.frase{font:400 30px/1.3 var(--serif);letter-spacing:-.01em;margin:2px 0 0}
+.frase button{border:0;background:none;padding:0 2px;font:inherit;color:var(--red);border-bottom:2px dashed rgba(198,61,49,.55);line-height:1.1}
+.frase button:active{background:#fdecea}
+.tira{display:flex;gap:6px;margin-top:16px;overflow-x:auto;margin-left:-16px;margin-right:-16px;padding:0 16px;scrollbar-width:none}
+.tira::-webkit-scrollbar{display:none}
+.tira .ant{flex:none;width:86px;height:52px;font-size:12px}
+.nota{font:500 12.5px/1.4 var(--sans);color:var(--mut);margin:6px 0 0}
+/* hoja de abajo */
+.velo{position:absolute;inset:0;background:rgba(15,24,45,.45);display:flex;align-items:flex-end;z-index:20;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.hoja{width:100%;background:#fff;border-radius:20px 20px 0 0;padding:8px 16px calc(16px + env(safe-area-inset-bottom));animation:sube .26s cubic-bezier(.2,.8,.2,1) both;max-height:80%;overflow:auto}
+.hoja .asa{width:38px;height:4px;border-radius:4px;background:#d3d8e1;margin:2px auto 12px}
+.hoja h3{font:400 24px/1.1 var(--serif);margin:0 0 12px}
+.hoja .chips{display:flex;flex-wrap:wrap;gap:7px}
+.hoja .listo{margin-top:16px}
+.aviso{font:500 14px/1.45 var(--sans);color:var(--ink)}
+.aviso p{margin:0 0 10px}
+.tag{display:inline-block;font:700 10.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;background:#fdecea;color:var(--red2);padding:5px 8px;border-radius:6px;margin-bottom:8px}
+@media (max-height:700px){ .resumen{display:none} .pie{padding-top:8px} }
+@media (max-height:640px){ .lab{margin:8px 0 4px} .ant{height:52px} }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+(function () {
+  const W = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/';
+  // Mismas fotos que la portada actual (Wikimedia Commons, licencias abiertas).
+  const ANT = [
+    ['cenar', 'Foodie', W + '4/4e/Penca_de_pl%C3%A1tanos_en_el_Mercado_Medell%C3%ADn%2C_Colonia_Condesa.jpg/330px-Penca_de_pl%C3%A1tanos_en_el_Mercado_Medell%C3%ADn%2C_Colonia_Condesa.jpg', 'comer rico'],
+    ['fiesta', 'Noche y fiesta', W + '5/52/Sal%C3%B3n_Los_%C3%81ngeles.jpg/330px-Sal%C3%B3n_Los_%C3%81ngeles.jpg', 'salir de fiesta'],
+    ['tranqui', 'Tranqui', W + '0/0f/Puente_Parque_Masayoshi_%C5%8Chira.jpg/330px-Puente_Parque_Masayoshi_%C5%8Chira.jpg', 'algo tranqui'],
+    ['cultural', 'Cultural', W + '9/97/Bellas_Artes_01.jpg/330px-Bellas_Artes_01.jpg', 'un plan cultural'],
+    ['romantico', 'Romántico', W + '4/4f/Chapultepec_castle_in_Mexico_city.jpg/330px-Chapultepec_castle_in_Mexico_city.jpg', 'una cita'],
+    ['familia', 'En familia', W + '9/95/Vista_a%C3%A9rea_de_la_Ciudad_de_M%C3%A9xico_desde_el_Parque_Aztl%C3%A1n_02.jpg/330px-Vista_a%C3%A9rea_de_la_Ciudad_de_M%C3%A9xico_desde_el_Parque_Aztl%C3%A1n_02.jpg', 'salir en familia']];
+  const ZONAS = ['Roma · Condesa', 'Polanco · Chapultepec', 'Juárez · Centro', 'Del Valle · Nápoles', 'Coyoacán · CU', 'San Ángel', 'Santa Fe · Poniente', 'Lomas · Tecamachalco', 'Satélite · Naucalpan', 'Xochimilco', 'Toda la ciudad'];
+  const COC = ['Todo tipo', 'Mexicana', 'Tacos', 'Mariscos', 'Japonesa y sushi', 'China y otras asiáticas', 'Italiana y pizza', 'Cortes y parrilla', 'Francesa', 'Española y mediterránea', 'Peruana y latina', 'Hamburguesas', 'Vegetariana y saludable', 'Internacional y de autor'];
+  const CUANDO = ['Ahora', 'Hoy tarde', 'Hoy noche', 'Finde'];
+  const QUIEN = [['solo', 'Solo', 1], ['date', 'Date', 2], ['amigos', 'Amigos', 4], ['familia', 'Familia', 4]];
+  // Presupuesto por persona: puntos de la barra (los mismos rangos que hoy usa el motor).
+  const PRES = [[0, 'Gratis', 'Sólo planes sin costo'], [300, 'Hasta $300', 'por persona'], [600, 'Hasta $600', 'por persona'], [1000, 'Hasta $1,000', 'por persona'],
+    [2000, 'Hasta $2,000', 'por persona'], [null, 'Sin límite', 'lo que cueste']];
+  const h = new Date().getHours();
+  const S = { v: (location.hash.replace('#', '') || 'a').toLowerCase(), ant: null, coc: 'Todo tipo', zona: 'Roma · Condesa', cuando: h < 16 ? 'Hoy tarde' : 'Hoy noche',
+    quien: 'amigos', n: 4, pres: 3, hoja: null, paso: 0 };
+  if (!/^[abc]$/.test(S.v)) S.v = 'a';
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const ant = k => ANT.find(a => a[0] === k);
+  const quienTxt = () => S.quien === 'solo' ? 'yo solo' : S.quien === 'date' ? 'mi date' : S.n + ' ' + (S.quien === 'familia' ? 'en familia' : 'amigos');
+  const presTxt = () => PRES[S.pres][1];
+  const antojoTxt = () => S.ant ? (S.ant === 'cenar' && S.coc !== 'Todo tipo' ? 'comer ' + S.coc.toLowerCase().split(' y ')[0] : ant(S.ant)[3]) : null;
+  const resumen = () => [S.ant ? ant(S.ant)[1] + (S.ant === 'cenar' && S.coc !== 'Todo tipo' ? ' · ' + S.coc : '') : null, S.zona, S.cuando, S.quien === 'solo' ? 'Solo' : S.quien === 'date' ? 'Date' : S.n + ' ' + (S.quien === 'familia' ? 'en familia' : 'amigos'), presTxt()].filter(Boolean).join(' · ');
+
+  function antojos(cls) {
+    return '<div class="' + (cls || 'antojos') + '" role="group" aria-label="Qué se les antoja">' + ANT.map(a =>
+      '<button class="ant" data-ant="' + a[0] + '" aria-pressed="' + (S.ant === a[0]) + '" style="background-image:url(\'' + a[2] + '\')"><span>' + a[1] +
+      (a[0] === 'cenar' && S.ant === 'cenar' ? '<small>' + esc(S.coc) + ' ▾</small>' : '') + '</span></button>').join('') + '</div>'; }
+  function zonas() { return '<div class="fila" role="group" aria-label="Zona">' + ZONAS.map(z => '<button class="chip" data-zona="' + esc(z) + '" aria-pressed="' + (S.zona === z) + '">' + z + '</button>').join('') + '</div>'; }
+  function cuando() { return '<div class="seg" role="group" aria-label="Cuándo">' + CUANDO.map(c => '<button data-cuando="' + c + '" aria-pressed="' + (S.cuando === c) + '">' + c + '</button>').join('') + '</div>'; }
+  function quien() { const conN = S.quien === 'amigos' || S.quien === 'familia';
+    return '<div class="quien"><div class="seg" role="group" aria-label="Con quién">' + QUIEN.map(q => '<button data-quien="' + q[0] + '" aria-pressed="' + (S.quien === q[0]) + '">' + q[1] + '</button>').join('') + '</div>' +
+      (conN ? '<div class="step" aria-label="Cuántos"><button data-n="-1" aria-label="Uno menos">−</button><span>' + S.n + '</span><button data-n="1" aria-label="Uno más">+</button></div>' : '') + '</div>'; }
+  function pres() { const p = PRES[S.pres], pct = S.pres / (PRES.length - 1) * 100;
+    return '<div class="pres"><div class="v"><b>' + p[1] + '</b><span>' + (p[0] === 0 ? 'sin costo' : p[0] == null ? 'sin tope' : 'con propina y traslado') + '</span></div>' +
+      '<input type="range" id="rango" min="0" max="' + (PRES.length - 1) + '" step="1" value="' + S.pres + '" style="--p:' + pct + '%" aria-label="Presupuesto por persona">' +
+      '<div class="marcas"><span>$0</span><span>$600</span><span>$2,000</span><span>∞</span></div></div>'; }
+  function cocinaLinea() { return S.ant === 'cenar' ? '<div class="lab">Tipo de comida <button class="chip" data-hoja="coc" style="height:28px;font-size:12.5px">' + S.coc + ' ▾</button></div>' : ''; }
+
+  function vistaA() {
+    return '<h1>¿Qué hacemos?</h1><p class="lead">3 planes con lugares, horario y precio. Gratis.</p>' +
+      '<div class="lab">Qué se les antoja</div>' + antojos() +
+      '<div class="lab">Dónde</div>' + zonas() +
+      '<div class="lab">Cuándo</div>' + cuando() +
+      '<div class="lab">Con quién</div>' + quien() +
+      '<div class="lab">Presupuesto por persona</div>' + pres(); }
+
+  function vistaB() {
+    if (!S.ant) return '<div class="b-grande"><h1>Arma tu salida.</h1><p class="lead">Un toque y te damos 3 planes listos: lugares, horario y precio por persona.</p>' +
+      '<div class="lab">¿Qué se les antoja?</div>' + antojos() + '</div>';
+    // Al elegir el antojo, las fotos se encogen a una fila y lo demás va saliendo, uno tras otro, ya con su valor puesto.
+    const d = i => S.recien ? ' style="animation-delay:' + (i * 140) + 'ms"' : ' style="animation:none"';
+    return '<h1>' + ant(S.ant)[1] + '</h1>' + antojos('mini') +
+      '<div class="revela"' + d(1) + '><div class="lab">Dónde</div>' + zonas() + '</div>' +
+      '<div class="revela"' + d(2) + '><div class="lab">Cuándo</div>' + cuando() + '</div>' +
+      '<div class="revela"' + d(3) + '><div class="lab">Con quién</div>' + quien() + '</div>' +
+      '<div class="revela"' + d(4) + '><div class="lab">Presupuesto por persona</div>' + pres() + '</div>' +
+      '<div class="ok revela"' + d(5) + '>✓ Ya está todo listo · cambia lo que quieras</div>'; }
+
+  function vistaC() {
+    const b = (k, t) => '<button data-hoja="' + k + '">' + esc(t) + '</button>';
+    return '<p class="frase">Quiero ' + b('ant', antojoTxt() || 'hacer algo') + ' en ' + b('zona', S.zona) + ', ' + b('cuando', S.cuando.toLowerCase()) + ', con ' + b('quien', quienTxt()) + ' y gastar ' + b('pres', presTxt().toLowerCase()) + '.</p>' +
+      '<p class="nota">Toca lo rojo para cambiarlo. Lo demás ya viene puesto.</p>' +
+      '<div class="lab">¿Qué se les antoja?</div>' + antojos() +
+      '<div class="lab">¿Cuánto por persona?</div>' + pres(); }
+
+  function hoja() {
+    if (!S.hoja) return '';
+    let t = '', c = '';
+    if (S.hoja === 'ant') { t = '¿Qué se les antoja?'; c = antojos(); }
+    if (S.hoja === 'coc') { t = '¿Qué tipo de comida?'; c = '<div class="chips">' + COC.map(x => '<button class="chip" data-coc="' + esc(x) + '" aria-pressed="' + (S.coc === x) + '">' + x + '</button>').join('') + '</div>'; }
+    if (S.hoja === 'zona') { t = '¿Dónde?'; c = '<div class="chips">' + ZONAS.map(z => '<button class="chip" data-zona="' + esc(z) + '" aria-pressed="' + (S.zona === z) + '">' + z + '</button>').join('') + '</div>'; }
+    if (S.hoja === 'cuando') { t = '¿Cuándo?'; c = cuando(); }
+    if (S.hoja === 'quien') { t = '¿Con quién?'; c = quien(); }
+    if (S.hoja === 'pres') { t = '¿Cuánto por persona?'; c = pres(); }
+    if (S.hoja === 'fin') { t = 'Aquí salen tus 3 planes'; c = '<div class="aviso"><span class="tag">Preview</span><p>En la versión real, al tocar el botón te llevamos directo a tus 3 opciones con lugares, horario y precio.</p><p><b>Buscaste:</b> ' + esc(resumen()) + '</p></div>'; }
+    return '<div class="velo" data-cerrar="1"><div class="hoja" role="dialog" aria-label="' + esc(t) + '"><div class="asa"></div><h3>' + t + '</h3>' + c +
+      '<button class="cta listo" data-cerrar="1">' + (S.hoja === 'fin' ? 'Entendido' : 'Listo') + '</button></div></div>'; }
+
+  function pinta() {
+    const listo = !!S.ant;
+    const cuerpo = S.v === 'a' ? vistaA() : S.v === 'b' ? vistaB() : vistaC();
+    const mostrarPie = S.v !== 'b' || !!S.ant;
+    $('app').innerHTML =
+      '<header><div class="marca"><i></i>SOBRES<small>MX</small></div><div class="sw" role="group" aria-label="Propuesta">' +
+      ['a', 'b', 'c'].map(v => '<button data-v="' + v + '" aria-pressed="' + (S.v === v) + '">' + v.toUpperCase() + '</button>').join('') + '</div></header>' +
+      '<main id="main">' + cuerpo + '</main>' +
+      (mostrarPie ? '<div class="pie"><p class="resumen">' + esc(resumen()) + '</p><button class="cta" data-fin="1"' + (listo ? '' : ' disabled') + '>' + (S.ant ? 'Ver mis 3 planes →' : S.v === 'c' ? 'Elige qué se les antoja ↑' : 'Elige qué se les antoja ↑') + '</button></div>' : '') +
+      hoja();
+    // Mientras se arrastra sólo cambia el número y la barra (redibujar todo soltaría el dedo en el celular).
+    const r = $('rango'); if (r) {
+      r.addEventListener('input', e => { S.pres = +e.target.value; const p = PRES[S.pres];
+        r.style.setProperty('--p', S.pres / (PRES.length - 1) * 100 + '%');
+        const b = r.parentNode.querySelector('.v b'), sp = r.parentNode.querySelector('.v span'); if (b) b.textContent = p[1]; if (sp) sp.textContent = p[0] === 0 ? 'sin costo' : p[0] == null ? 'sin tope' : 'con propina y traslado';
+        const rs = document.querySelector('.resumen'); if (rs) rs.textContent = resumen();
+        const fp = document.querySelector('.frase [data-hoja=pres]'); if (fp) fp.textContent = presTxt().toLowerCase();
+        if (navigator.vibrate) try { navigator.vibrate(6); } catch (x) {} });
+      r.addEventListener('change', () => { if (S.v === 'c' && S.hoja === 'pres') return; pinta(); }); }
+  }
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('button,[data-cerrar]'); if (!t) return;
+    const d = t.dataset;
+    S.recien = false;
+    if (d.v) { S.v = d.v; S.hoja = null; S.ant = null; S.coc = 'Todo tipo'; history.replaceState(null, '', '#' + d.v); }
+    else if (d.ant) { const otraVez = S.ant === d.ant;
+      S.recien = S.v === 'b' && !S.ant; S.ant = d.ant; if (d.ant === 'romantico') { S.quien = 'date'; S.n = 2; } if (d.ant === 'familia' && !otraVez) { S.quien = 'familia'; S.n = 4; }
+      // Foodie ya no detiene a nadie: queda «Todo tipo» y el tipo de comida se cambia tocando la tarjeta otra vez.
+      if (S.hoja === 'ant') S.hoja = null; else if (d.ant === 'cenar' && otraVez) S.hoja = 'coc'; }
+    else if (d.coc) { S.coc = d.coc; S.hoja = null; }
+    else if (d.zona) { S.zona = d.zona; S.paso = Math.max(S.paso, 2); if (S.hoja === 'zona') S.hoja = null; }
+    else if (d.cuando) { S.cuando = d.cuando; S.paso = Math.max(S.paso, 2); if (S.hoja === 'cuando') S.hoja = null; }
+    else if (d.quien) { S.quien = d.quien; S.n = QUIEN.find(q => q[0] === d.quien)[2]; }
+    else if (d.n) { S.n = Math.min(12, Math.max(2, S.n + (+d.n))); }
+    else if (d.hoja) { S.hoja = d.hoja; }
+    else if (d.fin) { S.hoja = 'fin'; }
+    else if (d.cerrar) { if (e.target === t) S.hoja = null; else return; }
+    else return;
+    pinta();
+  });
+  window.addEventListener('hashchange', () => { const v = location.hash.replace('#', ''); if (/^[abc]$/.test(v) && v !== S.v) { S.v = v; S.ant = null; S.coc = 'Todo tipo'; S.hoja = null; pinta(); } });
+  pinta();
+})();
+</script>
+</body>
+</html>
