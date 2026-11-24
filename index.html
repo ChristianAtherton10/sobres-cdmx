@@ -101,6 +101,8 @@
 .sb-revela{animation:sbSube .34s cubic-bezier(.2,.8,.2,1) both}
 @keyframes sbSube{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .sb-pres{background:var(--lila,#f3f5f9);border-radius:16px;padding:10px 14px 8px}
+.sb-pres-val{font:800 26px/1.1 var(--font-body);letter-spacing:-.02em;color:var(--ink);text-align:center;margin:2px 0 0}
+.sb-pres-nota{font:500 12px/1.3 var(--font-body);color:var(--color-neutral-700);text-align:center;margin-top:6px}
 .sb-pres .v{display:flex;justify-content:space-between;align-items:baseline;gap:10px;white-space:nowrap}
 .sb-pres .v b{font:800 24px/1 var(--font-body);letter-spacing:-.02em;color:var(--ink)}
 .sb-pres .v span{font:500 12px/1.2 var(--font-body);color:var(--color-neutral-700);white-space:normal;text-align:right}
@@ -115,9 +117,11 @@
 .sb-otros:active{transform:scale(.97)}
 .sb-res-tit{font:800 28px/1.1 var(--font-body);letter-spacing:-.03em;color:var(--ink);margin:10px 0 2px}
 .sb-res-sub{font:500 13px/1.35 var(--font-body);color:var(--color-neutral-700);margin:0}
-.sb-opt-btns{margin-top:auto;padding-top:14px;display:grid;grid-template-columns:1.15fr 1fr;gap:8px}
+.sb-opt-btns{margin-top:auto;padding-top:14px;display:grid;grid-template-columns:1.5fr 1fr;gap:8px}
 .sb-opt-btns .sb-btn,.sb-opt-btns .sb-btn2{min-height:50px;padding:0 8px;font-size:14.5px;justify-content:center;width:100%;white-space:nowrap}
 .sb-elegir{background:var(--electrico,#c63d31)!important;border-color:var(--electrico,#c63d31)!important;color:#fff!important}
+.sb-compartir{background:#ee6a2b!important;border-color:#ee6a2b!important;color:#fff!important;box-shadow:0 10px 20px -14px rgba(238,106,43,.9)}
+.sb-editar{background:#fff!important}
 .sb-res-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}
 .sb-puntos{display:flex;gap:8px;align-items:center}
 .sb-punto{width:9px;height:9px;padding:0;border:0;border-radius:999px;background:#cfd5df;cursor:pointer;transition:width .2s,background .2s}
@@ -541,7 +545,8 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <div class="sb-grab"></div>
 <div class="sb-kicker">{{ compKicker }}</div>
 <h2 id="comp-titulo" class="sb-h2" style="margin:6px 0 14px;overflow-wrap:anywhere">{{ compTitulo }}</h2>
-<a class="sb-btn sb-full" style="background:#0e7a54;color:#fff;box-shadow:none" href="{{ compWaUrl }}" target="_blank" rel="noopener" onClick="{{ compWaLog }}">Mandar por WhatsApp</a>
+<a class="sb-btn sb-full" style="background:#0e7a54;color:#fff;box-shadow:none;min-height:56px;font-size:17px" href="{{ compWaUrl }}" target="_blank" rel="noopener" onClick="{{ compWaLog }}">Mandar por WhatsApp</a>
+<sc-if value="{{ compCompleto }}" hint-placeholder-val="{{ true }}">
 <div class="sb-row" style="margin-top:8px;flex-wrap:nowrap">
 <input class="sb-input" readonly value="{{ compLink }}" aria-label="Enlace exacto a este plan" onClick="{{ tandaSelect }}" style="flex:1;min-width:0;font-size:13px!important;font-weight:500;background:var(--lila)">
 <button class="sb-btn2" style="flex:none;min-height:48px" onClick="{{ compCopiar }}">{{ compCopiarTxt }}</button>
@@ -578,6 +583,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </sc-if>
 </div>
 <sc-if value="{{ hasSendSel }}" hint-placeholder-val="{{ false }}"><button class="sb-btn sb-full" style="margin-top:10px" onClick="{{ compEnviar }}">{{ compEnviarTxt }}</button></sc-if>
+</sc-if>
 </sc-if>
 <button class="sb-btn3 sb-full" style="margin-top:12px" onClick="{{ closeSend }}">Listo</button>
 </div>
@@ -661,9 +667,9 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 <sc-if value="{{ facilElegido }}" hint-placeholder-val="{{ false }}">
 <div class="sb-revela" style="animation-delay:200ms">
 <h2 class="sb-facil-q" style="margin-top:16px">¿Cuánto por persona?</h2>
-<div class="sb-pres"><div class="v"><b>{{ facilPresTxt }}</b><span>{{ facilPresNota }}</span></div>
+<div class="sb-pres"><div class="sb-pres-val">{{ facilPresTxt }}</div>
 <input type="range" class="sb-rango" min="0" max="{{ facilPresMax }}" step="1" value="{{ facilPresVal }}" style="{{ facilPresCss }}" aria-label="Presupuesto por persona" onInput="{{ facilPresMueve }}" onChange="{{ facilPresFija }}">
-<div class="marcas"><span>$0</span><span>$600</span><span>$1,000</span><span>$2,000</span><span>∞</span></div></div>
+<div class="marcas"><span>$0</span><span>$600</span><span>$1,000</span><span>$2,000</span><span>∞</span></div><div class="sb-pres-nota">{{ facilPresNota }}</div></div>
 </div>
 <div class="sb-revela" style="animation-delay:360ms"><button class="sb-btn sb-full sb-cta-un {{ buscarFx }}" onClick="{{ facilGo1 }}"><span>Ver mis 3 planes</span><span aria-hidden="true">→</span></button></div>
 </sc-if>
@@ -943,7 +949,7 @@ main [style*="border:2px solid var(--color-neutral-300)"]{border-width:1.5px!imp
 </div>
 <p class="sb-note" style="margin:6px 0 0;font-size:12.5px">{{ o.votantes }}</p>
 </sc-if>
-<div class="sb-opt-btns"><button class="sb-btn sb-elegir" onClick="{{ o.elegir }}">{{ o.elegirTxt }}</button><button class="sb-btn2 sb-compartir" onClick="{{ o.compartir }}" aria-label="{{ o.compartirAria }}">Compartir plan</button></div>
+<div class="sb-opt-btns"><button class="sb-btn sb-compartir" onClick="{{ o.compartir }}" aria-label="{{ o.compartirAria }}">Compartir plan</button><button class="sb-btn2 sb-editar" onClick="{{ o.editar }}" aria-label="{{ o.editarAria }}">Editar</button></div>
 </div>
 </article>
 </sc-for>
@@ -6381,7 +6387,7 @@ class Component extends DCLogic {
     const R = {
       isMobile: s.isMobile, padBottom: s.isMobile ? '58px' : '0px', showBottomNav: s.isMobile && view !== 'venues', topNavDisplay: s.isMobile ? 'none' : 'flex',
       showTopSearch: !s.isMobile && view !== 'venues', showMobileSearch: s.isMobile && view !== 'venues',
-      navItems, bottomNav, brandGo: view === 'venues' ? (() => this.nav('venues')) : () => { this.setState({ paso: 1, pasoDir: 'back', facilPaso: 1, pasoN: (s.pasoN || 0) + 1 }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} }, brandSub: view === 'venues' ? 'PARA VENUES' : 'CDMX',
+      navItems, bottomNav, brandGo: view === 'venues' ? (() => this.nav('venues')) : () => { this.setState({ paso: 1, pasoDir: 'back', facilPaso: 1, pasoN: (s.pasoN || 0) + 1, ...this.inicioLimpio() }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} }, brandSub: view === 'venues' ? 'PARA VENUES' : 'CDMX',
       venueSwitchLabel: view === 'venues' ? '← Lado consumidor' : 'Para venues', venueSwitchGo: () => this.nav(view === 'venues' ? 'home' : 'venues'), venueBtnBg: view === 'venues' ? 'var(--color-text)' : 'transparent', venueBtnFg: view === 'venues' ? '#fff' : 'var(--color-text)',
       demoBadge: (this.props.insigniasDemo ?? true) && !s.isMobile, catCount: String(this.cat().length),
       searchQ: s.searchQ, setSearchQ: e => { const q = e.target.value; this.setState({ searchQ: q }); this.evSearch(q); }, searchClear: () => this.setState({ searchQ: '' }), searchHasQ: s.searchQ.length > 0, searchOpen: s.searchQ.length >= 2, searchResults, searchEmpty: s.searchQ.length >= 2 && !searchResults.length,
@@ -7021,7 +7027,7 @@ class Component extends DCLogic {
         + pls.map((pl, i) => (i + 1) + '. ' + pl.stops.map(v => v.n.split(' ·')[0]).join(' → ')).join('\n')
         + '\n\n' + (pls.length > 1 ? 'Elige la que más te late: ' : 'Ábrelo aquí: ') + this.tandaLink(); }
     const p = this.getPlan(); if (!p) return ''; const ts = this.curTimes(p); const rs = this.resumenPlan(p.stops, p.times);
-    return '¡Mira este plan que armé en SOBRES! ' + fecha + '\n\n'
+    return '¡Mira este plan que armé en SOBRES: «' + this.nombrePlan(p) + '»! ' + fecha + '\n\n'
       + p.stops.map((v, i) => this.time12(ts[i]) + ' · ' + v.n.split(' ·')[0]).join('\n')
       + '\n\nCosto aproximado: ' + rs.costo + ' por persona\n\nÁbrelo aquí: ' + this.tandaLinkDe([p]); }
   // ── ?v=facil: paso 1 de un toque + "Confirma y listo" (8 nov 2026) ──
@@ -7072,7 +7078,7 @@ class Component extends DCLogic {
             if (on && k === 'cenar') { this.setState({ facilCocSheet: true }); return; }
             const primera = !s.facilOpcion, antes = primera ? this.rectsAntojos() : null, d = DEF[k] || ['amigos', 4];
             this.setState({ cocinas: [], facilOpcion: k, vibes: cfg.vibes.slice(), planFrom: cfg.h[0], planTo: cfg.h[1], who: d[0], groupSize: d[1],
-              zone: 'all', zonesSel: [], porCiudad: true, facilRefinar: false, when: 'libre', customDate: '' }, () => { if (antes) this.flipAntojos(antes); }); } }; }),
+              zone: 'all', zonesSel: [], porCiudad: true, facilRefinar: false, when: 'libre', customDate: '', ...(this._presMovido ? {} : { budget: 'b1000', budgetCustom: null }) }, () => { if (antes) this.flipAntojos(antes); }); } }; }),
       facilCocSheet: !!s.facilCocSheet && enHome,
       facilCocCerrar: () => this.setState({ facilCocSheet: false }),
       facilCocinaOn: false,
@@ -7084,7 +7090,7 @@ class Component extends DCLogic {
       facilPresCss: '--p:' + Math.round(presI / (PRES.length - 1) * 100) + '%',
       facilPresMueve: e => { const t = e && e.target; if (!t) return; const i2 = +t.value; const x = PRES[i2]; if (!x) return;
         t.style.setProperty('--p', Math.round(i2 / (PRES.length - 1) * 100) + '%');
-        const box = t.closest && t.closest('.sb-pres'); if (box) { const b = box.querySelector('.v b'), sp = box.querySelector('.v span'); if (b) b.textContent = x[1]; if (sp) sp.textContent = x[2]; }
+        const box = t.closest && t.closest('.sb-pres'); if (box) { const b = box.querySelector('.sb-pres-val'), sp = box.querySelector('.sb-pres-nota'); if (b) b.textContent = x[1]; if (sp) sp.textContent = x[2]; }
         try { navigator.vibrate && navigator.vibrate(6); } catch (er) {} },
       facilPresFija: e => { const i2 = +((e && e.target && e.target.value) || 0); const x = PRES[i2]; if (!x || x[0] === s.budget) return;
         if (!this._presMovido) { this._presMovido = true; this.ev('presupuesto_movido', { presupuesto: x[0] }); }
@@ -7108,6 +7114,7 @@ class Component extends DCLogic {
   // Puntos de la barra del presupuesto (portada de un paso): id del motor, texto, nota.
   FACIL_PRES() { return [['free', 'Gratis', 'sólo planes sin costo'], ['b600', 'Hasta $600', 'por persona · con propina y traslado'], ['b1000', '$600 – $1,000', 'por persona · con propina y traslado'],
     ['b1999', '$1,000 – $2,000', 'por persona · con propina y traslado'], ['any', 'Sin límite', 'de todo tipo de precio']]; }
+  // (Los textos de la barra los cambia facilPresMueve mientras se arrastra; al soltar se guarda el rango.)
   // Las fotos suben a su nuevo lugar deslizándose (no saltan) al elegir el primer antojo.
   rectsAntojos() { const out = {}; try { document.querySelectorAll('.sb-fop[data-k]').forEach(e => { out[e.getAttribute('data-k')] = e.getBoundingClientRect(); }); } catch (e) {} return out; }
   flipAntojos(antes) { if (this.reduceMov && this.reduceMov()) return; try { document.querySelectorAll('.sb-fop[data-k]').forEach(e => { const a = antes[e.getAttribute('data-k')]; if (!a || !e.animate) return; const b = e.getBoundingClientRect(); if (!b.width) return;
@@ -7150,6 +7157,35 @@ class Component extends DCLogic {
     // Una vez por visita, la tarjeta de arriba se asoma a un lado para enseñar que se puede deslizar.
     setTimeout(() => { if (this._mazoAviso) return; const c = document.querySelector('.sb-mazo > .sb-opt[data-k="0"]'); if (!c || !c.animate || (this.reduceMov && this.reduceMov())) return; this._mazoAviso = true;
       c.animate([{ transform: 'none' }, { transform: 'translateX(-34px) rotate(-3deg)' }, { transform: 'none' }], { duration: 900, easing: 'ease-in-out', delay: 700 }); }, 400); }
+  // El logo regresa AL PRINCIPIO: en el celular, la portada sin antojo elegido (23 nov 2026, fundador).
+  // Nombre de un plan armado (23 nov 2026, fundador: «los títulos repiten el nombre de los lugares»): lo que se hace,
+  // en orden y sin repetir, y dónde. Ej. «Cena y copas en Roma Norte», «Museo, comida y postre en Coyoacán».
+  nombrePlan(p) { const st = (p && p.stops) || [], ts = (p.times && p.times.length === st.length) ? p.times : this.planTimes(st.length);
+    const que = (v, i) => { const a = (p.acts && p.acts[i]) || this.actsDe(v)[0], c = v.cat || '', n = v.n || '', h = ts[i] || 14;
+      if (v.evento) return v.concierto ? 'Concierto' : /festival/i.test(n) ? 'Festival' : (/expo|exposici/i.test(n) || /Museo|Galer/.test(c)) ? 'Expo' : 'Función';
+      if (/Atracci|Acuario|Zool/.test(c) || /kidzania|acuario|zool/i.test(n)) return 'Atracción';
+      if (/Taquer/.test(c)) return 'Tacos';
+      if (/Helader|Postre|Churrer|Panader|Paleter/.test(c)) return 'Postre';
+      if (/Antro|Salón de baile/.test(c) || a === 'baile') return 'Baile';
+      if (/Cantina/.test(c)) return 'Cantina';
+      if (/Mezcaler/.test(c)) return 'Mezcal';
+      if (a === 'copas') return 'Copas';
+      if (a === 'cafe' || /^Café/.test(c)) return 'Café';
+      if (a === 'comida' || a === 'cena' || a === 'desayuno') return h < 12 ? 'Desayuno' : h < 17.5 ? 'Comida' : 'Cena';
+      if (/Cine/.test(c)) return 'Cine'; if (/Teatro/.test(c)) return 'Teatro';
+      if (a === 'funcion') return 'Función';
+      if (/Museo/.test(c)) return 'Museo'; if (/Galer/.test(c)) return 'Galería'; if (/Parque|Jard/.test(c)) return 'Parque'; if (/Mercado/.test(c)) return 'Mercado';
+      if (a === 'taller') return 'Taller'; if (a === 'vista') return 'Mirador'; if (a === 'compras') return 'Compras'; if (a === 'lectura') return 'Librería';
+      if (a === 'juego' || a === 'reto' || a === 'atraccion') return 'Juegos'; if (a === 'musica') return 'Música en vivo';
+      return 'Paseo'; };
+    const q = []; st.forEach((v, i) => { const x = que(v, i); if (q.indexOf(x) < 0) q.push(x); });
+    const lista = q.slice(0, 3).map((x, i) => i ? x.charAt(0).toLowerCase() + x.slice(1) : x);
+    const txt = lista.length > 1 ? lista.slice(0, -1).join(', ') + ' y ' + lista[lista.length - 1] : (lista[0] || 'Plan');
+    const cols = {}; st.forEach(v => { const c = v.col || this.zLabel(v.z); cols[c] = (cols[c] || 0) + 1; });
+    const top = Object.keys(cols).sort((a, b) => cols[b] - cols[a]);
+    const donde = top.length === 1 || cols[top[0]] > st.length / 2 ? top[0] : (p.zonaPlan || this.zLabel(st[0] && st[0].z)).split(' · ')[0];
+    return donde ? txt + ' en ' + String(donde).split(' (')[0] : txt; }
+  inicioLimpio() { return this.state.facil ? { facilOpcion: '', facilRefinar: false, facilCocSheet: false, sendOpen: false, cocinas: [] } : {}; }
   resLimpio() { const s = this.state; return !!(s.facil && !s.tandaDe); }
   quieroOtros() { this.ev('quiero_otros_planes', { planes: ((this.state.results || {}).plans || []).length });
     this.setState({ facilRefinar: true, facilPaso: 2, planFrom: this.state.planFrom, sendOpen: false }); this.nav('home'); try { window.scrollTo(0, 0); } catch (e) {} }
@@ -7223,6 +7259,7 @@ class Component extends DCLogic {
     if (this._mazoR !== r) { this._mazoR = r; this._mazoI = 0; this._mazoN = 0; }   // planes nuevos: el mazo empieza en la opción 1
     const opciones = rp.map((p, i) => {
       const st = p.stops || []; const rs = this.resumenPlan(st, p.times);
+      const abrir = editando => abrir0.call(this, editando);
       // Foto real del ancla; si no tiene, la de otra parada del plan. Sin foto
       // no se deja un bloque vacío: el encabezado se compacta.
       const conFoto = [ancla(st)].concat(st).filter(Boolean).find(v => s.photos[v.id] && s.photos[v.id].src);
@@ -7235,7 +7272,7 @@ class Component extends DCLogic {
         compartirAria: 'Compartir la opción ' + (i + 1),
         compartir: () => { this.ev('compartir_plan_tarjeta', { opcion: i + 1 });
           this.setState({ planIdx: i, planStops: st.length, planCustom: { stops: st, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null }, () => this.compartirUnPlan()); },
-        editado: !!p.editado, titulo: st.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '),
+        editado: !!p.editado, titulo: this.nombrePlan(p), lugares: st.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '),
         // Un teatro sin función confirmada no tiene horario: no se inventa.
         horario: p.cartelera ? 'Según cartelera' : rs.horario, paradas: rs.paradas, costo: rs.costo, traslados: rs.traslados, costoNota: rs.costoNota,
         fondo: fondoDe(a) + ';height:' + (ph && ph.src ? (this.resLimpio() ? '124px' : '156px') : 'auto;min-height:96px'), hasPhoto: !!(ph && ph.src), photo: ph ? ph.src : '',
@@ -7265,14 +7302,20 @@ class Component extends DCLogic {
           return { votoOn: true, si: String(si), no: String(no), siOn: mio === 'sobres' ? 'true' : 'false', noOn: mio === 'nojalo' ? 'true' : 'false',
             votarSi: () => this.votarOpcion(p, 'sobres'), votarNo: () => this.votarOpcion(p, 'nojalo'),
             votantes: quienes.length ? 'Votaron: ' + quienes.join(', ') : 'Nadie ha votado todavía' }; })(),
-        elegir: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i] });
+        editarAria: 'Editar la opción ' + (i + 1),
+        // «Editar» (23 nov 2026): abre el plan ya en modo edición (cambiar, quitar o mover paradas). Cuenta como elegir el plan.
+        editar: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i], modo: 'editar' }); abrir(true); },
+        elegir: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i] }); abrir(false); } };
+      function abrir0(editando) {
           { const ts0 = (p.times && p.times.length === st.length) ? p.times : this.planTimes(st.length); const pf = this.aprende('elegido', st, ts0);
             pf.pendiente = { fecha: s.planDate || this.todayISO(), ids: st.map(v => v.id), cats: st.map(v => v.cat), ts: Date.now() }; this.perfilGuarda(pf); }
           this.setState({ planIdx: i, planDesdeTanda: true, planStops: st.length, swapSeed: 0,
             planCustom: { stops: st, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null,
             planView: 'edit', openedPlanId: null, planReadOnly: false, planLocked: false, openedPlanBy: '',
-            planEditando: false, desgloseAbierto: false, frasePlan: frases[i], results: r });
-          this.nav('plan'); } };
+            planEditando: !!editando, desgloseAbierto: false, frasePlan: frases[i], results: r,
+            // El aviso «cambiaste este plan después de compartirlo» sólo aplica al MISMO plan que se compartió.
+            compartidoSig: s.compartidoSig && String(s.compartidoSig).split('@')[0] === this.comboSig(st) ? s.compartidoSig : '' });
+          this.nav('plan'); }
     });
     const nOpc = opciones.length;
     const aviso = (r && r.expandNote) || '';
@@ -7337,7 +7380,7 @@ class Component extends DCLogic {
       toastStyle: 'position:fixed;left:50%;transform:translateX(-50%);bottom:' + (showBottomNav ? 'calc(var(--nav-h) + 14px)' : (enArmar || editando) ? '96px' : '24px')
         + ';z-index:100;background:var(--fill);color:var(--on-fill);padding:12px 18px;border-radius:14px;font:600 14px/1.4 var(--font-body);box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px);'
         + (s.toast ? 'opacity:1' : 'opacity:0;pointer-events:none') + ';transition:opacity .2s',
-      brandGo: () => { this.setState({ paso: 1, pasoDir: 'back', facilPaso: 1, pasoN: (s.pasoN || 0) + 1 }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} },   // el logo regresa al principio (paso 1)
+      brandGo: () => { this.setState({ paso: 1, pasoDir: 'back', facilPaso: 1, pasoN: (s.pasoN || 0) + 1, ...this.inicioLimpio() }); this.nav('home'); try { window.scrollTo(0, 0); } catch(e) {} },   // el logo regresa al principio (paso 1)
       hasUser: !!s.userName, isGuest: !s.userName, avatarLetter: (s.userName || '?')[0].toUpperCase(),
       avatarAria: 'Tu perfil, ' + (s.userName || ''), goProfile: () => this.nav('profile'),
       cuentaAbrir: () => this.pedirCuenta('general'),
@@ -7433,8 +7476,9 @@ class Component extends DCLogic {
       // Panel único de compartir.
       sendOpen: !!s.sendOpen,
       compKicker: s.compartirTanda ? 'Compartir tus opciones' : 'Compartir plan',
+      compCompleto: !s.facil,   // (23 nov 2026, fundador) en el celular la hoja de compartir sólo lleva el botón de WhatsApp
       compTitulo: s.compartirTanda ? ((s.results && s.results.plans || []).length === 1 ? 'Tu opción' : 'Tus ' + (s.results && s.results.plans || []).length + ' opciones')
-        : (((plan && plan.stops) ? plan : (s.sendOpen ? this.getPlan() : null)) || { stops: [] }).stops.map(v => v.n.split(' ·')[0]).join(' → '),   // desde la tarjeta de la tanda todavía no hay plan abierto
+        : (pl0 => s.facil && pl0.stops.length ? this.nombrePlan(pl0) : pl0.stops.map(v => v.n.split(' ·')[0]).join(' → '))(((plan && plan.stops) ? plan : (s.sendOpen ? this.getPlan() : null)) || { stops: [] }),   // desde la tarjeta de la tanda todavía no hay plan abierto
       compLink: s.sendOpen ? (s.compartirTanda ? this.tandaLink() : (plan ? this.tandaLinkDe([plan]) : (this.getPlan() ? this.tandaLinkDe([this.getPlan()]) : ''))) : '',
       compWaUrl: s.sendOpen ? 'https://wa.me/?text=' + encodeURIComponent(this.textoCompartir(!!s.compartirTanda)) : '#',
       compWaLog: () => this.ev('compartir_whatsapp', { tanda: !!s.compartirTanda }),

@@ -773,4 +773,22 @@ test('52.4 · mazo de planes: uno detrás del otro; al pasar la de arriba se va 
   a.runSearch({ nueva: true, fresh: true }); V = a.renderVals(); assert(V.opciones[0].k === '0' && a._mazoI === 0, 'con planes nuevos no regresó a la opción 1');
 });
 
+test('52.5 · (23 nov 2026) el logo regresa al principio; la barra arranca en $600 – $1,000; cada plan tiene nombre (no la lista de lugares); «Compartir plan» primero y «Editar» abre el plan para editar; compartir en el celular es sólo WhatsApp', () => {
+  const a = ciudad52('cenar', 'foodie', [19, 24], 'amigos', 4, 'b600', 1); a.nav('results');
+  let V = a.renderVals();
+  V.opciones.forEach(o => { assert(o.titulo && o.titulo.indexOf('→') < 0 && / en /.test(o.titulo), 'el título repite lugares: ' + o.titulo);
+    assert(!a.state.results.plans.some(p => p.stops.some(v => o.titulo.indexOf(v.n.split(' ·')[0]) >= 0)), 'el título trae el nombre de un lugar: ' + o.titulo); });
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  const btns = html.slice(html.indexOf('<div class="sb-opt-btns">'), html.indexOf('</div>', html.indexOf('<div class="sb-opt-btns">')));
+  assert(btns.indexOf('Compartir plan') > 0 && btns.indexOf('Editar') > btns.indexOf('Compartir plan') && btns.indexOf('Elegir') < 0, 'botones: ' + btns.replace(/<[^>]+>/g, '|'));
+  V.opciones[0].compartir(); V = a.renderVals(); assert(a.state.sendOpen && V.compCompleto === false && /wa\.me/.test(V.compWaUrl) && V.compTitulo === a.nombrePlan(a.state.results.plans[0]), 'compartir no quedó sólo con WhatsApp');
+  a.setState({ sendOpen: false }); a.renderVals().opciones[1].editar();
+  assert(a.state.view === 'plan' && a.state.planEditando === true && a.state.planCustom.stops[0].id === a.state.results.plans[1].stops[0].id, '«Editar» no abrió ese plan para editar');
+  assert(!a.state.compartidoSig, 'avisa que «cambiaste el plan que compartiste» en otro plan');
+  // Logo: al principio, sin antojo elegido; y al elegir de nuevo la barra vuelve a $600 – $1,000 si no la movieron.
+  a.renderVals().brandGo(); V = a.renderVals(); assert(a.state.view === 'home' && !a.state.facilOpcion && !V.facilElegido && V.facilP1, 'el logo no regresó al principio');
+  a.setState({ budget: 'b600' }); V.facilOpts[3].pick(); V = a.renderVals(); assert(a.state.budget === 'b1000' && V.facilPresTxt === '$600 – $1,000', 'la barra no arrancó en $600 – $1,000: ' + a.state.budget);
+  V.facilPresFija({ target: { value: '1' } }); a.renderVals().brandGo(); a.renderVals().facilOpts[0].pick(); assert(a.state.budget === 'b600', 'si ya movieron la barra, se respeta lo que eligieron');
+});
+
 if (require.main === module) report();
