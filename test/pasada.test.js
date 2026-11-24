@@ -791,4 +791,26 @@ test('52.5 · (23 nov 2026) el logo regresa al principio; la barra arranca en $6
   V.facilPresFija({ target: { value: '1' } }); a.renderVals().brandGo(); a.renderVals().facilOpts[0].pick(); assert(a.state.budget === 'b600', 'si ya movieron la barra, se respeta lo que eligieron');
 });
 
+test('52.6 · GA4 (23 nov 2026, fundador: «quiero ver todos los movimientos»): cada toque manda su evento, no sólo el primero', () => {
+  const a = nueva({}); const L = []; a.ev = (n, p) => L.push([n, p || {}]); a.generar = fn => fn(); a.nav('home');
+  const cuenta = n => L.filter(x => x[0] === n).length, ult = n => (L.filter(x => x[0] === n).pop() || [0, {}])[1];
+  let V = a.renderVals(); V.facilOpts[1].pick(); a.renderVals().facilOpts[3].pick();
+  assert(cuenta('antojo_elegido') === 2 && ult('antojo_elegido').antojo === 'cultural', 'antojo_elegido: ' + cuenta('antojo_elegido'));
+  a.renderVals().facilPresFija({ target: { value: '3' } }); a.renderVals().facilPresFija({ target: { value: '1' } });
+  assert(cuenta('presupuesto_movido') === 2 && ult('presupuesto_movido').presupuesto === 'b600', 'presupuesto_movido: ' + cuenta('presupuesto_movido'));
+  a.renderVals().facilGo1(); assert(cuenta('ver_mis_3_planes') === 1 && ult('ver_mis_3_planes').antojo === 'cultural' && cuenta('armar_planes') === 1, 'ver_mis_3_planes');
+  // swipe (sin página: se simula lo que hace el mazo) y puntitos
+  const hijo = () => ({ getAttribute: () => '2', style: {} }); const card = { parentNode: { children: [hijo(), hijo(), hijo()] }, style: {} }; const st0 = global.setTimeout; global.setTimeout = () => 0;
+  try { a.mazoSiguiente(card, -1); a.mazoSiguiente(card, 1); } finally { global.setTimeout = st0; }
+  a.mazoIr(0); const sw = L.filter(x => x[0] === 'plan_deslizado').map(x => x[1].direccion + ':' + x[1].opcion).join();
+  assert(sw === 'izquierda:2,derecha:3,punto:1', 'plan_deslizado: ' + sw);
+  V = a.renderVals(); V.opciones[0].compartir(); assert(cuenta('compartir_plan') === 1 && ult('compartir_plan').opcion === 1 && ult('compartir_plan').plan, 'compartir_plan');
+  a.renderVals().compWaLog(); assert(cuenta('compartir_whatsapp') === 1 && ult('compartir_whatsapp').origen === 'tarjeta', 'compartir_whatsapp');
+  a.setState({ sendOpen: false }); a.renderVals().opciones[1].editar(); assert(cuenta('editar_plan') === 1 && ult('editar_plan').opcion === 2, 'editar_plan');
+  a.nav('results'); a.renderVals().quieroOtros(); assert(cuenta('quiero_otros_planes') === 1, 'quiero_otros_planes');
+  a.renderVals().facilSiguiente(); a.facilVals('home', () => {}).facilGo(); assert(cuenta('ver_otros_3_planes') === 1, 'ver_otros_3_planes');
+  a.renderVals().brandGo(); assert(cuenta('logo_inicio') === 1, 'logo_inicio');
+  L.forEach(([n]) => assert(/^[a-z][a-z0-9_]{0,39}$/.test(n), 'nombre de evento inválido para GA4: ' + n));
+});
+
 if (require.main === module) report();

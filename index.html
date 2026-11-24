@@ -7073,7 +7073,7 @@ class Component extends DCLogic {
         return { k, emoji, label, sub: on && k === 'cenar' ? ((this.COCINAS().find(y => y[0] === this.cocinasSel()[0]) || [0, 'Todo tipo'])[1]) + ' ▾' : (elegido ? '' : ft[1]),
           fotoCss: ft[0] ? "background-image:linear-gradient(180deg,rgba(15,24,45,.08) 0%,rgba(15,24,45,.30) 45%,rgba(15,24,45,.86) 100%),url('" + ft[0] + "')" : '',
           aria: label + (on ? ' (seleccionado)' : ''), pressed: on ? 'true' : 'false',
-          pick: () => { this.evPaso1(k);
+          pick: () => { this.evPaso1(k); this.ev('antojo_elegido', { antojo: k, otra_vez: on ? 'si' : 'no' });
             // Foodie ya no detiene a nadie: queda «Todo tipo»; el tipo de comida se cambia tocándolo otra vez.
             if (on && k === 'cenar') { this.setState({ facilCocSheet: true }); return; }
             const primera = !s.facilOpcion, antes = primera ? this.rectsAntojos() : null, d = DEF[k] || ['amigos', 4];
@@ -7084,7 +7084,7 @@ class Component extends DCLogic {
       facilCocinaOn: false,
       facilCocinaOpts: [['', 'Todo tipo']].concat(this.COCINAS()).map(([k, l]) => ({ label: l, aria: l,
         pressed: (k ? this.cocinasSel().join() === k : !this.cocinasSel().length) ? 'true' : 'false',
-        pick: () => { this.evPaso1('cocina_' + (k || 'todo')); this.setState({ cocinas: k ? [k] : [], facilCocSheet: false }); } })),
+        pick: () => { this.evPaso1('cocina_' + (k || 'todo')); this.ev('tipo_comida_elegido', { cocina: k || 'todo' }); this.setState({ cocinas: k ? [k] : [], facilCocSheet: false }); } })),
       // Barra del presupuesto: los mismos rangos de siempre, uno por punto.
       facilPresMax: String(PRES.length - 1), facilPresVal: String(presI), facilPresTxt: PRES[presI][1], facilPresNota: PRES[presI][2],
       facilPresCss: '--p:' + Math.round(presI / (PRES.length - 1) * 100) + '%',
@@ -7093,7 +7093,7 @@ class Component extends DCLogic {
         const box = t.closest && t.closest('.sb-pres'); if (box) { const b = box.querySelector('.sb-pres-val'), sp = box.querySelector('.sb-pres-nota'); if (b) b.textContent = x[1]; if (sp) sp.textContent = x[2]; }
         try { navigator.vibrate && navigator.vibrate(6); } catch (er) {} },
       facilPresFija: e => { const i2 = +((e && e.target && e.target.value) || 0); const x = PRES[i2]; if (!x || x[0] === s.budget) return;
-        if (!this._presMovido) { this._presMovido = true; this.ev('presupuesto_movido', { presupuesto: x[0] }); }
+        this._presMovido = true; this.ev('presupuesto_movido', { presupuesto: x[0], presupuesto_txt: x[1], antes: s.budget });
         this.setState({ budget: x[0], budgetCustom: null }); },
       nqAbierto: !!s.nqAbierto || (s.noQuiero || []).length > 0, nqCerrado: !(s.nqAbierto || (s.noQuiero || []).length > 0), nqCls: (s.nqAbierto || (s.noQuiero || []).length > 0) ? 'sb-nq' : '', nqAbrir: () => this.setState({ nqAbierto: true }),
       facilRefinando: !!s.facilRefinar,
@@ -7102,11 +7102,12 @@ class Component extends DCLogic {
       facilAtras: () => { if (s.facilRefinar && paso === 2) { this.setState({ facilRefinar: false, facilPaso: 1 }); if (s.results) this.nav('results'); return; } ir(Math.max(1, paso - 1)); },
       facilSiguiente: () => ir(3),
       facilGo1: () => { if (!s.facilOpcion) return;
+        this.ev('ver_mis_3_planes', { antojo: s.facilOpcion, presupuesto: s.budget, cocina: this.cocinasSel().join(',') || 'todo' });
         this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: 'Toda la ciudad', cocinas: this.cocinasSel().join(','), portada: 'un_paso' });
         this.setState({ zone: 'all', zonesSel: [], porCiudad: true, facilPaso: 1, facilRefinar: false }, () => lanzar(false)); },
       facilGo: () => {
         this.ev('armar_planes', { vibras: (s.vibes || []).join(','), zona: this.zonesLabel(), cocinas: this.cocinasSel().join(','), portada: s.facilRefinar ? 'otros_planes' : 'pasos' });
-        if (s.facilRefinar) { const evitar = this.idsDePlanes(s.results);
+        if (s.facilRefinar) { const evitar = this.idsDePlanes(s.results); this.ev('ver_otros_3_planes', { zona: this.zonesLabel(), quien: s.who, personas: s.groupSize, presupuesto: s.budget });
           this.setState({ facilRefinar: false, facilPaso: 1, porCiudad: true }, () => this.generar(() => this.runSearch({ nueva: true, evitar }))); return; }
         lanzar(false); }
     };
@@ -7128,13 +7129,13 @@ class Component extends DCLogic {
   mazoPinta(el) { el = el || (typeof document !== 'undefined' && typeof document.querySelector === 'function' && document.querySelector('.sb-mazo')); if (!el) return; const n = el.children.length, top = this._mazoI || 0;
     Array.prototype.forEach.call(el.children, c => { const i = +c.getAttribute('data-i'); c.setAttribute('data-k', String((i - top + n) % n)); });
     try { if (typeof document.querySelectorAll === 'function') document.querySelectorAll('.sb-punto').forEach(b => b.setAttribute('aria-selected', b.getAttribute('data-i') === String(top) ? 'true' : 'false')); } catch (e) {} }
-  mazoIr(i) { this._mazoI = i; this.mazoPinta(); }
+  mazoIr(i) { if (i !== (this._mazoI || 0)) this.ev('plan_deslizado', { opcion: i + 1, direccion: 'punto', metodo: 'punto', swipes: (this._mazoN = (this._mazoN || 0) + 1) }); this._mazoI = i; this.mazoPinta(); }
   mazoSiguiente(card, dir) { const el = card.parentNode, n = el.children.length; if (n < 2) return;
     card.style.transition = 'transform .32s cubic-bezier(.3,.7,.4,1), opacity .32s';
     card.style.transform = 'translateX(' + (dir * 125) + '%) rotate(' + (dir * 16) + 'deg)';
     const sig = Array.prototype.find.call(el.children, c => c.getAttribute('data-k') === '1'); if (sig) { sig.style.transition = ''; sig.style.transform = ''; }
     this._mazoI = ((this._mazoI || 0) + 1) % n; this._mazoN = (this._mazoN || 0) + 1;
-    if (!this._carVisto) this._carVisto = {}; if (!this._carVisto[this._mazoI] && this._mazoI > 0) { this._carVisto[this._mazoI] = true; this.ev('plan_deslizado', { opcion: this._mazoI + 1 }); }
+    this.ev('plan_deslizado', { opcion: this._mazoI + 1, direccion: dir < 0 ? 'izquierda' : 'derecha', metodo: 'swipe', swipes: this._mazoN });
     setTimeout(() => { this.mazoPinta(el); card.style.transition = 'transform .38s cubic-bezier(.2,.8,.2,1), opacity .38s'; card.style.transform = ''; setTimeout(() => { card.style.transition = ''; }, 400); }, 300); }
   mazoEscucha() { if (this._mazoL || typeof document === 'undefined' || !document.addEventListener) return; this._mazoL = true;
     let d = null;
@@ -7185,7 +7186,8 @@ class Component extends DCLogic {
     const top = Object.keys(cols).sort((a, b) => cols[b] - cols[a]);
     const donde = top.length === 1 || cols[top[0]] > st.length / 2 ? top[0] : (p.zonaPlan || this.zLabel(st[0] && st[0].z)).split(' · ')[0];
     return donde ? txt + ' en ' + String(donde).split(' (')[0] : txt; }
-  inicioLimpio() { return this.state.facil ? { facilOpcion: '', facilRefinar: false, facilCocSheet: false, sendOpen: false, cocinas: [] } : {}; }
+  inicioLimpio() { if (this.state.view !== 'home') this.ev('logo_inicio', { desde: this.state.view });
+    return this.state.facil ? { facilOpcion: '', facilRefinar: false, facilCocSheet: false, sendOpen: false, cocinas: [] } : {}; }
   resLimpio() { const s = this.state; return !!(s.facil && !s.tandaDe); }
   quieroOtros() { this.ev('quiero_otros_planes', { planes: ((this.state.results || {}).plans || []).length });
     this.setState({ facilRefinar: true, facilPaso: 2, planFrom: this.state.planFrom, sendOpen: false }); this.nav('home'); try { window.scrollTo(0, 0); } catch (e) {} }
@@ -7270,7 +7272,7 @@ class Component extends DCLogic {
       return { fx: mazo ? '' : 'sc-rise', fxDelay: mazo ? '' : 'animation-delay:' + (i * 90) + 'ms', i: String(i), k: String(k), num: 'Opción ' + (i + 1), frase: frases[i],
         etiqueta: (r && r.porCiudad && p.zonaPlan) ? p.zonaPlan : frases[i],
         compartirAria: 'Compartir la opción ' + (i + 1),
-        compartir: () => { this.ev('compartir_plan_tarjeta', { opcion: i + 1 });
+        compartir: () => { this.ev('compartir_plan', { opcion: i + 1, plan: this.nombrePlan(p).slice(0, 90) });
           this.setState({ planIdx: i, planStops: st.length, planCustom: { stops: st, spent: p.spent, times: p.times || [] }, planNone: false, swapIdx: null }, () => this.compartirUnPlan()); },
         editado: !!p.editado, titulo: this.nombrePlan(p), lugares: st.map(v => v.n.split(' ·')[0].split(',')[0]).join(' → '),
         // Un teatro sin función confirmada no tiene horario: no se inventa.
@@ -7304,7 +7306,7 @@ class Component extends DCLogic {
             votantes: quienes.length ? 'Votaron: ' + quienes.join(', ') : 'Nadie ha votado todavía' }; })(),
         editarAria: 'Editar la opción ' + (i + 1),
         // «Editar» (23 nov 2026): abre el plan ya en modo edición (cambiar, quitar o mover paradas). Cuenta como elegir el plan.
-        editar: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i], modo: 'editar' }); abrir(true); },
+        editar: () => { this.ev('editar_plan', { opcion: i + 1, plan: this.nombrePlan(p).slice(0, 90) }); this.ev('elegir_plan', { opcion: i + 1, frase: frases[i], modo: 'editar' }); abrir(true); },
         elegir: () => { this.ev('elegir_plan', { opcion: i + 1, frase: frases[i] }); abrir(false); } };
       function abrir0(editando) {
           { const ts0 = (p.times && p.times.length === st.length) ? p.times : this.planTimes(st.length); const pf = this.aprende('elegido', st, ts0);
@@ -7481,7 +7483,7 @@ class Component extends DCLogic {
         : (pl0 => s.facil && pl0.stops.length ? this.nombrePlan(pl0) : pl0.stops.map(v => v.n.split(' ·')[0]).join(' → '))(((plan && plan.stops) ? plan : (s.sendOpen ? this.getPlan() : null)) || { stops: [] }),   // desde la tarjeta de la tanda todavía no hay plan abierto
       compLink: s.sendOpen ? (s.compartirTanda ? this.tandaLink() : (plan ? this.tandaLinkDe([plan]) : (this.getPlan() ? this.tandaLinkDe([this.getPlan()]) : ''))) : '',
       compWaUrl: s.sendOpen ? 'https://wa.me/?text=' + encodeURIComponent(this.textoCompartir(!!s.compartirTanda)) : '#',
-      compWaLog: () => this.ev('compartir_whatsapp', { tanda: !!s.compartirTanda }),
+      compWaLog: () => this.ev('compartir_whatsapp', { tanda: !!s.compartirTanda, origen: s.view === 'results' ? 'tarjeta' : s.view, opcion: (s.planIdx || 0) + 1 }),
       compCopiar: () => { const u = s.compartirTanda ? this.tandaLink() : this.tandaLinkDe([this.getPlan()]);
         this.copiarTexto(u, 'Enlace copiado'); this.setState({ compCopiado: true }); if (s.compartirTanda) this.setState({ tandaUrl: u });
         this.ev('compartir_enlace', { tanda: !!s.compartirTanda }); },
