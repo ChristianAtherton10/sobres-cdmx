@@ -70,7 +70,14 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .revela{animation:sube .32s cubic-bezier(.2,.8,.2,1) both}
 @keyframes sube{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .b-grande .antojos{grid-template-columns:repeat(2,1fr);gap:9px}
-.b-grande .ant{height:96px;font-size:16.5px;padding:0 12px 10px}
+.b-grande .ant{height:104px;font-size:17px;padding:0 12px 11px;border-radius:16px}
+.b-arriba .antojos{gap:8px}
+.b-arriba .ant{height:86px;font-size:15px;border-radius:14px}
+.b-cta{height:58px;font-size:18px;margin-top:14px;animation:late 2.4s ease-in-out 1.2s 2}
+@keyframes late{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+.b-ajusta{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px}
+.b-pill{height:30px;font-size:12.5px;padding:0 11px;color:var(--mut)}
+.b-pill span{font-size:10px;margin-left:2px}
 .mini{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:2px 16px 4px;scrollbar-width:none}
 .mini::-webkit-scrollbar{display:none}
 .mini .ant{flex:none;width:96px;height:44px;font-size:12.5px;border-radius:10px;padding:0 8px 6px}
@@ -119,9 +126,9 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   const PRES = [[0, 'Gratis', 'Sólo planes sin costo'], [300, 'Hasta $300', 'por persona'], [600, 'Hasta $600', 'por persona'], [1000, 'Hasta $1,000', 'por persona'],
     [2000, 'Hasta $2,000', 'por persona'], [null, 'Sin límite', 'lo que cueste']];
   const h = new Date().getHours();
-  const S = { v: (location.hash.replace('#', '') || 'a').toLowerCase(), ant: null, coc: 'Todo tipo', zona: 'Roma · Condesa', cuando: h < 16 ? 'Hoy tarde' : 'Hoy noche',
+  const S = { v: (location.hash.replace('#', '') || 'b').toLowerCase(), ant: null, coc: 'Todo tipo', zona: 'Roma · Condesa', cuando: h < 16 ? 'Hoy tarde' : 'Hoy noche',
     quien: 'amigos', n: 4, pres: 3, hoja: null, paso: 0 };
-  if (!/^[abc]$/.test(S.v)) S.v = 'a';
+  if (!/^[abc]$/.test(S.v)) S.v = 'b';
   const $ = id => document.getElementById(id);
   const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const ant = k => ANT.find(a => a[0] === k);
@@ -153,17 +160,19 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
       '<div class="lab">Con quién</div>' + quien() +
       '<div class="lab">Presupuesto por persona</div>' + pres(); }
 
+  // B (23 nov 2026, pedido del fundador): título + fotos grandes. Al tocar una, las fotos suben (en cuadrícula de 3, más
+  // grandes que una fila), aparece la barra del presupuesto y, justo debajo y bien visible, «Ver mis 3 planes».
+  // Zona, cuándo y con quién ya vienen puestos y se cambian en una línea debajo del botón.
   function vistaB() {
-    if (!S.ant) return '<div class="b-grande"><h1>Arma tu salida.</h1><p class="lead">Un toque y te damos 3 planes listos: lugares, horario y precio por persona.</p>' +
+    if (!S.ant) return '<div class="b-grande"><h1>Arma tu próxima salida</h1><p class="lead">Elige qué se les antoja y te damos 3 planes listos: lugares, horario y precio por persona.</p>' +
       '<div class="lab">¿Qué se les antoja?</div>' + antojos() + '</div>';
-    // Al elegir el antojo, las fotos se encogen a una fila y lo demás va saliendo, uno tras otro, ya con su valor puesto.
-    const d = i => S.recien ? ' style="animation-delay:' + (i * 140) + 'ms"' : ' style="animation:none"';
-    return '<h1>' + ant(S.ant)[1] + '</h1>' + antojos('mini') +
-      '<div class="revela"' + d(1) + '><div class="lab">Dónde</div>' + zonas() + '</div>' +
-      '<div class="revela"' + d(2) + '><div class="lab">Cuándo</div>' + cuando() + '</div>' +
-      '<div class="revela"' + d(3) + '><div class="lab">Con quién</div>' + quien() + '</div>' +
-      '<div class="revela"' + d(4) + '><div class="lab">Presupuesto por persona</div>' + pres() + '</div>' +
-      '<div class="ok revela"' + d(5) + '>✓ Ya está todo listo · cambia lo que quieras</div>'; }
+    const d = i => S.recien ? ' style="animation-delay:' + (i * 160 + 180) + 'ms"' : ' style="animation:none"';
+    const pill = (k, t) => '<button class="chip b-pill" data-hoja="' + k + '">' + esc(t) + ' <span aria-hidden="true">▾</span></button>';
+    return '<div class="b-arriba"><h1>Arma tu próxima salida</h1>' +
+      '<div class="lab">¿Qué se les antoja?</div>' + antojos() + '</div>' +
+      '<div class="revela"' + d(1) + '><div class="lab">¿Cuánto por persona?</div>' + pres() + '</div>' +
+      '<div class="revela"' + d(2) + '><button class="cta b-cta" data-fin="1">Ver mis 3 planes →</button></div>' +
+      '<div class="revela b-ajusta"' + d(3) + '>' + pill('zona', S.zona) + pill('cuando', S.cuando) + pill('quien', S.quien === 'solo' ? 'Solo' : S.quien === 'date' ? 'Date' : S.n + ' ' + (S.quien === 'familia' ? 'en familia' : 'amigos')) + '</div>'; }
 
   function vistaC() {
     const b = (k, t) => '<button data-hoja="' + k + '">' + esc(t) + '</button>';
@@ -186,9 +195,16 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
       '<button class="cta listo" data-cerrar="1">' + (S.hoja === 'fin' ? 'Entendido' : 'Listo') + '</button></div></div>'; }
 
   function pinta() {
+    const antes = {}; document.querySelectorAll('.ant[data-ant]').forEach(e => { antes[e.dataset.ant] = e.getBoundingClientRect(); });
+    pinta0();
+    if (S.v === 'b' && S.recien) document.querySelectorAll('main .ant[data-ant]').forEach(e => { const a = antes[e.dataset.ant]; if (!a) return; const b = e.getBoundingClientRect();
+      e.animate([{ transform: 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px) scale(' + a.width / b.width + ',' + a.height / b.height + ')', transformOrigin: 'top left' },
+        { transform: 'none', transformOrigin: 'top left' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); });
+  }
+  function pinta0() {
     const listo = !!S.ant;
     const cuerpo = S.v === 'a' ? vistaA() : S.v === 'b' ? vistaB() : vistaC();
-    const mostrarPie = S.v !== 'b' || !!S.ant;
+    const mostrarPie = S.v !== 'b';   // en B el botón va a media pantalla, no hasta abajo
     $('app').innerHTML =
       '<header><div class="marca"><i></i>SOBRES<small>MX</small></div><div class="sw" role="group" aria-label="Propuesta">' +
       ['a', 'b', 'c'].map(v => '<button data-v="' + v + '" aria-pressed="' + (S.v === v) + '">' + v.toUpperCase() + '</button>').join('') + '</div></header>' +
