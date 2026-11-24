@@ -813,4 +813,35 @@ test('52.6 · GA4 (23 nov 2026, fundador: «quiero ver todos los movimientos»):
   L.forEach(([n]) => assert(/^[a-z][a-z0-9_]{0,39}$/.test(n), 'nombre de evento inválido para GA4: ' + n));
 });
 
+section('53 · Gratis, computadora y colores (24 nov 2026, fundador)');
+
+test('53.1 · con presupuesto Gratis la página no se traba: salen planes gratis (lugares sueltos) o un aviso claro, nunca un error', () => {
+  ['cenar', 'fiesta', 'cultural', 'tranqui', 'romantico', 'familia'].forEach(op => {
+    const X = ANTOJOS52.find(x => x[0] === op); const a = ciudad52(X[0], X[1], X[2], X[3], X[4], 'free', 1); a.nav('results');
+    let V; try { V = a.renderVals(); } catch (e) { assert(false, op + ': la pantalla truena: ' + e.message); }
+    const P = a.state.results.plans || [];
+    P.forEach(p => p.stops.forEach(v => assert(!(v.pp > 0) || a.accesoLibre(v), op + ': ' + v.n + ' cuesta $' + v.pp + ' con presupuesto Gratis')));
+    if (!P.length) assert(V.sinOpciones && /Gratis/.test(V.sinOpcionesTxt) && !V.carruselCls, op + ': sin planes y sin aviso claro (o con el hueco del mazo): ' + V.sinOpcionesTxt);
+    if (['cultural', 'tranqui', 'familia'].indexOf(op) >= 0) assert(P.length >= 2, op + ': debería haber planes gratis (museos, parques): ' + P.length);
+  });
+});
+
+test('53.2 · la computadora abre la misma versión que el celular (portada de un paso y mazo), con flechas para pasar de plan', () => {
+  const a = makeApp({}, { ancho: 1280 }); assert(a.state.facil && a.renderVals().facilP1, 'la computadora no abrió la portada de un paso');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert(/\.sb-mazo\{position:relative;/.test(html) && html.indexOf('@media (max-width:819px){\n  .sb-mazo{') < 0, 'el mazo sigue siendo sólo de celular');
+  assert(/\.sb-optgrid\.sb-mazo\{max-width:540px!important/.test(html) && /class="sb-mazo-flechas"/.test(html), 'falta el mazo centrado o las flechas en computadora');
+  const st = html.slice(html.indexOf('<style'), html.indexOf('</style>')); assert(st.split('{').length === st.split('}').length, 'llaves descuadradas en el CSS');
+  const b = ciudad52('fiesta', 'nightlife', [20, 27], 'amigos', 4, 'b1000', 2); b.nav('results'); const V = b.renderVals();
+  V.mazoAtras(); assert(b._mazoI === V.opciones.length - 1, 'la flecha ← no regresó al plan anterior');
+});
+
+test('53.3 · cada uno de los 3 planes lleva su propio color y ya no fotos sueltas', () => {
+  const a = ciudad52('cultural', 'cultural', [11, 18], 'amigos', 4, 'b1000', 2); a.nav('results'); const V = a.renderVals();
+  assert(V.opciones.map(o => o.colorCls).join() === 'sb-c1,sb-c2,sb-c3', 'colores: ' + V.opciones.map(o => o.colorCls));
+  assert(V.opciones.every(o => !o.hasPhoto), 'el mazo sigue mostrando fotos sueltas');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  ['sb-c1', 'sb-c2', 'sb-c3'].forEach(c => assert(new RegExp('\\.sb-opt\\.' + c + '\\{--c:#[0-9a-f]{6};--c2:#[0-9a-f]{6};--ct:#[0-9a-f]{6}\\}').test(html), 'falta el color de ' + c));
+});
+
 if (require.main === module) report();

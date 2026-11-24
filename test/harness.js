@@ -56,7 +56,9 @@ function makeApp(stateOverrides = {}, opts = {}) {
   win.sessionStorage = sessionStorage;
   const sandbox = {
     DCLogic, window: win, localStorage, sessionStorage, document: doc,
-    location: { search: opts.search || '', origin: 'https://sitio.test', pathname: '/' }, setTimeout: (fn) => { try { fn(); } catch(e) {} return 0; }, clearTimeout: () => {},
+    // (24 nov 2026) La computadora ya abre la versión del celular; las pruebas que no dicen nada siguen probando la versión
+    // de siempre (?v=clasica), salvo las que piden un ancho de pantalla, que ven lo que vería esa pantalla.
+    location: { search: opts.search !== undefined ? opts.search : (opts.ancho ? '' : '?v=clasica'), origin: 'https://sitio.test', pathname: '/' }, setTimeout: (fn) => { try { fn(); } catch(e) {} return 0; }, clearTimeout: () => {},
     setInterval: () => 0, clearInterval: () => {}, fetch: () => Promise.reject(new Error('sin red')),
     console, Math: MathS, Date, JSON, URLSearchParams, crypto: cryptoS
   };
