@@ -51,9 +51,14 @@ test('41.6 · altas: llevan fuente y fecha; sólo salen en planes con horario y 
 });
 
 test('41.7 · funciones nuevas: Duelo y Lost en el CENART, con fecha y fuente; las vencidas no cargan', () => {
-  const a = makeApp({}); const ev = a.cat().filter(v => v.evento && /^ev-r/.test(v.id));
-  assert(ev.some(v => /^Duelo/.test(v.n)) && ev.some(v => /^Lost/.test(v.n)), 'faltan funciones');
-  ev.forEach(v => assert(v.fechas && v.fechas.hasta >= a.todayISO() && v.src, v.n + ' sin fecha/fuente o vencida'));
+  // (23 nov 2026) Las dos funciones eran el jueves 19 de noviembre: ya vencieron. La prueba ya no depende de la fecha:
+  // si siguen vigentes deben cargar, y si ya pasaron no deben cargar.
+  const a = makeApp({}); const ev = a.cat().filter(v => v.evento && /^ev-r/.test(v.id)), hoy = a.todayISO();
+  const E = a._win.SOBRES_REVISION.eventos; const F = (Array.isArray(E) ? E : Object.values(E)).filter(e => /^(Duelo|Lost)/.test(e.n || ''));
+  assert(F.length === 2, 'faltan en la revisión');
+  F.forEach(e => { const hasta = (e.fechas && e.fechas.hasta) || e.hasta || e.fecha || ''; const carga = ev.some(v => v.id === e.id);
+    assert(hasta ? (hasta >= hoy) === carga : true, e.n + (carga ? ' vencida y cargó' : ' vigente y no cargó') + ' (' + hasta + ')'); });
+  ev.forEach(v => assert(v.fechas && v.fechas.hasta >= hoy && v.src, v.n + ' sin fecha/fuente o vencida'));
 });
 
 test('41.8 · todo lugar sigue en una de las 10 zonas y los planes salen con la revisión', () => {

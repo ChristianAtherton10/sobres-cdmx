@@ -706,20 +706,71 @@ test('50.5 · un alta del fundador a la que sólo le falta el pin entra si Googl
 
 section('51 · Portada con fotos (16 nov 2026)');
 
-test('51.1 · cada antojo de la portada trae foto (Wikimedia) y bajada; la franja «Con lugares como» sólo usa nombres y cuentas reales del catálogo', () => {
+test('51.1 · cada antojo de la portada trae foto (Wikimedia) y bajada (23 nov 2026: sin la franja «Con lugares como»)', () => {
   const a = nueva({}); a.setState({ facilPaso: 1, facilOpcion: '', vibes: [] }); a.nav('home');
-  const V = a.renderVals(), C = a.cat();
+  const V = a.renderVals();
   assert(V.facilP1 && V.facilOpts.length === 6, 'no está en el paso 1 con 6 antojos');
   V.facilOpts.forEach(o => { assert(/url\('https:\/\/thumb\.wikimedia\.org\/wikipedia\/commons\/thumb\/[^']+\/500px-[^']+'\)/.test(o.fotoCss), o.label + ' sin foto');
     assert(o.sub && o.sub.length > 5 && o.label, o.label + ' sin bajada'); });
-  assert(V.facilFamOn, 'no salió la franja de lugares famosos');
-  const N = V.facilFamTxt.split(' · '); assert(N.length >= 4, 'pocos nombres: ' + V.facilFamTxt);
-  N.forEach(n => { const v = C.find(x => String(x.n).split(/ · | — /)[0].trim() === n && x.hot >= 3); assert(v && v.recomendable !== false && !v.coordAprox, n + ' no es un hotspot activo del catálogo'); });
-  const tot = C.filter(v => !v.evento).length, hot = C.filter(v => v.hot).length;
-  const m = V.facilFamCuenta.match(/Más de ([\d,]+) lugares de la CDMX · (\d+) hotspots/); assert(m, 'cuenta rara: ' + V.facilFamCuenta);
-  assert(+m[1].replace(/,/g, '') <= tot && +m[2] === hot, 'la cuenta no coincide con el catálogo: ' + V.facilFamCuenta + ' vs ' + tot + '/' + hot);
-  // Elegir un antojo sigue avanzando al paso 2.
-  V.facilOpts.find(o => o.label === 'Cultural').pick(); assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'cultural', 'elegir un antojo ya no avanza');
+  assert(!V.facilFamOn, 'la franja de lugares famosos ya no va');
+});
+
+section('52 · Portada de un paso, planes por toda la ciudad y mazo de planes (23 nov 2026, fundador)');
+
+const ANTOJOS52 = [['cenar', 'foodie', [19, 24], 'amigos', 4], ['fiesta', 'nightlife', [20, 27], 'amigos', 4], ['cultural', 'cultural', [11, 18], 'amigos', 4],
+  ['tranqui', 'chill', [11, 18], 'amigos', 4], ['romantico', 'romántico', [19, 25], 'date', 2], ['familia', 'familiar', [12, 19], 'familia', 4]];
+const ciudad52 = (op, vib, h, who, n, bud, sd) => { const a = nueva({}, { dseed: sd, rseed: sd * 7 });
+  a.setState({ who, groupSize: n, zone: 'all', zonesSel: [], vibes: [vib], facilOpcion: op, budget: bud, planFrom: h[0], planTo: h[1], porCiudad: true, when: 'libre' });
+  a.runSearch({ nueva: true }); return a; };
+
+test('52.1 · con sólo antojo y presupuesto salen planes por toda la ciudad: cada plan en UNA zona, sin repetir lugar ni marca, y en zonas distintas cuando alcanza', () => {
+  ANTOJOS52.forEach(([op, vib, h, who, n]) => [1, 2].forEach(sd => {
+    const a = ciudad52(op, vib, h, who, n, 'b1000', sd), P = a.state.results.plans || [], G = a.ZGRUPOS();
+    assert(P.length === 3, op + ' semilla ' + sd + ': salieron ' + P.length + ' planes');
+    const ids = new Set(), marcas = new Set(), zonas = [];
+    P.forEach(p => { const g = G.find(x => x[0] === p.zonaPlan); assert(g, op + ': plan sin zona');
+      p.stops.forEach(v => { assert(g[1].indexOf(v.z) >= 0, op + ': ' + v.n + ' (' + v.z + ') se sale de ' + g[0]);
+        assert(!ids.has(v.id) && !marcas.has(a.marcaDe(v)), op + ': repite ' + v.n); ids.add(v.id); marcas.add(a.marcaDe(v)); });
+      zonas.push(g[0]); assert(a.costoPlan(p.stops, p.times).total <= a.budgetMax(), op + ': se pasa del presupuesto'); });
+    assert(new Set(zonas).size === 3, op + ': las tres en ' + zonas.join(', '));
+  }));
+});
+
+test('52.2 · la portada sólo pide antojo y presupuesto (barra con los rangos del motor) y «Ver mis 3 planes» busca en toda la ciudad', () => {
+  const a = nueva({}); a.setState({ facilPaso: 1, facilOpcion: '' }); a.nav('home');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  const i = html.indexOf('<div id="armar-facil" class="sb-facil sb-facil1">'), b = html.slice(i, html.indexOf('<sc-if value="{{ facilP2 }}"', i));
+  assert(i > 0 && b.indexOf('zoneOpts') < 0 && b.indexOf('whoOpts') < 0 && b.indexOf('sb-rango') > 0 && b.indexOf('facilGo1') > 0, 'la portada pide de más o le falta la barra');
+  const ids = a.BUD.map(x => x[0]); a.FACIL_PRES().forEach(x => assert(ids.indexOf(x[0]) >= 0, 'la barra usa un rango que el motor no conoce: ' + x[0]));
+  assert(a.state.budget === 'b1000', 'la barra debe arrancar en $600 – $1,000 (arrancó en ' + a.state.budget + ')');
+  let V = a.renderVals(); assert(!V.facilElegido, 'sin antojo no sale la barra');
+  V.facilOpts.find(o => o.label === 'Cultural').pick(); V = a.renderVals(); assert(V.facilElegido && V.facilPresTxt === '$600 – $1,000', 'no salió la barra');
+  V.facilPresFija({ target: { value: '3' } }); assert(a.state.budget === 'b1999', 'mover la barra no cambió el presupuesto');
+  a.generar = fn => fn(); a.renderVals().facilGo1();
+  assert(a.state.view === 'results' && a.state.zone === 'all' && a.state.results.porCiudad && a.state.results.plans.length >= 1, 'no armó por toda la ciudad');
+});
+
+test('52.3 · resultados en el celular: sin subtítulo, el precio sin horario, «Elegir este plan» y «Compartir plan» en cada uno, y «Quiero otros planes» pregunta zona y arma otros sin repetir', () => {
+  const a = ciudad52('fiesta', 'nightlife', [20, 27], 'amigos', 4, 'b1000', 3); a.nav('results');
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert(html.indexOf('sb-res-sub') < 0 || html.indexOf('{{ resSubLimpio }}') < 0, 'sigue el subtítulo debajo de «Tus 3 planes»');
+  let V = a.renderVals(); assert(V.resLimpio && V.resTituloLimpio === 'Tus 3 planes' && !V.hayOpcionesV && !V.listaOnV, 'la pantalla sigue cargada');
+  V.opciones.forEach(o => { assert(/por persona/.test(o.resumen) && !/\d(:\d\d)? ?(am|pm)/.test(o.resumen), 'el precio trae horario: ' + o.resumen);
+    assert(o.elegirTxt && typeof o.compartir === 'function', 'falta un botón en ' + o.titulo); });
+  V.opciones[1].compartir(); assert(a.state.sendOpen && a.getPlan().stops.map(v => v.id).join() === a.state.results.plans[1].stops.map(v => v.id).join(), 'compartir no abrió ese plan');
+  a.setState({ sendOpen: false }); const antes = a.idsDePlanes(a.state.results);
+  a.renderVals().quieroOtros(); V = a.renderVals(); assert(a.state.view === 'home' && V.facilP2 && a.state.facilRefinar, 'no preguntó zona y horario');
+  a.setState({ zone: 'roma', zonesSel: a.conGrupos(['roma']) }); V.facilSiguiente(); a.generar = fn => fn(); a.facilVals('home', () => {}).facilGo();
+  const nuevos = a.idsDePlanes(a.state.results); assert(nuevos.length && nuevos.every(id => antes.indexOf(id) < 0), 'repitió lugares de la tanda anterior');
+  assert((a.state.results.plans || []).every(p => p.stops.every(v => a.conGrupos(['roma']).indexOf(v.z) >= 0)), 'no respetó la zona que eligieron');
+});
+
+test('52.4 · mazo de planes: uno detrás del otro; al pasar la de arriba se va hasta atrás y con planes nuevos empieza en la opción 1', () => {
+  const a = ciudad52('cultural', 'cultural', [11, 18], 'amigos', 4, 'b1000', 2); a.nav('results');
+  let V = a.renderVals(); assert(V.carruselCls === 'sb-mazo' && V.opciones.map(o => o.k).join() === '0,1,2' && V.puntos[0].on === 'true', 'el mazo no arranca en la opción 1');
+  a.mazoIr(1); V = a.renderVals(); assert(V.opciones.map(o => o.k).join() === '2,0,1' && V.puntos[1].on === 'true', 'la opción 1 no se fue hasta atrás: ' + V.opciones.map(o => o.k));
+  V.opciones.forEach(o => assert(!o.fx, 'las tarjetas del mazo no llevan la animación de entrada (pelea con el arrastre)'));
+  a.runSearch({ nueva: true, fresh: true }); V = a.renderVals(); assert(V.opciones[0].k === '0' && a._mazoI === 0, 'con planes nuevos no regresó a la opción 1');
 });
 
 if (require.main === module) report();

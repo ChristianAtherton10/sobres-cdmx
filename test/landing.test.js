@@ -576,30 +576,35 @@ test('38.2 · ?v=facil se activa, preselecciona Roma · Condesa y Juárez · Cen
   const c = makeApp({}, { search: '?v=facil&zona=coyoacan' }); assert(c.state.zonesSel.join() === 'coyoacan,cu', 'pisó la zona del anuncio: ' + c.state.zonesSel);
 });
 
-test('38.3 · paso 1: 6 opciones (Romántico en vez de Aventura), avanza solo; "Foodie" pide el tipo de comida y ése avanza', () => {
+test('38.3 · paso 1: 6 opciones; (23 nov 2026, fundador) elegir NO avanza: suben las fotos, salen la barra del presupuesto y «Ver mis 3 planes»; Foodie queda en «Todo tipo» y el tipo de comida se cambia tocándolo otra vez', () => {
   const a = makeApp({}, { search: '?v=facil' }); const L = conEv(a);
-  const u = a.facilVals('home', () => {}); assert(u.facilP1 && u.facilOpts.length === 6, 'opciones: ' + u.facilOpts.length);
+  const u = a.facilVals('home', () => {}); assert(u.facilP1 && u.facilOpts.length === 6 && !u.facilElegido, 'opciones: ' + u.facilOpts.length);
   assert(u.facilOpts.map(o => o.label).join('|') === 'Foodie|Noche y fiesta|Tranqui|Cultural|Romántico|En familia', u.facilOpts.map(o => o.label));
-  u.facilOpts[4].pick();   // Romántico: avanza solo y van en pareja
-  assert(a.state.facilPaso === 2 && a.state.vibes.join() === 'romántico' && a.state.who === 'date', JSON.stringify([a.state.facilPaso, a.state.vibes, a.state.who]));
-  a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 1, 'el paso 2 no regresa al 1');
-  a.facilVals('home', () => {}).facilOpts[0].pick();   // Foodie: NO avanza, sale el tipo de comida
+  u.facilOpts[4].pick();   // Romántico: se queda en la portada, van en pareja y se busca en toda la ciudad
   let v = a.facilVals('home', () => {});
-  assert(a.state.facilPaso === 1 && v.facilCocinaOn && v.facilCocinaOpts[0].label === 'Todo tipo' && a.state.who === 'amigos', 'Foodie no mostró el tipo de comida');
-  v.facilCocinaOpts.find(o => o.label === 'China y otras asiáticas').pick();
-  assert(a.state.facilPaso === 2 && a.state.cocinas.join() === 'asiatica', 'el tipo de comida no avanzó: ' + JSON.stringify([a.state.facilPaso, a.state.cocinas]));
+  assert(a.state.facilPaso === 1 && v.facilElegido && a.state.vibes.join() === 'romántico' && a.state.who === 'date' && a.state.groupSize === 2, JSON.stringify([a.state.facilPaso, a.state.vibes, a.state.who]));
+  assert(a.state.zone === 'all' && a.state.porCiudad === true, 'no busca en toda la ciudad');
+  a.facilVals('home', () => {}).facilOpts[0].pick();   // Foodie: queda «Todo tipo», sin pedir nada más
+  v = a.facilVals('home', () => {});
+  assert(a.state.facilPaso === 1 && !v.facilCocSheet && /Todo tipo/.test(v.facilOpts[0].sub) && a.state.who === 'amigos', 'Foodie no debe detener a nadie');
+  v.facilOpts[0].pick(); v = a.facilVals('home', () => {}); assert(v.facilCocSheet, 'tocar Foodie otra vez no abrió el tipo de comida');
+  v.facilCocinaOpts.find(o => o.label === 'China y otras asiáticas').pick(); v = a.facilVals('home', () => {});
+  assert(a.state.facilPaso === 1 && a.state.cocinas.join() === 'asiatica' && !v.facilCocSheet && /China/.test(v.facilOpts[0].sub), 'el tipo de comida no quedó: ' + JSON.stringify([a.state.facilPaso, a.state.cocinas]));
   const e = L.filter(x => x[0] === 'paso_1_elegido'); assert(e.length === 1 && e[0][1].opcion === 'romantico' && e[0][1].version === 'facil', JSON.stringify(e));
 });
 
-test('38.3b · pasos 2 y 3: Siguiente, ← Atrás y "Ver mis 3 planes" arma los planes', () => {
+test('38.3b · (23 nov 2026) «Ver mis 3 planes» arma desde la portada; «Quiero otros planes» pregunta zona/horario y con quién (pasos para afinar) y arma otros 3', () => {
   const a = makeApp({}, { search: '?v=facil' }); a.ev = () => {};
-  a.facilVals('home', () => {}).facilOpts[1].pick(); assert(a.facilVals('home', () => {}).facilP2, 'no llegó al paso 2');
-  a.facilVals('home', () => {}).facilSiguiente(); assert(a.state.facilPaso === 3 && a.facilVals('home', () => {}).facilP3, 'no llegó al paso 3');
+  let lanzo = false; a.facilVals('home', () => { lanzo = true; }).facilGo1(); assert(!lanzo, 'sin antojo no debe armar');
+  a.facilVals('home', () => {}).facilOpts[1].pick(); a.facilVals('home', () => { lanzo = true; }).facilGo1();
+  assert(lanzo && a.state.zone === 'all' && a.state.porCiudad, '«Ver mis 3 planes» no armó por toda la ciudad');
+  a.runSearch({ nueva: true }); a.quieroOtros();
+  let v = a.facilVals('home', () => {}); assert(v.facilP2 && /afinar/.test(v.facilPasoTxt2) && v.facilGoTxt === 'Ver otros 3 planes', 'no pidió afinar');
+  v.facilSiguiente(); assert(a.state.facilPaso === 3 && a.facilVals('home', () => {}).facilP3, 'no llegó al paso 3');
   a.facilVals('home', () => {}).facilAtras(); assert(a.state.facilPaso === 2, 'el paso 3 no regresa al 2');
-  a.facilVals('home', () => {}).facilSiguiente(); let lanzo = false; a.facilVals('home', () => { lanzo = true; }).facilGo();
-  assert(lanzo, '"Ver mis 3 planes" no armó los planes');
+  a.facilVals('home', () => {}).facilAtras(); assert(a.state.view === 'results' && !a.state.facilRefinar, '← Atrás en el paso 2 debe regresar a los planes');
   const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
-  ['Arma tu próxima salida en 3 pasos', 'id="armar-facil-donde"', 'id="armar-facil-quien"', 'Ver mis 3 planes', 'Regresar al paso 1', 'Regresar al paso 2']
+  ['Arma tu próxima salida', 'id="armar-facil-donde"', 'id="armar-facil-quien"', 'Ver mis 3 planes', 'Quiero otros planes', 'class="sb-rango"']
     .forEach(t => assert(html.indexOf(t) >= 0, 'falta en la plantilla: ' + t));
 });
 
@@ -698,12 +703,12 @@ test('40.5 · plan sin fecha: ningún texto dice "hoy" ni trae fecha; no descart
   // …y la versión actual sigue con fecha y "hoy en la noche".
   const a = makeApp({}); assert(a.state.when === 'noche' && /hoy en la noche/.test(a.whenLabel()), 'cambió la versión actual');
 });
-test('40.2 · paso 1 fácil: título grande en negritas y sin el subtítulo "Te damos 3 planes…"', () => {
+test('40.2 · paso 1 fácil: (23 nov 2026) «Arma tu próxima salida» en negritas, sin subtítulo ni «Paso 1 de 3»', () => {
   const b = bloque40('armar-facil');
-  assert(/class="sb-facil-titulo">Arma tu próxima salida en 3 pasos\./.test(b), 'falta el título');
-  assert(b.indexOf('Te damos 3 planes') < 0 && b.indexOf('sb-facil-sub') < 0, 'sigue el subtítulo');
-  assert(/\.sb-facil-titulo\{font:800 40px/.test(html40), 'el título no es de 40px en negritas');
-  assert(b.indexOf('Paso 1 de 3') > b.indexOf('sb-facil-titulo') && b.indexOf('¿Qué se les antoja?') > b.indexOf('Paso 1 de 3'), 'el orden cambió');
+  assert(/class="sb-facil-titulo">Arma tu próxima salida</.test(b), 'falta el título');
+  assert(b.indexOf('Te damos 3 planes') < 0 && b.indexOf('sb-facil-lead') < 0 && b.indexOf('Paso 1 de 3') < 0, 'sigue el subtítulo o el paso');
+  assert(/\.sb-facil1 \.sb-facil-titulo\{font:800 /.test(html40), 'el título no está en negritas');
+  assert(b.indexOf('¿Qué se les antoja?') > b.indexOf('sb-facil-titulo'), 'el orden cambió');
 });
 
 test('40.3 · logo más grande (29px celular, 32px compu) y pie hasta abajo en celular, oculto en pasos 2 y 3', () => {
